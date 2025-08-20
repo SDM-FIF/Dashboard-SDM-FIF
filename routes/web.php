@@ -2,6 +2,64 @@
 
 use Illuminate\Support\Facades\Route;
 
+// TODO: Placeholder route untuk UI, nanti diganti backend
 Route::get('/', function () {
+    return view('landingpage');
+})->name('landingpage');
+Route::get('/welcome', function () {
     return view('welcome');
-});
+})->name('welcome');
+// Dashboard
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->name('dashboard');
+// Dashboard Dosen
+Route::get('/dashboard-dosen', function () {
+    return view('dashboard-dosen');
+})->name('dashboard-dosen');
+// Data Management
+Route::get('/data-dosen', function () {
+    return view('data-dosen');
+})->name('data-dosen');
+
+Route::get('/data-tpa', function () {
+    return view('data.tpa');
+})->name('data-tpa');
+
+// Kompetisi
+Route::get('/kompetisi', function () {
+    return view('kompetisi.index');
+})->name('kompetisi');
+
+// Management
+Route::get('/manajemen-dosen', function () {
+    return view('manajemen.dosen');
+})->name('manajemen-dosen');
+
+Route::get('/manajemen-tpa', function () {
+    return view('manajemen.tpa');
+})->name('manajemen-tpa');
+
+// Recruitment
+Route::get('/rekrutasi-dosen', function () {
+    return view('rekrutasi.dosen');
+})->name('rekrutasi-dosen');
+
+Route::get('/manajemen-mahasiswa', function () {
+    return view('manajemen.mahasiswa');
+})->name('manajemen-mahasiswa');
+
+// Reports
+Route::get('/master-data', function () {
+    return view('reports.master-data');
+})->name('master-data');
+
+// System
+Route::get('/pengaturan', function () {
+    return view('system.pengaturan');
+})->name('pengaturan');
+
+Route::get('/logout', function () {
+    // Dummy logout, langsung redirect ke halaman login
+    return redirect()->route('login');
+})->name('logout');
