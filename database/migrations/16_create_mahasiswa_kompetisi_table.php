@@ -13,8 +13,13 @@ return new class extends Migration
     {
         Schema::create('mahasiswa_kompetisi', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->unsignedBigInteger('mahasiswa_id');
+            $table->unsignedBigInteger('kompetisi_id');
+
+            $table->foreign('mahasiswa_id')->references('id')->on('mahasiswa');
+            $table->foreign('kompetisi_id')->references('id')->on('kompetisi');
         });
+
     }
 
     /**
@@ -24,4 +29,5 @@ return new class extends Migration
     {
         Schema::dropIfExists('mahasiswa_kompetisi');
     }
+
 };
