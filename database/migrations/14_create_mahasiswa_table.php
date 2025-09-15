@@ -11,10 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tenaga_pendukung_akademik', function (Blueprint $table) {
+        Schema::create('mahasiswa', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->unsignedBigInteger('prodi_id');
+            $table->string('nama_lengkap');
+            $table->integer('nim');
+
+            $table->foreign('prodi_id')->references('id')->on('prodi');
         });
+
     }
 
     /**
@@ -22,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tenaga_pendukung_akademik');
+        Schema::dropIfExists('mahasiswa');
     }
 };

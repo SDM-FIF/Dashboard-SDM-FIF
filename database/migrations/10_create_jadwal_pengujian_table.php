@@ -13,8 +13,14 @@ return new class extends Migration
     {
         Schema::create('jadwal_pengujian', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->unsignedBigInteger('dosen_penguji_id');
+            $table->unsignedBigInteger('rekrutasi_dosen_id');
+            $table->date('jadwal_ujian');
+
+            $table->foreign('dosen_penguji_id')->references('id')->on('dosen');
+            $table->foreign('rekrutasi_dosen_id')->references('id')->on('rekrutasi_dosen');
         });
+
     }
 
     /**

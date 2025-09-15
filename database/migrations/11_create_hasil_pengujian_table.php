@@ -13,8 +13,14 @@ return new class extends Migration
     {
         Schema::create('hasil_pengujian', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('jadwal_pengujian_id');
+            $table->unsignedBigInteger('total_nilai');
+            $table->text('berita_acara');
             $table->timestamps();
+
+            $table->foreign('jadwal_pengujian_id')->references('id')->on('jadwal_pengujian');
         });
+
     }
 
     /**

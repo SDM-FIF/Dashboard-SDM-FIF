@@ -33,12 +33,27 @@
                     <h2 class="text-3xl font-bold text-white mb-8 text-center">Login</h2>
                 </div>
 
-                <form class="space-y-6" action="/dashboard" method="">
+                {{-- Error & success messages --}}
+                @if ($errors->any())
+                    <div class="bg-red-100 text-red-600 p-2 rounded mb-4">
+                        {{ $errors->first() }}
+                    </div>
+                @endif
+
+                @if (session('success'))
+                    <div class="bg-green-100 text-green-600 p-2 rounded mb-4">
+                        {{ session('success') }}
+                    </div>
+                @endif
+
+                <form class="space-y-6" action="{{ route('login.process') }}" method="POST">
+                    @csrf
                     <div>
                         <label for="username" class="block text-sm font-medium text-white mb-2">
                             Username
                         </label>
                         <input id="username" name="username" type="text" required
+                            value="{{ old('username') }}"
                             class="w-full px-3 py-2 border bg-white border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                             placeholder="Masukkan username">
                     </div>
@@ -102,31 +117,6 @@
                 eyeSlashIcon.classList.add('hidden');
             }
         }
-        function toggleDropdown(dropdownId) {
-            const dropdown = document.getElementById(dropdownId);
-            const arrow = document.getElementById('dashboardArrow');
-
-            if (dropdown.classList.contains('hidden')) {
-                dropdown.classList.remove('hidden');
-                arrow.style.transform = 'rotate(180deg)';
-            } else {
-                dropdown.classList.add('hidden');
-                arrow.style.transform = 'rotate(0deg)';
-            }
-        }
-
-        // Auto-open dropdown if current route is one of the dashboard sub-pages
-        document.addEventListener('DOMContentLoaded', function () {
-            const currentRoute = window.location.pathname;
-            const dashboardRoutes = ['{{ route("dashboard") }}', '{{ route("data-dosen") }}', '{{ route("data-tpa") }}'];
-
-            if (dashboardRoutes.some(route => currentRoute.includes(route.split('/').pop()))) {
-                const dropdown = document.getElementById('dashboardDropdown');
-                const arrow = document.getElementById('dashboardArrow');
-                dropdown.classList.remove('hidden');
-                arrow.style.transform = 'rotate(180deg)';
-            }
-        });
     </script>
 </body>
 

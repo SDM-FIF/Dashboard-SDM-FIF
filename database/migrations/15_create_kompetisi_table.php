@@ -11,10 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('komponen_penilaian', function (Blueprint $table) {
+        Schema::create('kompetisi', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->string('nama_kompetisi');
+            $table->string('nama_penyelenggara');
+            $table->enum('tingkat_kompetisi', ['Universitas', 'Kabupaten/Kota', 'Provinsi', 'Nasional', 'Internasional']);
+            $table->date('tanggal_kompetisi');
+
         });
+
     }
 
     /**
@@ -22,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('komponen_penilaian');
+        Schema::dropIfExists('kompetisi');
     }
 };

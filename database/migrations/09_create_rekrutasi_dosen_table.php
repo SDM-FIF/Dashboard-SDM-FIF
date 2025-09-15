@@ -13,8 +13,12 @@ return new class extends Migration
     {
         Schema::create('rekrutasi_dosen', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->string('nama_calon');
+            $table->date('tanggal_pengujian');
+            $table->enum('status', ['Diajukan', 'Diproses', 'Diterima', 'Ditolak']);
+
         });
+
     }
 
     /**
