@@ -52,15 +52,21 @@ Route::middleware('auth')->group(function () {
         return view('data.tpa');
     })->name('data-tpa');
 
+    Route::get('/dashboard-tpa', function () {
+         return view('dashboard-tpa');
+    })->name('dashboard-tpa');
     // Kompetisi
     Route::get('/kompetisi', function () {
         return view('kompetisi.index');
     })->name('kompetisi');
 
+    Route::get('dashboard-kompetisi', function () {
+        return view('dashboard-kompetisi');
+    })->name('dashboard-kompetisi');
     // Management
-    Route::get('/manajemen-dosen', function () {
-        return view('manajemen.dosen');
-    })->name('manajemen-dosen');
+    Route::get('/kelola-dosen', function () {
+        return view('kelola-dosen');
+    })->name('kelola-dosen');
 
     Route::get('/manajemen-tpa', function () {
         return view('manajemen.tpa');

@@ -1,70 +1,71 @@
 {{-- resources/views/components/navbar.blade.php --}}
-<nav class="bg-redmain text-white min-h-screen w-64 hidden md:flex flex-col font-nunito ">
+<nav class="bg-[#C41E3A] text-white min-h-screen w-64 hidden md:flex flex-col font-nunito shadow-lg">
     {{-- Header/Logo Section --}}
-    <div class="p-4 border-b border-red-500">
-        <h2 class="text-lg font-semibold">Dashboard SDM FIF</h2>
+    <div class="p-6 border-b border-red-500/30">
+        <h2 class="text-xl font-bold text-center">Dashboard SDM FIF</h2>
     </div>
 
     {{-- Navigation Menu --}}
     <div class="flex-1 py-4">
-        <ul class="space-y-2.5">
-            {{-- Dashboard with Dropdown --}}
+        <ul class="space-y-1">
+            {{-- Dashboard Section --}}
             <li class="relative">
                 <button onclick="toggleDropdown('dashboardDropdown')" 
-                        class="w-full flex items-center justify-between px-4 py-3 text-sm hover:bg-red-500 transition-colors duration-200 {{ request()->routeIs('dashboard*') || request()->routeIs('data-dosen*') || request()->routeIs('data-tpa*') ? 'bg-[#FBB03B] border-r-4 border-white' : '' }}">
+                        class="w-full flex items-center justify-between px-6 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('dashboard*') || request()->routeIs('data-dosen*') || request()->routeIs('data-tpa*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
                     <div class="flex items-center">
-                        <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                        <svg class="w-5 h-5 mr-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/>
                         </svg>
-                        Dashboard
+                        <span>Dashboard</span>
                     </div>
-                    <svg class="w-4 h-4 transform transition-transform duration-200" id="dashboardArrow" fill="currentColor" viewBox="0 0 20 20">
+                    <svg class="w-4 h-4 transform transition-transform duration-200 group-hover:scale-110" 
+                         id="dashboardArrow" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
                     </svg>
                 </button>
                 
-                {{-- Dropdown Menu --}}
-                <div id="dashboardDropdown" class="hidden bg-red-600 border-l-4 border-red-400">
-                    <ul class="py-2">
+                {{-- Dashboard Dropdown Menu --}}
+                <div id="dashboardDropdown" class="hidden bg-red-700/50 backdrop-blur-sm">
+                    <ul class="py-2 space-y-1">
                         <li>
                             <a href="{{ route('dashboard') }}" 
-                               class="block px-8 py-2 text-sm hover:bg-red-500 transition-colors duration-200 {{ request()->routeIs('data-dosen*') ? 'bg-red-500 text-white' : 'text-red-100' }}">
+                               class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('dashboard') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
                                 Dashboard SDM
                             </a>
                         </li>                        
                         <li>
                             <a href="{{ route('dashboard-dosen') }}" 
-                               class="block px-8 py-2 text-sm hover:bg-red-500 transition-colors duration-200 {{ request()->routeIs('data-dosen*') ? 'bg-red-500 text-white' : 'text-red-100' }}">
+                               class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('dashboard-dosen') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
                                 Dashboard Dosen
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('data-dosen') }}" 
-                               class="block px-8 py-2 text-sm hover:bg-red-500 transition-colors duration-200 {{ request()->routeIs('data-dosen*') ? 'bg-red-500 text-white' : 'text-red-100' }}">
-                                Data Dosen
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('data-dosen') }}" 
-                               class="block px-8 py-2 text-sm hover:bg-red-500 transition-colors duration-200 {{ request()->routeIs('data-dosen*') ? 'bg-red-500 text-white' : 'text-red-100' }}">
+                            <a href="{{ route('dashboard-tpa') }}" 
+                               class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('dashboard-tpa') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
                                 Dashboard TPA
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('data-dosen') }}" 
-                               class="block px-8 py-2 text-sm hover:bg-red-500 transition-colors duration-200 {{ request()->routeIs('data-dosen*') ? 'bg-red-500 text-white' : 'text-red-100' }}">
-                                Data TPA
-                            </a>
-                        </li>                                                                        
-                        <li>
-                            <a href="{{ route('data-tpa') }}" 
-                               class="block px-8 py-2 text-sm hover:bg-red-500 transition-colors duration-200 {{ request()->routeIs('data-tpa*') ? 'bg-red-500 text-white' : 'text-red-100' }}">
+                            <a href="{{ route('dashboard-kompetisi') }}" 
+                               class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('dashboard-kompetisi') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
                                 Dashboard Kompetisi
                             </a>
                         </li>
                         <li>
+                            <a href="{{ route('data-dosen') }}" 
+                               class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('data-dosen*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
+                                Data Dosen
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('data-tpa') }}" 
+                               class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('data-tpa*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
+                                Data TPA
+                            </a>
+                        </li>                                                                        
+                        <li>
                             <a href="{{ route('kompetisi') }}" 
-                               class="block px-8 py-2 text-sm hover:bg-red-500 transition-colors duration-200 {{ request()->routeIs('data-tpa*') ? 'bg-red-500 text-white' : 'text-red-100' }}">
+                               class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('kompetisi*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
                                 Data Kompetisi
                             </a>
                         </li>                        
@@ -72,99 +73,246 @@
                 </div>
             </li>
 
-
-            {{-- Manajemen Dosen --}}
-            <li>
-                <a href="{{ route('manajemen-dosen') }}" 
-                   class="flex items-center px-4 py-3 text-sm hover:bg-red-500 transition-colors duration-200 {{ request()->routeIs('manajemen-dosen*') ? 'bg-red-500 border-r-4 border-white' : '' }}">
-                    <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
+            {{-- Manajemen Dosen Section --}}
+            <li class="relative">
+                <button onclick="toggleDropdown('dosenDropdown')" 
+                        class="w-full flex items-center justify-between px-6 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('manajemen-dosen*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 mr-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zM4 18v-4h3v-3.5c0-.83.67-1.5 1.5-1.5S10 9.67 10 10.5V11h2.5l-2.54 7.63A1.5 1.5 0 0 1 8.46 20H5.5c-.83 0-1.5-.67-1.5-1.5zm15.64-4.24-1.42-1.42A6.97 6.97 0 0 0 19 9c0-3.87-3.13-7-7-7S5 5.13 5 9c0 1.26.35 2.44.96 3.46L4.5 14H4c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1h1.5v-1H7v1h1.5v-1h1v1H11v-2.5L14.5 11H17v2.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V12h.14z"/>
+                        </svg>
+                        <span>Manajemen Dosen</span>
+                    </div>
+                    <svg class="w-4 h-4 transform transition-transform duration-200 group-hover:scale-110" 
+                         id="dosenArrow" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
                     </svg>
-                    Manajemen Dosen
-                </a>
+                </button>
+                
+                {{-- Manajemen Dosen Dropdown Menu --}}
+                <div id="dosenDropdown" class="hidden bg-red-700/50 backdrop-blur-sm">
+                    <ul class="py-2 space-y-1">
+                        <li>
+                            <a href="{{ route('kelola-dosen') }}" 
+                               class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100">
+                                Kelola Data
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" 
+                               class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100">
+                                Import Data
+                            </a>
+                        </li>
+                        <!-- Add more dropdown items here -->
+                    </ul>
+                </div>
             </li>
 
-            {{-- Manajemen TPA --}}
-            <li>
-                <a href="{{ route('manajemen-tpa') }}" 
-                   class="flex items-center px-4 py-3 text-sm hover:bg-red-500 transition-colors duration-200 {{ request()->routeIs('manajemen-tpa*') ? 'bg-red-500 border-r-4 border-white' : '' }}">
-                    <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
+            {{-- Manajemen TPA Section --}}
+            <li class="relative">
+                <button onclick="toggleDropdown('tpaDropdown')" 
+                        class="w-full flex items-center justify-between px-6 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('manajemen-tpa*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 mr-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1V3H9V1L3 7V9H21ZM12 8C14.76 8 17 10.24 17 13V22H15V13C15 11.34 13.66 10 12 10S9 11.34 9 13V22H7V13C7 10.24 9.24 8 12 8Z"/>
+                        </svg>
+                        <span>Manajemen TPA</span>
+                    </div>
+                    <svg class="w-4 h-4 transform transition-transform duration-200 group-hover:scale-110" 
+                         id="tpaArrow" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
                     </svg>
-                    Manajemen TPA
-                </a>
+                </button>
+                
+                {{-- Manajemen TPA Dropdown Menu --}}
+                <div id="tpaDropdown" class="hidden bg-red-700/50 backdrop-blur-sm">
+                    <ul class="py-2 space-y-1">
+                        <li>
+                            <a href="{{ route('manajemen-tpa') }}" 
+                               class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100">
+                                Kelola Data
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" 
+                               class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100">
+                                Import Data
+                            </a>
+                        </li>
+                        <!-- Add more dropdown items here -->
+                    </ul>
+                </div>
             </li>
 
-
-            {{-- Rekrutasi Dosen --}}
-            <li>
-                <a href="{{ route('rekrutasi-dosen') }}" 
-                   class="flex items-center px-4 py-3 text-sm hover:bg-red-500 transition-colors duration-200 {{ request()->routeIs('rekrutasi-dosen*') ? 'bg-red-500 border-r-4 border-white' : '' }}">
-                    <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M8 9a3 3 0 100-6 3 3 0 000 6zM8 11a6 6 0 016 6H2a6 6 0 016-6zM16 7a1 1 0 10-2 0v1h-1a1 1 0 100 2h1v1a1 1 0 102 0v-1h1a1 1 0 100-2h-1V7z"/>
+            {{-- Rekrutasi Dosen Section --}}
+            <li class="relative">
+                <button onclick="toggleDropdown('rekrutasiDropdown')" 
+                        class="w-full flex items-center justify-between px-6 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('rekrutasi-dosen*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 mr-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V8c0-.55-.45-1-1-1s-1 .45-1 1v2H2c-.55 0-1 .45-1 1s.45 1 1 1h2v2c0 .55.45 1 1 1s1-.45 1-1v-2h2c.55 0 1-.45 1-1s-.45-1-1-1H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                        <span>Rekrutasi Dosen</span>
+                    </div>
+                    <svg class="w-4 h-4 transform transition-transform duration-200 group-hover:scale-110" 
+                         id="rekrutasiArrow" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
                     </svg>
-                    Rekrutasi Dosen
-                </a>
+                </button>
+                
+                {{-- Rekrutasi Dosen Dropdown Menu --}}
+                <div id="rekrutasiDropdown" class="hidden bg-red-700/50 backdrop-blur-sm">
+                    <ul class="py-2 space-y-1">
+                        <li>
+                            <a href="{{ route('rekrutasi-dosen') }}" 
+                               class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100">
+                                Kelola Data
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" 
+                               class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100">
+                                Import Data
+                            </a>
+                        </li>
+                        <!-- Add more dropdown items here -->
+                    </ul>
+                </div>
             </li>
 
-            {{-- Manajemen Mahasiswa --}}
-            <li>
-                <a href="{{ route('manajemen-mahasiswa') }}" 
-                   class="flex items-center px-4 py-3 text-sm hover:bg-red-500 transition-colors duration-200 {{ request()->routeIs('manajemen-mahasiswa*') ? 'bg-red-500 border-r-4 border-white' : '' }}">
-                    <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            {{-- Manajemen Mahasiswa Section --}}
+            <li class="relative">
+                <button onclick="toggleDropdown('mahasiswaDropdown')" 
+                        class="w-full flex items-center justify-between px-6 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('manajemen-mahasiswa*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 mr-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 3L1 9L12 15L21 11.09V17H23V9M5 13.18V17.18L12 21L19 17.18V13.18L12 17L5 13.18Z"/>
+                        </svg>
+                        <span>Manajemen Mahasiswa</span>
+                    </div>
+                    <svg class="w-4 h-4 transform transition-transform duration-200 group-hover:scale-110" 
+                         id="mahasiswaArrow" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
                     </svg>
-                    Manajemen Mahasiswa
-                </a>
+                </button>
+                
+                {{-- Manajemen Mahasiswa Dropdown Menu --}}
+                <div id="mahasiswaDropdown" class="hidden bg-red-700/50 backdrop-blur-sm">
+                    <ul class="py-2 space-y-1">
+                        <li>
+                            <a href="{{ route('manajemen-mahasiswa') }}" 
+                               class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100">
+                                Kelola Data
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" 
+                               class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100">
+                                Import Data
+                            </a>
+                        </li>
+                        <!-- Add more dropdown items here -->
+                    </ul>
+                </div>
             </li>
 
-            {{-- Master Data --}}
-            <li>
-                <a href="{{ route('master-data') }}" 
-                   class="flex items-center px-4 py-3 text-sm hover:bg-red-500 transition-colors duration-200 {{ request()->routeIs('master-data*') ? 'bg-red-500 border-r-4 border-white' : '' }}">
-                    <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z"/>
-                        <path fill-rule="evenodd" d="M4 5a2 2 0 012-2v1a1 1 0 001 1h6a1 1 0 001-1V3a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 3a1 1 0 000 2h.01a1 1 0 100-2H7zm3 0a1 1 0 000 2h3a1 1 0 100-2h-3zm-3 4a1 1 0 100 2h.01a1 1 0 100-2H7zm3 0a1 1 0 100 2h3a1 1 0 100-2h-3z" clip-rule="evenodd"/>
+            {{-- Master Data Section --}}
+            <li class="relative">
+                <button onclick="toggleDropdown('masterDataDropdown')" 
+                        class="w-full flex items-center justify-between px-6 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('master-data*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 mr-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                        </svg>
+                        <span>Master Data</span>
+                    </div>
+                    <svg class="w-4 h-4 transform transition-transform duration-200 group-hover:scale-110" 
+                         id="masterDataArrow" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
                     </svg>
-                    Master Data
-                </a>
+                </button>
+                
+                {{-- Master Data Dropdown Menu --}}
+                <div id="masterDataDropdown" class="hidden bg-red-700/50 backdrop-blur-sm">
+                    <ul class="py-2 space-y-1">
+                        <li>
+                            <a href="{{ route('master-data') }}" 
+                               class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100">
+                                Kelola Data
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" 
+                               class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100">
+                                Import Data
+                            </a>
+                        </li>
+                        <!-- Add more dropdown items here -->
+                    </ul>
+                </div>
             </li>
 
-            {{-- Pengaturan --}}
-            <li>
-                <a href="{{ route('pengaturan') }}" 
-                   class="flex items-center px-4 py-3 text-sm hover:bg-red-500 transition-colors duration-200 {{ request()->routeIs('pengaturan*') ? 'bg-red-500 border-r-4 border-white' : '' }}">
-                    <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+            {{-- Pengaturan Section --}}
+            <li class="relative">
+                <button onclick="toggleDropdown('pengaturanDropdown')" 
+                        class="w-full flex items-center justify-between px-6 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('pengaturan*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 mr-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.22,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.22,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z"/>
+                        </svg>
+                        <span>Pengaturan</span>
+                    </div>
+                    <svg class="w-4 h-4 transform transition-transform duration-200 group-hover:scale-110" 
+                         id="pengaturanArrow" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
                     </svg>
-                    Pengaturan
-                </a>
+                </button>
+                
+                {{-- Pengaturan Dropdown Menu --}}
+                <div id="pengaturanDropdown" class="hidden bg-red-700/50 backdrop-blur-sm">
+                    <ul class="py-2 space-y-1">
+                        <li>
+                            <a href="{{ route('pengaturan') }}" 
+                               class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100">
+                                Konfigurasi Sistem
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" 
+                               class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100">
+                                User Management
+                            </a>
+                        </li>
+                        <!-- Add more dropdown items here -->
+                    </ul>
+                </div>
             </li>
         </ul>
     </div>
 
     {{-- User Profile Section (Bottom) --}}
-    <div class="p-4 border-t border-red-500">
-        <div class="flex items-center space-x-3">
-            <div class="w-8 h-8 bg-red-500 rounded-full flex items-center justify-center">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+    <div class="p-6 border-t border-red-500/30 mt-auto">
+        <div class="flex items-center space-x-3 mb-4">
+            <div class="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-md">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
                 </svg>
             </div>
             <div class="flex-1">
-                <p class="text-sm font-medium">{{ Auth::user()->name ?? 'Admin' }}</p>
-                <p class="text-xs text-red-200">{{ Auth::user()->role ?? 'Administrator' }}</p>
+                <p class="text-sm font-semibold">{{ Auth::user()->name ?? 'Admin' }}</p>
+                <p class="text-xs text-red-200 opacity-80">{{ Auth::user()->role ?? 'Administrator' }}</p>
             </div>
         </div>
         
         {{-- Logout Button --}}
-        <form method="POST" action="{{ route('logout') }}" class="mt-3">
+        <form method="POST" action="{{ route('logout') }}">
             @csrf
-            <button type="submit" class="w-full text-left px-2 py-2 text-sm text-red-200 hover:text-white hover:bg-red-500 rounded transition-colors duration-200">
-                <svg class="w-4 h-4 inline mr-2" fill="currentColor" viewBox="0 0 20 20">
+            <button type="submit" class="w-full flex items-center px-4 py-3 text-sm font-medium text-red-200 hover:text-white hover:bg-red-600 rounded-lg transition-all duration-200 group">
+                <svg class="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 001-1h10.586l-2.293-2.293a1 1 0 10-1.414 1.414L14.586 5H5a3 3 0 00-3 3v8a3 3 0 003 3h10a3 3 0 003-3V8a1 1 0 10-2 0v8a1 1 0 01-1 1H5a1 1 0 01-1-1V8a1 1 0 011-1h1.586l2.707-2.707A1 1 0 0010.414 3H5z" clip-rule="evenodd"/>
                 </svg>
-                Logout
+                <span>Logout</span>
             </button>
         </form>
     </div>
@@ -173,8 +321,26 @@
 <script>
 function toggleDropdown(dropdownId) {
     const dropdown = document.getElementById(dropdownId);
-    const arrow = document.getElementById('dashboardArrow');
+    const arrowId = dropdownId.replace('Dropdown', 'Arrow');
+    const arrow = document.getElementById(arrowId);
     
+    // Close all other dropdowns first
+    const allDropdowns = document.querySelectorAll('[id$="Dropdown"]');
+    const allArrows = document.querySelectorAll('[id$="Arrow"]');
+    
+    allDropdowns.forEach(d => {
+        if (d.id !== dropdownId && !d.classList.contains('hidden')) {
+            d.classList.add('hidden');
+        }
+    });
+    
+    allArrows.forEach(a => {
+        if (a.id !== arrowId) {
+            a.style.transform = 'rotate(0deg)';
+        }
+    });
+    
+    // Toggle current dropdown
     if (dropdown.classList.contains('hidden')) {
         dropdown.classList.remove('hidden');
         arrow.style.transform = 'rotate(180deg)';
@@ -184,16 +350,51 @@ function toggleDropdown(dropdownId) {
     }
 }
 
-// Auto-open dropdown if current route is one of the dashboard sub-pages
+// Auto-open dropdown if current route is one of the sub-pages
 document.addEventListener('DOMContentLoaded', function() {
     const currentRoute = window.location.pathname;
-    const dashboardRoutes = ['{{ route("dashboard") }}', '{{ route("data-dosen") }}', '{{ route("data-tpa") }}'];
     
-    if (dashboardRoutes.some(route => currentRoute.includes(route.split('/').pop()))) {
-        const dropdown = document.getElementById('dashboardDropdown');
-        const arrow = document.getElementById('dashboardArrow');
-        dropdown.classList.remove('hidden');
-        arrow.style.transform = 'rotate(180deg)';
+    // Define route mappings for each section
+    const routeMappings = {
+        'dashboardDropdown': ['dashboard', 'data-dosen', 'data-tpa', 'dashboard-dosen', 'dashboard-tpa', 'dashboard-kompetisi', 'kompetisi'],
+        'dosenDropdown': ['manajemen-dosen', 'kelola-dosen'],
+        'tpaDropdown': ['manajemen-tpa'],
+        'rekrutasiDropdown': ['rekrutasi-dosen'],
+        'mahasiswaDropdown': ['manajemen-mahasiswa'],
+        'masterDataDropdown': ['master-data'],
+        'pengaturanDropdown': ['pengaturan']
+    };
+    
+    // Check each dropdown and auto-open if current route matches
+    Object.keys(routeMappings).forEach(dropdownId => {
+        const routes = routeMappings[dropdownId];
+        const shouldOpen = routes.some(route => currentRoute.includes(route));
+        
+        if (shouldOpen) {
+            const dropdown = document.getElementById(dropdownId);
+            const arrowId = dropdownId.replace('Dropdown', 'Arrow');
+            const arrow = document.getElementById(arrowId);
+            
+            if (dropdown && arrow) {
+                dropdown.classList.remove('hidden');
+                arrow.style.transform = 'rotate(180deg)';
+            }
+        }
+    });
+});
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const nav = event.target.closest('nav');
+    if (!nav) return;
+    
+    const isDropdownButton = event.target.closest('button[onclick*="toggleDropdown"]');
+    if (!isDropdownButton) {
+        const allDropdowns = document.querySelectorAll('[id$="Dropdown"]');
+        const allArrows = document.querySelectorAll('[id$="Arrow"]');
+        
+        allDropdowns.forEach(d => d.classList.add('hidden'));
+        allArrows.forEach(a => a.style.transform = 'rotate(0deg)');
     }
 });
 </script>
