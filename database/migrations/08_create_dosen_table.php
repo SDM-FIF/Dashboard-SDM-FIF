@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('nip');
             $table->string('kode_dosen');
             $table->string('lokasi_kerja');
+            
 
             $table->foreign('user_id')->references('id')->on('user');
             $table->foreign('prodi_id')->references('id')->on('prodi');
