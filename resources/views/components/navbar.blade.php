@@ -93,7 +93,7 @@
                 <div id="dosenDropdown" class="hidden bg-red-700/50 backdrop-blur-sm">
                     <ul class="py-2 space-y-1">
                         <li>
-                            <a href="{{ route('kelola-dosen') }}" 
+                            <a href="{{ route('manajemen-dosen.kelola-data') }}" 
                                class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100">
                                 Kelola Data
                             </a>
@@ -357,7 +357,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Define route mappings for each section
     const routeMappings = {
         'dashboardDropdown': ['dashboard', 'data-dosen', 'data-tpa', 'dashboard-dosen', 'dashboard-tpa', 'dashboard-kompetisi', 'kompetisi'],
-        'dosenDropdown': ['manajemen-dosen', 'kelola-dosen'],
+        'dosenDropdown': ['manajemen-dosen', 'kelola-data'],
         'tpaDropdown': ['manajemen-tpa'],
         'rekrutasiDropdown': ['rekrutasi-dosen'],
         'mahasiswaDropdown': ['manajemen-mahasiswa'],
