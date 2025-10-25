@@ -34,11 +34,11 @@ Route::get('/welcome', function () {
 // 🧪 DEBUG ROUTES FOR FRONTEND (DEVELOPMENT ONLY)
 // ============================
 Route::prefix('debug')->group(function () {
-    
+
     // Debug 1: Data Dosen Lengkap untuk Frontend
-    Route::get('/data-dosen', function() {
+    Route::get('/data-dosen', function () {
         $dosen = App\Models\Dosen::with(['prodi.fakultas', 'kelompokKeahlian', 'user'])->get();
-        
+
         return response()->json([
             'success' => true,
             'message' => 'Data dosen siap untuk frontend',
@@ -51,7 +51,7 @@ Route::prefix('debug')->group(function () {
                 'jabatan' => $dosen->pluck('jabatan')->unique()->values(),
                 'status_pegawai' => $dosen->pluck('status_pegawai')->unique()->values(),
             ],
-            'data_dosen' => $dosen->map(function($d) {
+            'data_dosen' => $dosen->map(function ($d) {
                 return [
                     'id' => $d->id,
                     'nama_lengkap' => $d->front_title . ' ' . $d->nama_lengkap . ', ' . $d->back_title,
@@ -85,16 +85,16 @@ Route::prefix('debug')->group(function () {
                     'non_aktif' => $dosen->where('status_pegawai', 'Non-Aktif')->count(),
                     'cuti' => $dosen->where('status_pegawai', 'Cuti')->count(),
                 ],
-                'per_jabatan' => $dosen->groupBy('jabatan')->map(function($group) {
+                'per_jabatan' => $dosen->groupBy('jabatan')->map(function ($group) {
                     return $group->count();
                 }),
-                'per_lokasi' => $dosen->groupBy('lokasi_kerja')->map(function($group) {
+                'per_lokasi' => $dosen->groupBy('lokasi_kerja')->map(function ($group) {
                     return $group->count();
                 }),
-                'per_prodi' => $dosen->groupBy('prodi.nama_prodi')->map(function($group) {
+                'per_prodi' => $dosen->groupBy('prodi.nama_prodi')->map(function ($group) {
                     return $group->count();
                 }),
-                'per_kelompok_keahlian' => $dosen->groupBy('kelompokKeahlian.nama_kelompok_keahlian')->map(function($group) {
+                'per_kelompok_keahlian' => $dosen->groupBy('kelompokKeahlian.nama_kelompok_keahlian')->map(function ($group) {
                     return $group->count();
                 })
             ]
@@ -102,7 +102,7 @@ Route::prefix('debug')->group(function () {
     });
 
     // Debug 2: Filter Options untuk Dropdown
-    Route::get('/filter-options', function() {
+    Route::get('/filter-options', function () {
         return response()->json([
             'success' => true,
             'message' => 'Data filter options untuk dropdown frontend',
@@ -110,14 +110,14 @@ Route::prefix('debug')->group(function () {
                 'lokasi_kerja' => App\Models\Dosen::distinct()->pluck('lokasi_kerja')->filter()->values(),
                 'jabatan' => App\Models\Dosen::distinct()->pluck('jabatan')->filter()->values(),
                 'status_pegawai' => ['Aktif', 'Non-Aktif', 'Cuti'],
-                'prodi' => App\Models\Prodi::with('fakultas')->get()->map(function($p) {
+                'prodi' => App\Models\Prodi::with('fakultas')->get()->map(function ($p) {
                     return [
                         'id' => $p->id,
                         'nama' => $p->nama_prodi,
                         'fakultas' => $p->fakultas->nama_fakultas
                     ];
                 }),
-                'kelompok_keahlian' => App\Models\KelompokKeahlian::all()->map(function($k) {
+                'kelompok_keahlian' => App\Models\KelompokKeahlian::all()->map(function ($k) {
                     return [
                         'id' => $k->id,
                         'nama' => $k->nama_kelompok_keahlian
@@ -131,7 +131,7 @@ Route::prefix('debug')->group(function () {
     Route::get('/test-controller', [DosenController::class, 'kelolaData']);
 
     // Debug 4: Database Connection Test
-    Route::get('/db-test', function() {
+    Route::get('/db-test', function () {
         try {
             return response()->json([
                 'success' => true,
@@ -182,7 +182,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/kelola-data', [DosenController::class, 'kelolaData'])->name('kelola-data');
         Route::get('/import-data', [DosenController::class, 'importForm'])->name('import-data');
         Route::post('/import-data', [DosenController::class, 'importProcess'])->name('import-process');
-        
+
         // CRUD Routes
         Route::get('/create', [DosenController::class, 'create'])->name('create');
         Route::post('/store', [DosenController::class, 'store'])->name('store');
@@ -196,7 +196,7 @@ Route::middleware('auth')->group(function () {
     // Data Routes (Backward Compatibility)
     // ============================
     Route::get('/data-dosen', [DosenController::class, 'index'])->name('data-dosen');
-    
+
     // AJAX Endpoints
     Route::get('/api/prodi-by-fakultas/{fakultasId}', [DosenController::class, 'getProdiByFakultas'])
         ->name('prodi.by.fakultas');
@@ -208,8 +208,32 @@ Route::middleware('auth')->group(function () {
         return view('data.tpa');
     })->name('data-tpa');
 
+    Route::get('/kelola-tpa', function () {
+        return view('kelola-tpa');
+    })->name('kelola-tpa');
+
+    Route::get('/import-dosen', function () {
+        return view('import-dosen');
+    })->name('import-dosen');
+    
+    Route::get('/import-file-dosen', function () {
+        return view('import-file-dosen');
+    })->name('import-file-dosen');
+
+    Route::get('/import-mahasiswa', function () {
+        return view('import-mahasiswa');
+    })->name('import-mahasiswa');
+
+    Route::get('/import-rekruitasi', function () {
+        return view('import-rekruitasi');
+    })->name('import-rekruitasi');
+
+    Route::get('/import-tpa', function () {
+        return view('import-tpa');
+    })->name('import-tpa');
+
     Route::get('/dashboard-tpa', function () {
-         return view('dashboard-tpa');
+        return view('dashboard-tpa');
     })->name('dashboard-tpa');
 
     // Kompetisi
@@ -228,11 +252,11 @@ Route::middleware('auth')->group(function () {
 
     // Recruitment
     Route::get('/rekrutasi-dosen', function () {
-        return view('rekrutasi.dosen');
+        return view('kelola-rekruitasi');
     })->name('rekrutasi-dosen');
 
     Route::get('/manajemen-mahasiswa', function () {
-        return view('manajemen.mahasiswa');
+        return view('kelola-mahasiswa');
     })->name('manajemen-mahasiswa');
 
     // Reports
