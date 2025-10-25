@@ -50,7 +50,7 @@ class DosenController extends Controller
             'prodi' => Prodi::with('fakultas')->get()
         ];
 
-        return view('data-dosen', compact('dosen', 'filterData'));
+        return view('kelola-dosen', compact('dosen', 'filterData'));
     }
 
     /**
@@ -387,7 +387,7 @@ class DosenController extends Controller
         ];
 
         // Kirim ke view (SIAP UNTUK FRONTEND)
-        return view('kelola-data-dosen', compact('dosen', 'filterData'));
+        return view('kelola-dosen', compact('dosen', 'filterData'));
     }
 
     /**

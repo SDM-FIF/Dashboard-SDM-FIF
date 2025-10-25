@@ -13,7 +13,7 @@ class RoleSeeder extends Seeder
         // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Create permissions
+        // Create permissions safely
         $permissions = [
             'view dashboard',
             'manage users',
@@ -30,21 +30,21 @@ class RoleSeeder extends Seeder
         ];
 
         foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission]);
+            Permission::firstOrCreate(['name' => $permission]);
         }
 
-        // Create Super Admin role
-        $superAdminRole = Role::create(['name' => 'Super Admin']);
+        // Create Super Admin role safely
+        $superAdminRole = Role::firstOrCreate(['name' => 'Super Admin']);
         $superAdminRole->givePermissionTo(Permission::all());
 
-        // Create Dosen role ← TAMBAH INI
-        $dosenRole = Role::create(['name' => 'dosen']);
+        // Create Dosen role safely
+        $dosenRole = Role::firstOrCreate(['name' => 'dosen']);
         $dosenRole->givePermissionTo([
             'view dashboard',
             'manage mahasiswa',
             'manage kompetisi'
         ]);
 
-        $this->command->info('✅ Roles dan permissions berhasil dibuat!');
+        $this->command->info('✅ Roles dan permissions berhasil dibuat atau diperbarui!');
     }
 }
