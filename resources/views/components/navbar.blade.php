@@ -91,6 +91,12 @@
                                 Import Data
                             </a>
                         </li>
+                        <li>
+                            <a href="{{ route('manajemen-dosen.laporan') }}"
+                                class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('manajemen-dosen.laporan') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
+                                Laporan Dosen
+                            </a>
+                        </li>
                         <!-- Add more dropdown items here -->
                     </ul>
                 </div>

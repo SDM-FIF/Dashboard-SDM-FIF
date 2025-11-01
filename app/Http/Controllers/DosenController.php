@@ -50,7 +50,7 @@ class DosenController extends Controller
             'prodi' => Prodi::with('fakultas')->get()
         ];
 
-        return view('kelola-dosen', compact('dosen', 'filterData'));
+        return view('data-dosen', compact('dosen', 'filterData'));
     }
 
     /**
@@ -77,11 +77,11 @@ class DosenController extends Controller
             'front_title' => 'nullable|string|max:50',
             'nama_lengkap' => 'required|string|max:255',
             'back_title' => 'nullable|string|max:50',
-            'jabatan' => 'required|string|max:100', // JFA mapping
+            'jabatan' => 'required|in:NJFA,Asisten Ahli,Lektor,Lektor Kepala,Profesor',
             'nip' => 'required|string|max:50|unique:dosen,nip',
             'kode_dosen' => 'required|string|max:20|unique:dosen,kode_dosen',
-            'lokasi_kerja' => 'required|string|max:100',
-            'status_pegawai' => 'required|in:Aktif,Non-Aktif,Cuti',
+            'lokasi_kerja' => 'required|in:Informatika,Rekayasa Perangkat Lunak,Data Sains,Teknologi Informasi',
+            'status_pegawai' => 'required|in:Tetap,Perbantuan,Profesional Full Time,Profesional Part Time',
             'username' => 'required|string|max:100|unique:user,username',
             'password' => 'required|string|min:8|confirmed',
         ]);
@@ -153,10 +153,11 @@ class DosenController extends Controller
             'front_title' => 'nullable|string|max:50',
             'nama_lengkap' => 'required|string|max:255',
             'back_title' => 'nullable|string|max:50',
-            'jabatan' => 'required|string|max:100',
+            'jabatan' => 'required|in:NJFA,Asisten Ahli,Lektor,Lektor Kepala,Profesor',
             'nip' => 'required|string|max:50|unique:dosen,nip,' . $dosen->user_id . ',user_id',
             'kode_dosen' => 'required|string|max:20|unique:dosen,kode_dosen,' . $dosen->user_id . ',user_id',
-            'lokasi_kerja' => 'required|string|max:100',
+            'lokasi_kerja' => 'required|in:Informatika,Rekayasa Perangkat Lunak,Data Sains,Teknologi Informasi',
+            'status_pegawai' => 'required|in:Tetap,Perbantuan,Profesional Full Time,Profesional Part Time',
             'username' => 'required|string|max:100|unique:user,username,' . $dosen->user_id,
             'password' => 'nullable|string|min:8|confirmed',
         ]);
@@ -190,7 +191,7 @@ class DosenController extends Controller
                 'lokasi_kerja' => $validated['lokasi_kerja'],
             ]);
 
-            return redirect()->route('data-dosen')->with('success', 'Data dosen berhasil diperbarui!');
+            return redirect()->route('manajemen-dosen.kelola-data')->with('success', 'Data dosen berhasil diperbarui!');
 
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()])->withInput();
@@ -207,7 +208,7 @@ class DosenController extends Controller
             $dosen->delete();
             $user->delete();
 
-            return redirect()->route('data-dosen')->with('success', 'Data dosen berhasil dihapus!');
+            return redirect()->route('manajemen-dosen.kelola-data')->with('success', 'Data dosen berhasil dihapus!');
 
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
@@ -378,16 +379,32 @@ class DosenController extends Controller
         // Pagination - 15 data per halaman (SUDAH DITES ✅)
         $dosen = $query->paginate(15);
 
-        // Data untuk dropdown filter (SUDAH DITES ✅)
+        // Data untuk dropdown filter (SUDAH DITES ✅) - Updated dengan enum values baru
         $filterData = [
-            'lokasi_kerja' => Dosen::distinct()->pluck('lokasi_kerja')->filter(),
-            'jfa_options' => Dosen::distinct()->pluck('jabatan')->filter(),
+            'lokasi_kerja' => [
+                'Informatika',
+                'Rekayasa Perangkat Lunak', 
+                'Data Sains',
+                'Teknologi Informasi'
+            ],
+            'jfa_options' => [
+                'NJFA',
+                'Asisten Ahli',
+                'Lektor', 
+                'Lektor Kepala',
+                'Profesor'
+            ],
             'kelompok_keahlian' => KelompokKeahlian::all(),
-            'status_pegawai' => ['Aktif', 'Non-Aktif', 'Cuti'],
+            'status_pegawai' => [
+                'Tetap', 
+                'Perbantuan', 
+                'Profesional Full Time', 
+                'Profesional Part Time'
+            ],
         ];
 
         // Kirim ke view (SIAP UNTUK FRONTEND)
-        return view('kelola-dosen', compact('dosen', 'filterData'));
+        return view('kelola-data-dosen', compact('dosen', 'filterData'));
     }
 
     /**
@@ -412,5 +429,45 @@ class DosenController extends Controller
         
         return redirect()->route('manajemen-dosen.kelola-data')
             ->with('success', 'Data berhasil diimport!');
+    }
+
+    /**
+     * Halaman Laporan Dosen
+     */
+    public function laporan()
+    {
+        // Statistik untuk laporan
+        $statistik = [
+            'total_dosen' => Dosen::count(),
+            'per_status' => [
+                'tetap' => Dosen::where('status_pegawai', 'Tetap')->count(),
+                'perbantuan' => Dosen::where('status_pegawai', 'Perbantuan')->count(),
+                'profesional_full' => Dosen::where('status_pegawai', 'Profesional Full Time')->count(),
+                'profesional_part' => Dosen::where('status_pegawai', 'Profesional Part Time')->count(),
+            ],
+            'per_jfa' => [
+                'njfa' => Dosen::where('jabatan', 'NJFA')->count(),
+                'asisten_ahli' => Dosen::where('jabatan', 'Asisten Ahli')->count(),
+                'lektor' => Dosen::where('jabatan', 'Lektor')->count(),
+                'lektor_kepala' => Dosen::where('jabatan', 'Lektor Kepala')->count(),
+                'profesor' => Dosen::where('jabatan', 'Profesor')->count(),
+            ],
+            'per_lokasi' => [
+                'informatika' => Dosen::where('lokasi_kerja', 'Informatika')->count(),
+                'rpl' => Dosen::where('lokasi_kerja', 'Rekayasa Perangkat Lunak')->count(),
+                'data_sains' => Dosen::where('lokasi_kerja', 'Data Sains')->count(),
+                'ti' => Dosen::where('lokasi_kerja', 'Teknologi Informasi')->count(),
+            ],
+            'per_kelompok_keahlian' => []
+        ];
+
+        // Statistik per kelompok keahlian
+        $kelompokKeahlian = KelompokKeahlian::all();
+        foreach ($kelompokKeahlian as $kelompok) {
+            $statistik['per_kelompok_keahlian'][$kelompok->nama_kelompok_keahlian] = 
+                Dosen::where('kelompok_keahlian_id', $kelompok->id)->count();
+        }
+
+        return view('manajemen-dosen.laporan', compact('statistik'));
     }
 }

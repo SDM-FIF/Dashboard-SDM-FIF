@@ -31,7 +31,7 @@ class DosenSeeder extends Seeder
         // Re-enable foreign key checks
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        // Data dummy dosen yang realistis
+        // Data dummy dosen yang realistis dengan enum values baru
         $dosenData = [
             [
                 'nama_lengkap' => 'Dr. Ahmad Fauzi, M.Kom',
@@ -40,8 +40,8 @@ class DosenSeeder extends Seeder
                 'nip' => '198501012010011001',
                 'kode_dosen' => 'DSN001',
                 'jabatan' => 'Lektor',
-                'lokasi_kerja' => 'Jakarta',
-                'status_pegawai' => 'Aktif',
+                'lokasi_kerja' => 'Informatika',
+                'status_pegawai' => 'Tetap',
                 'username' => 'ahmad.fauzi',
                 'password' => 'password123'
             ],
@@ -52,8 +52,8 @@ class DosenSeeder extends Seeder
                 'nip' => '198203051985032001',
                 'kode_dosen' => 'DSN002',
                 'jabatan' => 'Profesor',
-                'lokasi_kerja' => 'Bandung',
-                'status_pegawai' => 'Aktif',
+                'lokasi_kerja' => 'Rekayasa Perangkat Lunak',
+                'status_pegawai' => 'Tetap',
                 'username' => 'siti.nurhaliza',
                 'password' => 'password123'
             ],
@@ -64,8 +64,8 @@ class DosenSeeder extends Seeder
                 'nip' => '199012152018031002',
                 'kode_dosen' => 'DSN003',
                 'jabatan' => 'Asisten Ahli',
-                'lokasi_kerja' => 'Jakarta',
-                'status_pegawai' => 'Aktif',
+                'lokasi_kerja' => 'Data Sains',
+                'status_pegawai' => 'Profesional Full Time',
                 'username' => 'budi.santoso',
                 'password' => 'password123'
             ],
@@ -76,8 +76,8 @@ class DosenSeeder extends Seeder
                 'nip' => '198709202012122001',
                 'kode_dosen' => 'DSN004',
                 'jabatan' => 'Lektor Kepala',
-                'lokasi_kerja' => 'Surabaya',
-                'status_pegawai' => 'Aktif',
+                'lokasi_kerja' => 'Teknologi Informasi',
+                'status_pegawai' => 'Tetap',
                 'username' => 'indira.putri',
                 'password' => 'password123'
             ],
@@ -87,9 +87,9 @@ class DosenSeeder extends Seeder
                 'back_title' => 'M.T',
                 'nip' => '199505102019031001',
                 'kode_dosen' => 'DSN005',
-                'jabatan' => 'Dosen',
-                'lokasi_kerja' => 'Bandung',
-                'status_pegawai' => 'Non-Aktif',
+                'jabatan' => 'NJFA',
+                'lokasi_kerja' => 'Informatika',
+                'status_pegawai' => 'Profesional Part Time',
                 'username' => 'rahmat.hidayat',
                 'password' => 'password123'
             ],
@@ -100,8 +100,8 @@ class DosenSeeder extends Seeder
                 'nip' => '198712102015042001',
                 'kode_dosen' => 'DSN006',
                 'jabatan' => 'Lektor',
-                'lokasi_kerja' => 'Jakarta',
-                'status_pegawai' => 'Aktif',
+                'lokasi_kerja' => 'Rekayasa Perangkat Lunak',
+                'status_pegawai' => 'Perbantuan',
                 'username' => 'maya.sari',
                 'password' => 'password123'
             ],
@@ -112,8 +112,8 @@ class DosenSeeder extends Seeder
                 'nip' => '199203152019031003',
                 'kode_dosen' => 'DSN007',
                 'jabatan' => 'Asisten Ahli',
-                'lokasi_kerja' => 'Surabaya',
-                'status_pegawai' => 'Aktif',
+                'lokasi_kerja' => 'Data Sains',
+                'status_pegawai' => 'Tetap',
                 'username' => 'andi.pratama',
                 'password' => 'password123'
             ],
@@ -124,8 +124,8 @@ class DosenSeeder extends Seeder
                 'nip' => '197805121998031001',
                 'kode_dosen' => 'DSN008',
                 'jabatan' => 'Profesor',
-                'lokasi_kerja' => 'Bandung',
-                'status_pegawai' => 'Aktif',
+                'lokasi_kerja' => 'Teknologi Informasi',
+                'status_pegawai' => 'Tetap',
                 'username' => 'bambang.sutopo',
                 'password' => 'password123'
             ],
@@ -135,9 +135,9 @@ class DosenSeeder extends Seeder
                 'back_title' => 'M.Kom',
                 'nip' => '199408202020122002',
                 'kode_dosen' => 'DSN009',
-                'jabatan' => 'Dosen',
-                'lokasi_kerja' => 'Jakarta',
-                'status_pegawai' => 'Cuti',
+                'jabatan' => 'Asisten Ahli',
+                'lokasi_kerja' => 'Informatika',
+                'status_pegawai' => 'Profesional Part Time',
                 'username' => 'dewi.lestari',
                 'password' => 'password123'
             ],
@@ -148,8 +148,8 @@ class DosenSeeder extends Seeder
                 'nip' => '198606152014031002',
                 'kode_dosen' => 'DSN010',
                 'jabatan' => 'Lektor Kepala',
-                'lokasi_kerja' => 'Surabaya',
-                'status_pegawai' => 'Aktif',
+                'lokasi_kerja' => 'Rekayasa Perangkat Lunak',
+                'status_pegawai' => 'Profesional Full Time',
                 'username' => 'agus.setiawan',
                 'password' => 'password123'
             ]
