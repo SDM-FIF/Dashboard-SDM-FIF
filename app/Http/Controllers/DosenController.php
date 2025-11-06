@@ -62,7 +62,7 @@ class DosenController extends Controller
         $kelompokKeahlian = KelompokKeahlian::all();
         $fakultas = \App\Models\Fakultas::all();
 
-        return view('dosen.create', compact('prodi', 'kelompokKeahlian', 'fakultas'));
+        return view('tambah-data-dosen', compact('prodi', 'kelompokKeahlian', 'fakultas'));
     }
 
     /**
@@ -122,10 +122,45 @@ class DosenController extends Controller
     /**
      * Display the specified dosen.
      */
-    public function show(Dosen $dosen)
+    public function show(Request $request, Dosen $dosen)
     {
+        // Load relasi untuk dosen yang dipilih
         $dosen->load(['user', 'prodi.fakultas', 'kelompokKeahlian']);
-        return view('dosen.show', compact('dosen'));
+        
+        // Get all dosen untuk ditampilkan di list data dosen dengan filter
+        $query = Dosen::with(['user', 'prodi.fakultas', 'kelompokKeahlian']);
+        
+        // Filter berdasarkan status pegawai jika ada
+        if ($request->filled('filter_status')) {
+            $query->where('status_pegawai', $request->filter_status);
+        }
+        
+        // Sort berdasarkan parameter sort
+        if ($request->filled('sort')) {
+            $sortOption = $request->sort;
+            
+            switch ($sortOption) {
+                case 'nama-az':
+                    $query->orderBy('nama_lengkap', 'asc');
+                    break;
+                case 'nama-za':
+                    $query->orderBy('nama_lengkap', 'desc');
+                    break;
+                case 'terlama':
+                    $query->orderBy('id', 'asc');
+                    break;
+                case 'terbaru':
+                default:
+                    $query->orderBy('id', 'desc');
+                    break;
+            }
+        } else {
+            $query->orderBy('id', 'desc'); // Default sort
+        }
+        
+        $allDosen = $query->paginate(10);
+        
+        return view('detail-data-dosen', compact('dosen', 'allDosen'));
     }
 
     /**
@@ -138,7 +173,7 @@ class DosenController extends Controller
         $kelompokKeahlian = KelompokKeahlian::all();
         $fakultas = \App\Models\Fakultas::all();
 
-        return view('dosen.edit', compact('dosen', 'prodi', 'kelompokKeahlian', 'fakultas'));
+        return view('edit-data-dosen', compact('dosen', 'prodi', 'kelompokKeahlian', 'fakultas'));
     }
 
     /**
@@ -374,6 +409,39 @@ class DosenController extends Controller
         // Pencarian berdasarkan nama (SUDAH DITES ✅)
         if ($request->filled('search')) {
             $query->where('nama_lengkap', 'like', '%' . $request->search . '%');
+        }
+
+        // Date Range Filter - Skip karena tabel dosen tidak memiliki timestamps
+        // if ($request->filled('start_date') && $request->filled('end_date')) {
+        //     $query->whereBetween('created_at', [
+        //         $request->start_date . ' 00:00:00',
+        //         $request->end_date . ' 23:59:59'
+        //     ]);
+        // }
+
+        // Sorting
+        $sortBy = $request->get('sort', 'terbaru');
+        switch ($sortBy) {
+            case 'terbaru':
+                $query->orderBy('id', 'desc'); // Sort by ID descending (latest first)
+                break;
+            case 'terlama':
+                $query->orderBy('id', 'asc'); // Sort by ID ascending (oldest first)
+                break;
+            case 'nama-az':
+                $query->orderBy('nama_lengkap', 'asc');
+                break;
+            case 'nama-za':
+                $query->orderBy('nama_lengkap', 'desc');
+                break;
+            case 'nip-asc':
+                $query->orderBy('nip', 'asc');
+                break;
+            case 'nip-desc':
+                $query->orderBy('nip', 'desc');
+                break;
+            default:
+                $query->orderBy('id', 'desc'); // Default sort by ID descending
         }
 
         // Pagination - 15 data per halaman (SUDAH DITES ✅)

@@ -103,6 +103,20 @@
                                placeholder="Cari nama dosen..."
                                class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-700 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200">
                     </div>
+
+                    {{-- Sort Selection --}}
+                    <div>
+                        <label class="block text-lg font-semibold text-red-600 mb-3">Urutkan</label>
+                        <select name="sort" 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-700 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200">
+                            <option value="terbaru" {{ request('sort') == 'terbaru' ? 'selected' : '' }}>Terbaru</option>
+                            <option value="terlama" {{ request('sort') == 'terlama' ? 'selected' : '' }}>Terlama</option>
+                            <option value="nama-az" {{ request('sort') == 'nama-az' ? 'selected' : '' }}>Nama A-Z</option>
+                            <option value="nama-za" {{ request('sort') == 'nama-za' ? 'selected' : '' }}>Nama Z-A</option>
+                            <option value="nip-asc" {{ request('sort') == 'nip-asc' ? 'selected' : '' }}>NIP Naik</option>
+                            <option value="nip-desc" {{ request('sort') == 'nip-desc' ? 'selected' : '' }}>NIP Turun</option>
+                        </select>
+                    </div>
                 </div>
 
                 {{-- Filter Button --}}
@@ -147,17 +161,6 @@
 
                     {{-- Right Side Controls --}}
                     <div class="flex flex-wrap items-center space-x-4">
-                        {{-- Sort Dropdown --}}
-                        <div class="relative">
-                            <select id="sortDropdown"
-                                    class="px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-500 transition-all duration-200">
-                                <option value="terbaru">Terbaru</option>
-                                <option value="terlama">Terlama</option>
-                                <option value="nama-az">Nama A-Z</option>
-                                <option value="nama-za">Nama Z-A</option>
-                            </select>
-                        </div>
-
                         {{-- Export Dropdown --}}
                         <div class="relative">
                             <select id="exportDropdown"
@@ -345,17 +348,6 @@
                         alert(`Export ${this.value.toUpperCase()} akan segera tersedia`);
                         this.value = '';
                     }
-                });
-            }
-
-            // Sort functionality 
-            const sortDropdown = document.getElementById('sortDropdown');
-            if (sortDropdown) {
-                sortDropdown.addEventListener('change', function() {
-                    // Add sort parameter to current URL
-                    const url = new URL(window.location);
-                    url.searchParams.set('sort', this.value);
-                    window.location = url;
                 });
             }
 
