@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('prodi_id');
             $table->string('nama_lengkap');
             $table->integer('nim');
-
+            $table->enum('status', ['AKTIF', 'TIDAK AKTIF', 'CUTI'])->default('AKTIF');
             $table->foreign('prodi_id')->references('id')->on('prodi');
         });
 

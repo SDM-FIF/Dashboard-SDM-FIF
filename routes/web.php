@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\KompetisiController;
+use App\Http\Controllers\TpaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DosenController;
@@ -171,9 +173,7 @@ Route::middleware('auth')->group(function () {
     })->name('dashboard');
 
     // Dashboard Dosen
-    Route::get('/dashboard-dosen', function () {
-        return view('dashboard-dosen');
-    })->name('dashboard-dosen');
+    Route::get('/dashboard-dosen', [DosenController::class, 'dashboard'])->name('dashboard-dosen');
 
     // ============================
     // Manajemen Dosen Routes
@@ -215,7 +215,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/import-dosen', function () {
         return view('import-dosen');
     })->name('import-dosen');
-    
+
     Route::get('/import-file-dosen', function () {
         return view('import-file-dosen');
     })->name('import-file-dosen');
@@ -232,18 +232,16 @@ Route::middleware('auth')->group(function () {
         return view('import-tpa');
     })->name('import-tpa');
 
-    Route::get('/dashboard-tpa', function () {
-        return view('dashboard-tpa');
-    })->name('dashboard-tpa');
+    Route::get('/dashboard-tpa', [TpaController::class, 'dashboard'])->name('dashboard-tpa');
+
 
     // Kompetisi
     Route::get('/kompetisi', function () {
         return view('kompetisi.index');
     })->name('kompetisi');
 
-    Route::get('dashboard-kompetisi', function () {
-        return view('dashboard-kompetisi');
-    })->name('dashboard-kompetisi');
+    Route::get('/dashboard-kompetisi', [KompetisiController::class, 'index'])->name('dashboard-kompetisi');
+
 
     // Management
     Route::get('/manajemen-tpa', function () {

@@ -1,86 +1,73 @@
 import './bootstrap';
 import Chart from 'chart.js/auto';
 
-
+// 🥇 Jumlah Juara
 new Chart(document.getElementById('jumlahJuara'), {
     type: 'doughnut',
     data: {
-        labels: ['Juara 1', 'Juara 2', 'Juara 3'],
+        labels: chartData.jumlahJuara.labels,
         datasets: [{
-            data: [110, 30, 10],
+            data: chartData.jumlahJuara.data,
             backgroundColor: ['#b91c1c', '#ef4444', '#f87171']
         }]
     }
 });
 
+// 🎓 Jumlah Mahasiswa
 new Chart(document.getElementById('jumlahMahasiswa'), {
     type: 'doughnut',
     data: {
-        labels: ['AKADEMIK', 'NON-AKADEMIK'],
+        labels: chartData.jumlahMahasiswa.labels,
         datasets: [{
-            data: [110, 30],
+            data: chartData.jumlahMahasiswa.data,
             backgroundColor: ['#b91c1c', '#ef4444']
         }]
     }
 });
 
+// 👩‍🎓 Status Mahasiswa
 new Chart(document.getElementById('statusMahasiswa'), {
     type: 'doughnut',
     data: {
-        labels: ['AKTIF', 'CUTI','TIDAK AKTIF'],
+        labels: chartData.statusMahasiswa.labels,
         datasets: [{
-            data: [110, 30, 10],
-            backgroundColor: ['#991b1b','#b91c1c', '#ef4444', '#f87171']
+            data: chartData.statusMahasiswa.data,
+            backgroundColor: ['#991b1b','#b91c1c', '#ef4444']
         }]
     }
 });
 
+// 🏆 Jumlah Kompetisi
 new Chart(document.getElementById('jumlahKompetisi'), {
     type: 'bar',
     data: {
-        labels: ['RPL', 'IT', 'DS', 'IF', 'PJJ'],
+        labels: chartData.jumlahKompetisi.labels,
         datasets: [{
-            label: 'Jumlah Dosen',
-            data: [30, 40, 20, 45, 5],
-            backgroundColor: [
-                '#b91c1c',
-                '#ef4444',
-                '#f87171',
-                '#fca5a5',
-                '#fecaca'
-            ]
+            label: 'Jumlah Kompetisi per Tingkat',
+            data: chartData.jumlahKompetisi.data,
+            backgroundColor: ['#b91c1c', '#ef4444', '#f87171', '#fca5a5', '#fecaca']
         }]
     },
     options: {
         responsive: true,
         plugins: {
-            title: {
-                display: true,
-                text: 'JFA Dosen'
-            },
-            legend: {
-                display: false
-            }
+            title: { display: true, text: 'Distribusi Kompetisi Berdasarkan Tingkat' },
+            legend: { display: false }
         },
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        }
+        scales: { y: { beginAtZero: true } }
     }
 });
 
+// 🧑‍🏫 Jumlah Kompetisi 2
 new Chart(document.getElementById('jumlahKompetisi2'), {
     type: 'bar',
     data: {
-        labels: ['PEGAWAI TETAP','PROFESIONAL FULL TIME','PROFESIONAL PART TIME','PERBANTUAN LLDIKTI'],
+        labels: chartData.jumlahKompetisi2.labels,
         datasets: [{
             label: 'Jumlah',
-            data: [40,20,60,80],
+            data: chartData.jumlahKompetisi2.data,
             backgroundColor: '#b91c1c'
         }]
     },
-    options: {
-        indexAxis: 'y'
-    }
+    options: { indexAxis: 'y' }
 });

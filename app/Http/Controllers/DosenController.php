@@ -6,6 +6,7 @@ use App\Models\Dosen;
 use App\Models\Prodi;
 use App\Models\KelompokKeahlian;
 use App\Models\User;
+use DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -222,6 +223,41 @@ class DosenController extends Controller
         $prodi = Prodi::where('fakultas_id', $fakultasId)->get(['id', 'nama_prodi']);
         return response()->json($prodi);
     }
+    public function dashboard()
+{
+    // 🔹 1. Jumlah Dosen per Status Pegawai (Aktif, Non-Aktif, Cuti)
+    $statusDosen = DB::table('dosen')
+        ->select('status_pegawai', DB::raw('count(*) as total'))
+        ->groupBy('status_pegawai')
+        ->pluck('total', 'status_pegawai');
+
+    // 🔹 2. Jumlah Dosen per Jabatan (Lektor, Profesor, Asisten Ahli, dll)
+    $jabatanDosen = DB::table('dosen')
+        ->select('jabatan', DB::raw('count(*) as total'))
+        ->groupBy('jabatan')
+        ->pluck('total', 'jabatan');
+
+    // 🔹 3. Jumlah Dosen per Lokasi Kerja
+    $lokasiDosen = DB::table('dosen')
+        ->select('lokasi_kerja', DB::raw('count(*) as total'))
+        ->groupBy('lokasi_kerja')
+        ->pluck('total', 'lokasi_kerja');
+
+    // 🔹 4. Jumlah Dosen per Prodi
+    $prodiDosen = DB::table('dosen')
+        ->join('prodi', 'dosen.prodi_id', '=', 'prodi.id')
+        ->select('prodi.nama_prodi', DB::raw('count(*) as total'))
+        ->groupBy('prodi.nama_prodi')
+        ->pluck('total', 'prodi.nama_prodi');
+
+    return view('dashboard-dosen', [
+        'statusDosen' => $statusDosen,
+        'jabatanDosen' => $jabatanDosen,
+        'lokasiDosen' => $lokasiDosen,
+        'prodiDosen' => $prodiDosen,
+    ]);
+}
+
 
     /**
      * Kelola Data Dosen - Halaman utama manajemen dosen (sesuai navbar)

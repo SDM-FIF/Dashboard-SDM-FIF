@@ -14,7 +14,11 @@ class DatabaseSeeder extends Seeder
             FakultasSeeder::class,          // 3. Buat fakultas (master data)
             ProdiSeeder::class,             // 4. Buat prodi (butuh fakultas_id)
             KelompokKeahlianSeeder::class,  // 5. Buat kelompok keahlian
-            DosenSeeder::class,             // 6. TERAKHIR - Dosen (butuh semua data di atas)
+            DosenSeeder::class,
+            MahasiswaSeeder::class,
+            KompetisiSeeder::class,  
+            MahasiswaKompetisiSeeder::class,
+            TenagaPendukungAkademikSeeder::class,           
         ]);
     }
 }

@@ -1,87 +1,100 @@
 import './bootstrap';
 import Chart from 'chart.js/auto';
 
-//MASIH DUMMY DISESUAIKAN SETELAH ADA CONTROLLER
 
-new Chart(document.getElementById('jumlahJuara'), {
-    type: 'doughnut',
-    data: {
-        labels: ['Juara 1', 'Juara 2', 'Juara 3'],
-        datasets: [{
-            data: [110, 30, 10],
-            backgroundColor: ['#b91c1c', '#ef4444', '#f87171']
-        }]
-    }
-});
 
-new Chart(document.getElementById('jumlahMahasiswa'), {
-    type: 'doughnut',
-    data: {
-        labels: ['AKADEMIK', 'NON-AKADEMIK'],
-        datasets: [{
-            data: [110, 30],
-            backgroundColor: ['#b91c1c', '#ef4444']
-        }]
-    }
-});
-
-new Chart(document.getElementById('statusMahasiswa'), {
-    type: 'doughnut',
-    data: {
-        labels: ['AKTIF', 'CUTI','TIDAK AKTIF'],
-        datasets: [{
-            data: [110, 30, 10],
-            backgroundColor: ['#991b1b','#b91c1c', '#ef4444', '#f87171']
-        }]
-    }
-});
-
-new Chart(document.getElementById('jumlahKompetisi'), {
+// 🔸 1. Jumlah TPA per Status Pegawai
+new Chart(document.getElementById('statusTpa'), {
     type: 'bar',
     data: {
-        labels: ['RPL', 'IT', 'DS', 'IF', 'PJJ'],
+        labels: chartData.statusTpa.labels,
         datasets: [{
-            label: 'Jumlah Dosen',
-            data: [30, 40, 20, 45, 5],
-            backgroundColor: [
-                '#b91c1c',
-                '#ef4444',
-                '#f87171',
-                '#fca5a5',
-                '#fecaca'
-            ]
+            label: 'Jumlah',
+            data: chartData.statusTpa.data,
+            backgroundColor: '#b91c1c'
         }]
     },
     options: {
-        responsive: true,
+        indexAxis: 'y',
         plugins: {
             title: {
                 display: true,
-                text: 'JFA Dosen'
+                text: 'Status Pegawai TPA'
             },
-            legend: {
-                display: false
-            }
-        },
-        scales: {
-            y: {
-                beginAtZero: true
+            legend: { display: false }
+        }
+    }
+});
+
+// 🔸 2. Jumlah TPA per Lokasi Kerja
+new Chart(document.getElementById('lokasiTpa'), {
+    type: 'doughnut',
+    data: {
+        labels: chartData.lokasiTpa.labels,
+        datasets: [{
+            data: chartData.lokasiTpa.data,
+            backgroundColor: ['#b91c1c', '#ef4444', '#f87171', '#fca5a5']
+        }]
+    },
+    options: {
+        plugins: {
+            title: {
+                display: true,
+                text: 'Lokasi Kerja TPA'
             }
         }
     }
 });
 
-new Chart(document.getElementById('jumlahKompetisi2'), {
-    type: 'bar',
+// 🔸 3. Jumlah TPA per Pendidikan Terakhir
+new Chart(document.getElementById('pendidikanTpa'), {
+    type: 'doughnut',
     data: {
-        labels: ['PEGAWAI TETAP','PROFESIONAL FULL TIME','PROFESIONAL PART TIME','PERBANTUAN LLDIKTI'],
+        labels: chartData.pendidikanTpa.labels,
         datasets: [{
-            label: 'Jumlah',
-            data: [40,20,60,80],
-            backgroundColor: '#b91c1c'
+            data: chartData.pendidikanTpa.data,
+            backgroundColor: ['#991b1b', '#b91c1c', '#ef4444', '#f87171']
         }]
     },
     options: {
-        indexAxis: 'y'
+        plugins: {
+            title: {
+                display: true,
+                text: 'Pendidikan Terakhir TPA'
+            }
+        }
     }
 });
+
+// 🔸 4. Jumlah TPA per Pangkat/Golongan
+if (document.getElementById('pangkatTpa')) {
+    new Chart(document.getElementById('pangkatTpa'), {
+        type: 'doughnut',
+        data: {
+            labels: chartData.pangkatTpa.labels,
+            datasets: [{
+                data: chartData.pangkatTpa.data,
+                backgroundColor: [
+                    '#b91c1c',
+                    '#ef4444',
+                    '#f87171',
+                    '#fca5a5',
+                    '#fecaca'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Pangkat / Golongan TPA'
+                },
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+}
+

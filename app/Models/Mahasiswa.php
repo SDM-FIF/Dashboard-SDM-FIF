@@ -14,6 +14,7 @@ class Mahasiswa extends Model
         'prodi_id',
         'nama_lengkap',
         'nim',
+        'status',
     ];
 
     // Relasi
