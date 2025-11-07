@@ -10,14 +10,9 @@ class KelompokKeahlianSeeder extends Seeder
     public function run(): void
     {
         $kelompokKeahlian = [
-            'Sistem Informasi',
-            'Jaringan Komputer',
-            'Kecerdasan Buatan',
-            'Rekayasa Perangkat Lunak',
-            'Basis Data',
-            'Keamanan Siber',
-            'Multimedia',
-            'Pemrograman Web'
+            'SEAL',  // Software Engineering and Application Laboratory
+            'DSIS',  // Data Science and Information Systems
+            'CITI'   // Cybersecurity and Information Technology Infrastructure
         ];
 
         foreach ($kelompokKeahlian as $nama) {

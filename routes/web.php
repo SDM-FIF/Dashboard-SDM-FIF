@@ -37,6 +37,10 @@ Route::get('/welcome', function () {
 // ============================
 Route::prefix('debug')->group(function () {
 
+    // Debug Test: Kelola Data Dosen (Bypass Auth untuk Testing)
+    Route::get('/kelola-data-dosen', [DosenController::class, 'kelolaData'])
+        ->name('debug.kelola-data-dosen');
+
     // Debug 1: Data Dosen Lengkap untuk Frontend
     Route::get('/data-dosen', function () {
         $dosen = App\Models\Dosen::with(['prodi.fakultas', 'kelompokKeahlian', 'user'])->get();
@@ -182,6 +186,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/kelola-data', [DosenController::class, 'kelolaData'])->name('kelola-data');
         Route::get('/import-data', [DosenController::class, 'importForm'])->name('import-data');
         Route::post('/import-data', [DosenController::class, 'importProcess'])->name('import-process');
+        Route::get('/laporan', [DosenController::class, 'laporan'])->name('laporan');
 
         // CRUD Routes
         Route::get('/create', [DosenController::class, 'create'])->name('create');
