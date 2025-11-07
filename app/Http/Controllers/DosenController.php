@@ -50,7 +50,7 @@ class DosenController extends Controller
             'prodi' => Prodi::with('fakultas')->get()
         ];
 
-        return view('data-dosen', compact('dosen', 'filterData'));
+        return view('manajemen-dosen.data-dosen', compact('dosen', 'filterData'));
     }
 
     /**
@@ -62,7 +62,7 @@ class DosenController extends Controller
         $kelompokKeahlian = KelompokKeahlian::all();
         $fakultas = \App\Models\Fakultas::all();
 
-        return view('tambah-data-dosen', compact('prodi', 'kelompokKeahlian', 'fakultas'));
+        return view('manajemen-dosen.tambah-data-dosen', compact('prodi', 'kelompokKeahlian', 'fakultas'));
     }
 
     /**
@@ -160,7 +160,7 @@ class DosenController extends Controller
         
         $allDosen = $query->paginate(10);
         
-        return view('detail-data-dosen', compact('dosen', 'allDosen'));
+        return view('manajemen-dosen.detail-data-dosen', compact('dosen', 'allDosen'));
     }
 
     /**
@@ -173,7 +173,7 @@ class DosenController extends Controller
         $kelompokKeahlian = KelompokKeahlian::all();
         $fakultas = \App\Models\Fakultas::all();
 
-        return view('edit-data-dosen', compact('dosen', 'prodi', 'kelompokKeahlian', 'fakultas'));
+        return view('manajemen-dosen.edit-data-dosen', compact('dosen', 'prodi', 'kelompokKeahlian', 'fakultas'));
     }
 
     /**
@@ -472,7 +472,7 @@ class DosenController extends Controller
         ];
 
         // Kirim ke view (SIAP UNTUK FRONTEND)
-        return view('kelola-data-dosen', compact('dosen', 'filterData'));
+        return view('manajemen-dosen.kelola-data-dosen', compact('dosen', 'filterData'));
     }
 
     /**
