@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DosenController;
+use App\Http\Controllers\TenagaPendukungAkademikController;
 
 // ============================
 // Auth Routes
@@ -196,6 +197,24 @@ Route::middleware('auth')->group(function () {
         Route::put('/{dosen}', [DosenController::class, 'update'])->name('update');
         Route::delete('/{dosen}', [DosenController::class, 'destroy'])->name('destroy');
     });
+    // ============================
+    // Manajemen TPA Routes
+    // ============================
+    Route::prefix('manajemen-tpa')->name('manajemen-tpa.')->group(function () {
+        Route::get('/kelola-data', [TenagaPendukungAkademikController::class, 'kelolaData'])->name('kelola-data');
+        Route::get('/import-data', [TenagaPendukungAkademikController::class, 'importForm'])->name('import-data');
+        Route::post('/import-data', [TenagaPendukungAkademikController::class, 'importProcess'])->name('import-process');
+        Route::get('/laporan', [TenagaPendukungAkademikController::class, 'laporan'])->name('laporan');
+
+        // CRUD Routes
+        Route::get('/create', [TenagaPendukungAkademikController::class, 'create'])->name('create');
+        Route::post('/store', [TenagaPendukungAkademikController::class, 'store'])->name('store');
+        Route::get('/{tpa}', [TenagaPendukungAkademikController::class, 'show'])->name('show');
+        Route::get('/{tpa}/edit', [TenagaPendukungAkademikController::class, 'edit'])->name('edit');
+        Route::put('/{tpa}', [TenagaPendukungAkademikController::class, 'update'])->name('update');
+        Route::delete('/{tpa}', [TenagaPendukungAkademikController::class, 'destroy'])->name('destroy');
+    });
+
 
     // ============================
     // Data Routes (Backward Compatibility)

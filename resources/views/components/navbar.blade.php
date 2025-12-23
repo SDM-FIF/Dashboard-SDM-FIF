@@ -105,7 +105,7 @@
             {{-- Manajemen TPA Section --}}
             <li class="relative">
                 <button onclick="toggleDropdown('tpaDropdown')"
-                    class="w-full flex items-center justify-between px-6 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('manajemen-tpa*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
+                    class="w-full flex items-center justify-between px-6 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('manajemen-tpa.*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
                     <div class="flex items-center">
                         <svg class="w-5 h-5 mr-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                             <path
@@ -125,18 +125,23 @@
                 <div id="tpaDropdown" class="hidden bg-red-700/50 backdrop-blur-sm">
                     <ul class="py-2 space-y-1">
                         <li>
-                            <a href="{{ route('kelola-tpa') }}"
-                                class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100">
+                            <a href="{{ route('manajemen-tpa.kelola-data') }}"
+                                class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100 {{ request()->routeIs('manajemen-tpa.kelola-data') ? 'bg-red-600/60' : '' }}">
                                 Kelola Data
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('import-tpa') }}"
-                                class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100">
+                            <a href="{{ route('manajemen-tpa.import-data') }}"
+                                class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100 {{ request()->routeIs('manajemen-tpa.import-data') || request()->routeIs('manajemen-tpa.import-process') ? 'bg-red-600/60' : '' }}">
                                 Import Data
                             </a>
                         </li>
-                        <!-- Add more dropdown items here -->
+                        <li>
+                            <a href="{{ route('manajemen-tpa.laporan') }}"
+                                class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100 {{ request()->routeIs('manajemen-tpa.laporan') ? 'bg-red-600/60' : '' }}">
+                                Laporan
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </li>
