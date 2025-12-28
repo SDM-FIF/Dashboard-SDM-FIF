@@ -4,7 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DosenController;
 use App\Http\Controllers\TenagaPendukungAkademikController;
-use App\Http\Controllers\RekrutasiDosenController; // TAMBAHKAN INI
+use App\Http\Controllers\RekrutasiDosenController;
+use App\Http\Controllers\MahasiswaController;
 
 // ============================
 // Auth Routes
@@ -215,6 +216,28 @@ Route::middleware('auth')->group(function () {
         Route::get('/{tpa}/edit', [TenagaPendukungAkademikController::class, 'edit'])->name('edit');
         Route::put('/{tpa}', [TenagaPendukungAkademikController::class, 'update'])->name('update');
         Route::delete('/{tpa}', [TenagaPendukungAkademikController::class, 'destroy'])->name('destroy');
+    });
+    // ============================
+    // Manajemen Mahasiswa Routes
+    // ============================
+    Route::resource('manajemen-mahasiswa', MahasiswaController::class);
+    Route::prefix('mahasiswa')->name('mahasiswa.')->group(function () {
+        
+        // Custom Routes (Menu Utama)
+        Route::get('/kelola-data', [MahasiswaController::class, 'kelolaData'])->name('kelola-data');
+        Route::get('/import-data', [MahasiswaController::class, 'importForm'])->name('import-data');
+        Route::post('/import-data', [MahasiswaController::class, 'importProcess'])->name('import-process');
+        Route::get('/laporan', [MahasiswaController::class, 'laporan'])->name('laporan');
+
+        // CRUD Routes
+        Route::get('/create', [MahasiswaController::class, 'create'])->name('create');
+        Route::post('/store', [MahasiswaController::class, 'store'])->name('store');
+        
+        // Note: Parameter '{mahasiswa}' harus sama dengan variabel di controller (public function show(Mahasiswa $mahasiswa))
+        Route::get('/{mahasiswa}', [MahasiswaController::class, 'show'])->name('show');
+        Route::get('/{mahasiswa}/edit', [MahasiswaController::class, 'edit'])->name('edit');
+        Route::put('/{mahasiswa}', [MahasiswaController::class, 'update'])->name('update');
+        Route::delete('/{mahasiswa}', [MahasiswaController::class, 'destroy'])->name('destroy');
     });
 
     // ============================

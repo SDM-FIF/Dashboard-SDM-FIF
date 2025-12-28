@@ -196,44 +196,56 @@
     </div>
 </li>
 
-            {{-- Manajemen Mahasiswa Section --}}
-            <li class="relative">
-                <button onclick="toggleDropdown('mahasiswaDropdown')"
-                    class="w-full flex items-center justify-between px-6 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('manajemen-mahasiswa*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
-                    <div class="flex items-center">
-                        <svg class="w-5 h-5 mr-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                            <path
-                                d="M12 3L1 9L12 15L21 11.09V17H23V9M5 13.18V17.18L12 21L19 17.18V13.18L12 17L5 13.18Z" />
+                {{-- Manajemen Mahasiswa Section --}}
+                <li class="relative">
+                    {{-- Button Dropdown: Aktif (Kuning) jika route diawali dengan 'mahasiswa.' --}}
+                    <button onclick="toggleDropdown('mahasiswaDropdown')"
+                        class="w-full flex items-center justify-between px-6 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('mahasiswa.*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
+                        <div class="flex items-center">
+                            {{-- Icon Cap Graduation untuk Mahasiswa --}}
+                            <svg class="w-5 h-5 mr-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 3L1 9L12 15L21 10.09V17H23V9M5 13.18V17.18L12 21L19 17.18V13.18L12 17L5 13.18Z" />
+                            </svg>
+                            <span>Manajemen Mahasiswa</span>
+                        </div>
+                        
+                        {{-- Panah Dropdown --}}
+                        <svg class="w-4 h-4 transform transition-transform duration-200 {{ request()->routeIs('mahasiswa.*') ? 'rotate-180' : '' }} group-hover:scale-110" 
+                            id="mahasiswaArrow"
+                            fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                clip-rule="evenodd" />
                         </svg>
-                        <span>Manajemen Mahasiswa</span>
-                    </div>
-                    <svg class="w-4 h-4 transform transition-transform duration-200 group-hover:scale-110"
-                        id="mahasiswaArrow" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd"
-                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                            clip-rule="evenodd" />
-                    </svg>
-                </button>
+                    </button>
 
-                {{-- Manajemen Mahasiswa Dropdown Menu --}}
-                <div id="mahasiswaDropdown" class="hidden bg-red-700/50 backdrop-blur-sm">
-                    <ul class="py-2 space-y-1">
-                        <li>
-                            <a href="{{ route('manajemen-mahasiswa') }}"
-                                class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100">
-                                Kelola Data
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('import-mahasiswa') }}"
-                                class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100">
-                                Import Data
-                            </a>
-                        </li>
-                        <!-- Add more dropdown items here -->
-                    </ul>
-                </div>
-            </li>
+                    {{-- Menu Dropdown: Hidden secara default kecuali sedang di route mahasiswa --}}
+                    <div id="mahasiswaDropdown" class="{{ request()->routeIs('mahasiswa.*') ? '' : 'hidden' }} bg-red-700/50 backdrop-blur-sm">
+                        <ul class="py-2 space-y-1">
+                            <li>
+                                {{-- Link Kelola Data --}}
+                                <a href="{{ route('mahasiswa.kelola-data') }}"
+                                    class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100 {{ request()->routeIs('mahasiswa.kelola-data') ? 'bg-red-600/60' : '' }}">
+                                    Kelola Data
+                                </a>
+                            </li>
+                            <li>
+                                {{-- Link Import Data --}}
+                                <a href="{{ route('mahasiswa.import-data') }}"
+                                    class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100 {{ request()->routeIs('mahasiswa.import-data') || request()->routeIs('mahasiswa.import-process') ? 'bg-red-600/60' : '' }}">
+                                    Import Data
+                                </a>
+                            </li>
+                            <li>
+                                {{-- Link Laporan --}}
+                                <a href="{{ route('mahasiswa.laporan') }}"
+                                    class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100 {{ request()->routeIs('mahasiswa.laporan') ? 'bg-red-600/60' : '' }}">
+                                    Laporan
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
 
             {{-- Master Data Section --}}
             <li class="relative">
