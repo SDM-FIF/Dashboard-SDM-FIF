@@ -146,44 +146,55 @@
                 </div>
             </li>
 
-            {{-- Rekrutasi Dosen Section --}}
-            <li class="relative">
-                <button onclick="toggleDropdown('rekrutasiDropdown')"
-                    class="w-full flex items-center justify-between px-6 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('rekrutasi-dosen*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
-                    <div class="flex items-center">
-                        <svg class="w-5 h-5 mr-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                            <path
-                                d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V8c0-.55-.45-1-1-1s-1 .45-1 1v2H2c-.55 0-1 .45-1 1s.45 1 1 1h2v2c0 .55.45 1 1 1s1-.45 1-1v-2h2c.55 0 1-.45 1-1s-.45-1-1-1H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-                        </svg>
-                        <span>Rekrutasi Dosen</span>
-                    </div>
-                    <svg class="w-4 h-4 transform transition-transform duration-200 group-hover:scale-110"
-                        id="rekrutasiArrow" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd"
-                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                            clip-rule="evenodd" />
-                    </svg>
-                </button>
+           {{-- Rekrutasi Dosen Section --}}
+<li class="relative">
+    <button onclick="toggleDropdown('rekrutasiDropdown')"
+        class="w-full flex items-center justify-between px-6 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('rekrutasi-dosen*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
+        <div class="flex items-center">
+            <svg class="w-5 h-5 mr-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                    d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V8c0-.55-.45-1-1-1s-1 .45-1 1v2H2c-.55 0-1 .45-1 1s.45 1 1 1h2v2c0 .55.45 1 1 1s1-.45 1-1v-2h2c.55 0 1-.45 1-1s-.45-1-1-1H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+            </svg>
+            <span>Rekrutasi Dosen</span>
+        </div>
+        <svg class="w-4 h-4 transform transition-transform duration-200 group-hover:scale-110"
+            id="rekrutasiArrow" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd"
+                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                clip-rule="evenodd" />
+        </svg>
+    </button>
 
-                {{-- Rekrutasi Dosen Dropdown Menu --}}
-                <div id="rekrutasiDropdown" class="hidden bg-red-700/50 backdrop-blur-sm">
-                    <ul class="py-2 space-y-1">
-                        <li>
-                            <a href="{{ route('rekrutasi-dosen') }}"
-                                class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100">
-                                Kelola Data
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('import-rekruitasi') }}"
-                                class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100">
-                                Import Data
-                            </a>
-                        </li>
-                        <!-- Add more dropdown items here -->
-                    </ul>
-                </div>
+    {{-- Rekrutasi Dosen Dropdown Menu --}}
+    <div id="rekrutasiDropdown" class="hidden bg-red-700/50 backdrop-blur-sm">
+        <ul class="py-2 space-y-1">
+            <li>
+                <a href="{{ route('rekrutasi-dosen') }}"
+                    class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('rekrutasi-dosen') && !request()->routeIs('rekrutasi-dosen.*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
+                    Overview
+                </a>
             </li>
+            <li>
+                <a href="{{ route('import-rekruitasi') }}"
+                    class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('import-rekruitasi') || request()->routeIs('rekrutasi-dosen.import*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
+                    Import Rekrutasi Dosen
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('rekrutasi-dosen.jadwal-pengujian') }}"
+                    class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('rekrutasi-dosen.jadwal-pengujian') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
+                    Jadwal Pengujian Dosen
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('rekrutasi-dosen.hasil-pengujian') }}"
+                    class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('rekrutasi-dosen.hasil-pengujian') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
+                    Hasil Pengujian
+                </a>
+            </li>
+        </ul>
+    </div>
+</li>
 
             {{-- Manajemen Mahasiswa Section --}}
             <li class="relative">
