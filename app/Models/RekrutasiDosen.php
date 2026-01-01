@@ -11,6 +11,7 @@ class RekrutasiDosen extends Model
     protected $fillable = [
         'no_registrasi',
         'nama_calon',
+        'jenis_kelamin',
         'prodi_id',
         'tahun_ajar',
         'tanggal_pengujian',

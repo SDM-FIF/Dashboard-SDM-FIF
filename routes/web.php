@@ -222,7 +222,7 @@ Route::middleware('auth')->group(function () {
     // ============================
     Route::resource('manajemen-mahasiswa', MahasiswaController::class);
     Route::prefix('mahasiswa')->name('mahasiswa.')->group(function () {
-        
+
         // Custom Routes (Menu Utama)
         Route::get('/kelola-data', [MahasiswaController::class, 'kelolaData'])->name('kelola-data');
         Route::get('/import-data', [MahasiswaController::class, 'importForm'])->name('import-data');
@@ -232,7 +232,7 @@ Route::middleware('auth')->group(function () {
         // CRUD Routes
         Route::get('/create', [MahasiswaController::class, 'create'])->name('create');
         Route::post('/store', [MahasiswaController::class, 'store'])->name('store');
-        
+
         // Note: Parameter '{mahasiswa}' harus sama dengan variabel di controller (public function show(Mahasiswa $mahasiswa))
         Route::get('/{mahasiswa}', [MahasiswaController::class, 'show'])->name('show');
         Route::get('/{mahasiswa}/edit', [MahasiswaController::class, 'edit'])->name('edit');
@@ -244,39 +244,45 @@ Route::middleware('auth')->group(function () {
     // 🆕 Rekrutasi Dosen Routes (TAMBAHAN BARU)
     // ============================
     Route::prefix('rekrutasi-dosen')->name('rekrutasi-dosen.')->group(function () {
-    // Overview / Main List
-    Route::get('/', [RekrutasiDosenController::class, 'index'])->name('index');
-    
-    // Import Routes
-    Route::get('/import', [RekrutasiDosenController::class, 'importView'])->name('import.view');
-    Route::post('/import', [RekrutasiDosenController::class, 'import'])->name('import');
-    
-    // Jadwal Pengujian
-    Route::get('/jadwal-pengujian', [RekrutasiDosenController::class, 'jadwalPengujian'])->name('jadwal-pengujian');
-    
-    // Hasil Pengujian
-    Route::get('/hasil-pengujian', [RekrutasiDosenController::class, 'hasilPengujian'])->name('hasil-pengujian');
-    
-    // ⚠️ EXPORT ROUTES - HARUS DI ATAS {id} ⚠️
-    Route::get('/export-excel', [RekrutasiDosenController::class, 'exportExcel'])->name('export-excel');
-    Route::get('/export-csv', [RekrutasiDosenController::class, 'exportCsv'])->name('export-csv');
-    Route::get('/export-pdf', [RekrutasiDosenController::class, 'exportPdf'])->name('export-pdf');
-    
-    // CRUD Routes
-    Route::get('/create', [RekrutasiDosenController::class, 'create'])->name('create');
-    Route::post('/', [RekrutasiDosenController::class, 'store'])->name('store');
-    Route::get('/{id}', [RekrutasiDosenController::class, 'show'])->name('show');
-    Route::get('/{id}/edit', [RekrutasiDosenController::class, 'edit'])->name('edit');
-    Route::put('/{id}', [RekrutasiDosenController::class, 'update'])->name('update');
-    Route::delete('/{id}', [RekrutasiDosenController::class, 'destroy'])->name('destroy');
-});
+        // Overview / Main List
+        Route::get('/', [RekrutasiDosenController::class, 'index'])->name('index');
+
+        // Import Routes
+        Route::get('/import', [RekrutasiDosenController::class, 'importView'])->name('import.view');
+        Route::post('/import', [RekrutasiDosenController::class, 'import'])->name('import');
+        // Import Routes - Detail
+        Route::get('/import/template', [RekrutasiDosenController::class, 'downloadTemplate'])->name('import.template');
+        Route::post('/import/upload', [RekrutasiDosenController::class, 'uploadImport'])->name('import.upload');
+        Route::post('/import/save', [RekrutasiDosenController::class, 'saveImport'])->name('import.save');
+        Route::get('/import/result', [RekrutasiDosenController::class, 'importResult'])->name('import.result');
+        Route::get('/import/download-result', [RekrutasiDosenController::class, 'downloadImportResult'])->name('import.download-result');
+
+        // Jadwal Pengujian
+        Route::get('/jadwal-pengujian', [RekrutasiDosenController::class, 'jadwalPengujian'])->name('jadwal-pengujian');
+
+        // Hasil Pengujian
+        Route::get('/hasil-pengujian', [RekrutasiDosenController::class, 'hasilPengujian'])->name('hasil-pengujian');
+
+        // ⚠️ EXPORT ROUTES - HARUS DI ATAS {id} ⚠️
+        Route::get('/export-excel', [RekrutasiDosenController::class, 'exportExcel'])->name('export-excel');
+        Route::get('/export-csv', [RekrutasiDosenController::class, 'exportCsv'])->name('export-csv');
+        Route::get('/export-pdf', [RekrutasiDosenController::class, 'exportPdf'])->name('export-pdf');
+
+        // CRUD Routes
+        Route::get('/create', [RekrutasiDosenController::class, 'create'])->name('create');
+        Route::post('/', [RekrutasiDosenController::class, 'store'])->name('store');
+        Route::get('/{id}', [RekrutasiDosenController::class, 'show'])->name('show');
+        Route::get('/{id}/edit', [RekrutasiDosenController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [RekrutasiDosenController::class, 'update'])->name('update');
+        Route::delete('/{id}', [RekrutasiDosenController::class, 'destroy'])->name('destroy');
+    });
 
     // ============================
     // Backward Compatibility Routes (untuk Navbar)
     // ============================
     // UBAH route ini dari yang lama
     Route::get('/rekrutasi-dosen', [RekrutasiDosenController::class, 'index'])->name('rekrutasi-dosen');
-    
+
     // UBAH route ini dari yang lama
     Route::get('/import-rekruitasi', [RekrutasiDosenController::class, 'importView'])->name('import-rekruitasi');
 
@@ -303,7 +309,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/import-dosen', function () {
         return view('import-dosen');
     })->name('import-dosen');
-    
+
     Route::get('/import-file-dosen', function () {
         return view('import-file-dosen');
     })->name('import-file-dosen');

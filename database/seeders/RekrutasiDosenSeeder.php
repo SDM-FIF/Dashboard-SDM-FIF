@@ -30,6 +30,7 @@ class RekrutasiDosenSeeder extends Seeder
             [
                 'no_registrasi' => 'REK-202412-0001',
                 'nama_calon' => 'Dr. Ahmad Nurul Huda, M.Kom',
+                'jenis_kelamin' => 'Laki-laki',
                 'prodi_id' => $prodiInformatika,
                 'tahun_ajar' => 'Ganjil 2025/2026',
                 'tanggal_pengujian' => '2025-01-15',
@@ -39,6 +40,7 @@ class RekrutasiDosenSeeder extends Seeder
             [
                 'no_registrasi' => 'REK-202412-0002',
                 'nama_calon' => 'Siti Aminah, S.Kom, M.T',
+                'jenis_kelamin' => 'Perempuan',
                 'prodi_id' => $prodiInformatika,
                 'tahun_ajar' => 'Ganjil 2025/2026',
                 'tanggal_pengujian' => '2025-01-20',
@@ -48,6 +50,7 @@ class RekrutasiDosenSeeder extends Seeder
             [
                 'no_registrasi' => 'REK-202412-0003',
                 'nama_calon' => 'Budi Santoso, M.Kom',
+                'jenis_kelamin' => 'Laki-laki',
                 'prodi_id' => $prodiInformatika,
                 'tahun_ajar' => 'Genap 2025/2026',
                 'tanggal_pengujian' => '2025-02-10',
@@ -59,6 +62,7 @@ class RekrutasiDosenSeeder extends Seeder
             [
                 'no_registrasi' => 'REK-202412-0004',
                 'nama_calon' => 'Rina Wulandari, S.Kom, M.Kom',
+                'jenis_kelamin' => 'Perempuan',
                 'prodi_id' => $prodiDataSains,
                 'tahun_ajar' => 'Ganjil 2025/2026',
                 'tanggal_pengujian' => '2025-01-18',
@@ -68,6 +72,7 @@ class RekrutasiDosenSeeder extends Seeder
             [
                 'no_registrasi' => 'REK-202412-0005',
                 'nama_calon' => 'Agus Setiawan, M.T',
+                'jenis_kelamin' => 'Laki-laki',
                 'prodi_id' => $prodiRPL,
                 'tahun_ajar' => 'Genap 2025/2026',
                 'tanggal_pengujian' => '2025-02-15',
@@ -77,6 +82,7 @@ class RekrutasiDosenSeeder extends Seeder
             [
                 'no_registrasi' => 'REK-202412-0006',
                 'nama_calon' => 'Dewi Sartika, S.Kom, M.Sc',
+                'jenis_kelamin' => 'Perempuan',
                 'prodi_id' => $prodiTI,
                 'tahun_ajar' => 'Ganjil 2025/2026',
                 'tanggal_pengujian' => '2025-01-25',
