@@ -14,11 +14,26 @@ class JadwalPengujian extends Model
         'dosen_penguji_id',
         'rekrutasi_dosen_id',
         'jadwal_ujian',
+        'status_dosen',
     ];
 
     protected $casts = [
         'jadwal_ujian' => 'date',
     ];
+
+    // Konstanta untuk status dosen
+    const STATUS_SELEKSI = 'Seleksi';
+    const STATUS_DITERIMA = 'Diterima';
+    const STATUS_DITOLAK = 'Ditolak';
+
+    public static function getStatusDosenOptions()
+    {
+        return [
+            self::STATUS_SELEKSI,
+            self::STATUS_DITERIMA,
+            self::STATUS_DITOLAK,
+        ];
+    }
 
     // Relasi
     public function dosenPenguji()
