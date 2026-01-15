@@ -21,7 +21,8 @@ class Dosen extends Model
         'nip',
         'kode_dosen',
         'lokasi_kerja',
-        'status_pegawai', // Kolom baru
+        'status_pegawai',
+        'pendidikan_terakhir', // TAMBAHKAN INI
     ];
 
     // Relasi

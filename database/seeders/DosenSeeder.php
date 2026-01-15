@@ -31,8 +31,50 @@ class DosenSeeder extends Seeder
         // Re-enable foreign key checks
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        // Data dummy dosen yang realistis dengan enum values baru
+        // Data dummy dosen dengan pendidikan terakhir
         $dosenData = [
+            // S1 - 3 dosen
+            [
+                'nama_lengkap' => 'Budi Santoso, S.Kom',
+                'front_title' => '',
+                'back_title' => 'S.Kom',
+                'nip' => '199012152018031002',
+                'kode_dosen' => 'DSN003',
+                'jabatan' => 'Asisten Ahli',
+                'lokasi_kerja' => 'Data Sains',
+                'status_pegawai' => 'Profesional Full Time',
+                'pendidikan_terakhir' => 'S1',
+                'username' => 'budi.santoso',
+                'password' => 'password123'
+            ],
+            [
+                'nama_lengkap' => 'Rahmat Hidayat, S.Kom',
+                'front_title' => '',
+                'back_title' => 'S.Kom',
+                'nip' => '199505102019031001',
+                'kode_dosen' => 'DSN005',
+                'jabatan' => 'NJFA',
+                'lokasi_kerja' => 'Informatika',
+                'status_pegawai' => 'Profesional Part Time',
+                'pendidikan_terakhir' => 'S1',
+                'username' => 'rahmat.hidayat',
+                'password' => 'password123'
+            ],
+            [
+                'nama_lengkap' => 'Dewi Lestari, S.T',
+                'front_title' => '',
+                'back_title' => 'S.T',
+                'nip' => '199408202020122002',
+                'kode_dosen' => 'DSN009',
+                'jabatan' => 'Asisten Ahli',
+                'lokasi_kerja' => 'Informatika',
+                'status_pegawai' => 'Profesional Part Time',
+                'pendidikan_terakhir' => 'S1',
+                'username' => 'dewi.lestari',
+                'password' => 'password123'
+            ],
+            
+            // S2 - 4 dosen
             [
                 'nama_lengkap' => 'Dr. Ahmad Fauzi, M.Kom',
                 'front_title' => 'Dr.',
@@ -42,31 +84,8 @@ class DosenSeeder extends Seeder
                 'jabatan' => 'Lektor',
                 'lokasi_kerja' => 'Informatika',
                 'status_pegawai' => 'Tetap',
+                'pendidikan_terakhir' => 'S2',
                 'username' => 'ahmad.fauzi',
-                'password' => 'password123'
-            ],
-            [
-                'nama_lengkap' => 'Prof. Dr. Siti Nurhaliza, M.T',
-                'front_title' => 'Prof. Dr.',
-                'back_title' => 'M.T',
-                'nip' => '198203051985032001',
-                'kode_dosen' => 'DSN002',
-                'jabatan' => 'Profesor',
-                'lokasi_kerja' => 'Rekayasa Perangkat Lunak',
-                'status_pegawai' => 'Tetap',
-                'username' => 'siti.nurhaliza',
-                'password' => 'password123'
-            ],
-            [
-                'nama_lengkap' => 'Budi Santoso, S.Kom, M.Sc',
-                'front_title' => '',
-                'back_title' => 'S.Kom, M.Sc',
-                'nip' => '199012152018031002',
-                'kode_dosen' => 'DSN003',
-                'jabatan' => 'Asisten Ahli',
-                'lokasi_kerja' => 'Data Sains',
-                'status_pegawai' => 'Profesional Full Time',
-                'username' => 'budi.santoso',
                 'password' => 'password123'
             ],
             [
@@ -78,19 +97,8 @@ class DosenSeeder extends Seeder
                 'jabatan' => 'Lektor Kepala',
                 'lokasi_kerja' => 'Teknologi Informasi',
                 'status_pegawai' => 'Tetap',
+                'pendidikan_terakhir' => 'S2',
                 'username' => 'indira.putri',
-                'password' => 'password123'
-            ],
-            [
-                'nama_lengkap' => 'Rahmat Hidayat, M.T',
-                'front_title' => '',
-                'back_title' => 'M.T',
-                'nip' => '199505102019031001',
-                'kode_dosen' => 'DSN005',
-                'jabatan' => 'NJFA',
-                'lokasi_kerja' => 'Informatika',
-                'status_pegawai' => 'Profesional Part Time',
-                'username' => 'rahmat.hidayat',
                 'password' => 'password123'
             ],
             [
@@ -102,19 +110,36 @@ class DosenSeeder extends Seeder
                 'jabatan' => 'Lektor',
                 'lokasi_kerja' => 'Rekayasa Perangkat Lunak',
                 'status_pegawai' => 'Perbantuan',
+                'pendidikan_terakhir' => 'S2',
                 'username' => 'maya.sari',
                 'password' => 'password123'
             ],
             [
-                'nama_lengkap' => 'Andi Pratama, S.Kom, M.T',
+                'nama_lengkap' => 'Andi Pratama, M.T',
                 'front_title' => '',
-                'back_title' => 'S.Kom, M.T',
+                'back_title' => 'M.T',
                 'nip' => '199203152019031003',
                 'kode_dosen' => 'DSN007',
                 'jabatan' => 'Asisten Ahli',
                 'lokasi_kerja' => 'Data Sains',
                 'status_pegawai' => 'Tetap',
+                'pendidikan_terakhir' => 'S2',
                 'username' => 'andi.pratama',
+                'password' => 'password123'
+            ],
+            
+            // S3 - 3 dosen
+            [
+                'nama_lengkap' => 'Prof. Dr. Siti Nurhaliza, M.T',
+                'front_title' => 'Prof. Dr.',
+                'back_title' => 'M.T',
+                'nip' => '198203051985032001',
+                'kode_dosen' => 'DSN002',
+                'jabatan' => 'Profesor',
+                'lokasi_kerja' => 'Rekayasa Perangkat Lunak',
+                'status_pegawai' => 'Tetap',
+                'pendidikan_terakhir' => 'S3',
+                'username' => 'siti.nurhaliza',
                 'password' => 'password123'
             ],
             [
@@ -126,19 +151,8 @@ class DosenSeeder extends Seeder
                 'jabatan' => 'Profesor',
                 'lokasi_kerja' => 'Teknologi Informasi',
                 'status_pegawai' => 'Tetap',
+                'pendidikan_terakhir' => 'S3',
                 'username' => 'bambang.sutopo',
-                'password' => 'password123'
-            ],
-            [
-                'nama_lengkap' => 'Dewi Lestari, M.Kom',
-                'front_title' => '',
-                'back_title' => 'M.Kom',
-                'nip' => '199408202020122002',
-                'kode_dosen' => 'DSN009',
-                'jabatan' => 'Asisten Ahli',
-                'lokasi_kerja' => 'Informatika',
-                'status_pegawai' => 'Profesional Part Time',
-                'username' => 'dewi.lestari',
                 'password' => 'password123'
             ],
             [
@@ -150,6 +164,7 @@ class DosenSeeder extends Seeder
                 'jabatan' => 'Lektor Kepala',
                 'lokasi_kerja' => 'Rekayasa Perangkat Lunak',
                 'status_pegawai' => 'Profesional Full Time',
+                'pendidikan_terakhir' => 'S3',
                 'username' => 'agus.setiawan',
                 'password' => 'password123'
             ]
@@ -176,11 +191,9 @@ class DosenSeeder extends Seeder
         }
 
         foreach ($dosenData as $data) {
-            // Pilih prodi dan kelompok keahlian secara acak
             $selectedProdi = $prodi->random();
             $selectedKelompok = $kelompokKeahlian->random();
 
-            // Buat user terlebih dahulu
             $user = User::create([
                 'fakultas_id' => $selectedProdi->fakultas_id,
                 'prodi_id' => $selectedProdi->id,
@@ -190,10 +203,8 @@ class DosenSeeder extends Seeder
                 'password' => Hash::make($data['password']),
             ]);
 
-            // Assign role dosen
             $user->assignRole('dosen');
 
-            // Buat data dosen
             Dosen::create([
                 'user_id' => $user->id,
                 'prodi_id' => $selectedProdi->id,
@@ -206,11 +217,13 @@ class DosenSeeder extends Seeder
                 'kode_dosen' => $data['kode_dosen'],
                 'lokasi_kerja' => $data['lokasi_kerja'],
                 'status_pegawai' => $data['status_pegawai'],
+                'pendidikan_terakhir' => $data['pendidikan_terakhir'], // TAMBAHAN
             ]);
 
-            $this->command->info("✅ Dosen {$data['nama_lengkap']} berhasil dibuat");
+            $this->command->info("✅ Dosen {$data['nama_lengkap']} ({$data['pendidikan_terakhir']}) berhasil dibuat");
         }
 
         $this->command->info("🎉 DosenSeeder selesai! Total: " . count($dosenData) . " dosen");
+        $this->command->info("📊 Pembagian: 3 S1, 4 S2, 3 S3");
     }
 }
