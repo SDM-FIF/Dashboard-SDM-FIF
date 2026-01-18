@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\JadwalPengujian;
+use App\Models\CalonDosen;
 use App\Models\RekrutasiDosen;
 use App\Models\Dosen;
 use Carbon\Carbon;
@@ -16,6 +17,7 @@ class JadwalPengujianSeeder extends Seeder
         // Validasi data yang diperlukan
         $rekrutasiDosen = RekrutasiDosen::all();
         $dosen = Dosen::all();
+        $calonDosen = CalonDosen::all();
 
         if ($rekrutasiDosen->isEmpty()) {
             $this->command->error('❌ Data Rekrutasi Dosen belum ada! Jalankan RekrutasiDosenSeeder dulu.');
@@ -25,6 +27,10 @@ class JadwalPengujianSeeder extends Seeder
         if ($dosen->isEmpty()) {
             $this->command->error('❌ Data Dosen belum ada! Jalankan DosenSeeder dulu.');
             return;
+        }
+
+         if ($calonDosen->isEmpty()) {
+            $this->command->warn('⚠️ Data Calon Dosen kosong. Jadwal akan dibuat tanpa calon dosen.');
         }
 
         try {
@@ -63,6 +69,7 @@ class JadwalPengujianSeeder extends Seeder
                 $status = $this->generateStatus($index);
 
                 $jadwalData[] = [
+                    'calon_dosen_id' => $calonDosen->isNotEmpty() ? $calonDosen->random()->id : null,
                     'dosen_penguji_id' => $penguji->id,
                     'rekrutasi_dosen_id' => $rekrutasi->id,
                     'jadwal_ujian' => $jadwalUjian->format('Y-m-d'),

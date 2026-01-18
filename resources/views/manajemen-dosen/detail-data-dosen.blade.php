@@ -377,6 +377,10 @@
                     }
                 });
             }
+
+            // Scroll to current dosen if highlighted
+            const currentDosenRow = document.querySelector('.highlight-row');
+            if (currentDosenRow) {
                 setTimeout(() => {
                     currentDosenRow.scrollIntoView({ 
                         behavior: 'smooth', 

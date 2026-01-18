@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,10 +11,11 @@
     <!-- Chart.js for charts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body class="flex flex-col md:flex-row bg-gray-50 font-nunito">
     {{-- Sidebar Navigation --}}
     <x-navbar />
-    
+
     {{-- Main Content --}}
     <main class="flex-1 p-4 md:p-6 min-h-screen">
         {{-- Top Search Bar --}}
@@ -160,13 +162,13 @@
                         </thead>
                         <tbody>
                             @foreach($statistik['per_kelompok_keahlian'] as $kelompok => $jumlah)
-                                <tr class="border-b border-gray-100">
-                                    <td class="py-3 text-gray-800">{{ $kelompok }}</td>
-                                    <td class="text-right py-3 font-medium">{{ $jumlah }}</td>
-                                    <td class="text-right py-3 text-sm text-gray-600">
-                                        {{ $statistik['total_dosen'] > 0 ? round(($jumlah / $statistik['total_dosen']) * 100, 1) : 0 }}%
-                                    </td>
-                                </tr>
+                            <tr class="border-b border-gray-100">
+                                <td class="py-3 text-gray-800">{{ $kelompok }}</td>
+                                <td class="text-right py-3 font-medium">{{ $jumlah }}</td>
+                                <td class="text-right py-3 text-sm text-gray-600">
+                                    {{ $statistik['total_dosen'] > 0 ? round(($jumlah / $statistik['total_dosen']) * 100, 1) : 0 }}%
+                                </td>
+                            </tr>
                             @endforeach
                         </tbody>
                     </table>
@@ -178,18 +180,18 @@
         <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
             <h3 class="text-xl font-bold text-gray-800 mb-4">Export Laporan</h3>
             <div class="flex flex-wrap gap-4">
-                <button onclick="exportPDF()" 
-                        class="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-lg flex items-center space-x-2 transition-all duration-200">
+                <button onclick="exportPDF()"
+                    class="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-lg flex items-center space-x-2 transition-all duration-200">
                     <i class="fas fa-file-pdf"></i>
                     <span>Export PDF</span>
                 </button>
-                <button onclick="exportExcel()" 
-                        class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg flex items-center space-x-2 transition-all duration-200">
+                <button onclick="exportExcel()"
+                    class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg flex items-center space-x-2 transition-all duration-200">
                     <i class="fas fa-file-excel"></i>
                     <span>Export Excel</span>
                 </button>
-                <button onclick="printReport()" 
-                        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg flex items-center space-x-2 transition-all duration-200">
+                <button onclick="printReport()"
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg flex items-center space-x-2 transition-all duration-200">
                     <i class="fas fa-print"></i>
                     <span>Print</span>
                 </button>
@@ -197,7 +199,29 @@
         </div>
     </main>
 
+    @php
+        $jsStatistikData = [
+            'perStatus' => [
+                'tetap' => $statistik['per_status']['tetap'] ?? 0,
+                'perbantuan' => $statistik['per_status']['perbantuan'] ?? 0,
+                'profesionalFull' => $statistik['per_status']['profesional_full'] ?? 0,
+                'profesionalPart' => $statistik['per_status']['profesional_part'] ?? 0
+            ],
+            'perJfa' => [
+                'njfa' => $statistik['per_jfa']['njfa'] ?? 0,
+                'asistenAhli' => $statistik['per_jfa']['asisten_ahli'] ?? 0,
+                'lektor' => $statistik['per_jfa']['lektor'] ?? 0,
+                'lektorKepala' => $statistik['per_jfa']['lektor_kepala'] ?? 0,
+                'profesor' => $statistik['per_jfa']['profesor'] ?? 0
+            ]
+        ];
+    @endphp
+
+    <script id="statistik-data" type="application/json">@json($jsStatistikData)</script>
+
     <script>
+        const statistikData = JSON.parse(document.getElementById('statistik-data').textContent);
+
         document.addEventListener('DOMContentLoaded', function() {
             // Status Pegawai Chart
             const statusCtx = document.getElementById('statusChart').getContext('2d');
@@ -207,16 +231,16 @@
                     labels: ['Tetap', 'Perbantuan', 'Profesional Full Time', 'Profesional Part Time'],
                     datasets: [{
                         data: [
-                            {{ $statistik['per_status']['tetap'] }},
-                            {{ $statistik['per_status']['perbantuan'] }},
-                            {{ $statistik['per_status']['profesional_full'] }},
-                            {{ $statistik['per_status']['profesional_part'] }}
+                            statistikData.perStatus.tetap,
+                            statistikData.perStatus.perbantuan,
+                            statistikData.perStatus.profesionalFull,
+                            statistikData.perStatus.profesionalPart
                         ],
                         backgroundColor: [
                             '#10B981', // Green
                             '#F59E0B', // Yellow
                             '#3B82F6', // Blue
-                            '#8B5CF6'  // Purple
+                            '#8B5CF6' // Purple
                         ],
                         borderWidth: 2,
                         borderColor: '#ffffff'
@@ -242,18 +266,18 @@
                     datasets: [{
                         label: 'Jumlah Dosen',
                         data: [
-                            {{ $statistik['per_jfa']['njfa'] }},
-                            {{ $statistik['per_jfa']['asisten_ahli'] }},
-                            {{ $statistik['per_jfa']['lektor'] }},
-                            {{ $statistik['per_jfa']['lektor_kepala'] }},
-                            {{ $statistik['per_jfa']['profesor'] }}
+                            statistikData.perJfa.njfa,
+                            statistikData.perJfa.asistenAhli,
+                            statistikData.perJfa.lektor,
+                            statistikData.perJfa.lektorKepala,
+                            statistikData.perJfa.profesor
                         ],
                         backgroundColor: [
                             '#EF4444', // Red
                             '#F59E0B', // Yellow
                             '#10B981', // Green
                             '#3B82F6', // Blue
-                            '#8B5CF6'  // Purple
+                            '#8B5CF6' // Purple
                         ],
                         borderRadius: 4,
                         borderSkipped: false,
@@ -299,13 +323,17 @@
             body * {
                 visibility: hidden;
             }
-            main, main * {
+
+            main,
+            main * {
                 visibility: visible;
             }
+
             .no-print {
                 display: none !important;
             }
         }
     </style>
 </body>
+
 </html>
