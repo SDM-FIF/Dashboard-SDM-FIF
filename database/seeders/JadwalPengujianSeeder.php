@@ -7,6 +7,7 @@ use App\Models\JadwalPengujian;
 use App\Models\CalonDosen;
 use App\Models\RekrutasiDosen;
 use App\Models\Dosen;
+use App\Models\TahunAjar;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -18,6 +19,7 @@ class JadwalPengujianSeeder extends Seeder
         $rekrutasiDosen = RekrutasiDosen::all();
         $dosen = Dosen::all();
         $calonDosen = CalonDosen::all();
+        $tahunAjar = TahunAjar::all();
 
         if ($rekrutasiDosen->isEmpty()) {
             $this->command->error('❌ Data Rekrutasi Dosen belum ada! Jalankan RekrutasiDosenSeeder dulu.');
@@ -31,6 +33,10 @@ class JadwalPengujianSeeder extends Seeder
 
          if ($calonDosen->isEmpty()) {
             $this->command->warn('⚠️ Data Calon Dosen kosong. Jadwal akan dibuat tanpa calon dosen.');
+        }
+
+        if ($tahunAjar->isEmpty()) {
+            $this->command->warn('⚠️ Data Tahun Ajar kosong. Jadwal akan dibuat tanpa tahun ajar.');
         }
 
         try {
@@ -69,6 +75,7 @@ class JadwalPengujianSeeder extends Seeder
                 $status = $this->generateStatus($index);
 
                 $jadwalData[] = [
+                    'tahun_ajar_id' => $tahunAjar->isNotEmpty() ? $tahunAjar->random()->id : null,
                     'calon_dosen_id' => $calonDosen->isNotEmpty() ? $calonDosen->random()->id : null,
                     'dosen_penguji_id' => $penguji->id,
                     'rekrutasi_dosen_id' => $rekrutasi->id,

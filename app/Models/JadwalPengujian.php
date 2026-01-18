@@ -11,6 +11,7 @@ class JadwalPengujian extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'tahun_ajar_id',
         'calon_dosen_id',
         'dosen_penguji_id',
         'rekrutasi_dosen_id',
@@ -50,6 +51,16 @@ class JadwalPengujian extends Model
     }
 
     // Relasi
+    public function tahunAjar()
+    {
+        return $this->belongsTo(TahunAjar::class);
+    }
+
+    public function calonDosen()
+    {
+        return $this->belongsTo(CalonDosen::class);
+    }
+
     public function dosenPenguji()
     {
         return $this->belongsTo(Dosen::class, 'dosen_penguji_id');
