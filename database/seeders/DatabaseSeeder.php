@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use DeepCopy\f013\C;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -15,6 +16,7 @@ class DatabaseSeeder extends Seeder
             ProdiSeeder::class,             
             KelompokKeahlianSeeder::class,  
             DosenSeeder::class,
+            CalonDosenSeeder::class,
             RekrutasiDosenSeeder::class,
             JadwalPengujianSeeder::class             
         ]);

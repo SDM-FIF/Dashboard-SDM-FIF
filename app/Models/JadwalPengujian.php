@@ -11,10 +11,12 @@ class JadwalPengujian extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'calon_dosen_id',
         'dosen_penguji_id',
         'rekrutasi_dosen_id',
         'jadwal_ujian',
         'status_dosen',
+        'jenis_kelamin',
     ];
 
     protected $casts = [
@@ -26,12 +28,24 @@ class JadwalPengujian extends Model
     const STATUS_DITERIMA = 'Diterima';
     const STATUS_DITOLAK = 'Ditolak';
 
+     // Konstanta untuk jenis kelamin
+    const JENIS_KELAMIN_LAKI = 'Laki-laki';
+    const JENIS_KELAMIN_PEREMPUAN = 'Perempuan';
+
     public static function getStatusDosenOptions()
     {
         return [
             self::STATUS_SELEKSI,
             self::STATUS_DITERIMA,
             self::STATUS_DITOLAK,
+        ];
+    }
+
+    public static function getJenisKelaminOptions()
+    {
+        return [
+            self::JENIS_KELAMIN_LAKI,
+            self::JENIS_KELAMIN_PEREMPUAN,
         ];
     }
 
