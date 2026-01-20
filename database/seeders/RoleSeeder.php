@@ -45,6 +45,18 @@ class RoleSeeder extends Seeder
             'manage kompetisi'
         ]);
 
+         // ======================
+        // TENAGA PENDUKUNG AKADEMIK (TPA)
+        // ======================
+        $tpaRole = Role::firstOrCreate(['name' => 'tpa']);
+        $tpaRole->givePermissionTo([
+            'view dashboard',
+            'manage mahasiswa',
+            'manage dosen',
+            'manage kompetisi',
+            'view reports'
+        ]);
+
         $this->command->info('✅ Roles dan permissions berhasil dibuat atau diperbarui!');
     }
 }

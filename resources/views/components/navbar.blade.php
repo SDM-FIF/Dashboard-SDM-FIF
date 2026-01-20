@@ -231,8 +231,8 @@
                             </li>
                             <li>
                                 {{-- Link Import Data --}}
-                                <a href="{{ route('mahasiswa.import-data') }}"
-                                    class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100 {{ request()->routeIs('mahasiswa.import-data') || request()->routeIs('mahasiswa.import-process') ? 'bg-red-600/60' : '' }}">
+                                <a href="{{ route('mahasiswa.import.view') }}"
+                                    class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100 {{ request()->routeIs('mahasiswa.import.*') || request()->routeIs('mahasiswa.import-process') ? 'bg-red-600/60' : '' }}">
                                     Import Data
                                 </a>
                             </li>
