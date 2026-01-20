@@ -204,14 +204,23 @@ Route::middleware('auth')->group(function () {
     // Manajemen TPA Routes
     // ============================
     Route::prefix('manajemen-tpa')->name('manajemen-tpa.')->group(function () {
+        // Kelola Data & Laporan
         Route::get('/kelola-data', [TenagaPendukungAkademikController::class, 'kelolaData'])->name('kelola-data');
-        Route::get('/import-data', [TenagaPendukungAkademikController::class, 'importForm'])->name('import-data');
-        Route::post('/import-data', [TenagaPendukungAkademikController::class, 'importProcess'])->name('import-process');
         Route::get('/laporan', [TenagaPendukungAkademikController::class, 'laporan'])->name('laporan');
+
+
+        Route::get('/download-template', [TenagaPendukungAkademikController::class, 'downloadTemplate'])->name('download-template');
+
+        // Import Features (Upload -> Preview -> Store)
+        Route::get('/import-data', [TenagaPendukungAkademikController::class, 'importForm'])->name('import-data');
+        Route::post('/import-process', [TenagaPendukungAkademikController::class, 'importProcess'])->name('import-process');
+        Route::post('/import-store', [TenagaPendukungAkademikController::class, 'storeImport'])->name('import.store');
 
         // CRUD Routes
         Route::get('/create', [TenagaPendukungAkademikController::class, 'create'])->name('create');
         Route::post('/store', [TenagaPendukungAkademikController::class, 'store'])->name('store');
+
+        // Letakkan route dengan parameter {tpa} di paling bawah agar tidak bentrok dengan route statis
         Route::get('/{tpa}', [TenagaPendukungAkademikController::class, 'show'])->name('show');
         Route::get('/{tpa}/edit', [TenagaPendukungAkademikController::class, 'edit'])->name('edit');
         Route::put('/{tpa}', [TenagaPendukungAkademikController::class, 'update'])->name('update');
@@ -220,26 +229,36 @@ Route::middleware('auth')->group(function () {
     // ============================
     // Manajemen Mahasiswa Routes
     // ============================
-    Route::resource('manajemen-mahasiswa', MahasiswaController::class);
+
     Route::prefix('mahasiswa')->name('mahasiswa.')->group(function () {
 
-        // Custom Routes (Menu Utama)
-        Route::get('/kelola-data', [MahasiswaController::class, 'kelolaData'])->name('kelola-data');
-        Route::get('/import-data', [MahasiswaController::class, 'importForm'])->name('import-data');
-        Route::post('/import-data', [MahasiswaController::class, 'importProcess'])->name('import-process');
+        // --- FITUR IMPORT (Pola Multi-Step) ---
+        // Halaman utama import & Step 1 (Upload View)
+        Route::get('/import', [MahasiswaController::class, 'importView'])->name('import.view');
+        // Proses Upload & Parsing (Step 1 ke Step 2)
+        Route::post('/import/upload', [MahasiswaController::class, 'uploadImport'])->name('import.upload');
+        // Proses Simpan ke Database (Step 2 ke Result)
+        Route::post('/import/save', [MahasiswaController::class, 'saveImport'])->name('import.save');
+        // Halaman Hasil Akhir (Step 3)
+        Route::get('/import/result', [MahasiswaController::class, 'importResult'])->name('import.result');
+
+        // --- DOWNLOADS ---
+        Route::get('/download-template', [MahasiswaController::class, 'downloadTemplate'])->name('download.template');
+        Route::get('/download-result', [MahasiswaController::class, 'downloadImportResult'])->name('download.result');
+
+        // --- MANAJEMEN DATA (CRUD) ---
+        Route::get('/kelola-data', [MahasiswaController::class, 'index'])->name('kelola-data');
         Route::get('/laporan', [MahasiswaController::class, 'laporan'])->name('laporan');
 
-        // CRUD Routes
         Route::get('/create', [MahasiswaController::class, 'create'])->name('create');
         Route::post('/store', [MahasiswaController::class, 'store'])->name('store');
 
-        // Note: Parameter '{mahasiswa}' harus sama dengan variabel di controller (public function show(Mahasiswa $mahasiswa))
+        // Route dengan Parameter diletakkan di bawah agar tidak "memakan" route statis di atas
         Route::get('/{mahasiswa}', [MahasiswaController::class, 'show'])->name('show');
         Route::get('/{mahasiswa}/edit', [MahasiswaController::class, 'edit'])->name('edit');
         Route::put('/{mahasiswa}', [MahasiswaController::class, 'update'])->name('update');
         Route::delete('/{mahasiswa}', [MahasiswaController::class, 'destroy'])->name('destroy');
     });
-
     // ============================
     // 🆕 Rekrutasi Dosen Routes (TAMBAHAN BARU)
     // ============================
