@@ -136,12 +136,6 @@
                                 Import Data
                             </a>
                         </li>
-                        <li>
-                            <a href="{{ route('manajemen-tpa.laporan') }}"
-                                class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100 {{ request()->routeIs('manajemen-tpa.laporan') ? 'bg-red-600/60' : '' }}">
-                                Laporan
-                            </a>
-                        </li>
                     </ul>
                 </div>
             </li>
@@ -236,13 +230,7 @@
                                     Import Data
                                 </a>
                             </li>
-                            <li>
-                                {{-- Link Laporan --}}
-                                <a href="{{ route('mahasiswa.laporan') }}"
-                                    class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100 {{ request()->routeIs('mahasiswa.laporan') ? 'bg-red-600/60' : '' }}">
-                                    Laporan
-                                </a>
-                            </li>
+
                         </ul>
                     </div>
                 </li>
