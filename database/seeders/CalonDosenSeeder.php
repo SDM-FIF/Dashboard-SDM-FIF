@@ -39,6 +39,7 @@ class CalonDosenSeeder extends Seeder
         $calonDosenData = [
             // Calon dengan S3
             [
+                // no_registrasi akan auto-generate
                 'prodi_id' => $prodi->where('nama_prodi', 'Informatika')->first()?->id ?? $prodi->first()->id,
                 'nama' => 'Dr. Andi Firmansyah, M.Kom',
                 'jenis_kelamin' => 'Laki-laki',
@@ -57,6 +58,7 @@ class CalonDosenSeeder extends Seeder
                 'ipk_s3' => 3.90,
                 'jabatan_fungsional_akademik' => 'Lektor',
                 'prodi_tujuan' => 'Informatika',
+                'bidang_keahlian' => 'Artificial Intelligence',
             ],
             [
                 'prodi_id' => $prodi->where('nama_prodi', 'Data Sains')->first()?->id ?? $prodi->first()->id,
@@ -77,6 +79,7 @@ class CalonDosenSeeder extends Seeder
                 'ipk_s3' => 3.92,
                 'jabatan_fungsional_akademik' => 'Lektor Kepala',
                 'prodi_tujuan' => 'Data Sains',
+                'bidang_keahlian' => 'Machine Learning',
             ],
 
             // Calon dengan S2
@@ -99,6 +102,7 @@ class CalonDosenSeeder extends Seeder
                 'ipk_s3' => null,
                 'jabatan_fungsional_akademik' => 'Asisten Ahli',
                 'prodi_tujuan' => 'Rekayasa Perangkat Lunak',
+                'bidang_keahlian' => 'Software Engineering',
             ],
             [
                 'prodi_id' => $prodi->where('nama_prodi', 'Teknologi Informasi')->first()?->id ?? $prodi->first()->id,
@@ -119,6 +123,7 @@ class CalonDosenSeeder extends Seeder
                 'ipk_s3' => null,
                 'jabatan_fungsional_akademik' => 'Asisten Ahli',
                 'prodi_tujuan' => 'Teknologi Informasi',
+                'bidang_keahlian' => 'Network Security',
             ],
 
             // Calon dengan S1
@@ -141,6 +146,7 @@ class CalonDosenSeeder extends Seeder
                 'ipk_s3' => null,
                 'jabatan_fungsional_akademik' => 'NJFA',
                 'prodi_tujuan' => 'Informatika',
+                'bidang_keahlian' => 'Web Development',
             ],
             [
                 'prodi_id' => $prodi->where('nama_prodi', 'Data Sains')->first()?->id ?? $prodi->first()->id,
@@ -161,10 +167,11 @@ class CalonDosenSeeder extends Seeder
                 'ipk_s3' => null,
                 'jabatan_fungsional_akademik' => 'NJFA',
                 'prodi_tujuan' => 'Data Sains',
+                'bidang_keahlian' => 'Data Analytics',
             ],
         ];
 
-        // Insert data
+        // Insert data (no_registrasi akan auto-generate via boot method)
         foreach ($calonDosenData as $data) {
             CalonDosen::create($data);
         }
@@ -180,5 +187,6 @@ class CalonDosenSeeder extends Seeder
         $this->command->info("   - Pendidikan S3: {$s3}");
         $this->command->info("   - Pendidikan S2: {$s2}");
         $this->command->info("   - Pendidikan S1: {$s1}");
+        $this->command->info("🔢 No. Registrasi auto-generated dengan format: CAL-YYYYMMDD-XXXX");
     }
 }

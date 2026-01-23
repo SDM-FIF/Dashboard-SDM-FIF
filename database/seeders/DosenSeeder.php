@@ -10,6 +10,7 @@ use App\Models\KelompokKeahlian;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
+use Carbon\Carbon;
 
 class DosenSeeder extends Seeder
 {
@@ -31,7 +32,7 @@ class DosenSeeder extends Seeder
         // Re-enable foreign key checks
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-        // Data dummy dosen dengan pendidikan terakhir
+        // Data dummy dosen dengan pendidikan terakhir dan kolom baru
         $dosenData = [
             // S1 - 3 dosen
             [
@@ -44,6 +45,9 @@ class DosenSeeder extends Seeder
                 'lokasi_kerja' => 'Data Sains',
                 'status_pegawai' => 'Profesional Full Time',
                 'pendidikan_terakhir' => 'S1',
+                'sertifikasi_dosen' => false,
+                'tanggal_serdos' => null,
+                'status_dosen' => 'Aktif',
                 'username' => 'budi.santoso',
                 'password' => 'password123'
             ],
@@ -57,6 +61,9 @@ class DosenSeeder extends Seeder
                 'lokasi_kerja' => 'Informatika',
                 'status_pegawai' => 'Profesional Part Time',
                 'pendidikan_terakhir' => 'S1',
+                'sertifikasi_dosen' => false,
+                'tanggal_serdos' => null,
+                'status_dosen' => 'Tugas Belajar',
                 'username' => 'rahmat.hidayat',
                 'password' => 'password123'
             ],
@@ -70,6 +77,9 @@ class DosenSeeder extends Seeder
                 'lokasi_kerja' => 'Informatika',
                 'status_pegawai' => 'Profesional Part Time',
                 'pendidikan_terakhir' => 'S1',
+                'sertifikasi_dosen' => true,
+                'tanggal_serdos' => '2023-06-15',
+                'status_dosen' => 'Aktif',
                 'username' => 'dewi.lestari',
                 'password' => 'password123'
             ],
@@ -85,6 +95,9 @@ class DosenSeeder extends Seeder
                 'lokasi_kerja' => 'Informatika',
                 'status_pegawai' => 'Tetap',
                 'pendidikan_terakhir' => 'S2',
+                'sertifikasi_dosen' => true,
+                'tanggal_serdos' => '2018-03-20',
+                'status_dosen' => 'Aktif',
                 'username' => 'ahmad.fauzi',
                 'password' => 'password123'
             ],
@@ -98,6 +111,9 @@ class DosenSeeder extends Seeder
                 'lokasi_kerja' => 'Teknologi Informasi',
                 'status_pegawai' => 'Tetap',
                 'pendidikan_terakhir' => 'S2',
+                'sertifikasi_dosen' => true,
+                'tanggal_serdos' => '2019-08-10',
+                'status_dosen' => 'Aktif',
                 'username' => 'indira.putri',
                 'password' => 'password123'
             ],
@@ -111,6 +127,9 @@ class DosenSeeder extends Seeder
                 'lokasi_kerja' => 'Rekayasa Perangkat Lunak',
                 'status_pegawai' => 'Perbantuan',
                 'pendidikan_terakhir' => 'S2',
+                'sertifikasi_dosen' => true,
+                'tanggal_serdos' => '2020-01-25',
+                'status_dosen' => 'Izin Belajar',
                 'username' => 'maya.sari',
                 'password' => 'password123'
             ],
@@ -124,6 +143,9 @@ class DosenSeeder extends Seeder
                 'lokasi_kerja' => 'Data Sains',
                 'status_pegawai' => 'Tetap',
                 'pendidikan_terakhir' => 'S2',
+                'sertifikasi_dosen' => false,
+                'tanggal_serdos' => null,
+                'status_dosen' => 'Aktif',
                 'username' => 'andi.pratama',
                 'password' => 'password123'
             ],
@@ -139,6 +161,9 @@ class DosenSeeder extends Seeder
                 'lokasi_kerja' => 'Rekayasa Perangkat Lunak',
                 'status_pegawai' => 'Tetap',
                 'pendidikan_terakhir' => 'S3',
+                'sertifikasi_dosen' => true,
+                'tanggal_serdos' => '2015-05-12',
+                'status_dosen' => 'Aktif',
                 'username' => 'siti.nurhaliza',
                 'password' => 'password123'
             ],
@@ -152,6 +177,9 @@ class DosenSeeder extends Seeder
                 'lokasi_kerja' => 'Teknologi Informasi',
                 'status_pegawai' => 'Tetap',
                 'pendidikan_terakhir' => 'S3',
+                'sertifikasi_dosen' => true,
+                'tanggal_serdos' => '2012-11-30',
+                'status_dosen' => 'CLTY',
                 'username' => 'bambang.sutopo',
                 'password' => 'password123'
             ],
@@ -165,6 +193,9 @@ class DosenSeeder extends Seeder
                 'lokasi_kerja' => 'Rekayasa Perangkat Lunak',
                 'status_pegawai' => 'Profesional Full Time',
                 'pendidikan_terakhir' => 'S3',
+                'sertifikasi_dosen' => true,
+                'tanggal_serdos' => '2021-09-18',
+                'status_dosen' => 'Aktif',
                 'username' => 'agus.setiawan',
                 'password' => 'password123'
             ]
@@ -217,13 +248,25 @@ class DosenSeeder extends Seeder
                 'kode_dosen' => $data['kode_dosen'],
                 'lokasi_kerja' => $data['lokasi_kerja'],
                 'status_pegawai' => $data['status_pegawai'],
-                'pendidikan_terakhir' => $data['pendidikan_terakhir'], // TAMBAHAN
+                'pendidikan_terakhir' => $data['pendidikan_terakhir'],
+                'sertifikasi_dosen' => $data['sertifikasi_dosen'],      // ✅ Tambahan
+                'tanggal_serdos' => $data['tanggal_serdos'],            // ✅ Tambahan
+                'foto_profil' => null,                                  // ✅ Null dulu (foto diupload manual)
+                'status_dosen' => $data['status_dosen'],                // ✅ Tambahan
             ]);
 
-            $this->command->info("✅ Dosen {$data['nama_lengkap']} ({$data['pendidikan_terakhir']}) berhasil dibuat");
+            $serdosStatus = $data['sertifikasi_dosen'] ? '✓ Serdos' : '✗ Belum';
+            $this->command->info("✅ Dosen {$data['nama_lengkap']} ({$data['pendidikan_terakhir']}) - {$serdosStatus} - Status: {$data['status_dosen']}");
         }
 
-        $this->command->info("🎉 DosenSeeder selesai! Total: " . count($dosenData) . " dosen");
-        $this->command->info("📊 Pembagian: 3 S1, 4 S2, 3 S3");
+        // Statistik
+        $totalDosen = count($dosenData);
+        $totalSerdos = collect($dosenData)->where('sertifikasi_dosen', true)->count();
+        $totalBelumSerdos = $totalDosen - $totalSerdos;
+
+        $this->command->info("🎉 DosenSeeder selesai!");
+        $this->command->info("📊 Total: {$totalDosen} dosen");
+        $this->command->info("   - Pembagian: 3 S1, 4 S2, 3 S3");
+        $this->command->info("   - Sertifikasi: {$totalSerdos} sudah, {$totalBelumSerdos} belum");
     }
 }
