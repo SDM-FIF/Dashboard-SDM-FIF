@@ -63,7 +63,7 @@ class MahasiswaController extends Controller
         // Data untuk dropdown filter
         $filterData = [
             'prodi' => Prodi::all(),
-            'status' => ['AKTIF', 'TIDAK AKTIF', 'CUTI'],
+            'status' => ['aktif', 'cuti', 'nonaktif', 'lulus', 'resign', 'dikeluarkan'], // Kecil semua
         ];
 
         return view('mahasiswa.kelola-data', compact('mahasiswa', 'filterData'));
@@ -189,7 +189,7 @@ class MahasiswaController extends Controller
     private function validateImportData($data)
     {
         $validated = [];
-        $validStatuses = ['AKTIF', 'TIDAK AKTIF', 'CUTI'];
+        $validStatuses = ['aktif', 'cuti', 'nonaktif', 'lulus', 'resign', 'dikeluarkan'];
 
         foreach ($data as $row) {
             $errors = [];
@@ -222,11 +222,11 @@ class MahasiswaController extends Controller
             }
 
             // 4. Validasi Status
-            $statusInput = strtoupper($row['status']);
+            $statusInput = strtolower(trim($row['status']));
             if (empty($row['status'])) {
                 $errors[] = 'Status kosong';
             } elseif (!in_array($statusInput, $validStatuses)) {
-                $errors[] = 'Status tidak valid (Gunakan: AKTIF, TIDAK AKTIF, CUTI)';
+                $errors[] = 'Status tidak valid (Gunakan: aktif, cuti, nonaktif, lulus, resign, atau dikeluarkan)';
             }
 
             $validated[] = [
@@ -234,15 +234,13 @@ class MahasiswaController extends Controller
                 'nama_lengkap' => $row['nama_lengkap'],
                 'prodi_name' => $row['prodi'],
                 'prodi_id' => $prodiId,
-                'status' => $statusInput, // Gunakan yang sudah uppercase
+                'status' => $statusInput,
                 'is_valid' => empty($errors),
                 'errors' => $errors
             ];
         }
-
         return $validated;
     }
-
     /**
      * Simpan Data Import ke Database
      */
@@ -349,7 +347,7 @@ class MahasiswaController extends Controller
             <Cell ss:StyleID="Header"><Data ss:Type="String">NIM</Data></Cell>
             <Cell ss:StyleID="Header"><Data ss:Type="String">Nama Lengkap</Data></Cell>
             <Cell ss:StyleID="Header"><Data ss:Type="String">Program Studi</Data></Cell>
-            <Cell ss:StyleID="Header"><Data ss:Type="String">Status (AKTIF/CUTI)</Data></Cell>
+            <Cell ss:StyleID="Header"><Data ss:Type="String">Status (aktif/cuti/nonaktif/lulus/resign/dikeluarkan)</Data></Cell>
            </Row>
           </Table>
          </Worksheet>
@@ -448,7 +446,7 @@ class MahasiswaController extends Controller
             'nama_lengkap' => 'required|string|max:255',
             'nim' => 'required|numeric|unique:mahasiswa,nim',
             'prodi_id' => 'required|exists:prodi,id',
-            'status' => 'required|in:AKTIF,TIDAK AKTIF,CUTI',
+            'status' => 'required|in:aktif,cuti,nonaktif,lulus,resign,dikeluarkan', // SINKRON DISINI
         ]);
 
         try {
@@ -458,11 +456,23 @@ class MahasiswaController extends Controller
             return back()->withErrors(['error' => 'Error: ' . $e->getMessage()])->withInput();
         }
     }
-
     public function show(Request $request, Mahasiswa $mahasiswa)
     {
-        $mahasiswa->load(['prodi', 'kompetisi']); // Asumsi relasi kompetisi ada
-        return view('mahasiswa.detail-data', compact('mahasiswa'));
+        // 1. Ambil detail mahasiswa yang dipilih (Eager load relasi)
+        $mahasiswa->load(['prodi']);
+
+        // 2. Ambil data mahasiswa keseluruhan untuk tabel di bawah detail
+        $allQuery = Mahasiswa::query();
+
+        // Tambahkan filter status jika ada (Sesuai form filter di Blade kamu)
+        if ($request->filled('filter_status')) {
+            $allQuery->where('status', $request->filter_status);
+        }
+
+        $allMahasiswa = $allQuery->paginate(10)->withQueryString();
+
+        // 3. Kirim kedua variabel ke view
+        return view('mahasiswa.detail-data', compact('mahasiswa', 'allMahasiswa'));
     }
 
     public function edit(Mahasiswa $mahasiswa)
@@ -477,7 +487,7 @@ class MahasiswaController extends Controller
             'nama_lengkap' => 'required|string|max:255',
             'nim' => 'required|numeric|unique:mahasiswa,nim,' . $mahasiswa->id,
             'prodi_id' => 'required|exists:prodi,id',
-            'status' => 'required|in:AKTIF,TIDAK AKTIF,CUTI',
+            'status' => 'required|in:aktif,cuti,nonaktif,lulus,resign,dikeluarkan', // SINKRON DISINI
         ]);
 
         try {

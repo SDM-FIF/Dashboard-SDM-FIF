@@ -7,14 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 class TenagaPendukungAkademik extends Model
 {
     protected $table = 'tenaga_pendukung_akademik';
-    
+
     public $timestamps = false;
 
     protected $fillable = [
         'user_id',
         'nama_lengkap',
         'nip',
-        'pangkat_golongan',
+        'jabatan',
         'status_pegawai',
         'lokasi_kerja',
         'pendidikan_terakhir',

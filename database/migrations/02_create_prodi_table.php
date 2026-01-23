@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nama_prodi');
             $table->unsignedBigInteger('fakultas_id')->nullable();
-            
+            $table->enum('jenjang', ['s1', 's2', 's3']);
             $table->foreign('fakultas_id')->references('id')->on('fakultas');
         });
 

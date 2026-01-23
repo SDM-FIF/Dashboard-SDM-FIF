@@ -89,11 +89,11 @@
                                 Pangkat / Golongan <span class="text-gray-400">(Opsional)</span>
                             </label>
                             <input type="text"
-                                   name="pangkat_golongan"
-                                   value="{{ old('pangkat_golongan') }}"
-                                   placeholder="III/a, IV/b, dll."
-                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 @error('pangkat_golongan') border-red-500 @enderror">
-                            @error('pangkat_golongan')
+                                   name="jabatan"
+                                   value="{{ old('jabatan') }}"
+                                   placeholder="admin prodi, skretaris prodi, dll."
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200 @error('jabatan') border-red-500 @enderror">
+                            @error('jabatan')
                                 <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                             @enderror
                         </div>

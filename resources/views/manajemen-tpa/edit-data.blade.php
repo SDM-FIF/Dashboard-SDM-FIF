@@ -77,8 +77,8 @@
 
                         <div>
                             <label class="block text-sm font-medium mb-2">Pangkat / Golongan</label>
-                            <input type="text" name="pangkat_golongan"
-                                   value="{{ old('pangkat_golongan', $tpa->pangkat_golongan) }}"
+                            <input type="text" name="jabatan"
+                                   value="{{ old('jabatan', $tpa->jabatan) }}"
                                    class="w-full px-4 py-3 border rounded-lg">
                         </div>
 
