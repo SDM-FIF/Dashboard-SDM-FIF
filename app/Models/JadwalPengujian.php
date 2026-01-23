@@ -16,12 +16,16 @@ class JadwalPengujian extends Model
         'dosen_penguji_id',
         'rekrutasi_dosen_id',
         'jadwal_ujian',
+        'gedung',      // ✅ Tambahan baru
+        'ruangan',     // ✅ Tambahan baru
+        'waktu',       // ✅ Tambahan baru
         'status_dosen',
         'jenis_kelamin',
     ];
 
     protected $casts = [
         'jadwal_ujian' => 'date',
+        'waktu' => 'datetime:H:i', // ✅ Cast waktu ke format jam:menit
     ];
 
     // Konstanta untuk status dosen

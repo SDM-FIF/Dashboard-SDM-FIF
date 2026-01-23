@@ -57,7 +57,11 @@ class JadwalPengujianSeeder extends Seeder
             return;
         }
 
-        $statusOptions = ['Seleksi', 'Diterima', 'Ditolak'];
+        // ✅ Data dummy untuk gedung dan ruangan
+        $gedungOptions = ['Gedung A', 'Gedung B', 'Gedung C', 'Gedung Rektorat', 'Gedung Teknik'];
+        $ruanganOptions = ['R.101', 'R.201', 'R.301', 'Lab Komputer 1', 'Lab Komputer 2', 'Ruang Sidang', 'Aula'];
+        $waktuOptions = ['08:00:00', '09:00:00', '10:00:00', '13:00:00', '14:00:00', '15:00:00'];
+
         $jadwalData = [];
 
         // Untuk setiap rekrutasi dosen, buat 2-3 jadwal pengujian dengan penguji berbeda
@@ -80,6 +84,9 @@ class JadwalPengujianSeeder extends Seeder
                     'dosen_penguji_id' => $penguji->id,
                     'rekrutasi_dosen_id' => $rekrutasi->id,
                     'jadwal_ujian' => $jadwalUjian->format('Y-m-d'),
+                    'gedung' => $gedungOptions[array_rand($gedungOptions)],  // ✅ Tambahan
+                    'ruangan' => $ruanganOptions[array_rand($ruanganOptions)], // ✅ Tambahan
+                    'waktu' => $waktuOptions[array_rand($waktuOptions)],      // ✅ Tambahan
                     'status_dosen' => $status,
                 ];
             }
