@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 class Kompetisi extends Model
 {
     protected $table = 'kompetisi';
-    
     public $timestamps = false;
 
     protected $fillable = [
         'nama_kompetisi',
+        'jenis', // ✅ Tambah ini
         'nama_penyelenggara',
         'tingkat_kompetisi',
         'tanggal_kompetisi',
@@ -21,33 +21,34 @@ class Kompetisi extends Model
         'tanggal_kompetisi' => 'date',
     ];
 
-    // Enum untuk tingkat kompetisi
-    const TINGKAT_UNIVERSITAS = 'Universitas';
-    const TINGKAT_KABUPATEN_KOTA = 'Kabupaten/Kota';
-    const TINGKAT_PROVINSI = 'Provinsi';
-    const TINGKAT_NASIONAL = 'Nasional';
-    const TINGKAT_INTERNASIONAL = 'Internasional';
+    // ✅ Konstanta Jenis Kompetisi (Kecil semua sesuai request sebelumnya)
+    const JENIS_SAINS = 'sains';
+    const JENIS_SENI = 'seni';
+    const JENIS_OLAHRAGA = 'olahraga';
+    const JENIS_TEKNOLOGI = 'teknologi';
+    const JENIS_LAINNYA = 'lainnya';
 
-    public static function getTingkatKompetisiOptions()
+    public static function getJenisOptions()
     {
         return [
-            self::TINGKAT_UNIVERSITAS,
-            self::TINGKAT_KABUPATEN_KOTA,
-            self::TINGKAT_PROVINSI,
-            self::TINGKAT_NASIONAL,
-            self::TINGKAT_INTERNASIONAL,
+            self::JENIS_SAINS,
+            self::JENIS_SENI,
+            self::JENIS_OLAHRAGA,
+            self::JENIS_TEKNOLOGI,
+            self::JENIS_LAINNYA,
         ];
     }
 
-    // Relasi
+    // Tingkat Kompetisi (Sebaiknya juga dibuat kecil semua jika ingin konsisten)
+    const TINGKAT_UNIVERSITAS = 'universitas';
+    const TINGKAT_NASIONAL = 'nasional';
+    const TINGKAT_INTERNASIONAL = 'internasional';
+    // ... dst
+
+    // Relasi tetap sama
     public function mahasiswa()
     {
         return $this->belongsToMany(Mahasiswa::class, 'mahasiswa_kompetisi')
                     ->using(MahasiswaKompetisi::class);
-    }
-
-    public function mahasiswaKompetisi()
-    {
-        return $this->hasMany(MahasiswaKompetisi::class);
     }
 }

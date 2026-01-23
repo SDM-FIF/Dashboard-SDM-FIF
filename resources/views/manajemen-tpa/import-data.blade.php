@@ -156,7 +156,7 @@
                                     @if($row['is_duplicate']) <br><span class="text-[10px] uppercase">Sudah Ada</span> @endif
                                 </td>
                                 <td class="px-4 py-3 text-sm text-gray-700 font-medium">{{ $row['nama_lengkap'] }}</td>
-                                <td class="px-4 py-3 text-sm text-gray-700">{{ $row['pangkat_golongan'] }}</td>
+                                <td class="px-4 py-3 text-sm text-gray-700">{{ $row['jabatan'] }}</td>
                                 <td class="px-4 py-3 text-sm text-gray-700">{{ $row['lokasi_kerja'] }}</td>
                             </tr>
                             @endforeach

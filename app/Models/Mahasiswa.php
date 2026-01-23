@@ -7,13 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 class Mahasiswa extends Model
 {
     protected $table = 'mahasiswa';
-    
+
     public $timestamps = false;
 
     protected $fillable = [
         'prodi_id',
         'nama_lengkap',
         'nim',
+        'status', 
     ];
 
     // Relasi
@@ -25,7 +26,7 @@ class Mahasiswa extends Model
     public function kompetisi()
     {
         return $this->belongsToMany(Kompetisi::class, 'mahasiswa_kompetisi')
-                    ->using(MahasiswaKompetisi::class);
+            ->using(MahasiswaKompetisi::class);
     }
 
     public function mahasiswaKompetisi()

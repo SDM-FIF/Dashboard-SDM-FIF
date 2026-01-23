@@ -145,7 +145,7 @@
                         <tr class="bg-red-600 text-white">
                             <th class="px-6 py-4 text-left text-sm font-semibold">Nama</th>
                             <th class="px-6 py-4 text-left text-sm font-semibold">NIP</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold">Pangkat/Gol.</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold">Jabatan</th>
                             <th class="px-6 py-4 text-left text-sm font-semibold">Lokasi Kerja</th>
                             <th class="px-6 py-4 text-left text-sm font-semibold">Status</th>
                             <th class="px-6 py-4 text-left text-sm font-semibold">Aksi</th>
@@ -168,7 +168,7 @@
                                         {{ $item->nip }}
                                     </td>
                                     <td class="px-6 py-4 text-sm text-gray-900">
-                                        {{ $item->pangkat_golongan ?? '-' }}
+                                        {{ $item->jabatan ?? '-' }}
                                     </td>
                                     <td class="px-6 py-4 text-sm text-gray-900">
                                         {{ $item->lokasi_kerja }}
