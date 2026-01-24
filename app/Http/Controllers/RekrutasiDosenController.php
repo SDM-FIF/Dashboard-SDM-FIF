@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\RekrutasiDosen;
+use App\Models\CalonDosen;
 use App\Models\Prodi;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
@@ -14,34 +14,40 @@ class RekrutasiDosenController extends Controller
 {
     public function index(Request $request)
     {
-        $query = RekrutasiDosen::with('prodi');
+        $query = CalonDosen::with(['prodi', 'tahunAjar']);
 
         // Filter by Prodi
         if ($request->filled('prodi')) {
             $query->where('prodi_id', $request->prodi);
         }
 
-        // Filter by Tahun Ajar
-        if ($request->filled('tahun_ajar')) {
-            $query->where('tahun_ajar', $request->tahun_ajar);
+        // Filter by Jenjang
+        if ($request->filled('jenjang')) {
+            $query->whereHas('prodi', function($q) use ($request) {
+                $q->where('jenjang', $request->jenjang);
+            });
         }
 
-        // Filter by Status
+        // Filter by Tahun Ajar
+        if ($request->filled('tahun_ajar')) {
+            $query->where('tahun_ajar_id', $request->tahun_ajar);
+        }
+
+        // Filter by Status Penerimaan
         if ($request->filled('status')) {
-            $query->where('status', $request->status);
+            $query->where('status_penerimaan', $request->status);
         }
 
         // Search by name
         if ($request->filled('search')) {
-            $query->where('nama_calon', 'like', '%' . $request->search . '%');
+            $query->where('nama', 'like', '%' . $request->search . '%');
         }
 
-        // Sorting
         // Sorting
         $sortColumn = $request->get('sort', 'created_at');
         $sortOrder = $request->get('order', 'desc');
 
-        $allowedSorts = ['no_registrasi', 'nama_calon', 'tahun_ajar', 'status', 'created_at'];
+        $allowedSorts = ['no_registrasi', 'nama', 'created_at'];
         if (in_array($sortColumn, $allowedSorts)) {
             $query->orderBy($sortColumn, $sortOrder);
         } else {
@@ -50,51 +56,41 @@ class RekrutasiDosenController extends Controller
 
         $rekrutasi = $query->paginate(10)->withQueryString();
 
-        // Get filter data
+        // Get filter data dari database
         $filterData = [
             'prodi' => Prodi::all(),
-            'tahun_ajar' => [
-                'Ganjil 2024/2025',
-                'Genap 2024/2025',
-                'Ganjil 2025/2026',
-                'Genap 2025/2026',
-            ],
-            'status' => RekrutasiDosen::getStatusOptions()
+            'jenjang' => Prodi::distinct()->pluck('jenjang')->filter()->sort()->values(),
+            'tahun_ajar' => \App\Models\TahunAjar::orderBy('tahun', 'desc')->orderBy('semester', 'desc')->get(),
+            'status' => \App\Models\CalonDosen::getStatusOptions(),
         ];
 
-        // UBAH PATH VIEW DI SINI
         return view('rekrutasi-dosen.rekrutasi-dosen', compact('rekrutasi', 'filterData'));
     }
 
     public function create()
     {
         $prodi = Prodi::all();
-        $tahunAjar = [
-            'Ganjil 2024/2025',
-            'Genap 2024/2025',
-            'Ganjil 2025/2026',
-            'Genap 2025/2026',
-        ];
+        // Ambil tahun ajar dari database
+        $tahunAjar = \App\Models\TahunAjar::orderBy('tahun', 'desc')->orderBy('semester', 'desc')->get();
 
-        // UBAH PATH VIEW DI SINI
         return view('rekrutasi-dosen.tambah-rekrutasi-dosen', compact('prodi', 'tahunAjar'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'nama_calon' => 'required|string|max:255',
+            'nama' => 'required|string|max:255',
             'prodi_id' => 'required|exists:prodi,id',
-            'tahun_ajar' => 'required|string',
-            'tanggal_pengujian' => 'required|date',
-            'jadwal' => 'nullable|string',
-            'status' => 'required|in:Diajukan,Diproses,Diterima,Ditolak',
+            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
+            'tempat_lahir' => 'nullable|string',
+            'tanggal_lahir' => 'nullable|date',
+            'nomor_telepon' => 'nullable|string',
+            'alamat' => 'nullable|string',
+            'bidang_keahlian' => 'nullable|string',
         ]);
 
-        // Generate no registrasi otomatis
-        $validated['no_registrasi'] = RekrutasiDosen::generateNoRegistrasi();
-
-        RekrutasiDosen::create($validated);
+        // No registrasi auto-generate via model boot
+        CalonDosen::create($validated);
 
         return redirect()->route('rekrutasi-dosen')
             ->with('success', 'Data rekrutasi berhasil ditambahkan!');
@@ -102,7 +98,7 @@ class RekrutasiDosenController extends Controller
 
     public function show($id)
     {
-        $rekrutasi = RekrutasiDosen::with(['prodi', 'jadwalPengujian.dosenPenguji'])->findOrFail($id);
+        $rekrutasi = CalonDosen::with(['prodi', 'jadwalPengujian.dosenPenguji'])->findOrFail($id);
 
         // UBAH PATH VIEW DI SINI
         return view('rekrutasi-dosen.detail-rekrutasi-dosen', compact('rekrutasi'));
@@ -110,30 +106,27 @@ class RekrutasiDosenController extends Controller
 
     public function edit($id)
     {
-        $rekrutasi = RekrutasiDosen::findOrFail($id);
+        $rekrutasi = CalonDosen::findOrFail($id);
         $prodi = Prodi::all();
-        $tahunAjar = [
-            'Ganjil 2024/2025',
-            'Genap 2024/2025',
-            'Ganjil 2025/2026',
-            'Genap 2025/2026',
-        ];
+        // Ambil tahun ajar dari database
+        $tahunAjar = \App\Models\TahunAjar::orderBy('tahun', 'desc')->orderBy('semester', 'desc')->get();
 
-        // UBAH PATH VIEW DI SINI
         return view('rekrutasi-dosen.edit-rekrutasi-dosen', compact('rekrutasi', 'prodi', 'tahunAjar'));
     }
 
     public function update(Request $request, $id)
     {
-        $rekrutasi = RekrutasiDosen::findOrFail($id);
+        $rekrutasi = CalonDosen::findOrFail($id);
 
         $validated = $request->validate([
-            'nama_calon' => 'required|string|max:255',
+            'nama' => 'required|string|max:255',
             'prodi_id' => 'required|exists:prodi,id',
-            'tahun_ajar' => 'required|string',
-            'tanggal_pengujian' => 'required|date',
-            'jadwal' => 'nullable|string',
-            'status' => 'required|in:Diajukan,Diproses,Diterima,Ditolak',
+            'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
+            'tempat_lahir' => 'nullable|string',
+            'tanggal_lahir' => 'nullable|date',
+            'nomor_telepon' => 'nullable|string',
+            'alamat' => 'nullable|string',
+            'bidang_keahlian' => 'nullable|string',
         ]);
 
         $rekrutasi->update($validated);
@@ -144,7 +137,7 @@ class RekrutasiDosenController extends Controller
 
     public function destroy($id)
     {
-        $rekrutasi = RekrutasiDosen::findOrFail($id);
+        $rekrutasi = CalonDosen::findOrFail($id);
         $rekrutasi->delete();
 
         return redirect()->route('rekrutasi-dosen')
@@ -410,7 +403,7 @@ class RekrutasiDosenController extends Controller
             // Validate No. Registrasi
             if (empty($row['no_registrasi'])) {
                 $errors[] = 'No. Registrasi kosong';
-            } elseif (RekrutasiDosen::where('no_registrasi', $row['no_registrasi'])->exists()) {
+            } elseif (CalonDosen::where('no_registrasi', $row['no_registrasi'])->exists()) {
                 $errors[] = 'No. Registrasi sudah ada';
             }
 
@@ -477,15 +470,11 @@ class RekrutasiDosenController extends Controller
         foreach ($importData as $row) {
             if ($row['is_valid']) {
                 try {
-                    RekrutasiDosen::create([
+                    CalonDosen::create([
                         'no_registrasi' => $row['no_registrasi'],
-                        'nama_calon' => $row['nama_calon'],
+                        'nama' => $row['nama_calon'],
                         'jenis_kelamin' => $row['jenis_kelamin'],
                         'prodi_id' => $row['prodi_id'],
-                        'tahun_ajar' => $row['tahun_ajar'],
-                        'tanggal_pengujian' => now()->addDays(7), // Default 7 hari dari sekarang
-                        'jadwal' => null,
-                        'status' => 'Diproses', // Default status
                     ]);
                     $successCount++;
                 } catch (\Exception $e) {
@@ -648,17 +637,22 @@ class RekrutasiDosenController extends Controller
 
     public function exportPdf(Request $request)
     {
-        $query = RekrutasiDosen::with('prodi');
+        $query = CalonDosen::with(['prodi', 'tahunAjar']);
 
         // Apply filters
         if ($request->filled('prodi')) {
             $query->where('prodi_id', $request->prodi);
         }
+        if ($request->filled('jenjang')) {
+            $query->whereHas('prodi', function($q) use ($request) {
+                $q->where('jenjang', $request->jenjang);
+            });
+        }
         if ($request->filled('tahun_ajar')) {
-            $query->where('tahun_ajar', $request->tahun_ajar);
+            $query->where('tahun_ajar_id', $request->tahun_ajar);
         }
         if ($request->filled('status')) {
-            $query->where('status', $request->status);
+            $query->where('status_penerimaan', $request->status);
         }
 
         $rekrutasi = $query->latest()->get();

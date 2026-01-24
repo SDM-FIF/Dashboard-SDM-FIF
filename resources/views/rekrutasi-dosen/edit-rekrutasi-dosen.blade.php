@@ -80,9 +80,9 @@
                                 class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 @error('tahun_ajar') border-red-500 @enderror">
                             <option value="">-- Pilih Tahun Ajar --</option>
                             @if(isset($tahunAjar))
-                                @foreach($tahunAjar as $tahun)
-                                    <option value="{{ $tahun }}" {{ old('tahun_ajar', $rekrutasi->tahun_ajar) == $tahun ? 'selected' : '' }}>
-                                        {{ $tahun }}
+                                @foreach($tahunAjar as $ta)
+                                    <option value="{{ $ta->label }}" {{ old('tahun_ajar', $rekrutasi->tahun_ajar) == $ta->label ? 'selected' : '' }}>
+                                        {{ $ta->label }}
                                     </option>
                                 @endforeach
                             @endif

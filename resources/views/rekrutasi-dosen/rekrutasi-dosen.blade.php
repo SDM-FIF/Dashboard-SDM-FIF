@@ -28,7 +28,23 @@
         <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6 mb-6">
             <form method="GET" action="{{ route('rekrutasi-dosen') }}">
                 {{-- Filter Row --}}
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    {{-- Jenjang Filter --}}
+                    <div>
+                        <label class="block text-base font-semibold text-[#C41E3A] mb-2">Jenjang</label>
+                        <select name="jenjang"
+                            class="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-700 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200">
+                            <option value="">Semua Jenjang</option>
+                            @if(isset($filterData['jenjang']))
+                            @foreach($filterData['jenjang'] as $jenjang)
+                            <option value="{{ $jenjang }}" {{ request('jenjang') == $jenjang ? 'selected' : '' }}>
+                                {{ $jenjang }}
+                            </option>
+                            @endforeach
+                            @endif
+                        </select>
+                    </div>
+
                     {{-- Prodi Filter --}}
                     <div>
                         <label class="block text-base font-semibold text-[#C41E3A] mb-2">Prodi</label>
@@ -51,20 +67,29 @@
                         <select name="tahun_ajar"
                             class="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-700 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200">
                             <option value="">Semua Tahun Ajar</option>
-                            <option value="Ganjil 2025/2026" {{ request('tahun_ajar') == 'Ganjil 2025/2026' ? 'selected' : '' }}>Ganjil 2025/2026</option>
-                            <option value="Genap 2025/2026" {{ request('tahun_ajar') == 'Genap 2025/2026' ? 'selected' : '' }}>Genap 2025/2026</option>
+                            @if(isset($filterData['tahun_ajar']))
+                            @foreach($filterData['tahun_ajar'] as $ta)
+                            <option value="{{ $ta->id }}" {{ request('tahun_ajar') == $ta->id ? 'selected' : '' }}>
+                                {{ $ta->label }}
+                            </option>
+                            @endforeach
+                            @endif
                         </select>
                     </div>
 
-                    {{-- Status Dosen Filter --}}
+                    {{-- Status Penerimaan Filter --}}
                     <div>
-                        <label class="block text-base font-semibold text-[#C41E3A] mb-2">Status Dosen</label>
+                        <label class="block text-base font-semibold text-[#C41E3A] mb-2">Status</label>
                         <select name="status"
                             class="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-700 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200">
                             <option value="">Semua Status</option>
-                            <option value="Diterima" {{ request('status') == 'Diterima' ? 'selected' : '' }}>Diterima</option>
-                            <option value="Ditolak" {{ request('status') == 'Ditolak' ? 'selected' : '' }}>Ditolak</option>
-                            <option value="Diproses" {{ request('status') == 'Diproses' ? 'selected' : '' }}>Diproses</option>
+                            @if(isset($filterData['status']))
+                            @foreach($filterData['status'] as $status)
+                            <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
+                                {{ $status }}
+                            </option>
+                            @endforeach
+                            @endif
                         </select>
                     </div>
 
@@ -76,7 +101,7 @@
                             <span>Filter</span>
                         </button>
 
-                        @if(request()->has('prodi') || request()->has('tahun_ajar') || request()->has('status'))
+                        @if(request()->has('jenjang') || request()->has('prodi') || request()->has('tahun_ajar') || request()->has('status'))
                         <a href="{{ route('rekrutasi-dosen') }}"
                             class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold px-4 py-2.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex items-center justify-center space-x-2">
                             <i class="fas fa-redo"></i>
@@ -156,37 +181,19 @@
                             </a>
                         </th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
-                            <a href="{{ route('rekrutasi-dosen', array_merge(request()->all(), ['sort' => 'nama_calon', 'order' => request('order') == 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center hover:text-yellow-300">
+                            <a href="{{ route('rekrutasi-dosen', array_merge(request()->all(), ['sort' => 'nama', 'order' => request('order') == 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center hover:text-yellow-300">
                                 Nama
-                                @if(request('sort') == 'nama_calon')
+                                @if(request('sort') == 'nama')
                                 <i class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }} ml-1 text-xs"></i>
                                 @else
                                 <i class="fas fa-sort ml-1 text-xs opacity-50"></i>
                                 @endif
                             </a>
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Prodi</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
-                            <a href="{{ route('rekrutasi-dosen', array_merge(request()->all(), ['sort' => 'tahun_ajar', 'order' => request('order') == 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center hover:text-yellow-300">
-                                Tahun Ajar
-                                @if(request('sort') == 'tahun_ajar')
-                                <i class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }} ml-1 text-xs"></i>
-                                @else
-                                <i class="fas fa-sort ml-1 text-xs opacity-50"></i>
-                                @endif
-                            </a>
-                        </th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Jadwal</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
-                            <a href="{{ route('rekrutasi-dosen', array_merge(request()->all(), ['sort' => 'status', 'order' => request('order') == 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center hover:text-yellow-300">
-                                Status
-                                @if(request('sort') == 'status')
-                                <i class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }} ml-1 text-xs"></i>
-                                @else
-                                <i class="fas fa-sort ml-1 text-xs opacity-50"></i>
-                                @endif
-                            </a>
-                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Jenjang</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Nama Prodi</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Tahun Ajar</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Status</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Aksi</th>
                     </tr>
                 </thead>
@@ -200,29 +207,30 @@
                             {{ $item->no_registrasi }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {{ $item->nama_calon }}
+                            {{ $item->nama }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                {{ strtoupper($item->prodi->jenjang ?? '-') }}
+                            </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             {{ $item->prodi->nama_prodi ?? '-' }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {{ $item->tahun_ajar ?? '-' }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {{ $item->jadwal ?? ($item->tanggal_pengujian ? $item->tanggal_pengujian->format('d/m/Y') : '-') }}
+                            {{ $item->tahunAjar->label ?? '-' }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm">
                             @php
-                            $statusClass = match($item->status) {
-                            'Diterima' => 'bg-green-100 text-green-800',
-                            'Ditolak' => 'bg-red-100 text-red-800',
-                            'Diproses' => 'bg-blue-100 text-blue-800',
-                            'Diajukan' => 'bg-yellow-100 text-yellow-800',
-                            default => 'bg-gray-100 text-gray-800'
+                            $statusClass = match($item->status_penerimaan) {
+                                'Diterima' => 'bg-green-100 text-green-800',
+                                'Ditolak' => 'bg-red-100 text-red-800',
+                                'Seleksi' => 'bg-blue-100 text-blue-800',
+                                default => 'bg-gray-100 text-gray-800'
                             };
                             @endphp
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $statusClass }}">
-                                {{ $item->status }}
+                                {{ $item->status_penerimaan }}
                             </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -249,7 +257,7 @@
                                     @method('DELETE')
                                     <button type="button"
                                         class="text-red-600 hover:text-red-800 transition-colors duration-200 delete-btn"
-                                        data-nama="{{ $item->nama_calon }}"
+                                        data-nama="{{ $item->nama }}"
                                         data-no-reg="{{ $item->no_registrasi }}"
                                         title="Hapus">
                                         <i class="fas fa-trash"></i>
@@ -262,7 +270,7 @@
                     @else
                     {{-- Empty State --}}
                     <tr>
-                        <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                        <td colspan="8" class="px-6 py-12 text-center text-gray-500">
                             <div class="flex flex-col items-center space-y-4">
                                 <i class="fas fa-users text-4xl text-gray-300"></i>
                                 <div>
