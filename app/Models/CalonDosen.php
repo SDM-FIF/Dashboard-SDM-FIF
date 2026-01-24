@@ -12,34 +12,45 @@ class CalonDosen extends Model
     protected $table = 'calon_dosen';
 
     protected $fillable = [
-        'no_registrasi',              // ✅ Tambahan baru
+        'no_registrasi',
         'prodi_id',
+        'tahun_ajar_id',
         'nama',
         'jenis_kelamin',
         'tempat_lahir',
         'tanggal_lahir',
         'nomor_telepon',
         'alamat',
-        'prodi_pendidikan_s1',
-        'nama_kampus_pendidikan_s1',
-        'ipk_s1',
-        'prodi_pendidikan_s2',
-        'nama_kampus_pendidikan_s2',
-        'ipk_s2',
-        'prodi_pendidikan_s3',
-        'nama_kampus_pendidikan_s3',
-        'ipk_s3',
         'jabatan_fungsional_akademik',
-        'prodi_tujuan',
-        'bidang_keahlian',            // ✅ Tambahan baru
+        'bidang_keahlian',
+        'status_penerimaan',
     ];
 
     protected $casts = [
         'tanggal_lahir' => 'date',
-        'ipk_s1' => 'decimal:2',
-        'ipk_s2' => 'decimal:2',
-        'ipk_s3' => 'decimal:2',
     ];
+
+    // Constants untuk status penerimaan
+    const STATUS_SELEKSI = 'Seleksi';
+    const STATUS_DITERIMA = 'Diterima';
+    const STATUS_DITOLAK = 'Ditolak';
+
+    public static function getStatusOptions()
+    {
+        return [
+            self::STATUS_SELEKSI,
+            self::STATUS_DITERIMA,
+            self::STATUS_DITOLAK,
+        ];
+    }
+
+    /**
+     * Relasi ke Tahun Ajar
+     */
+    public function tahunAjar()
+    {
+        return $this->belongsTo(TahunAjar::class);
+    }
 
     /**
      * Relasi ke Prodi
@@ -78,9 +89,13 @@ class CalonDosen extends Model
      */
     public function getPendidikanTerakhirAttribute()
     {
-        if ($this->ipk_s3) return 'S3';
-        if ($this->ipk_s2) return 'S2';
-        if ($this->ipk_s1) return 'S1';
+        // Ambil riwayat pendidikan terakhir berdasarkan jenjang tertinggi
+        $riwayat = $this->riwayatPendidikan()->orderByRaw("FIELD(jenjang, 's3', 's2', 's1')")->first();
+        
+        if ($riwayat) {
+            return strtoupper($riwayat->jenjang);
+        }
+        
         return '-';
     }
 

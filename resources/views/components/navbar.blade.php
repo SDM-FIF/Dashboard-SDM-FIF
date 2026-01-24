@@ -171,7 +171,7 @@
             <li>
                 <a href="{{ route('rekrutasi-dosen') }}"
                     class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('rekrutasi-dosen') && !request()->routeIs('rekrutasi-dosen.*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
-                    Overview
+                    Data Rekrutasi Dosen
                 </a>
             </li>
             <li>

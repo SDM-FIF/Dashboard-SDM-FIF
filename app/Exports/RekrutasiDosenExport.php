@@ -2,7 +2,7 @@
 
 namespace App\Exports;
 
-use App\Models\RekrutasiDosen;
+use App\Models\CalonDosen;
 use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\WithEvents;
@@ -23,19 +23,25 @@ class RekrutasiDosenExport implements FromView, WithEvents, ShouldAutoSize
      */
     public function view(): View
     {
-        $query = RekrutasiDosen::query()->with('prodi');
+        $query = CalonDosen::query()->with(['prodi', 'tahunAjar']);
         
         // Apply filters
         if (isset($this->filters['prodi']) && !empty($this->filters['prodi'])) {
             $query->where('prodi_id', $this->filters['prodi']);
         }
         
+        if (isset($this->filters['jenjang']) && !empty($this->filters['jenjang'])) {
+            $query->whereHas('prodi', function($q) {
+                $q->where('jenjang', $this->filters['jenjang']);
+            });
+        }
+        
         if (isset($this->filters['tahun_ajar']) && !empty($this->filters['tahun_ajar'])) {
-            $query->where('tahun_ajar', $this->filters['tahun_ajar']);
+            $query->where('tahun_ajar_id', $this->filters['tahun_ajar']);
         }
         
         if (isset($this->filters['status']) && !empty($this->filters['status'])) {
-            $query->where('status', $this->filters['status']);
+            $query->where('status_penerimaan', $this->filters['status']);
         }
         
         $rekrutasi = $query->latest()->get();
@@ -53,7 +59,7 @@ class RekrutasiDosenExport implements FromView, WithEvents, ShouldAutoSize
         return [
             AfterSheet::class => function(AfterSheet $event) {
                 // Style header row
-                $event->sheet->getStyle('A1:G1')->applyFromArray([
+                $event->sheet->getStyle('A1:F1')->applyFromArray([
                     'font' => [
                         'bold' => true,
                         'color' => ['rgb' => 'FFFFFF'],

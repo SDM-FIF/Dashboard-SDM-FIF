@@ -28,6 +28,14 @@ class TahunAjarSeeder extends Seeder
 
         // Data tahun ajar
         $tahunAjarData = [
+            // Tahun 2023/2024
+            ['tahun' => 2324, 'semester' => '1'], 
+            ['tahun' => 2324, 'semester' => '2'],
+            
+            // Tahun 2024/2025
+            ['tahun' => 2425, 'semester' => '1'], 
+            ['tahun' => 2425, 'semester' => '2'],
+            
             // Tahun 2025/2026
             ['tahun' => 2526, 'semester' => '1'], 
             ['tahun' => 2526, 'semester' => '2'], 
