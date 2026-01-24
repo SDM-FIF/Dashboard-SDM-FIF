@@ -528,6 +528,89 @@
                         <label class="block text-sm font-medium text-gray-700 mb-2">Alamat</label>
 <textarea name="alamat" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm resize-none" style="margin: 0;"></textarea>
                     </div>
+
+                    <!-- Divider -->
+                    <div class="md:col-span-2">
+                        <hr class="my-4 border-gray-300">
+                        <h3 class="text-lg font-semibold text-[#C41E3A] mb-3">
+                            <i class="fas fa-graduation-cap mr-2"></i>Riwayat Pendidikan
+                        </h3>
+                    </div>
+
+                    <!-- S1 -->
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Pendidikan S1</label>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama Universitas</label>
+<input type="text" name="riwayat[s1][nama_universitas]" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Program Studi</label>
+<input type="text" name="riwayat[s1][prodi_pendidikan]" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Lulus</label>
+<input type="date" name="riwayat[s1][tanggal_lulus]" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Upload Ijazah (PDF/JPG/PNG)</label>
+<input type="file" name="riwayat[s1][ijazah]" accept=".pdf,.jpg,.jpeg,.png" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Upload Transkrip (PDF/JPG/PNG)</label>
+<input type="file" name="riwayat[s1][transkrip_nilai]" accept=".pdf,.jpg,.jpeg,.png" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                    </div>
+
+                    <!-- S2 -->
+                    <div class="md:col-span-2 mt-3">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Pendidikan S2 (Opsional)</label>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama Universitas</label>
+<input type="text" name="riwayat[s2][nama_universitas]" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Program Studi</label>
+<input type="text" name="riwayat[s2][prodi_pendidikan]" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Lulus</label>
+<input type="date" name="riwayat[s2][tanggal_lulus]" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Upload Ijazah (PDF/JPG/PNG)</label>
+<input type="file" name="riwayat[s2][ijazah]" accept=".pdf,.jpg,.jpeg,.png" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Upload Transkrip (PDF/JPG/PNG)</label>
+<input type="file" name="riwayat[s2][transkrip_nilai]" accept=".pdf,.jpg,.jpeg,.png" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                    </div>
+
+                    <!-- S3 -->
+                    <div class="md:col-span-2 mt-3">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Pendidikan S3 (Opsional)</label>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama Universitas</label>
+<input type="text" name="riwayat[s3][nama_universitas]" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Program Studi</label>
+<input type="text" name="riwayat[s3][prodi_pendidikan]" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Lulus</label>
+<input type="date" name="riwayat[s3][tanggal_lulus]" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Upload Ijazah (PDF/JPG/PNG)</label>
+<input type="file" name="riwayat[s3][ijazah]" accept=".pdf,.jpg,.jpeg,.png" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Upload Transkrip (PDF/JPG/PNG)</label>
+<input type="file" name="riwayat[s3][transkrip_nilai]" accept=".pdf,.jpg,.jpeg,.png" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                    </div>
                 </div>
             </form>
         `,
@@ -554,6 +637,12 @@
                 return false;
             }
             
+            // Debug: log FormData
+            console.log('=== FormData Contents ===');
+            for (let [key, value] of formData.entries()) {
+                console.log(key, ':', value);
+            }
+            
             return formData;
         }
     }).then((result) => {
@@ -574,8 +663,16 @@
                 },
                 body: formData
             })
-            .then(response => response.json())
+            .then(response => {
+                // Log response status untuk debugging
+                console.log('Response status:', response.status);
+                if (!response.ok && response.status !== 422) {
+                    throw new Error('HTTP error! status: ' + response.status);
+                }
+                return response.json();
+            })
             .then(data => {
+                console.log('Response data:', data);
                 if (data.success) {
                     Swal.fire({
                         icon: 'success',
@@ -585,10 +682,25 @@
                         timer: 2000
                     }).then(() => location.reload());
                 } else {
-                    Swal.fire('Error', 'Gagal menyimpan data', 'error');
+                    // Tampilkan pesan error yang lebih detail
+                    let errorMessage = 'Gagal menyimpan data';
+                    if (data.message) {
+                        errorMessage = data.message;
+                    }
+                    if (data.errors) {
+                        errorMessage += '<br><br>' + Object.values(data.errors).flat().join('<br>');
+                    }
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        html: errorMessage
+                    });
                 }
             })
-            .catch(() => Swal.fire('Error', 'Terjadi kesalahan', 'error'));
+            .catch(error => {
+                console.error('Fetch error:', error);
+                Swal.fire('Error', 'Terjadi kesalahan: ' + error.message, 'error');
+            });
         }
     });
 }
@@ -685,6 +797,95 @@
                             <label class="block text-sm font-medium text-gray-700 mb-2">Alamat</label>
 <textarea name="alamat" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm resize-none" style="margin: 0;">${item.alamat || ''}</textarea>
                         </div>
+
+                        <!-- Divider untuk Riwayat Pendidikan -->
+                        <div class="md:col-span-2">
+                            <hr class="my-4 border-gray-300">
+                            <h3 class="text-lg font-semibold text-gray-800 mb-3">
+                                <i class="fas fa-graduation-cap mr-2 text-purple-600"></i>Riwayat Pendidikan
+                            </h3>
+                        </div>
+
+                        <!-- S1 (Wajib) -->
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Pendidikan S1 <span class="text-red-500">*</span></label>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nama Universitas <span class="text-red-500">*</span></label>
+<input type="text" name="riwayat[s1][nama_universitas]" value="${item.riwayat_pendidikan?.find(r => r.jenjang === 'S1')?.nama_universitas || ''}" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Program Studi <span class="text-red-500">*</span></label>
+<input type="text" name="riwayat[s1][prodi_pendidikan]" value="${item.riwayat_pendidikan?.find(r => r.jenjang === 'S1')?.prodi_pendidikan || ''}" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Lulus <span class="text-red-500">*</span></label>
+<input type="date" name="riwayat[s1][tanggal_lulus]" value="${item.riwayat_pendidikan?.find(r => r.jenjang === 'S1')?.tanggal_lulus?.split('T')[0] || ''}" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Upload Ijazah Baru (PDF/JPG/PNG)</label>
+                            <input type="file" name="riwayat[s1][ijazah]" accept=".pdf,.jpg,.jpeg,.png" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                            ${item.riwayat_pendidikan?.find(r => r.jenjang === 'S1')?.ijazah ? '<small class="text-gray-500">File saat ini: ' + item.riwayat_pendidikan.find(r => r.jenjang === 'S1').ijazah.split('/').pop() + '</small>' : ''}
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Upload Transkrip Baru (PDF/JPG/PNG)</label>
+                            <input type="file" name="riwayat[s1][transkrip_nilai]" accept=".pdf,.jpg,.jpeg,.png" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                            ${item.riwayat_pendidikan?.find(r => r.jenjang === 'S1')?.transkrip_nilai ? '<small class="text-gray-500">File saat ini: ' + item.riwayat_pendidikan.find(r => r.jenjang === 'S1').transkrip_nilai.split('/').pop() + '</small>' : ''}
+                        </div>
+
+                        <!-- S2 (Opsional) -->
+                        <div class="md:col-span-2 mt-3">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Pendidikan S2 (Opsional)</label>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nama Universitas</label>
+<input type="text" name="riwayat[s2][nama_universitas]" value="${item.riwayat_pendidikan?.find(r => r.jenjang === 'S2')?.nama_universitas || ''}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Program Studi</label>
+<input type="text" name="riwayat[s2][prodi_pendidikan]" value="${item.riwayat_pendidikan?.find(r => r.jenjang === 'S2')?.prodi_pendidikan || ''}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Lulus</label>
+<input type="date" name="riwayat[s2][tanggal_lulus]" value="${item.riwayat_pendidikan?.find(r => r.jenjang === 'S2')?.tanggal_lulus?.split('T')[0] || ''}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Upload Ijazah Baru (PDF/JPG/PNG)</label>
+                            <input type="file" name="riwayat[s2][ijazah]" accept=".pdf,.jpg,.jpeg,.png" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                            ${item.riwayat_pendidikan?.find(r => r.jenjang === 'S2')?.ijazah ? '<small class="text-gray-500">File saat ini: ' + item.riwayat_pendidikan.find(r => r.jenjang === 'S2').ijazah.split('/').pop() + '</small>' : ''}
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Upload Transkrip Baru (PDF/JPG/PNG)</label>
+                            <input type="file" name="riwayat[s2][transkrip_nilai]" accept=".pdf,.jpg,.jpeg,.png" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                            ${item.riwayat_pendidikan?.find(r => r.jenjang === 'S2')?.transkrip_nilai ? '<small class="text-gray-500">File saat ini: ' + item.riwayat_pendidikan.find(r => r.jenjang === 'S2').transkrip_nilai.split('/').pop() + '</small>' : ''}
+                        </div>
+
+                        <!-- S3 (Opsional) -->
+                        <div class="md:col-span-2 mt-3">
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">Pendidikan S3 (Opsional)</label>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nama Universitas</label>
+<input type="text" name="riwayat[s3][nama_universitas]" value="${item.riwayat_pendidikan?.find(r => r.jenjang === 'S3')?.nama_universitas || ''}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Program Studi</label>
+<input type="text" name="riwayat[s3][prodi_pendidikan]" value="${item.riwayat_pendidikan?.find(r => r.jenjang === 'S3')?.prodi_pendidikan || ''}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Lulus</label>
+<input type="date" name="riwayat[s3][tanggal_lulus]" value="${item.riwayat_pendidikan?.find(r => r.jenjang === 'S3')?.tanggal_lulus?.split('T')[0] || ''}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Upload Ijazah Baru (PDF/JPG/PNG)</label>
+                            <input type="file" name="riwayat[s3][ijazah]" accept=".pdf,.jpg,.jpeg,.png" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                            ${item.riwayat_pendidikan?.find(r => r.jenjang === 'S3')?.ijazah ? '<small class="text-gray-500">File saat ini: ' + item.riwayat_pendidikan.find(r => r.jenjang === 'S3').ijazah.split('/').pop() + '</small>' : ''}
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Upload Transkrip Baru (PDF/JPG/PNG)</label>
+                            <input type="file" name="riwayat[s3][transkrip_nilai]" accept=".pdf,.jpg,.jpeg,.png" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                            ${item.riwayat_pendidikan?.find(r => r.jenjang === 'S3')?.transkrip_nilai ? '<small class="text-gray-500">File saat ini: ' + item.riwayat_pendidikan.find(r => r.jenjang === 'S3').transkrip_nilai.split('/').pop() + '</small>' : ''}
+                        </div>
                     </div>
                 </form>
             `,
@@ -704,9 +905,17 @@
                 const form = document.getElementById('swalEditForm');
                 const formData = new FormData(form);
                 
+                // Validasi required fields
                 if (!formData.get('nama') || !formData.get('prodi_id') || !formData.get('tahun_ajar_id') || 
                     !formData.get('status_penerimaan') || !formData.get('jenis_kelamin')) {
                     Swal.showValidationMessage('Mohon lengkapi semua field yang wajib diisi (*)');
+                    return false;
+                }
+                
+                // Validasi S1 wajib
+                if (!formData.get('riwayat[s1][nama_universitas]') || !formData.get('riwayat[s1][prodi_pendidikan]') || 
+                    !formData.get('riwayat[s1][tanggal_lulus]')) {
+                    Swal.showValidationMessage('Data Pendidikan S1 wajib diisi!');
                     return false;
                 }
                 
@@ -733,8 +942,15 @@
                     },
                     body: formData
                 })
-                .then(response => response.json())
+                .then(response => {
+                    console.log('Update response status:', response.status);
+                    if (!response.ok && response.status !== 422) {
+                        throw new Error('HTTP error! status: ' + response.status);
+                    }
+                    return response.json();
+                })
                 .then(data => {
+                    console.log('Update response data:', data);
                     if (data.success) {
                         Swal.fire({
                             icon: 'success',
@@ -744,12 +960,23 @@
                             timer: 2000
                         }).then(() => location.reload());
                     } else {
-                        Swal.fire('Error', 'Gagal mengupdate data', 'error');
+                        let errorMessage = 'Gagal mengupdate data';
+                        if (data.message) {
+                            errorMessage = data.message;
+                        }
+                        if (data.errors) {
+                            errorMessage += '<br><br>' + Object.values(data.errors).flat().join('<br>');
+                        }
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            html: errorMessage
+                        });
                     }
                 })
                 .catch(error => {
                     console.error('Update error:', error);
-                    Swal.fire('Error', 'Terjadi kesalahan', 'error');
+                    Swal.fire('Error', 'Terjadi kesalahan: ' + error.message, 'error');
                 });
             }
         });
@@ -781,6 +1008,24 @@
                 if (item.riwayat_pendidikan && item.riwayat_pendidikan.length > 0) {
                     riwayatHTML = '<div class="space-y-2">';
                     item.riwayat_pendidikan.forEach(riwayat => {
+                        let filesHTML = '';
+                        if (riwayat.ijazah || riwayat.transkrip_nilai) {
+                            filesHTML = '<div class="mt-2 flex gap-2">';
+                            if (riwayat.ijazah) {
+                                const ijazahFilename = riwayat.ijazah.split('/').pop();
+                                filesHTML += `<a href="/rekrutasi-dosen/riwayat-file/${ijazahFilename}" target="_blank" class="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs hover:bg-blue-200">
+                                    <i class="fas fa-file-pdf mr-1"></i> Ijazah
+                                </a>`;
+                            }
+                            if (riwayat.transkrip_nilai) {
+                                const transkripFilename = riwayat.transkrip_nilai.split('/').pop();
+                                filesHTML += `<a href="/rekrutasi-dosen/riwayat-file/${transkripFilename}" target="_blank" class="inline-flex items-center px-2 py-1 bg-green-100 text-green-700 rounded text-xs hover:bg-green-200">
+                                    <i class="fas fa-file-alt mr-1"></i> Transkrip
+                                </a>`;
+                            }
+                            filesHTML += '</div>';
+                        }
+                        
                         riwayatHTML += `
                             <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
                                 <div class="flex items-center justify-between">
@@ -789,6 +1034,7 @@
                                 </div>
                                 <p class="text-sm text-gray-700 mt-1">${riwayat.prodi_pendidikan}</p>
                                 <p class="text-sm text-gray-600">${riwayat.nama_universitas}</p>
+                                ${filesHTML}
                             </div>
                         `;
                     });
