@@ -49,7 +49,7 @@ class CalonDosen extends Model
      */
     public function tahunAjar()
     {
-        return $this->belongsTo(TahunAjar::class);
+        return $this->belongsTo(TahunAjar::class, 'tahun_ajar_id');
     }
 
     /**

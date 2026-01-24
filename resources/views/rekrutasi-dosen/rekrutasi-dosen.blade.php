@@ -1,6 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<style>
+    /* Custom styling untuk SweetAlert2 form */
+    .swal2-input,
+    .swal2-textarea {
+        margin: 0 !important;
+        box-sizing: border-box !important;
+    }
+    
+    .swal2-html-container {
+        overflow-y: auto !important;
+        max-height: 70vh !important;
+    }
+</style>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -125,10 +139,10 @@
                 {{-- Action Buttons Row --}}
                 <div class="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0">
                     {{-- Tambah Data Button --}}
-                    <a href="{{ route('rekrutasi-dosen.create') }}"
-                        class="bg-[#FBB03B] hover:bg-orange-600 text-[#B91432] font-semibold px-6 py-2.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md inline-block">
-                        Tambah Data
-                    </a>
+                    <button onclick="openCreateModal()"
+                        class="bg-[#FBB03B] hover:bg-orange-600 text-[#B91432] font-semibold px-6 py-2.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
+                        <i class="fas fa-plus mr-2"></i>Tambah Data
+                    </button>
 
                     {{-- Right Side Controls --}}
                     <div class="flex flex-wrap items-center gap-3">
@@ -236,18 +250,16 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             <div class="flex items-center space-x-3">
                                 {{-- View Button --}}
-                                <a href="{{ route('rekrutasi-dosen.show', $item->id) }}"
-                                    class="text-blue-600 hover:text-blue-800 transition-colors duration-200"
+                                <button data-id="{{ $item->id }}" class="btn-detail text-blue-600 hover:text-blue-800 transition-colors duration-200"
                                     title="Lihat Detail">
                                     <i class="fas fa-eye"></i>
-                                </a>
+                                </button>
 
                                 {{-- Edit Button --}}
-                                <a href="{{ route('rekrutasi-dosen.edit', $item->id) }}"
-                                    class="text-green-600 hover:text-green-800 transition-colors duration-200"
+                                <button data-id="{{ $item->id }}" class="btn-edit text-green-600 hover:text-green-800 transition-colors duration-200"
                                     title="Edit">
                                     <i class="fas fa-edit"></i>
-                                </a>
+                                </button>
 
                                 {{-- Delete Button - IMPROVED WITH SWEETALERT --}}
                                 <form action="{{ route('rekrutasi-dosen.destroy', $item->id) }}"
@@ -277,11 +289,11 @@
                                     <h3 class="text-lg font-medium text-gray-900 mb-1">Tidak ada data rekrutasi</h3>
                                     <p class="text-sm text-gray-500">Belum ada data rekrutasi yang tersedia.</p>
                                 </div>
-                                <a href="{{ route('rekrutasi-dosen.create') }}"
+                                <button onclick="openCreateModal()"
                                     class="inline-flex items-center px-4 py-2 bg-[#C41E3A] hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors duration-200">
                                     <i class="fas fa-plus mr-2"></i>
                                     Tambah Data Rekrutasi
-                                </a>
+                                </button>
                             </div>
                         </td>
                     </tr>
@@ -414,6 +426,486 @@
                             form.submit();
                         }
                     });
+                });
+            });
+        });
+    </script>
+
+    
+    <script>
+        // Function to format date (remove ISO timestamp)
+        function formatDate(dateString) {
+            if (!dateString) return '-';
+            // Remove time part if exists (e.g., "1985-03-15T00:00:00.000000Z" -> "1985-03-15")
+            return dateString.split('T')[0];
+        }
+
+        // Function to format date for display (YYYY-MM-DD to DD-MM-YYYY)
+        function formatDateDisplay(dateString) {
+            if (!dateString) return '-';
+            const date = dateString.split('T')[0];
+            const [year, month, day] = date.split('-');
+            return `${day}-${month}-${year}`;
+        }
+
+        // Modal Functions
+        function openCreateModal() {
+    Swal.fire({
+        title: '<i class="fas fa-user-plus mr-2"></i>Tambah Data Rekrutasi Dosen',
+        html: `
+            <form id="swalCreateForm" class="text-left">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap <span class="text-red-500">*</span></label>
+<input type="text" name="nama" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Prodi <span class="text-red-500">*</span></label>
+<select name="prodi_id" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                            <option value="">Pilih Prodi</option>
+                            @if(isset($filterData['prodi']))
+                                @foreach($filterData['prodi'] as $prodi)
+                                    <option value="{{ $prodi->id }}">{{ $prodi->nama_prodi }}</option>
+                                @endforeach
+                            @endif
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tahun Ajar <span class="text-red-500">*</span></label>
+<select name="tahun_ajar_id" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                            <option value="">Pilih Tahun Ajar</option>
+                            @if(isset($filterData['tahun_ajar']))
+                                @foreach($filterData['tahun_ajar'] as $ta)
+                                    <option value="{{ $ta->id }}">{{ $ta->label }}</option>
+                                @endforeach
+                            @endif
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Status Penerimaan <span class="text-red-500">*</span></label>
+<select name="status_penerimaan" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                            <option value="">Pilih Status</option>
+                            <option value="Seleksi">Seleksi</option>
+                            <option value="Diterima">Diterima</option>
+                            <option value="Ditolak">Ditolak</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Jenis Kelamin <span class="text-red-500">*</span></label>
+<select name="jenis_kelamin" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                            <option value="">Pilih Jenis Kelamin</option>
+                            <option value="Laki-laki">Laki-laki</option>
+                            <option value="Perempuan">Perempuan</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tempat Lahir</label>
+<input type="text" name="tempat_lahir" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Lahir</label>
+<input type="date" name="tanggal_lahir" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nomor Telepon</label>
+<input type="text" name="nomor_telepon" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Jabatan Fungsional Akademik</label>
+<select name="jabatan_fungsional_akademik" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                            <option value="NJFA">NJFA</option>
+                            <option value="Asisten Ahli">Asisten Ahli</option>
+                            <option value="Lektor">Lektor</option>
+                            <option value="Lektor Kepala">Lektor Kepala</option>
+                            <option value="Guru Besar">Guru Besar</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Bidang Keahlian</label>
+<input type="text" name="bidang_keahlian" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Alamat</label>
+<textarea name="alamat" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm resize-none" style="margin: 0;"></textarea>
+                    </div>
+                </div>
+            </form>
+        `,
+        width: '850px',
+        showCancelButton: true,
+        confirmButtonColor: '#C41E3A',
+        cancelButtonColor: '#6B7280',
+        confirmButtonText: '<i class="fas fa-save mr-2"></i>Simpan',
+        cancelButtonText: '<i class="fas fa-times mr-2"></i>Batal',
+        customClass: {
+            popup: 'rounded-lg',
+            confirmButton: 'px-6 py-2.5 rounded-lg font-semibold',
+            cancelButton: 'px-6 py-2.5 rounded-lg font-semibold',
+            title: 'text-[#C41E3A]'
+        },
+        preConfirm: () => {
+            const form = document.getElementById('swalCreateForm');
+            const formData = new FormData(form);
+            
+            // Validasi required fields
+            if (!formData.get('nama') || !formData.get('prodi_id') || !formData.get('tahun_ajar_id') || 
+                !formData.get('status_penerimaan') || !formData.get('jenis_kelamin')) {
+                Swal.showValidationMessage('Mohon lengkapi semua field yang wajib diisi (*)');
+                return false;
+            }
+            
+            return formData;
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const formData = result.value;
+            
+            Swal.fire({
+                title: 'Menyimpan...',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            fetch('{{ route("rekrutasi-dosen.store") }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: data.message,
+                        showConfirmButton: false,
+                        timer: 2000
+                    }).then(() => location.reload());
+                } else {
+                    Swal.fire('Error', 'Gagal menyimpan data', 'error');
+                }
+            })
+            .catch(() => Swal.fire('Error', 'Terjadi kesalahan', 'error'));
+        }
+    });
+}
+
+        function openEditModal(id) {
+    Swal.fire({
+        title: 'Memuat...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+    });
+
+    fetch(`/rekrutasi-dosen/${id}`, {
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(response => response.json())
+    .then(data => {
+        const item = data.data;
+        
+        Swal.fire({
+            title: '<i class="fas fa-edit mr-2"></i>Edit Data Rekrutasi Dosen',
+            html: `
+                <form id="swalEditForm" class="text-left">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap <span class="text-red-500">*</span></label>
+<input type="text" name="nama" value="${item.nama}" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Prodi <span class="text-red-500">*</span></label>
+<select name="prodi_id" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                                <option value="">Pilih Prodi</option>
+                                @if(isset($filterData['prodi']))
+                                    @foreach($filterData['prodi'] as $prodi)
+                                        <option value="{{ $prodi->id }}" ${item.prodi_id == '{{ $prodi->id }}' ? 'selected' : ''}>{{ $prodi->nama_prodi }}</option>
+                                    @endforeach
+                                @endif
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tahun Ajar <span class="text-red-500">*</span></label>
+<select name="tahun_ajar_id" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                                <option value="">Pilih Tahun Ajar</option>
+                                @if(isset($filterData['tahun_ajar']))
+                                    @foreach($filterData['tahun_ajar'] as $ta)
+                                        <option value="{{ $ta->id }}" ${item.tahun_ajar_id == '{{ $ta->id }}' ? 'selected' : ''}>{{ $ta->label }}</option>
+                                    @endforeach
+                                @endif
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Status Penerimaan <span class="text-red-500">*</span></label>
+<select name="status_penerimaan" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                                <option value="">Pilih Status</option>
+                                <option value="Seleksi" ${item.status_penerimaan == 'Seleksi' ? 'selected' : ''}>Seleksi</option>
+                                <option value="Diterima" ${item.status_penerimaan == 'Diterima' ? 'selected' : ''}>Diterima</option>
+                                <option value="Ditolak" ${item.status_penerimaan == 'Ditolak' ? 'selected' : ''}>Ditolak</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Jenis Kelamin <span class="text-red-500">*</span></label>
+<select name="jenis_kelamin" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                                <option value="">Pilih Jenis Kelamin</option>
+                                <option value="Laki-laki" ${item.jenis_kelamin == 'Laki-laki' ? 'selected' : ''}>Laki-laki</option>
+                                <option value="Perempuan" ${item.jenis_kelamin == 'Perempuan' ? 'selected' : ''}>Perempuan</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tempat Lahir</label>
+<input type="text" name="tempat_lahir" value="${item.tempat_lahir || ''}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Lahir</label>
+<input type="date" name="tanggal_lahir" value="${item.tanggal_lahir ? item.tanggal_lahir.split('T')[0] : ''}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Nomor Telepon</label>
+<input type="text" name="nomor_telepon" value="${item.nomor_telepon || ''}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Jabatan Fungsional Akademik</label>
+<select name="jabatan_fungsional_akademik" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                                <option value="NJFA" ${item.jabatan_fungsional_akademik == 'NJFA' ? 'selected' : ''}>NJFA</option>
+                                <option value="Asisten Ahli" ${item.jabatan_fungsional_akademik == 'Asisten Ahli' ? 'selected' : ''}>Asisten Ahli</option>
+                                <option value="Lektor" ${item.jabatan_fungsional_akademik == 'Lektor' ? 'selected' : ''}>Lektor</option>
+                                <option value="Lektor Kepala" ${item.jabatan_fungsional_akademik == 'Lektor Kepala' ? 'selected' : ''}>Lektor Kepala</option>
+                                <option value="Guru Besar" ${item.jabatan_fungsional_akademik == 'Guru Besar' ? 'selected' : ''}>Guru Besar</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Bidang Keahlian</label>
+<input type="text" name="bidang_keahlian" value="${item.bidang_keahlian || ''}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Alamat</label>
+<textarea name="alamat" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm resize-none" style="margin: 0;">${item.alamat || ''}</textarea>
+                        </div>
+                    </div>
+                </form>
+            `,
+            width: '850px',
+            showCancelButton: true,
+            confirmButtonColor: '#C41E3A',
+            cancelButtonColor: '#6B7280',
+            confirmButtonText: '<i class="fas fa-save mr-2"></i>Update',
+            cancelButtonText: '<i class="fas fa-times mr-2"></i>Batal',
+            customClass: {
+                popup: 'rounded-lg',
+                confirmButton: 'px-6 py-2.5 rounded-lg font-semibold',
+                cancelButton: 'px-6 py-2.5 rounded-lg font-semibold',
+                title: 'text-[#C41E3A]'
+            },
+            preConfirm: () => {
+                const form = document.getElementById('swalEditForm');
+                const formData = new FormData(form);
+                
+                if (!formData.get('nama') || !formData.get('prodi_id') || !formData.get('tahun_ajar_id') || 
+                    !formData.get('status_penerimaan') || !formData.get('jenis_kelamin')) {
+                    Swal.showValidationMessage('Mohon lengkapi semua field yang wajib diisi (*)');
+                    return false;
+                }
+                
+                return { formData, id: item.id };
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const { formData, id } = result.value;
+                
+                // Add _method for Laravel method spoofing
+                formData.append('_method', 'PUT');
+                
+                Swal.fire({
+                    title: 'Menyimpan...',
+                    allowOutsideClick: false,
+                    didOpen: () => Swal.showLoading()
+                });
+
+                fetch(`/rekrutasi-dosen/${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: data.message,
+                            showConfirmButton: false,
+                            timer: 2000
+                        }).then(() => location.reload());
+                    } else {
+                        Swal.fire('Error', 'Gagal mengupdate data', 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Update error:', error);
+                    Swal.fire('Error', 'Terjadi kesalahan', 'error');
+                });
+            }
+        });
+    })
+    .catch(() => Swal.fire('Error', 'Gagal memuat data', 'error'));
+}
+
+        function showDetail(id) {
+            Swal.fire({
+                title: 'Memuat...',
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            fetch(`/rekrutasi-dosen/${id}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                Swal.close();
+                const item = data.data;
+                console.log('Detail data:', item); // Debug log
+                console.log('Tahun Ajar:', item.tahun_ajar); // Debug tahun_ajar
+                console.log('TahunAjar (camelCase):', item.tahunAjar); // Debug tahunAjar
+                let riwayatHTML = '<p class="text-gray-500 italic">Belum ada data riwayat pendidikan</p>';
+                
+                if (item.riwayat_pendidikan && item.riwayat_pendidikan.length > 0) {
+                    riwayatHTML = '<div class="space-y-2">';
+                    item.riwayat_pendidikan.forEach(riwayat => {
+                        riwayatHTML += `
+                            <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-semibold text-purple-800">${riwayat.jenjang.toUpperCase()}</span>
+                                    <span class="text-sm text-gray-600">${formatDateDisplay(riwayat.tanggal_lulus)}</span>
+                                </div>
+                                <p class="text-sm text-gray-700 mt-1">${riwayat.prodi_pendidikan}</p>
+                                <p class="text-sm text-gray-600">${riwayat.nama_universitas}</p>
+                            </div>
+                        `;
+                    });
+                    riwayatHTML += '</div>';
+                }
+
+                const statusClass = item.status_penerimaan === 'Diterima' ? 'bg-green-100 text-green-800' :
+                                   item.status_penerimaan === 'Ditolak' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800';
+
+                Swal.fire({
+    title: '<i class="fas fa-user-circle mr-2"></i>Detail Calon Dosen',
+    html: `
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-500">No. Registrasi</label>
+                    <p class="text-gray-900 font-semibold">${item.no_registrasi}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-500">Nama Lengkap</label>
+                    <p class="text-gray-900 font-semibold">${item.nama}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-500">Jenis Kelamin</label>
+                    <p class="text-gray-900">${item.jenis_kelamin}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-500">Tempat, Tanggal Lahir</label>
+                    <p class="text-gray-900">${item.tempat_lahir || '-'}, ${formatDateDisplay(item.tanggal_lahir)}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-500">Nomor Telepon</label>
+                    <p class="text-gray-900">${item.nomor_telepon || '-'}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-500">Alamat</label>
+                    <p class="text-gray-900">${item.alamat || '-'}</p>
+                </div>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-500">Prodi</label>
+                    <p class="text-gray-900">${item.prodi ? item.prodi.nama_prodi : '-'}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-500">Jenjang</label>
+                    <p class="text-gray-900"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">${item.prodi ? item.prodi.jenjang : '-'}</span></p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-500">Tahun Ajar</label>
+                    <p class="text-gray-900">${(item.tahun_ajar && item.tahun_ajar.label) || (item.tahunAjar && item.tahunAjar.label) || '-'}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-500">Status Penerimaan</label>
+                    <p><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusClass}">${item.status_penerimaan}</span></p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-500">Jabatan Fungsional</label>
+                    <p class="text-gray-900">${item.jabatan_fungsional_akademik || '-'}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-500">Bidang Keahlian</label>
+                    <p class="text-gray-900">${item.bidang_keahlian || '-'}</p>
+                </div>
+            </div>
+            <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-500 mb-2">Riwayat Pendidikan</label>
+                ${riwayatHTML}
+            </div>
+        </div>
+    `,
+    width: '900px',
+    confirmButtonText: '<i class="fas fa-times mr-2"></i>Tutup',
+    confirmButtonColor: '#6B7280',
+    customClass: {
+        popup: 'rounded-lg',
+        confirmButton: 'px-6 py-2.5 rounded-lg font-semibold',
+        title: 'text-[#C41E3A]'
+    }
+});
+            })
+            .catch(error => {
+                Swal.fire('Error', 'Gagal memuat detail data', 'error');
+            });
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        // Close modal when clicking outside (on overlay)
+        document.addEventListener('DOMContentLoaded', function() {
+            const modals = ['createModal', 'editModal', 'detailModal'];
+            
+            modals.forEach(modalId => {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.addEventListener('click', function(e) {
+                        // Close if clicking on the overlay (not the content)
+                        if (e.target === modal) {
+                            closeModal(modalId);
+                        }
+                    });
+                }
+            });
+
+            // Event listeners for detail buttons
+            document.querySelectorAll('.btn-detail').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    showDetail(this.getAttribute('data-id'));
+                });
+            });
+
+            // Event listeners for edit buttons
+            document.querySelectorAll('.btn-edit').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    openEditModal(this.getAttribute('data-id'));
                 });
             });
         });
