@@ -20,6 +20,11 @@ class TahunAjar extends Model
         'tahun' => 'integer',
     ];
 
+    protected $appends = [
+        'label',
+        'nama_semester'
+    ];
+
     /**
      * Relasi ke Jadwal Pengujian
      */

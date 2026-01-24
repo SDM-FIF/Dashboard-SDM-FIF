@@ -81,26 +81,43 @@ class RekrutasiDosenController extends Controller
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
             'prodi_id' => 'required|exists:prodi,id',
+            'tahun_ajar_id' => 'required|exists:tahun_ajar,id',
+            'status_penerimaan' => 'required|in:Seleksi,Diterima,Ditolak',
             'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
             'tempat_lahir' => 'nullable|string',
             'tanggal_lahir' => 'nullable|date',
             'nomor_telepon' => 'nullable|string',
             'alamat' => 'nullable|string',
+            'jabatan_fungsional_akademik' => 'nullable|string',
             'bidang_keahlian' => 'nullable|string',
         ]);
 
         // No registrasi auto-generate via model boot
-        CalonDosen::create($validated);
+        $calonDosen = CalonDosen::create($validated);
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Data rekrutasi berhasil ditambahkan!',
+                'data' => $calonDosen->load(['prodi', 'tahunAjar'])
+            ]);
+        }
 
         return redirect()->route('rekrutasi-dosen')
             ->with('success', 'Data rekrutasi berhasil ditambahkan!');
     }
 
-    public function show($id)
+    public function show(Request $request, $id)
     {
-        $rekrutasi = CalonDosen::with(['prodi', 'jadwalPengujian.dosenPenguji'])->findOrFail($id);
+        $rekrutasi = CalonDosen::with(['prodi', 'tahunAjar', 'riwayatPendidikan', 'jadwalPengujian.dosenPenguji'])->findOrFail($id);
 
-        // UBAH PATH VIEW DI SINI
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'data' => $rekrutasi
+            ]);
+        }
+
         return view('rekrutasi-dosen.detail-rekrutasi-dosen', compact('rekrutasi'));
     }
 
@@ -121,15 +138,26 @@ class RekrutasiDosenController extends Controller
         $validated = $request->validate([
             'nama' => 'required|string|max:255',
             'prodi_id' => 'required|exists:prodi,id',
+            'tahun_ajar_id' => 'required|exists:tahun_ajar,id',
+            'status_penerimaan' => 'required|in:Seleksi,Diterima,Ditolak',
             'jenis_kelamin' => 'required|in:Laki-laki,Perempuan',
             'tempat_lahir' => 'nullable|string',
             'tanggal_lahir' => 'nullable|date',
             'nomor_telepon' => 'nullable|string',
             'alamat' => 'nullable|string',
+            'jabatan_fungsional_akademik' => 'nullable|string',
             'bidang_keahlian' => 'nullable|string',
         ]);
 
         $rekrutasi->update($validated);
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Data rekrutasi berhasil diupdate!',
+                'data' => $rekrutasi->load(['prodi', 'tahunAjar'])
+            ]);
+        }
 
         return redirect()->route('rekrutasi-dosen')
             ->with('success', 'Data rekrutasi berhasil diupdate!');
