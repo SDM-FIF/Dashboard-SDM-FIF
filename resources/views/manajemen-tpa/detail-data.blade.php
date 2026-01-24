@@ -64,8 +64,8 @@
                     {{-- Column 2 --}}
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-sm font-semibold text-gray-600 mb-1">Pangkat/Golongan</label>
-                            <p class="text-gray-900 font-medium">{{ $tpa->pangkat_golongan ?? '-' }}</p>
+                            <label class="block text-sm font-semibold text-gray-600 mb-1">Jabatan</label>
+                            <p class="text-gray-900 font-medium">{{ $tpa->jabatan ?? '-' }}</p>
                         </div>
 
                         <div>
