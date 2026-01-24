@@ -279,6 +279,9 @@ Route::middleware('auth')->group(function () {
         // Jadwal Pengujian
         Route::get('/jadwal-pengujian', [RekrutasiDosenController::class, 'jadwalPengujian'])->name('jadwal-pengujian');
 
+        // Download Riwayat Pendidikan Files
+        Route::get('/riwayat-file/{filename}', [RekrutasiDosenController::class, 'downloadRiwayatFile'])->name('riwayat.download');
+
         // Hasil Pengujian
         Route::get('/hasil-pengujian', [RekrutasiDosenController::class, 'hasilPengujian'])->name('hasil-pengujian');
 
