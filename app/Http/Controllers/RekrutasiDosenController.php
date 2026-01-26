@@ -442,8 +442,264 @@ class RekrutasiDosenController extends Controller
 
     public function jadwalPengujian()
     {
-        // UBAH PATH VIEW DI SINI
-        return view('rekrutasi-dosen.jadwal-pengujian-dosen');
+        $jadwalList = \App\Models\JadwalPengujian::with(['calonDosen', 'dosenPenguji', 'tahunAjar'])
+            ->orderBy('id', 'desc')
+            ->paginate(10);
+
+        // Get distinct gedung and ruangan for filters
+        $gedungList = \App\Models\JadwalPengujian::distinct()->pluck('gedung')->sort()->values();
+        $ruanganList = \App\Models\JadwalPengujian::distinct()->pluck('ruangan')->sort()->values();
+
+        // Get data for modals
+        $calonDosenList = \App\Models\CalonDosen::all();
+        $dosenList = \App\Models\Dosen::all();
+        $tahunAjarList = \App\Models\TahunAjar::all();
+
+        return view('rekrutasi-dosen.jadwal-pengujian', compact('jadwalList', 'gedungList', 'ruanganList', 'calonDosenList', 'dosenList', 'tahunAjarList'));
+    }
+
+    public function storeJadwalPengujian(Request $request)
+    {
+        try {
+            $request->validate([
+                'tahun_ajar_id' => 'required|exists:tahun_ajar,id',
+                'calon_dosen_id' => 'required|exists:calon_dosen,id',
+                'dosen_penguji_id' => 'required|exists:dosen,id',
+                'jadwal_ujian' => 'required|date',
+                'gedung' => 'required|string',
+                'ruangan' => 'required|string',
+                'waktu' => 'required',
+            ]);
+
+            \App\Models\JadwalPengujian::create($request->all());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Jadwal pengujian berhasil ditambahkan!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menambahkan jadwal pengujian: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function showJadwalPengujian($id)
+    {
+        $jadwal = \App\Models\JadwalPengujian::with(['calonDosen', 'dosenPenguji', 'tahunAjar'])->findOrFail($id);
+
+        return response()->json([
+            'tahun_ajar_id' => $jadwal->tahun_ajar_id,
+            'calon_dosen_id' => $jadwal->calon_dosen_id,
+            'dosen_penguji_id' => $jadwal->dosen_penguji_id,
+            'calon_dosen_nama' => $jadwal->calonDosen->nama,
+            'dosen_penguji_nama' => $jadwal->dosenPenguji->front_title . ' ' . $jadwal->dosenPenguji->nama_lengkap . ', ' . $jadwal->dosenPenguji->back_title,
+            'tahun_ajar' => $jadwal->tahunAjar->label,
+            'jadwal_ujian' => \Carbon\Carbon::parse($jadwal->jadwal_ujian)->format('d F Y'),
+            'jadwal_ujian_raw' => \Carbon\Carbon::parse($jadwal->jadwal_ujian)->format('Y-m-d'),
+            'gedung' => $jadwal->gedung,
+            'ruangan' => $jadwal->ruangan,
+            'waktu' => \Carbon\Carbon::parse($jadwal->waktu)->format('H:i'),
+            'waktu_raw' => \Carbon\Carbon::parse($jadwal->waktu)->format('H:i'),
+        ]);
+    }
+
+    public function editJadwalPengujian($id)
+    {
+        $jadwal = \App\Models\JadwalPengujian::findOrFail($id);
+        $calonDosenList = \App\Models\CalonDosen::all();
+        $dosenList = \App\Models\Dosen::all();
+        $tahunAjarList = \App\Models\TahunAjar::all();
+
+        return view('rekrutasi-dosen.jadwal-pengujian-edit', compact('jadwal', 'calonDosenList', 'dosenList', 'tahunAjarList'));
+    }
+
+    public function updateJadwalPengujian(Request $request, $id)
+    {
+        try {
+            $request->validate([
+                'tahun_ajar_id' => 'required|exists:tahun_ajar,id',
+                'calon_dosen_id' => 'required|exists:calon_dosen,id',
+                'dosen_penguji_id' => 'required|exists:dosen,id',
+                'jadwal_ujian' => 'required|date',
+                'gedung' => 'required|string',
+                'ruangan' => 'required|string',
+                'waktu' => 'required',
+            ]);
+
+            $jadwal = \App\Models\JadwalPengujian::findOrFail($id);
+            $jadwal->update($request->all());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Jadwal pengujian berhasil diupdate!'
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error updating jadwal pengujian: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal mengupdate jadwal pengujian: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function destroyJadwalPengujian($id)
+    {
+        try {
+            $jadwal = \App\Models\JadwalPengujian::findOrFail($id);
+            $jadwal->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Jadwal pengujian berhasil dihapus!'
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Error deleting jadwal pengujian: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Gagal menghapus jadwal pengujian: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function exportJadwalPengujianExcel()
+    {
+        $jadwalList = \App\Models\JadwalPengujian::with(['calonDosen', 'dosenPenguji', 'tahunAjar'])->get();
+
+        $filename = 'jadwal-pengujian-' . date('Y-m-d-His') . '.xls';
+
+        $headers = [
+            'Content-Type' => 'application/vnd.ms-excel',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
+
+        $callback = function () use ($jadwalList) {
+            echo $this->generateJadwalPengujianExcel($jadwalList);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    private function generateJadwalPengujianExcel($data)
+    {
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
+ <Styles>
+  <Style ss:ID="Header">
+   <Font ss:Bold="1" ss:Color="#FFFFFF" ss:Size="11"/>
+   <Interior ss:Color="#C41E3A" ss:Pattern="Solid"/>
+   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="Data">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+  </Style>
+ </Styles>
+ <Worksheet ss:Name="Jadwal Pengujian">
+  <Table>
+   <Column ss:Width="50"/>
+   <Column ss:Width="200"/>
+   <Column ss:Width="200"/>
+   <Column ss:Width="150"/>
+   <Column ss:Width="150"/>
+   <Column ss:Width="150"/>
+   <Column ss:Width="100"/>
+   <Row ss:Height="25">
+    <Cell ss:StyleID="Header"><Data ss:Type="String">No</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Nama Calon Dosen</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Dosen Penguji</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Tahun Ajar</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Gedung</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Ruangan</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Waktu</Data></Cell>
+   </Row>';
+
+        foreach ($data as $index => $jadwal) {
+            $dosenPengujiNama = $jadwal->dosenPenguji->front_title . ' ' . $jadwal->dosenPenguji->nama_lengkap . ', ' . $jadwal->dosenPenguji->back_title;
+            $waktu = \Carbon\Carbon::parse($jadwal->jadwal_ujian)->format('d/m/Y') . ' - ' . \Carbon\Carbon::parse($jadwal->waktu)->format('H:i');
+
+            $xml .= '
+   <Row>
+    <Cell ss:StyleID="Data"><Data ss:Type="Number">' . ($index + 1) . '</Data></Cell>
+    <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($jadwal->calonDosen->nama, ENT_XML1, 'UTF-8') . '</Data></Cell>
+    <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($dosenPengujiNama, ENT_XML1, 'UTF-8') . '</Data></Cell>
+    <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($jadwal->tahunAjar->label, ENT_XML1, 'UTF-8') . '</Data></Cell>
+    <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($jadwal->gedung, ENT_XML1, 'UTF-8') . '</Data></Cell>
+    <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($jadwal->ruangan, ENT_XML1, 'UTF-8') . '</Data></Cell>
+    <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($waktu, ENT_XML1, 'UTF-8') . '</Data></Cell>
+   </Row>';
+        }
+
+        $xml .= '
+  </Table>
+ </Worksheet>
+</Workbook>';
+
+        return $xml;
+    }
+
+    public function exportJadwalPengujianCsv()
+    {
+        $jadwalList = \App\Models\JadwalPengujian::with(['calonDosen', 'dosenPenguji', 'tahunAjar'])->get();
+
+        $filename = 'jadwal-pengujian-' . date('Y-m-d-His') . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
+
+        $callback = function () use ($jadwalList) {
+            $file = fopen('php://output', 'w');
+            
+            // Add BOM for UTF-8
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
+            
+            // Header
+            fputcsv($file, ['No', 'Nama Calon Dosen', 'Dosen Penguji', 'Tahun Ajar', 'Gedung', 'Ruangan', 'Waktu']);
+            
+            // Data
+            foreach ($jadwalList as $index => $jadwal) {
+                $dosenPengujiNama = $jadwal->dosenPenguji->front_title . ' ' . $jadwal->dosenPenguji->nama_lengkap . ', ' . $jadwal->dosenPenguji->back_title;
+                $waktu = \Carbon\Carbon::parse($jadwal->jadwal_ujian)->format('d/m/Y') . ' - ' . \Carbon\Carbon::parse($jadwal->waktu)->format('H:i');
+                
+                fputcsv($file, [
+                    $index + 1,
+                    $jadwal->calonDosen->nama,
+                    $dosenPengujiNama,
+                    $jadwal->tahunAjar->label,
+                    $jadwal->gedung,
+                    $jadwal->ruangan,
+                    $waktu
+                ]);
+            }
+            
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    public function exportJadwalPengujianPdf()
+    {
+        $jadwalList = \App\Models\JadwalPengujian::with(['calonDosen', 'dosenPenguji', 'tahunAjar'])->get();
+
+        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('rekrutasi-dosen.jadwal-pengujian-pdf', compact('jadwalList'));
+        
+        return $pdf->download('jadwal-pengujian-' . date('Y-m-d-His') . '.pdf');
     }
 
     public function hasilPengujian()
