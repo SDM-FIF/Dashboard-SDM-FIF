@@ -84,11 +84,19 @@
                 @endif
                 
                 <div class="flex justify-center space-x-4">
+                    @if(isset($result['data']) && count($result['data']) > 0)
                     <a href="{{ route('rekrutasi-dosen.import.download-result') }}" 
                        class="inline-flex items-center px-6 py-3 bg-[#FBB03B] hover:bg-orange-600 text-black font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg">
                         <i class="fas fa-download mr-2"></i>
                         Lihat Data
                     </a>
+                    @else
+                    <button disabled
+                       class="inline-flex items-center px-6 py-3 bg-gray-400 text-gray-700 font-semibold rounded-lg cursor-not-allowed">
+                        <i class="fas fa-download mr-2"></i>
+                        Lihat Data (Tidak Ada Data Berhasil)
+                    </button>
+                    @endif
                     
                     <a href="{{ route('rekrutasi-dosen') }}" 
                        class="inline-flex items-center px-6 py-3 bg-[#C41E3A] hover:bg-red-700 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg">

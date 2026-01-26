@@ -130,44 +130,94 @@
                 <p class="text-sm text-gray-600 mb-4">Hanya data valid yang akan diproses</p>
                 
                 <div class="overflow-x-auto">
-                    <table class="w-full border-collapse border border-gray-300">
+                    <table class="w-full border-collapse border border-gray-300 text-xs">
                         <thead>
                             <tr class="bg-[#C41E3A] text-white">
-                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase border border-gray-300">Valid</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase border border-gray-300">No. Registrasi</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase border border-gray-300">Nama</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase border border-gray-300">Jenis Kelamin</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase border border-gray-300">Tahun Ajar</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase border border-gray-300">Prodi</th>
+                                <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">Valid</th>
+                                <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">Nama</th>
+                                <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">JK</th>
+                                <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">Tahun Ajar</th>
+                                <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">Prodi</th>
+                                <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300" colspan="3" style="text-align: center;">Pendidikan S1</th>
+                                <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300" colspan="3" style="text-align: center;">Pendidikan S2</th>
+                                <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300" colspan="3" style="text-align: center;">Pendidikan S3</th>
+                                <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">Error</th>
+                            </tr>
+                            <tr class="bg-[#C41E3A] text-white">
+                                <th class="px-2 py-2 border border-gray-300"></th>
+                                <th class="px-2 py-2 border border-gray-300"></th>
+                                <th class="px-2 py-2 border border-gray-300"></th>
+                                <th class="px-2 py-2 border border-gray-300"></th>
+                                <th class="px-2 py-2 border border-gray-300"></th>
+                                <th class="px-2 py-2 text-center text-xs border border-gray-300">Universitas</th>
+                                <th class="px-2 py-2 text-center text-xs border border-gray-300">Prodi</th>
+                                <th class="px-2 py-2 text-center text-xs border border-gray-300">Tgl Lulus</th>
+                                <th class="px-2 py-2 text-center text-xs border border-gray-300">Universitas</th>
+                                <th class="px-2 py-2 text-center text-xs border border-gray-300">Prodi</th>
+                                <th class="px-2 py-2 text-center text-xs border border-gray-300">Tgl Lulus</th>
+                                <th class="px-2 py-2 text-center text-xs border border-gray-300">Universitas</th>
+                                <th class="px-2 py-2 text-center text-xs border border-gray-300">Prodi</th>
+                                <th class="px-2 py-2 text-center text-xs border border-gray-300">Tgl Lulus</th>
+                                <th class="px-2 py-2 border border-gray-300"></th>
                             </tr>
                         </thead>
                         <tbody class="bg-white">
                             @if(session()->has('import_data') && count(session('import_data')) > 0)
                                 @foreach(session('import_data') as $row)
                                 <tr class="{{ $row['is_valid'] ? 'hover:bg-gray-50' : 'bg-red-50' }} border-b border-gray-200">
-                                    <td class="px-4 py-3 text-center border border-gray-300">
+                                    <td class="px-2 py-2 text-center border border-gray-300">
                                         @if($row['is_valid'])
-                                            <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                                            <i class="fas fa-check-circle text-green-500 text-lg"></i>
                                         @else
-                                            <i class="fas fa-times-circle text-red-500 text-xl"></i>
+                                            <i class="fas fa-times-circle text-red-500 text-lg"></i>
                                         @endif
                                     </td>
-                                    <td class="px-4 py-3 text-sm border border-gray-300">{{ $row['no_registrasi'] }}</td>
-                                    <td class="px-4 py-3 text-sm border border-gray-300">{{ $row['nama_calon'] }}</td>
-                                    <td class="px-4 py-3 text-sm border border-gray-300">{{ $row['jenis_kelamin'] }}</td>
-                                    <td class="px-4 py-3 text-sm border border-gray-300">{{ $row['tahun_ajar'] }}</td>
-                                    <td class="px-4 py-3 text-sm border border-gray-300">
-                                        {{ $row['prodi_name'] }}
+                                    <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['nama_calon'] }}</td>
+                                    <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['jenis_kelamin'] }}</td>
+                                    <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['tahun_ajar'] }}</td>
+                                    <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['prodi_name'] }}</td>
+                                    <!-- S1 -->
+                                    <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['universitas_s1'] ?? '-' }}</td>
+                                    <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['prodi_s1'] ?? '-' }}</td>
+                                    <td class="px-2 py-2 text-xs border border-gray-300">
+                                        @if(!empty($row['tanggal_lulus_s1']))
+                                            {{ \Carbon\Carbon::parse($row['tanggal_lulus_s1'])->format('d/m/Y') }}
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
+                                    <!-- S2 -->
+                                    <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['universitas_s2'] ?? '-' }}</td>
+                                    <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['prodi_s2'] ?? '-' }}</td>
+                                    <td class="px-2 py-2 text-xs border border-gray-300">
+                                        @if(!empty($row['tanggal_lulus_s2']))
+                                            {{ \Carbon\Carbon::parse($row['tanggal_lulus_s2'])->format('d/m/Y') }}
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
+                                    <!-- S3 -->
+                                    <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['universitas_s3'] ?? '-' }}</td>
+                                    <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['prodi_s3'] ?? '-' }}</td>
+                                    <td class="px-2 py-2 text-xs border border-gray-300">
+                                        @if(!empty($row['tanggal_lulus_s3']))
+                                            {{ \Carbon\Carbon::parse($row['tanggal_lulus_s3'])->format('d/m/Y') }}
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
+                                    <td class="px-2 py-2 text-xs border border-gray-300">
                                         @if(!empty($row['errors']))
-                                            <br>
-                                            <span class="text-xs text-red-600 mt-1 block">{{ implode(', ', $row['errors']) }}</span>
+                                            <span class="text-red-600">{{ implode(', ', $row['errors']) }}</span>
+                                        @else
+                                            <span class="text-green-600">Valid</span>
                                         @endif
                                     </td>
                                 </tr>
                                 @endforeach
                             @else
                                 <tr>
-                                    <td colspan="6" class="px-4 py-12 text-center text-gray-500 border border-gray-300">
+                                    <td colspan="15" class="px-4 py-12 text-center text-gray-500 border border-gray-300">
                                         <div class="flex flex-col items-center">
                                             <i class="fas fa-inbox text-4xl mb-4 text-gray-400"></i>
                                             <p>No data shown available in table</p>
