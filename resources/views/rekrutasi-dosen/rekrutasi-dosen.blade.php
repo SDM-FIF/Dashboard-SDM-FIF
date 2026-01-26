@@ -305,11 +305,7 @@
         {{-- Pagination --}}
         @if(isset($rekrutasi) && $rekrutasi->hasPages())
         <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
-            <div class="flex items-center justify-between">
-                <div class="text-sm text-gray-700">
-                    Menampilkan {{ $rekrutasi->firstItem() }} sampai {{ $rekrutasi->lastItem() }}
-                    dari {{ $rekrutasi->total() }} hasil
-                </div>
+            <div class="flex items-center justify-end">
                 <div class="flex items-center space-x-2">
                     {{ $rekrutasi->links() }}
                 </div>
