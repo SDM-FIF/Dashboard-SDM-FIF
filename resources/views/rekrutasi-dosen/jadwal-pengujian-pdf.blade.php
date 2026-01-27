@@ -49,10 +49,11 @@
                 <th style="width: 5%;">No</th>
                 <th style="width: 20%;">Nama Calon Dosen</th>
                 <th style="width: 20%;">Dosen Penguji</th>
-                <th style="width: 15%;">Tahun Ajar</th>
-                <th style="width: 15%;">Gedung</th>
+                <th style="width: 12%;">Tahun Ajar</th>
+                <th style="width: 10%;">Metode</th>
+                <th style="width: 10%;">Gedung</th>
                 <th style="width: 10%;">Ruangan</th>
-                <th style="width: 15%;">Waktu</th>
+                <th style="width: 13%;">Waktu</th>
             </tr>
         </thead>
         <tbody>
@@ -60,10 +61,15 @@
             <tr>
                 <td>{{ $index + 1 }}</td>
                 <td>{{ $jadwal->calonDosen->nama }}</td>
-                <td>{{ $jadwal->dosenPenguji->front_title }} {{ $jadwal->dosenPenguji->nama_lengkap }}, {{ $jadwal->dosenPenguji->back_title }}</td>
+                <td>
+                    @foreach($jadwal->dosenPenguji as $dosen)
+                        {{ $dosen->pivot->urutan }}. {{ $dosen->front_title }} {{ $dosen->nama_lengkap }}, {{ $dosen->back_title }}<br>
+                    @endforeach
+                </td>
                 <td>{{ $jadwal->tahunAjar->label }}</td>
-                <td>{{ $jadwal->gedung }}</td>
-                <td>{{ $jadwal->ruangan }}</td>
+                <td>{{ $jadwal->metode_pelaksanaan }}</td>
+                <td>{{ $jadwal->gedung ?? '-' }}</td>
+                <td>{{ $jadwal->ruangan ?? '-' }}</td>
                 <td>{{ \Carbon\Carbon::parse($jadwal->jadwal_ujian)->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($jadwal->waktu)->format('H:i') }}</td>
             </tr>
             @endforeach

@@ -13,8 +13,8 @@ class JadwalPengujian extends Model
     protected $fillable = [
         'tahun_ajar_id',
         'calon_dosen_id',
-        'dosen_penguji_id',
         'jadwal_ujian',
+        'metode_pelaksanaan',
         'gedung',
         'ruangan',
         'waktu',
@@ -38,7 +38,10 @@ class JadwalPengujian extends Model
 
     public function dosenPenguji()
     {
-        return $this->belongsTo(Dosen::class, 'dosen_penguji_id');
+        return $this->belongsToMany(Dosen::class, 'jadwal_pengujian_dosen')
+                    ->withPivot('urutan')
+                    ->withTimestamps()
+                    ->orderBy('urutan');
     }
 
     public function hasilPengujian()

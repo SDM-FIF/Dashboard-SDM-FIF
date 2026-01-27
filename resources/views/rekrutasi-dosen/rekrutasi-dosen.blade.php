@@ -61,7 +61,7 @@
 
                     {{-- Prodi Filter --}}
                     <div>
-                        <label class="block text-base font-semibold text-[#C41E3A] mb-2">Prodi</label>
+                        <label class="block text-base font-semibold text-[#C41E3A] mb-2">Prodi Tujuan</label>
                         <select name="prodi"
                             class="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-700 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200">
                             <option value="">Semua Prodi</option>
@@ -205,7 +205,7 @@
                             </a>
                         </th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Jenjang</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Nama Prodi</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Prodi Tujuan</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Tahun Ajar</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Status</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Aksi</th>
@@ -456,7 +456,7 @@
 <input type="text" name="nama" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Prodi <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Prodi Tujuan <span class="text-red-500">*</span></label>
 <select name="prodi_id" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
                             <option value="">Pilih Prodi</option>
                             @if(isset($filterData['prodi']))
@@ -725,7 +725,7 @@
 <input type="text" name="nama" value="${item.nama}" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Prodi <span class="text-red-500">*</span></label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Prodi Tujuan <span class="text-red-500">*</span></label>
 <select name="prodi_id" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
                                 <option value="">Pilih Prodi</option>
                                 @if(isset($filterData['prodi']))
@@ -1072,7 +1072,7 @@
             </div>
             <div class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-500">Prodi</label>
+                    <label class="block text-sm font-medium text-gray-500">Prodi Tujuan</label>
                     <p class="text-gray-900">${item.prodi ? item.prodi.nama_prodi : '-'}</p>
                 </div>
                 <div>

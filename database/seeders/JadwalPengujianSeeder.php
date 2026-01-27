@@ -37,7 +37,8 @@ class JadwalPengujianSeeder extends Seeder
             // ✅ Disable foreign key checks
             DB::statement('SET FOREIGN_KEY_CHECKS=0;');
             
-            // ✅ Hapus data lama
+            // ✅ Hapus data lama dari pivot table dan jadwal
+            DB::table('jadwal_pengujian_dosen')->truncate();
             JadwalPengujian::truncate();
             
             // ✅ Re-enable foreign key checks
@@ -51,41 +52,56 @@ class JadwalPengujianSeeder extends Seeder
             return;
         }
 
-        // ✅ Data dummy untuk gedung dan ruangan
+        // ✅ Data dummy untuk metode pelaksanaan, gedung dan ruangan
+        $metodeOptions = ['Online', 'Onsite'];
         $gedungOptions = ['Gedung A', 'Gedung B', 'Gedung C', 'Gedung Rektorat', 'Gedung Teknik'];
         $ruanganOptions = ['R.101', 'R.201', 'R.301', 'Lab Komputer 1', 'Lab Komputer 2', 'Ruang Sidang', 'Aula'];
         $waktuOptions = ['08:00:00', '09:00:00', '10:00:00', '13:00:00', '14:00:00', '15:00:00'];
 
         $jadwalData = [];
+        $totalJadwal = 0;
 
-        // Untuk setiap calon dosen, buat 2-3 jadwal pengujian dengan penguji berbeda
+        // Untuk setiap calon dosen, buat 1 jadwal pengujian dengan 2-3 dosen penguji
         foreach ($calonDosen as $calon) {
             // Ambil 2-3 dosen penguji secara acak
             $jumlahPenguji = rand(2, 3);
             $dosenPenguji = $dosen->random($jumlahPenguji);
 
-            foreach ($dosenPenguji as $index => $penguji) {
-                // Jadwal ujian random dalam 30 hari ke depan
-                $jadwalUjian = Carbon::now()->addDays(rand(1, 30));
+            // Jadwal ujian random dalam 30 hari ke depan
+            $jadwalUjian = Carbon::now()->addDays(rand(1, 30));
+            
+            // Random metode pelaksanaan
+            $metode = $metodeOptions[array_rand($metodeOptions)];
+            
+            // Jika Online, gedung dan ruangan harus null
+            // Jika Onsite, harus ada gedung dan ruangan
+            $gedung = $metode === 'Online' ? null : $gedungOptions[array_rand($gedungOptions)];
+            $ruangan = $metode === 'Online' ? null : $ruanganOptions[array_rand($ruanganOptions)];
 
-                $jadwalData[] = [
-                    'tahun_ajar_id' => $tahunAjar->isNotEmpty() ? $tahunAjar->random()->id : null,
-                    'calon_dosen_id' => $calon->id,
-                    'dosen_penguji_id' => $penguji->id,
-                    'jadwal_ujian' => $jadwalUjian->format('Y-m-d'),
-                    'gedung' => $gedungOptions[array_rand($gedungOptions)],
-                    'ruangan' => $ruanganOptions[array_rand($ruanganOptions)],
-                    'waktu' => $waktuOptions[array_rand($waktuOptions)],
-                ];
+            // Create jadwal pengujian
+            $jadwal = JadwalPengujian::create([
+                'tahun_ajar_id' => $tahunAjar->isNotEmpty() ? $tahunAjar->random()->id : null,
+                'calon_dosen_id' => $calon->id,
+                'jadwal_ujian' => $jadwalUjian->format('Y-m-d'),
+                'metode_pelaksanaan' => $metode,
+                'gedung' => $gedung,
+                'ruangan' => $ruangan,
+                'waktu' => $waktuOptions[array_rand($waktuOptions)],
+            ]);
+
+            // Attach dosen penguji dengan urutan
+            foreach ($dosenPenguji as $index => $penguji) {
+                $jadwal->dosenPenguji()->attach($penguji->id, [
+                    'urutan' => $index + 1,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
             }
+
+            $totalJadwal++;
         }
 
-        // Insert data
-        DB::table('jadwal_pengujian')->insert($jadwalData);
-
         // Hitung statistik
-        $totalJadwal = count($jadwalData);
-
         $this->command->info("✅ JadwalPengujianSeeder selesai!");
         $this->command->info("📊 Total jadwal pengujian: {$totalJadwal}");
     }
