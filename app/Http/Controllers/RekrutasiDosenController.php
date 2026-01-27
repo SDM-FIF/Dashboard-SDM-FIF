@@ -440,38 +440,73 @@ class RekrutasiDosenController extends Controller
             ->with('success', 'Data berhasil diimport!');
     }
 
-    public function jadwalPengujian()
+    public function jadwalPengujian(Request $request)
     {
-        $jadwalList = \App\Models\JadwalPengujian::with(['calonDosen', 'dosenPenguji', 'tahunAjar'])
-            ->orderBy('id', 'desc')
-            ->paginate(10);
+        $query = \App\Models\JadwalPengujian::with(['calonDosen', 'dosenPenguji', 'tahunAjar']);
 
-        // Get distinct gedung and ruangan for filters
-        $gedungList = \App\Models\JadwalPengujian::distinct()->pluck('gedung')->sort()->values();
-        $ruanganList = \App\Models\JadwalPengujian::distinct()->pluck('ruangan')->sort()->values();
+        // Apply filters
+        if ($request->filled('metode')) {
+            $query->where('metode_pelaksanaan', $request->metode);
+        }
+
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            $query->where(function($q) use ($searchTerm) {
+                $q->whereHas('calonDosen', function($sq) use ($searchTerm) {
+                    $sq->where('nama', 'like', '%' . $searchTerm . '%');
+                })
+                ->orWhereHas('dosenPenguji', function($sq) use ($searchTerm) {
+                    $sq->where('nama_lengkap', 'like', '%' . $searchTerm . '%');
+                });
+            });
+        }
+
+        $jadwalList = $query->orderBy('id', 'desc')->paginate(10)->withQueryString();
+
+        // Get metode pelaksanaan options (enum values)
+        $metodeList = ['Online', 'Onsite'];
 
         // Get data for modals
         $calonDosenList = \App\Models\CalonDosen::all();
         $dosenList = \App\Models\Dosen::all();
         $tahunAjarList = \App\Models\TahunAjar::all();
 
-        return view('rekrutasi-dosen.jadwal-pengujian', compact('jadwalList', 'gedungList', 'ruanganList', 'calonDosenList', 'dosenList', 'tahunAjarList'));
+        return view('rekrutasi-dosen.jadwal-pengujian', compact('jadwalList', 'metodeList', 'calonDosenList', 'dosenList', 'tahunAjarList'));
     }
 
     public function storeJadwalPengujian(Request $request)
     {
         try {
-            $request->validate([
+            $validated = $request->validate([
                 'tahun_ajar_id' => 'required|exists:tahun_ajar,id',
                 'calon_dosen_id' => 'required|exists:calon_dosen,id',
-                'dosen_penguji_id' => 'required|exists:dosen,id',
+                'dosen_penguji_id' => 'required|array|min:2|max:3',
+                'dosen_penguji_id.*' => 'required|exists:dosen,id|distinct',
                 'jadwal_ujian' => 'required|date',
-                'gedung' => 'required|string',
-                'ruangan' => 'required|string',
+                'metode_pelaksanaan' => 'required|in:Online,Onsite',
+                'gedung' => 'nullable|string',
+                'ruangan' => 'nullable|string',
                 'waktu' => 'required',
             ]);
 
-            \App\Models\JadwalPengujian::create($request->all());
+            // Set gedung and ruangan to null if metode is Online
+            if ($validated['metode_pelaksanaan'] === 'Online') {
+                $validated['gedung'] = null;
+                $validated['ruangan'] = null;
+            }
+
+            // Extract dosen_penguji_id before creating
+            $dosenPengujiIds = $validated['dosen_penguji_id'];
+            unset($validated['dosen_penguji_id']);
+
+            $jadwal = \App\Models\JadwalPengujian::create($validated);
+
+            // Attach dosen penguji with urutan
+            $dosenData = [];
+            foreach ($dosenPengujiIds as $index => $dosenId) {
+                $dosenData[$dosenId] = ['urutan' => $index + 1];
+            }
+            $jadwal->dosenPenguji()->attach($dosenData);
 
             return response()->json([
                 'success' => true,
@@ -489,15 +524,25 @@ class RekrutasiDosenController extends Controller
     {
         $jadwal = \App\Models\JadwalPengujian::with(['calonDosen', 'dosenPenguji', 'tahunAjar'])->findOrFail($id);
 
+        // Format dosen penguji array
+        $dosenPengujiList = $jadwal->dosenPenguji->map(function($dosen) {
+            return [
+                'id' => $dosen->id,
+                'urutan' => $dosen->pivot->urutan,
+                'nama' => $dosen->front_title . ' ' . $dosen->nama_lengkap . ', ' . $dosen->back_title
+            ];
+        })->sortBy('urutan')->values();
+
         return response()->json([
             'tahun_ajar_id' => $jadwal->tahun_ajar_id,
             'calon_dosen_id' => $jadwal->calon_dosen_id,
-            'dosen_penguji_id' => $jadwal->dosen_penguji_id,
+            'dosen_penguji_ids' => $jadwal->dosenPenguji->pluck('id')->toArray(),
+            'dosen_penguji_list' => $dosenPengujiList,
             'calon_dosen_nama' => $jadwal->calonDosen->nama,
-            'dosen_penguji_nama' => $jadwal->dosenPenguji->front_title . ' ' . $jadwal->dosenPenguji->nama_lengkap . ', ' . $jadwal->dosenPenguji->back_title,
             'tahun_ajar' => $jadwal->tahunAjar->label,
             'jadwal_ujian' => \Carbon\Carbon::parse($jadwal->jadwal_ujian)->format('d F Y'),
             'jadwal_ujian_raw' => \Carbon\Carbon::parse($jadwal->jadwal_ujian)->format('Y-m-d'),
+            'metode_pelaksanaan' => $jadwal->metode_pelaksanaan,
             'gedung' => $jadwal->gedung,
             'ruangan' => $jadwal->ruangan,
             'waktu' => \Carbon\Carbon::parse($jadwal->waktu)->format('H:i'),
@@ -518,18 +563,38 @@ class RekrutasiDosenController extends Controller
     public function updateJadwalPengujian(Request $request, $id)
     {
         try {
-            $request->validate([
+            $validated = $request->validate([
                 'tahun_ajar_id' => 'required|exists:tahun_ajar,id',
                 'calon_dosen_id' => 'required|exists:calon_dosen,id',
-                'dosen_penguji_id' => 'required|exists:dosen,id',
+                'dosen_penguji_id' => 'required|array|min:2|max:3',
+                'dosen_penguji_id.*' => 'required|exists:dosen,id|distinct',
                 'jadwal_ujian' => 'required|date',
-                'gedung' => 'required|string',
-                'ruangan' => 'required|string',
+                'metode_pelaksanaan' => 'required|in:Online,Onsite',
+                'gedung' => 'nullable|string',
+                'ruangan' => 'nullable|string',
                 'waktu' => 'required',
             ]);
 
+            // Set gedung and ruangan to null if metode is Online
+            if ($validated['metode_pelaksanaan'] === 'Online') {
+                $validated['gedung'] = null;
+                $validated['ruangan'] = null;
+            }
+
             $jadwal = \App\Models\JadwalPengujian::findOrFail($id);
-            $jadwal->update($request->all());
+
+            // Extract dosen_penguji_id before updating
+            $dosenPengujiIds = $validated['dosen_penguji_id'];
+            unset($validated['dosen_penguji_id']);
+
+            $jadwal->update($validated);
+
+            // Sync dosen penguji with urutan
+            $dosenData = [];
+            foreach ($dosenPengujiIds as $index => $dosenId) {
+                $dosenData[$dosenId] = ['urutan' => $index + 1];
+            }
+            $jadwal->dosenPenguji()->sync($dosenData);
 
             return response()->json([
                 'success' => true,
@@ -607,6 +672,15 @@ class RekrutasiDosenController extends Controller
     <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
    </Borders>
   </Style>
+  <Style ss:ID="DataWrap">
+   <Alignment ss:Vertical="Top" ss:WrapText="1"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+  </Style>
  </Styles>
  <Worksheet ss:Name="Jadwal Pengujian">
   <Table>
@@ -614,31 +688,44 @@ class RekrutasiDosenController extends Controller
    <Column ss:Width="200"/>
    <Column ss:Width="200"/>
    <Column ss:Width="150"/>
-   <Column ss:Width="150"/>
-   <Column ss:Width="150"/>
+   <Column ss:Width="120"/>
+   <Column ss:Width="120"/>
+   <Column ss:Width="120"/>
    <Column ss:Width="100"/>
    <Row ss:Height="25">
     <Cell ss:StyleID="Header"><Data ss:Type="String">No</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Nama Calon Dosen</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Dosen Penguji</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Tahun Ajar</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Metode</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Gedung</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Ruangan</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Waktu</Data></Cell>
    </Row>';
 
         foreach ($data as $index => $jadwal) {
-            $dosenPengujiNama = $jadwal->dosenPenguji->front_title . ' ' . $jadwal->dosenPenguji->nama_lengkap . ', ' . $jadwal->dosenPenguji->back_title;
+            // Build multiple dosen penguji with numbering (each on new line)
+            $dosenPengujiList = [];
+            foreach ($jadwal->dosenPenguji as $dosen) {
+                $dosenPengujiList[] = $dosen->pivot->urutan . '. ' . $dosen->front_title . ' ' . $dosen->nama_lengkap . ', ' . $dosen->back_title;
+            }
+            // First escape XML special characters, then join with line break entity
+            $dosenPengujiEscaped = array_map(function($item) {
+                return htmlspecialchars($item, ENT_XML1 | ENT_QUOTES, 'UTF-8');
+            }, $dosenPengujiList);
+            $dosenPengujiNama = implode('&#10;', $dosenPengujiEscaped);
+            
             $waktu = \Carbon\Carbon::parse($jadwal->jadwal_ujian)->format('d/m/Y') . ' - ' . \Carbon\Carbon::parse($jadwal->waktu)->format('H:i');
 
             $xml .= '
    <Row>
     <Cell ss:StyleID="Data"><Data ss:Type="Number">' . ($index + 1) . '</Data></Cell>
     <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($jadwal->calonDosen->nama, ENT_XML1, 'UTF-8') . '</Data></Cell>
-    <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($dosenPengujiNama, ENT_XML1, 'UTF-8') . '</Data></Cell>
+    <Cell ss:StyleID="DataWrap"><Data ss:Type="String">' . $dosenPengujiNama . '</Data></Cell>
     <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($jadwal->tahunAjar->label, ENT_XML1, 'UTF-8') . '</Data></Cell>
-    <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($jadwal->gedung, ENT_XML1, 'UTF-8') . '</Data></Cell>
-    <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($jadwal->ruangan, ENT_XML1, 'UTF-8') . '</Data></Cell>
+    <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($jadwal->metode_pelaksanaan, ENT_XML1, 'UTF-8') . '</Data></Cell>
+    <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($jadwal->gedung ?? '-', ENT_XML1, 'UTF-8') . '</Data></Cell>
+    <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($jadwal->ruangan ?? '-', ENT_XML1, 'UTF-8') . '</Data></Cell>
     <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($waktu, ENT_XML1, 'UTF-8') . '</Data></Cell>
    </Row>';
         }
@@ -669,11 +756,16 @@ class RekrutasiDosenController extends Controller
             fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
             
             // Header
-            fputcsv($file, ['No', 'Nama Calon Dosen', 'Dosen Penguji', 'Tahun Ajar', 'Gedung', 'Ruangan', 'Waktu']);
+            fputcsv($file, ['No', 'Nama Calon Dosen', 'Dosen Penguji', 'Tahun Ajar', 'Metode', 'Gedung', 'Ruangan', 'Waktu']);
             
             // Data
             foreach ($jadwalList as $index => $jadwal) {
-                $dosenPengujiNama = $jadwal->dosenPenguji->front_title . ' ' . $jadwal->dosenPenguji->nama_lengkap . ', ' . $jadwal->dosenPenguji->back_title;
+                // Build multiple dosen penguji with numbering
+                $dosenPengujiList = [];
+                foreach ($jadwal->dosenPenguji as $dosen) {
+                    $dosenPengujiList[] = $dosen->pivot->urutan . '. ' . $dosen->front_title . ' ' . $dosen->nama_lengkap . ', ' . $dosen->back_title;
+                }
+                $dosenPengujiNama = implode(' | ', $dosenPengujiList);
                 $waktu = \Carbon\Carbon::parse($jadwal->jadwal_ujian)->format('d/m/Y') . ' - ' . \Carbon\Carbon::parse($jadwal->waktu)->format('H:i');
                 
                 fputcsv($file, [
@@ -681,8 +773,9 @@ class RekrutasiDosenController extends Controller
                     $jadwal->calonDosen->nama,
                     $dosenPengujiNama,
                     $jadwal->tahunAjar->label,
-                    $jadwal->gedung,
-                    $jadwal->ruangan,
+                    $jadwal->metode_pelaksanaan,
+                    $jadwal->gedung ?? '-',
+                    $jadwal->ruangan ?? '-',
                     $waktu
                 ]);
             }

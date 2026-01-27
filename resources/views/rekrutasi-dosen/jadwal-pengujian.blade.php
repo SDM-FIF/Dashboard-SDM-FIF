@@ -14,6 +14,37 @@
         overflow-y: auto !important;
         max-height: 70vh !important;
     }
+
+    /* Select2 styling inside SweetAlert2 */
+    .select2-container {
+        z-index: 9999 !important;
+    }
+    
+    .select2-container .select2-selection--single {
+        height: 38px !important;
+        border: 1px solid #d1d5db !important;
+        border-radius: 0.375rem !important;
+    }
+    
+    .select2-container .select2-selection--single .select2-selection__rendered {
+        line-height: 36px !important;
+        padding-left: 12px !important;
+    }
+    
+    .select2-container .select2-selection--single .select2-selection__arrow {
+        height: 36px !important;
+    }
+    
+    .select2-dropdown {
+        border: 1px solid #d1d5db !important;
+        border-radius: 0.375rem !important;
+    }
+    
+    .select2-search__field {
+        border: 1px solid #d1d5db !important;
+        border-radius: 0.375rem !important;
+        padding: 4px 8px !important;
+    }
 </style>
 
 <head>
@@ -23,6 +54,9 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <title>Jadwal Pengujian - Dashboard SDM FIF</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="flex flex-col md:flex-row bg-gray-50 font-nunito">
@@ -41,51 +75,44 @@
 
         {{-- Filter Section --}}
         <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6 mb-6">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                {{-- Gedung Filter --}}
-                <div>
-                    <label class="block text-base font-semibold text-[#C41E3A] mb-2">Gedung</label>
-                    <select id="filterGedung" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-700 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500">
-                        <option value="">Semua Gedung</option>
-                        @foreach($gedungList as $gedung)
-                            <option value="{{ $gedung }}">{{ $gedung }}</option>
-                        @endforeach
-                    </select>
-                </div>
+            <form method="GET" action="{{ route('rekrutasi-dosen.jadwal-pengujian') }}" id="filterForm">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {{-- Metode Pelaksanaan Filter --}}
+                    <div>
+                        <label class="block text-base font-semibold text-[#C41E3A] mb-2">Metode Pelaksanaan</label>
+                        <select name="metode" id="filterMetode" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-700 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                            <option value="">Semua Metode</option>
+                            @foreach($metodeList as $metode)
+                                <option value="{{ $metode }}" {{ request('metode') == $metode ? 'selected' : '' }}>{{ $metode }}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
-                {{-- Ruangan Filter --}}
-                <div>
-                    <label class="block text-base font-semibold text-[#C41E3A] mb-2">Ruangan</label>
-                    <select id="filterRuangan" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-700 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500">
-                        <option value="">Semua Ruangan</option>
-                        @foreach($ruanganList as $ruangan)
-                            <option value="{{ $ruangan }}">{{ $ruangan }}</option>
-                        @endforeach
-                    </select>
-                </div>
+                    {{-- Search Input --}}
+                    <div>
+                        <label class="block text-base font-semibold text-[#C41E3A] mb-2">Cari</label>
+                        <input type="text" name="search" id="searchInput" value="{{ request('search') }}" placeholder="Cari nama calon dosen atau penguji..." 
+                               class="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-700 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                    </div>
 
-                {{-- Search Input --}}
-                <div>
-                    <label class="block text-base font-semibold text-[#C41E3A] mb-2">Cari</label>
-                    <input type="text" id="searchInput" placeholder="Cari nama calon dosen atau penguji..." 
-                           class="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-700 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500">
-                </div>
+                    {{-- Filter & Reset Buttons --}}
+                    <div class="flex items-end gap-2">
+                        <button type="submit" id="applyFilterBtn"
+                            class="flex-1 bg-[#FBB03B] hover:bg-orange-600 text-black font-semibold px-4 py-2.5 rounded-lg flex items-center justify-center space-x-2 transition-all duration-200 shadow-sm hover:shadow-md">
+                            <i class="fas fa-sliders-h text-black"></i>
+                            <span>Filter</span>
+                        </button>
 
-                {{-- Filter & Reset Buttons --}}
-                <div class="flex items-end gap-2">
-                    <button type="button" id="applyFilterBtn"
-                        class="flex-1 bg-[#FBB03B] hover:bg-orange-600 text-black font-semibold px-4 py-2.5 rounded-lg flex items-center justify-center space-x-2 transition-all duration-200 shadow-sm hover:shadow-md">
-                        <i class="fas fa-sliders-h text-black"></i>
-                        <span>Filter</span>
-                    </button>
-
-                    <button type="button" id="resetBtn" style="display: none;"
-                        class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold px-4 py-2.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex items-center justify-center space-x-2">
-                        <i class="fas fa-redo"></i>
-                        <span>Reset</span>
-                    </button>
+                        @if(request('metode') || request('search'))
+                        <a href="{{ route('rekrutasi-dosen.jadwal-pengujian') }}" id="resetBtn"
+                            class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold px-4 py-2.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex items-center justify-center space-x-2">
+                            <i class="fas fa-redo"></i>
+                            <span>Reset</span>
+                        </a>
+                        @endif
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
 
         {{-- Data Table Section --}}
@@ -142,8 +169,9 @@
                             <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider w-16">No</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Nama Calon Dosen</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Dosen Penguji</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider w-32">Gedung</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider w-32">Ruangan</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider w-32">Metode</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Gedung</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Ruangan</th>
                             <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider w-40">Waktu</th>
                             <th class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider w-32">Aksi</th>
                         </tr>
@@ -151,18 +179,25 @@
                     <tbody id="jadwalTableBody" class="bg-white divide-y divide-gray-200">
                         @forelse($jadwalList as $index => $jadwal)
                         <tr class="hover:bg-gray-50 transition-colors duration-150">
-                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{{ $index + 1 }}</td>
+                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{{ $jadwalList->firstItem() + $index }}</td>
                             <td class="px-4 py-4 text-sm text-gray-900">{{ $jadwal->calonDosen->nama }}</td>
                             <td class="px-4 py-4 text-sm text-gray-900">
-                                {{ $jadwal->dosenPenguji->front_title }} {{ $jadwal->dosenPenguji->nama_lengkap }}, {{ $jadwal->dosenPenguji->back_title }}
+                                @foreach($jadwal->dosenPenguji as $dosen)
+                                    <div class="mb-1">{{ $loop->iteration }}. {{ $dosen->front_title }} {{ $dosen->nama_lengkap }}, {{ $dosen->back_title }}</div>
+                                @endforeach
                             </td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{{ $jadwal->gedung }}</td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{{ $jadwal->ruangan }}</td>
+                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $jadwal->metode_pelaksanaan == 'Online' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800' }}">
+                                    {{ $jadwal->metode_pelaksanaan }}
+                                </span>
+                            </td>
+                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{{ $jadwal->gedung ?? '-' }}</td>
+                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{{ $jadwal->ruangan ?? '-' }}</td>
                             <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
                                 {{ \Carbon\Carbon::parse($jadwal->jadwal_ujian)->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($jadwal->waktu)->format('H:i') }}
                             </td>
                             <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                                <div class="flex items-center justify-center space-x-3">
+                                <div class="flex items-center justify-center space-x-2">
                                     <button type="button" class="btn-detail text-blue-600 hover:text-blue-800 transition-colors duration-200" 
                                             data-id="{{ $jadwal->id }}" title="Detail">
                                         <i class="fas fa-eye"></i>
@@ -170,6 +205,14 @@
                                     <button type="button" class="btn-edit text-green-600 hover:text-green-800 transition-colors duration-200" 
                                             data-id="{{ $jadwal->id }}" title="Edit">
                                         <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button type="button" class="btn-penilaian text-purple-600 hover:text-purple-800 transition-colors duration-200" 
+                                            data-id="{{ $jadwal->id }}" title="Penilaian Calon Dosen">
+                                        <i class="fas fa-clipboard-check"></i>
+                                    </button>
+                                    <button type="button" class="btn-berita-acara text-orange-600 hover:text-orange-800 transition-colors duration-200" 
+                                            data-id="{{ $jadwal->id }}" title="Berita Acara">
+                                        <i class="fas fa-file-signature"></i>
                                     </button>
                                     <button type="button" class="btn-delete text-red-600 hover:text-red-800 transition-colors duration-200" 
                                             data-id="{{ $jadwal->id }}" title="Hapus">
@@ -180,7 +223,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                            <td colspan="8" class="px-6 py-12 text-center text-gray-500">
                                 <i class="fas fa-calendar-times text-4xl mb-2"></i>
                                 <p>Tidak ada data jadwal pengujian</p>
                             </td>
@@ -204,57 +247,6 @@
     </main>
 
     <script>
-        // Apply and Reset Filter Functions
-        document.getElementById('applyFilterBtn').addEventListener('click', function() {
-            filterTable();
-            // Show reset button when any filter is active
-            const gedung = document.getElementById('filterGedung').value;
-            const ruangan = document.getElementById('filterRuangan').value;
-            const search = document.getElementById('searchInput').value;
-            
-            if (gedung || ruangan || search) {
-                document.getElementById('resetBtn').style.display = 'flex';
-            }
-        });
-
-        document.getElementById('resetBtn').addEventListener('click', function() {
-            document.getElementById('filterGedung').value = '';
-            document.getElementById('filterRuangan').value = '';
-            document.getElementById('searchInput').value = '';
-            document.getElementById('resetBtn').style.display = 'none';
-            filterTable();
-        });
-
-        // Filter and Search Functions
-        function filterTable() {
-            const gedungFilter = document.getElementById('filterGedung').value.toLowerCase();
-            const ruanganFilter = document.getElementById('filterRuangan').value.toLowerCase();
-            const searchInput = document.getElementById('searchInput').value.toLowerCase();
-            const rows = document.querySelectorAll('#jadwalTableBody tr');
-            
-            rows.forEach(row => {
-                if (row.cells.length > 1) {
-                    const gedung = row.cells[3].textContent.toLowerCase();
-                    const ruangan = row.cells[4].textContent.toLowerCase();
-                    const calonDosen = row.cells[1].textContent.toLowerCase();
-                    const dosenPenguji = row.cells[2].textContent.toLowerCase();
-                    
-                    const matchGedung = !gedungFilter || gedung.includes(gedungFilter);
-                    const matchRuangan = !ruanganFilter || ruangan.includes(ruanganFilter);
-                    const matchSearch = !searchInput || calonDosen.includes(searchInput) || dosenPenguji.includes(searchInput);
-                    
-                    if (matchGedung && matchRuangan && matchSearch) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
-                }
-            });
-        }
-
-        // Event listeners for real-time filtering
-        document.getElementById('searchInput').addEventListener('input', filterTable);
-
         // Export Dropdown Toggle
         document.getElementById('exportBtn').addEventListener('click', function(e) {
             e.stopPropagation();
@@ -292,7 +284,11 @@
                                 </div>
                                 <div class="border-b pb-2">
                                     <p class="text-sm text-gray-600">Dosen Penguji</p>
-                                    <p class="text-base font-semibold">${data.dosen_penguji_nama}</p>
+                                    <div class="text-base font-semibold">
+                                        ${data.dosen_penguji_list.map((dosen, index) => 
+                                            `<div class="mb-1">${dosen.urutan}. ${dosen.nama}</div>`
+                                        ).join('')}
+                                    </div>
                                 </div>
                                 <div class="border-b pb-2">
                                     <p class="text-sm text-gray-600">Tahun Ajar</p>
@@ -303,12 +299,20 @@
                                     <p class="text-base font-semibold">${data.jadwal_ujian}</p>
                                 </div>
                                 <div class="border-b pb-2">
+                                    <p class="text-sm text-gray-600">Metode Pelaksanaan</p>
+                                    <p class="text-base font-semibold">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${data.metode_pelaksanaan === 'Online' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'}">
+                                            ${data.metode_pelaksanaan}
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="border-b pb-2">
                                     <p class="text-sm text-gray-600">Gedung</p>
-                                    <p class="text-base font-semibold">${data.gedung}</p>
+                                    <p class="text-base font-semibold">${data.gedung || '-'}</p>
                                 </div>
                                 <div class="border-b pb-2">
                                     <p class="text-sm text-gray-600">Ruangan</p>
-                                    <p class="text-base font-semibold">${data.ruangan}</p>
+                                    <p class="text-base font-semibold">${data.ruangan || '-'}</p>
                                 </div>
                                 <div>
                                     <p class="text-sm text-gray-600">Waktu</p>
@@ -351,44 +355,42 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Calon Dosen <span class="text-red-500">*</span></label>
-                            <select name="calon_dosen_id" required class="swal2-input w-full">
+                            <select id="calonDosenSelect" name="calon_dosen_id" required class="swal2-input w-full" style="width: 100%;">
+                                <option value="">Pilih Calon Dosen</option>
                                 @foreach($calonDosenList as $calon)
                                 <option value="{{ $calon->id }}">{{ $calon->nama }}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Dosen Penguji <span class="text-red-500">*</span></label>
-                            <select name="dosen_penguji_id" required class="swal2-input w-full">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Dosen Penguji (Pilih 2-3) <span class="text-red-500">*</span></label>
+                            <select id="dosenPengujiSelect" name="dosen_penguji_id[]" required multiple class="swal2-input w-full" style="width: 100%;">
+                                <option value="">Pilih Dosen Penguji</option>
                                 @foreach($dosenList as $dosen)
                                 <option value="{{ $dosen->id }}">{{ $dosen->front_title }} {{ $dosen->nama_lengkap }}, {{ $dosen->back_title }}</option>
                                 @endforeach
                             </select>
+                            <small class="text-gray-500">Minimal 2, maksimal 3 dosen penguji</small>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Ujian <span class="text-red-500">*</span></label>
                             <input type="date" name="jadwal_ujian" required class="swal2-input w-full">
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Gedung <span class="text-red-500">*</span></label>
-                            <select name="gedung" required class="swal2-input w-full">
-                                <option value="Gedung A">Gedung A</option>
-                                <option value="Gedung B">Gedung B</option>
-                                <option value="Gedung C">Gedung C</option>
-                                <option value="Gedung Teknik">Gedung Teknik</option>
-                                <option value="Gedung Rektorat">Gedung Rektorat</option>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Metode Pelaksanaan <span class="text-red-500">*</span></label>
+                            <select id="metodeSelect" name="metode_pelaksanaan" required class="swal2-input w-full">
+                                @foreach($metodeList as $metode)
+                                <option value="{{ $metode }}">{{ $metode }}</option>
+                                @endforeach
                             </select>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Ruangan <span class="text-red-500">*</span></label>
-                            <select name="ruangan" required class="swal2-input w-full">
-                                <option value="Aula">Aula</option>
-                                <option value="R.201">R.201</option>
-                                <option value="R.301">R.301</option>
-                                <option value="Lab Komputer 1">Lab Komputer 1</option>
-                                <option value="Lab Komputer 2">Lab Komputer 2</option>
-                                <option value="Ruang Sidang">Ruang Sidang</option>
-                            </select>
+                        <div id="gedungField">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Gedung <span id="gedungRequired" class="text-red-500">*</span></label>
+                            <input type="text" id="gedungInput" name="gedung" class="swal2-input w-full" placeholder="Contoh: Gedung A">
+                        </div>
+                        <div id="ruanganField">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Ruangan <span id="ruanganRequired" class="text-red-500">*</span></label>
+                            <input type="text" id="ruanganInput" name="ruangan" class="swal2-input w-full" placeholder="Contoh: R.201">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Waktu <span class="text-red-500">*</span></label>
@@ -402,8 +404,78 @@
                 confirmButtonColor: '#C41E3A',
                 cancelButtonColor: '#6B7280',
                 width: '600px',
+                didOpen: () => {
+                    // Initialize Select2 for Calon Dosen (single select)
+                    $('#calonDosenSelect').select2({
+                        placeholder: 'Cari dan pilih calon dosen...',
+                        allowClear: true,
+                        dropdownParent: $('.swal2-container')
+                    });
+
+                    // Initialize Select2 for Dosen Penguji (multiple select with min 2, max 3)
+                    $('#dosenPengujiSelect').select2({
+                        placeholder: 'Cari dan pilih 2-3 dosen penguji...',
+                        allowClear: true,
+                        dropdownParent: $('.swal2-container'),
+                        multiple: true,
+                        maximumSelectionLength: 3,
+                        minimumResultsForSearch: 0
+                    });
+
+                    // Validate minimum 2 dosen penguji
+                    $('#dosenPengujiSelect').on('change', function() {
+                        const selected = $(this).val();
+                        if (selected && selected.length < 2) {
+                            // Will be validated on submit
+                        }
+                    });
+
+                    // Handle metode pelaksanaan change
+                    const metodeSelect = document.getElementById('metodeSelect');
+                    const gedungInput = document.getElementById('gedungInput');
+                    const ruanganInput = document.getElementById('ruanganInput');
+                    const gedungRequired = document.getElementById('gedungRequired');
+                    const ruanganRequired = document.getElementById('ruanganRequired');
+
+                    function toggleGedungRuangan() {
+                        if (metodeSelect.value === 'Online') {
+                            gedungInput.disabled = true;
+                            ruanganInput.disabled = true;
+                            gedungInput.value = '';
+                            ruanganInput.value = '';
+                            gedungInput.style.backgroundColor = '#e5e7eb';
+                            ruanganInput.style.backgroundColor = '#e5e7eb';
+                            gedungRequired.style.display = 'none';
+                            ruanganRequired.style.display = 'none';
+                        } else {
+                            gedungInput.disabled = false;
+                            ruanganInput.disabled = false;
+                            gedungInput.style.backgroundColor = '';
+                            ruanganInput.style.backgroundColor = '';
+                            gedungRequired.style.display = 'inline';
+                            ruanganRequired.style.display = 'inline';
+                        }
+                    }
+
+                    metodeSelect.addEventListener('change', toggleGedungRuangan);
+                    toggleGedungRuangan(); // Initialize on load
+                },
                 preConfirm: () => {
                     const form = document.getElementById('createForm');
+                    const dosenPenguji = $('#dosenPengujiSelect').val();
+                    
+                    // Validate minimum 2 dosen penguji
+                    if (!dosenPenguji || dosenPenguji.length < 2) {
+                        Swal.showValidationMessage('Pilih minimal 2 dosen penguji');
+                        return false;
+                    }
+                    
+                    // Validate maximum 3 dosen penguji
+                    if (dosenPenguji.length > 3) {
+                        Swal.showValidationMessage('Maksimal 3 dosen penguji');
+                        return false;
+                    }
+                    
                     const formData = new FormData(form);
                     
                     return fetch('/rekrutasi-dosen/jadwal-pengujian', {
@@ -467,44 +539,40 @@
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Calon Dosen <span class="text-red-500">*</span></label>
-                                    <select name="calon_dosen_id" required class="swal2-input w-full">
+                                    <select id="editCalonDosenSelect" name="calon_dosen_id" required class="swal2-input w-full" style="width: 100%;">
                                         @foreach($calonDosenList as $calon)
                                         <option value="{{ $calon->id }}" ${data.calon_dosen_id == {{ $calon->id }} ? 'selected' : ''}>{{ $calon->nama }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Dosen Penguji <span class="text-red-500">*</span></label>
-                                    <select name="dosen_penguji_id" required class="swal2-input w-full">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Dosen Penguji (Pilih 2-3) <span class="text-red-500">*</span></label>
+                                    <select id="editDosenPengujiSelect" name="dosen_penguji_id[]" required multiple class="swal2-input w-full" style="width: 100%;">
                                         @foreach($dosenList as $dosen)
-                                        <option value="{{ $dosen->id }}" ${data.dosen_penguji_id == {{ $dosen->id }} ? 'selected' : ''}>{{ $dosen->front_title }} {{ $dosen->nama_lengkap }}, {{ $dosen->back_title }}</option>
+                                        <option value="{{ $dosen->id }}">{{ $dosen->front_title }} {{ $dosen->nama_lengkap }}, {{ $dosen->back_title }}</option>
                                         @endforeach
                                     </select>
+                                    <small class="text-gray-500">Minimal 2, maksimal 3 dosen penguji</small>
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Ujian <span class="text-red-500">*</span></label>
                                     <input type="date" name="jadwal_ujian" value="${data.jadwal_ujian_raw}" required class="swal2-input w-full">
                                 </div>
                                 <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Gedung <span class="text-red-500">*</span></label>
-                                    <select name="gedung" required class="swal2-input w-full">
-                                        <option value="Gedung A" ${data.gedung == 'Gedung A' ? 'selected' : ''}>Gedung A</option>
-                                        <option value="Gedung B" ${data.gedung == 'Gedung B' ? 'selected' : ''}>Gedung B</option>
-                                        <option value="Gedung C" ${data.gedung == 'Gedung C' ? 'selected' : ''}>Gedung C</option>
-                                        <option value="Gedung Teknik" ${data.gedung == 'Gedung Teknik' ? 'selected' : ''}>Gedung Teknik</option>
-                                        <option value="Gedung Rektorat" ${data.gedung == 'Gedung Rektorat' ? 'selected' : ''}>Gedung Rektorat</option>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Metode Pelaksanaan <span class="text-red-500">*</span></label>
+                                    <select id="editMetodeSelect" name="metode_pelaksanaan" required class="swal2-input w-full">
+                                        @foreach($metodeList as $metode)
+                                        <option value="{{ $metode }}" ${data.metode_pelaksanaan == '{{ $metode }}' ? 'selected' : ''}>{{ $metode }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Ruangan <span class="text-red-500">*</span></label>
-                                    <select name="ruangan" required class="swal2-input w-full">
-                                        <option value="Aula" ${data.ruangan == 'Aula' ? 'selected' : ''}>Aula</option>
-                                        <option value="R.201" ${data.ruangan == 'R.201' ? 'selected' : ''}>R.201</option>
-                                        <option value="R.301" ${data.ruangan == 'R.301' ? 'selected' : ''}>R.301</option>
-                                        <option value="Lab Komputer 1" ${data.ruangan == 'Lab Komputer 1' ? 'selected' : ''}>Lab Komputer 1</option>
-                                        <option value="Lab Komputer 2" ${data.ruangan == 'Lab Komputer 2' ? 'selected' : ''}>Lab Komputer 2</option>
-                                        <option value="Ruang Sidang" ${data.ruangan == 'Ruang Sidang' ? 'selected' : ''}>Ruang Sidang</option>
-                                    </select>
+                                <div id="editGedungField">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Gedung <span id="editGedungRequired" class="text-red-500">*</span></label>
+                                    <input type="text" id="editGedungInput" name="gedung" value="${data.gedung || ''}" class="swal2-input w-full" placeholder="Contoh: Gedung A">
+                                </div>
+                                <div id="editRuanganField">
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Ruangan <span id="editRuanganRequired" class="text-red-500">*</span></label>
+                                    <input type="text" id="editRuanganInput" name="ruangan" value="${data.ruangan || ''}" class="swal2-input w-full" placeholder="Contoh: R.201">
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Waktu <span class="text-red-500">*</span></label>
@@ -518,8 +586,75 @@
                         confirmButtonColor: '#C41E3A',
                         cancelButtonColor: '#6B7280',
                         width: '600px',
+                        didOpen: () => {
+                            // Initialize Select2 for Calon Dosen (single select)
+                            $('#editCalonDosenSelect').select2({
+                                placeholder: 'Cari dan pilih calon dosen...',
+                                allowClear: true,
+                                dropdownParent: $('.swal2-container')
+                            });
+
+                            // Initialize Select2 for Dosen Penguji (multiple select with min 2, max 3)
+                            $('#editDosenPengujiSelect').select2({
+                                placeholder: 'Cari dan pilih 2-3 dosen penguji...',
+                                allowClear: true,
+                                dropdownParent: $('.swal2-container'),
+                                multiple: true,
+                                maximumSelectionLength: 3,
+                                minimumResultsForSearch: 0
+                            });
+
+                            // Pre-select multiple dosen penguji
+                            if (data.dosen_penguji_ids && data.dosen_penguji_ids.length > 0) {
+                                $('#editDosenPengujiSelect').val(data.dosen_penguji_ids).trigger('change');
+                            }
+
+                            // Handle metode pelaksanaan change
+                            const metodeSelect = document.getElementById('editMetodeSelect');
+                            const gedungInput = document.getElementById('editGedungInput');
+                            const ruanganInput = document.getElementById('editRuanganInput');
+                            const gedungRequired = document.getElementById('editGedungRequired');
+                            const ruanganRequired = document.getElementById('editRuanganRequired');
+
+                            function toggleGedungRuangan() {
+                                if (metodeSelect.value === 'Online') {
+                                    gedungInput.disabled = true;
+                                    ruanganInput.disabled = true;
+                                    gedungInput.value = '';
+                                    ruanganInput.value = '';
+                                    gedungInput.style.backgroundColor = '#e5e7eb';
+                                    ruanganInput.style.backgroundColor = '#e5e7eb';
+                                    gedungRequired.style.display = 'none';
+                                    ruanganRequired.style.display = 'none';
+                                } else {
+                                    gedungInput.disabled = false;
+                                    ruanganInput.disabled = false;
+                                    gedungInput.style.backgroundColor = '';
+                                    ruanganInput.style.backgroundColor = '';
+                                    gedungRequired.style.display = 'inline';
+                                    ruanganRequired.style.display = 'inline';
+                                }
+                            }
+
+                            metodeSelect.addEventListener('change', toggleGedungRuangan);
+                            toggleGedungRuangan(); // Initialize on load
+                        },
                         preConfirm: () => {
                             const form = document.getElementById('editForm');
+                            const dosenPenguji = $('#editDosenPengujiSelect').val();
+                            
+                            // Validate minimum 2 dosen penguji
+                            if (!dosenPenguji || dosenPenguji.length < 2) {
+                                Swal.showValidationMessage('Pilih minimal 2 dosen penguji');
+                                return false;
+                            }
+                            
+                            // Validate maximum 3 dosen penguji
+                            if (dosenPenguji.length > 3) {
+                                Swal.showValidationMessage('Maksimal 3 dosen penguji');
+                                return false;
+                            }
+                            
                             const formData = new FormData(form);
                             
                             return fetch(`/rekrutasi-dosen/jadwal-pengujian/${id}`, {
@@ -625,6 +760,38 @@
                 }
             });
         }
+
+        // Penilaian Calon Dosen Button
+        document.querySelectorAll('.btn-penilaian').forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                // TODO: Navigate to penilaian page or open penilaian modal
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Penilaian Calon Dosen',
+                    text: `Halaman penilaian untuk jadwal ID: ${id} akan segera tersedia.`,
+                    confirmButtonColor: '#C41E3A'
+                });
+                // Future implementation:
+                // window.location.href = `/rekrutasi-dosen/penilaian/${id}`;
+            });
+        });
+
+        // Berita Acara Button
+        document.querySelectorAll('.btn-berita-acara').forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                // TODO: Navigate to berita acara page or open berita acara modal
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Berita Acara',
+                    text: `Halaman berita acara untuk jadwal ID: ${id} akan segera tersedia.`,
+                    confirmButtonColor: '#C41E3A'
+                });
+                // Future implementation:
+                // window.location.href = `/rekrutasi-dosen/berita-acara/${id}`;
+            });
+        });
     </script>
 </body>
 </html>

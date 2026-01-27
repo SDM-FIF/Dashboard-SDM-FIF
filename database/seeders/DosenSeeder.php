@@ -36,7 +36,7 @@ class DosenSeeder extends Seeder
         $dosenData = [
             // S1 - 3 dosen
             [
-                'nama_lengkap' => 'Budi Santoso, S.Kom',
+                'nama_lengkap' => 'Budi Santoso',
                 'front_title' => '',
                 'back_title' => 'S.Kom',
                 'nip' => '199012152018031002',
@@ -52,7 +52,7 @@ class DosenSeeder extends Seeder
                 'password' => 'password123'
             ],
             [
-                'nama_lengkap' => 'Rahmat Hidayat, S.Kom',
+                'nama_lengkap' => 'Rahmat Hidayat',
                 'front_title' => '',
                 'back_title' => 'S.Kom',
                 'nip' => '199505102019031001',
@@ -68,7 +68,7 @@ class DosenSeeder extends Seeder
                 'password' => 'password123'
             ],
             [
-                'nama_lengkap' => 'Dewi Lestari, S.T',
+                'nama_lengkap' => 'Dewi Lestari',
                 'front_title' => '',
                 'back_title' => 'S.T',
                 'nip' => '199408202020122002',
@@ -86,7 +86,7 @@ class DosenSeeder extends Seeder
             
             // S2 - 4 dosen
             [
-                'nama_lengkap' => 'Dr. Ahmad Fauzi, M.Kom',
+                'nama_lengkap' => 'Ahmad Fauzi',
                 'front_title' => 'Dr.',
                 'back_title' => 'M.Kom',
                 'nip' => '198501012010011001',
@@ -102,7 +102,7 @@ class DosenSeeder extends Seeder
                 'password' => 'password123'
             ],
             [
-                'nama_lengkap' => 'Dr. Indira Putri, M.Kom',
+                'nama_lengkap' => 'Indira Putri',
                 'front_title' => 'Dr.',
                 'back_title' => 'M.Kom',
                 'nip' => '198709202012122001',
@@ -118,7 +118,7 @@ class DosenSeeder extends Seeder
                 'password' => 'password123'
             ],
             [
-                'nama_lengkap' => 'Dr. Maya Sari, M.Kom',
+                'nama_lengkap' => 'Maya Sari',
                 'front_title' => 'Dr.',
                 'back_title' => 'M.Kom',
                 'nip' => '198712102015042001',
@@ -134,7 +134,7 @@ class DosenSeeder extends Seeder
                 'password' => 'password123'
             ],
             [
-                'nama_lengkap' => 'Andi Pratama, M.T',
+                'nama_lengkap' => 'Andi Pratama',
                 'front_title' => '',
                 'back_title' => 'M.T',
                 'nip' => '199203152019031003',
@@ -152,12 +152,12 @@ class DosenSeeder extends Seeder
             
             // S3 - 3 dosen
             [
-                'nama_lengkap' => 'Prof. Dr. Siti Nurhaliza, M.T',
+                'nama_lengkap' => 'Siti Nurhaliza',
                 'front_title' => 'Prof. Dr.',
                 'back_title' => 'M.T',
                 'nip' => '198203051985032001',
                 'kode_dosen' => 'DSN002',
-                'jabatan' => 'Profesor',
+                'jabatan' => 'Guru Besar',
                 'lokasi_kerja' => 'Rekayasa Perangkat Lunak',
                 'status_pegawai' => 'Tetap',
                 'pendidikan_terakhir' => 'S3',
@@ -168,12 +168,12 @@ class DosenSeeder extends Seeder
                 'password' => 'password123'
             ],
             [
-                'nama_lengkap' => 'Prof. Dr. Ir. Bambang Sutopo, M.Sc',
+                'nama_lengkap' => 'Bambang Sutopo',
                 'front_title' => 'Prof. Dr. Ir.',
                 'back_title' => 'M.Sc',
                 'nip' => '197805121998031001',
                 'kode_dosen' => 'DSN008',
-                'jabatan' => 'Profesor',
+                'jabatan' => 'Guru Besar',
                 'lokasi_kerja' => 'Teknologi Informasi',
                 'status_pegawai' => 'Tetap',
                 'pendidikan_terakhir' => 'S3',
@@ -184,7 +184,7 @@ class DosenSeeder extends Seeder
                 'password' => 'password123'
             ],
             [
-                'nama_lengkap' => 'Dr. Agus Setiawan, M.T',
+                'nama_lengkap' => 'Agus Setiawan',
                 'front_title' => 'Dr.',
                 'back_title' => 'M.T',
                 'nip' => '198606152014031002',
