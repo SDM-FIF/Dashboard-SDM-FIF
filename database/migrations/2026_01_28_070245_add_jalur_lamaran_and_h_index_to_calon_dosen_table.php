@@ -16,9 +16,9 @@ return new class extends Migration
             $table->enum('jalur_lamaran', [
                 'S3 Prof Full time',
                 'S2 Praktisi Part time',
-                'Praktisi Part time',
-                'Prof Full time',
-                'OnGoing'
+                'S3 Praktisi Part time',
+                'S2 Prof Full time',
+                'S3 OnGoing'
             ])->nullable()->after('status_penerimaan');
             
             $table->decimal('h_index', 5, 2)->nullable()->after('jalur_lamaran');

@@ -538,9 +538,9 @@
                             <option value="">Pilih Jalur Lamaran</option>
                             <option value="S3 Prof Full time">S3 Prof Full time</option>
                             <option value="S2 Praktisi Part time">S2 Praktisi Part time</option>
-                            <option value="Praktisi Part time">Praktisi Part time</option>
-                            <option value="Prof Full time">Prof Full time</option>
-                            <option value="OnGoing">OnGoing</option>
+                            <option value="S3 Praktisi Part time">S3 Praktisi Part time</option>
+                            <option value="S2 Prof Full time">S2 Prof Full time</option>
+                            <option value="S3 OnGoing">S3 OnGoing</option>
                         </select>
                     </div>
                     <div>
@@ -822,9 +822,9 @@
                                 <option value="">Pilih Jalur Lamaran</option>
                                 <option value="S3 Prof Full time" ${item.jalur_lamaran == 'S3 Prof Full time' ? 'selected' : ''}>S3 Prof Full time</option>
                                 <option value="S2 Praktisi Part time" ${item.jalur_lamaran == 'S2 Praktisi Part time' ? 'selected' : ''}>S2 Praktisi Part time</option>
-                                <option value="Praktisi Part time" ${item.jalur_lamaran == 'Praktisi Part time' ? 'selected' : ''}>Praktisi Part time</option>
-                                <option value="Prof Full time" ${item.jalur_lamaran == 'Prof Full time' ? 'selected' : ''}>Prof Full time</option>
-                                <option value="OnGoing" ${item.jalur_lamaran == 'OnGoing' ? 'selected' : ''}>OnGoing</option>
+                                <option value="S3 Praktisi Part time" ${item.jalur_lamaran == 'S3 Praktisi Part time' ? 'selected' : ''}>S3 Praktisi Part time</option>
+                                <option value="S2 Prof Full time" ${item.jalur_lamaran == 'S2 Prof Full time' ? 'selected' : ''}>S2 Prof Full time</option>
+                                <option value="S3 OnGoing" ${item.jalur_lamaran == 'S3 OnGoing' ? 'selected' : ''}>S3 OnGoing</option>
                             </select>
                         </div>
                         <div>
