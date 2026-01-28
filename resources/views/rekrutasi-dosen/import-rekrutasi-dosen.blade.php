@@ -138,12 +138,16 @@
                                 <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">JK</th>
                                 <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">Tahun Ajar</th>
                                 <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">Prodi</th>
+                                <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">Jalur Lamaran</th>
+                                <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">H-Index</th>
                                 <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300" colspan="3" style="text-align: center;">Pendidikan S1</th>
                                 <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300" colspan="3" style="text-align: center;">Pendidikan S2</th>
                                 <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300" colspan="3" style="text-align: center;">Pendidikan S3</th>
                                 <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">Error</th>
                             </tr>
                             <tr class="bg-[#C41E3A] text-white">
+                                <th class="px-2 py-2 border border-gray-300"></th>
+                                <th class="px-2 py-2 border border-gray-300"></th>
                                 <th class="px-2 py-2 border border-gray-300"></th>
                                 <th class="px-2 py-2 border border-gray-300"></th>
                                 <th class="px-2 py-2 border border-gray-300"></th>
@@ -176,6 +180,26 @@
                                     <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['jenis_kelamin'] }}</td>
                                     <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['tahun_ajar'] }}</td>
                                     <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['prodi_name'] }}</td>
+                                    <!-- Jalur Lamaran -->
+                                    <td class="px-2 py-2 text-xs border border-gray-300">
+                                        @if(!empty($row['jalur_lamaran']))
+                                            <span class="px-2 py-1 text-xs font-semibold rounded bg-blue-100 text-blue-800">
+                                                {{ $row['jalur_lamaran'] }}
+                                            </span>
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
+                                    <!-- H-Index -->
+                                    <td class="px-2 py-2 text-xs border border-gray-300">
+                                        @if(!empty($row['h_index']))
+                                            <span class="px-2 py-1 text-xs font-semibold rounded bg-yellow-100 text-yellow-800">
+                                                {{ $row['h_index'] }}
+                                            </span>
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
                                     <!-- S1 -->
                                     <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['universitas_s1'] ?? '-' }}</td>
                                     <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['prodi_s1'] ?? '-' }}</td>
@@ -217,7 +241,7 @@
                                 @endforeach
                             @else
                                 <tr>
-                                    <td colspan="15" class="px-4 py-12 text-center text-gray-500 border border-gray-300">
+                                    <td colspan="17" class="px-4 py-12 text-center text-gray-500 border border-gray-300">
                                         <div class="flex flex-col items-center">
                                             <i class="fas fa-inbox text-4xl mb-4 text-gray-400"></i>
                                             <p>No data shown available in table</p>
