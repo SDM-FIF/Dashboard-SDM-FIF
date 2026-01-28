@@ -58,8 +58,8 @@ class RekrutasiDosenExport implements FromView, WithEvents, ShouldAutoSize
     {
         return [
             AfterSheet::class => function(AfterSheet $event) {
-                // Style header row
-                $event->sheet->getStyle('A1:F1')->applyFromArray([
+                // Style header row (updated to include jalur_lamaran and h_index columns)
+                $event->sheet->getStyle('A1:H1')->applyFromArray([
                     'font' => [
                         'bold' => true,
                         'color' => ['rgb' => 'FFFFFF'],

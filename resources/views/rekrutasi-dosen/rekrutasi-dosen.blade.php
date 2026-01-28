@@ -207,6 +207,8 @@
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Jenjang</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Prodi Tujuan</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Tahun Ajar</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Jalur Lamaran</th>
+                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">H-Index</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Status</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Aksi</th>
                     </tr>
@@ -233,6 +235,16 @@
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                             {{ $item->tahunAjar->label ?? '-' }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                {{ $item->jalur_lamaran ?? '-' }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                {{ $item->h_index ?? '-' }}
+                            </span>
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm">
                             @php
@@ -282,7 +294,7 @@
                     @else
                     {{-- Empty State --}}
                     <tr>
-                        <td colspan="8" class="px-6 py-12 text-center text-gray-500">
+                        <td colspan="10" class="px-6 py-12 text-center text-gray-500">
                             <div class="flex flex-col items-center space-y-4">
                                 <i class="fas fa-users text-4xl text-gray-300"></i>
                                 <div>
@@ -519,6 +531,21 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Bidang Keahlian</label>
 <input type="text" name="bidang_keahlian" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Jalur Lamaran</label>
+<select name="jalur_lamaran" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                            <option value="">Pilih Jalur Lamaran</option>
+                            <option value="S3 Prof Full time">S3 Prof Full time</option>
+                            <option value="S2 Praktisi Part time">S2 Praktisi Part time</option>
+                            <option value="Praktisi Part time">Praktisi Part time</option>
+                            <option value="Prof Full time">Prof Full time</option>
+                            <option value="OnGoing">OnGoing</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">H-Index</label>
+<input type="number" name="h_index" step="0.01" min="0" placeholder="Contoh: 12 atau 8.5" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
                     </div>
                     <div class="md:col-span-2">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Alamat</label>
@@ -788,6 +815,21 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Bidang Keahlian</label>
 <input type="text" name="bidang_keahlian" value="${item.bidang_keahlian || ''}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Jalur Lamaran</label>
+<select name="jalur_lamaran" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                                <option value="">Pilih Jalur Lamaran</option>
+                                <option value="S3 Prof Full time" ${item.jalur_lamaran == 'S3 Prof Full time' ? 'selected' : ''}>S3 Prof Full time</option>
+                                <option value="S2 Praktisi Part time" ${item.jalur_lamaran == 'S2 Praktisi Part time' ? 'selected' : ''}>S2 Praktisi Part time</option>
+                                <option value="Praktisi Part time" ${item.jalur_lamaran == 'Praktisi Part time' ? 'selected' : ''}>Praktisi Part time</option>
+                                <option value="Prof Full time" ${item.jalur_lamaran == 'Prof Full time' ? 'selected' : ''}>Prof Full time</option>
+                                <option value="OnGoing" ${item.jalur_lamaran == 'OnGoing' ? 'selected' : ''}>OnGoing</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">H-Index</label>
+<input type="number" name="h_index" value="${item.h_index || ''}" step="0.01" min="0" placeholder="Contoh: 12 atau 8.5" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
                         </div>
                         <div class="md:col-span-2">
                             <label class="block text-sm font-medium text-gray-700 mb-2">Alamat</label>
@@ -1094,6 +1136,14 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-500">Bidang Keahlian</label>
                     <p class="text-gray-900">${item.bidang_keahlian || '-'}</p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-500">Jalur Lamaran</label>
+                    <p class="text-gray-900"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">${item.jalur_lamaran || '-'}</span></p>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-500">H-Index</label>
+                    <p class="text-gray-900"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">${item.h_index || '-'}</span></p>
                 </div>
             </div>
             <div class="md:col-span-2">
