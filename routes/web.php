@@ -286,6 +286,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/jadwal-pengujian/{id}/edit', [RekrutasiDosenController::class, 'editJadwalPengujian'])->name('jadwal-pengujian.edit');
         Route::match(['put', 'post'], '/jadwal-pengujian/{id}', [RekrutasiDosenController::class, 'updateJadwalPengujian'])->name('jadwal-pengujian.update');
         Route::delete('/jadwal-pengujian/{id}', [RekrutasiDosenController::class, 'destroyJadwalPengujian'])->name('jadwal-pengujian.destroy');
+        
+        // Penilaian Calon Dosen
+        Route::get('/penilaian/{jadwal_id}', [RekrutasiDosenController::class, 'penilaian'])->name('penilaian');
 
         // Download Riwayat Pendidikan Files
         Route::get('/riwayat-file/{filename}', [RekrutasiDosenController::class, 'downloadRiwayatFile'])->name('riwayat.download');

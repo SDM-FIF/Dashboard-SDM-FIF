@@ -628,6 +628,25 @@ class RekrutasiDosenController extends Controller
         }
     }
 
+    public function penilaian($jadwal_id)
+    {
+        try {
+            $jadwal = \App\Models\JadwalPengujian::with([
+                'calonDosen.prodi',
+                'dosenPenguji',
+                'tahunAjar'
+            ])->findOrFail($jadwal_id);
+
+            $calonDosen = $jadwal->calonDosen;
+
+            return view('rekrutasi-dosen.penilaian-calon-dosen', compact('jadwal', 'calonDosen'));
+        } catch (\Exception $e) {
+            Log::error('Error loading penilaian page: ' . $e->getMessage());
+            return redirect()->route('jadwal-pengujian')
+                ->with('error', 'Gagal memuat halaman penilaian: ' . $e->getMessage());
+        }
+    }
+
     public function exportJadwalPengujianExcel()
     {
         $jadwalList = \App\Models\JadwalPengujian::with(['calonDosen', 'dosenPenguji', 'tahunAjar'])->get();

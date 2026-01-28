@@ -24,6 +24,8 @@ class CalonDosen extends Model
         'jabatan_fungsional_akademik',
         'bidang_keahlian',
         'status_penerimaan',
+        'jalur_lamaran',
+        'h_index',
     ];
 
     protected $casts = [

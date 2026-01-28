@@ -57,6 +57,8 @@ class CalonDosenSeeder extends Seeder
                 'jabatan_fungsional_akademik' => 'Lektor',
                 'bidang_keahlian' => 'Artificial Intelligence',
                 'status_penerimaan' => 'Diterima',
+                'jalur_lamaran' => 'S3 Prof Full time',
+                'h_index' => 12.5,
             ],
             [
                 'prodi_id' => $prodi->where('nama_prodi', 'S3 - Data Sains')->first()?->id ?? $prodi->first()->id,
@@ -70,6 +72,8 @@ class CalonDosenSeeder extends Seeder
                 'jabatan_fungsional_akademik' => 'Lektor Kepala',
                 'bidang_keahlian' => 'Machine Learning',
                 'status_penerimaan' => 'Diterima',
+                'jalur_lamaran' => 'Prof Full time',
+                'h_index' => 8.3,
             ],
             [
                 'prodi_id' => $prodi->where('nama_prodi', 'S3 - Rekayasa Perangkat Lunak')->first()?->id ?? $prodi->first()->id,
@@ -83,6 +87,8 @@ class CalonDosenSeeder extends Seeder
                 'jabatan_fungsional_akademik' => 'Lektor',
                 'bidang_keahlian' => 'Computer Vision',
                 'status_penerimaan' => 'Seleksi',
+                'jalur_lamaran' => 'OnGoing',
+                'h_index' => 4.7,
             ],
 
             // Calon Dosen S2
@@ -98,6 +104,8 @@ class CalonDosenSeeder extends Seeder
                 'jabatan_fungsional_akademik' => 'Asisten Ahli',
                 'bidang_keahlian' => 'Software Engineering',
                 'status_penerimaan' => 'Seleksi',
+                'jalur_lamaran' => 'S2 Praktisi Part time',
+                'h_index' => 3.2,
             ],
             [
                 'prodi_id' => $prodi->where('nama_prodi', 'S2 - Teknologi Informasi')->first()?->id ?? $prodi->first()->id,
@@ -111,6 +119,23 @@ class CalonDosenSeeder extends Seeder
                 'jabatan_fungsional_akademik' => 'Asisten Ahli',
                 'bidang_keahlian' => 'Network Security',
                 'status_penerimaan' => 'Diterima',
+                'jalur_lamaran' => 'S2 Praktisi Part time',
+                'h_index' => 1.8,
+            ],
+            [
+                'prodi_id' => $prodi->where('nama_prodi', 'S2 - Teknik Komputer')->first()?->id ?? $prodi->first()->id,
+                'tahun_ajar_id' => $tahunAjar->random()->id,
+                'nama' => 'Eko Setiawan, M.T',
+                'jenis_kelamin' => 'Laki-laki',
+                'tempat_lahir' => 'Yogyakarta',
+                'tanggal_lahir' => '1988-02-18',
+                'nomor_telepon' => '085678901234',
+                'alamat' => 'Jl. Malioboro No. 12, Yogyakarta',
+                'jabatan_fungsional_akademik' => 'Lektor',
+                'bidang_keahlian' => 'Computer Networks',
+                'status_penerimaan' => 'Ditolak',
+                'jalur_lamaran' => 'Prof Full time',
+                'h_index' => 6.5,
             ],
             [
                 'prodi_id' => $prodi->where('nama_prodi', 'S2 - Data Sains')->first()?->id ?? $prodi->first()->id,
@@ -124,6 +149,8 @@ class CalonDosenSeeder extends Seeder
                 'jabatan_fungsional_akademik' => 'Asisten Ahli',
                 'bidang_keahlian' => 'Database Systems',
                 'status_penerimaan' => 'Seleksi',
+                'jalur_lamaran' => 'Praktisi Part time',
+                'h_index' => 1.5,
             ],
 
             // Calon Dosen S1
@@ -139,6 +166,8 @@ class CalonDosenSeeder extends Seeder
                 'jabatan_fungsional_akademik' => 'NJFA',
                 'bidang_keahlian' => 'Web Development',
                 'status_penerimaan' => 'Ditolak',
+                'jalur_lamaran' => 'OnGoing',
+                'h_index' => 0.5,
             ],
             [
                 'prodi_id' => $prodi->where('nama_prodi', 'S1 - Data Sains')->first()?->id ?? $prodi->first()->id,
@@ -152,6 +181,8 @@ class CalonDosenSeeder extends Seeder
                 'jabatan_fungsional_akademik' => 'NJFA',
                 'bidang_keahlian' => 'Data Analytics',
                 'status_penerimaan' => 'Seleksi',
+                'jalur_lamaran' => 'Praktisi Part time',
+                'h_index' => 1.2,
             ],
             [
                 'prodi_id' => $prodi->where('nama_prodi', 'S1 - Rekayasa Perangkat Lunak')->first()?->id ?? $prodi->first()->id,
@@ -165,6 +196,8 @@ class CalonDosenSeeder extends Seeder
                 'jabatan_fungsional_akademik' => 'NJFA',
                 'bidang_keahlian' => 'Mobile Development',
                 'status_penerimaan' => 'Seleksi',
+                'jalur_lamaran' => 'OnGoing',
+                'h_index' => 0.8,
             ],
         ];
 
