@@ -180,7 +180,7 @@
                         @forelse($jadwalList as $index => $jadwal)
                         <tr class="hover:bg-gray-50 transition-colors duration-150">
                             <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{{ $jadwalList->firstItem() + $index }}</td>
-                            <td class="px-4 py-4 text-sm text-gray-900">{{ $jadwal->calonDosen->nama }}</td>
+                            <td class="px-4 py-4 text-sm text-gray-900">{{ $jadwal->calonDosen->nama ?? '-' }}</td>
                             <td class="px-4 py-4 text-sm text-gray-900">
                                 @foreach($jadwal->dosenPenguji as $dosen)
                                     <div class="mb-1">{{ $loop->iteration }}. {{ $dosen->front_title }} {{ $dosen->nama_lengkap }}, {{ $dosen->back_title }}</div>
@@ -765,15 +765,7 @@
         document.querySelectorAll('.btn-penilaian').forEach(button => {
             button.addEventListener('click', function() {
                 const id = this.getAttribute('data-id');
-                // TODO: Navigate to penilaian page or open penilaian modal
-                Swal.fire({
-                    icon: 'info',
-                    title: 'Penilaian Calon Dosen',
-                    text: `Halaman penilaian untuk jadwal ID: ${id} akan segera tersedia.`,
-                    confirmButtonColor: '#C41E3A'
-                });
-                // Future implementation:
-                // window.location.href = `/rekrutasi-dosen/penilaian/${id}`;
+                window.location.href = `/rekrutasi-dosen/penilaian/${id}`;
             });
         });
 
