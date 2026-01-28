@@ -99,7 +99,7 @@ class RekrutasiDosenController extends Controller
                 'alamat' => 'nullable|string',
                 'jabatan_fungsional_akademik' => 'nullable|string',
                 'bidang_keahlian' => 'nullable|string',
-                'jalur_lamaran' => 'nullable|in:S3 Prof Full time,S2 Praktisi Part time,Praktisi Part time,Prof Full time,OnGoing',
+                'jalur_lamaran' => 'nullable|in:S3 Prof Full time,S2 Praktisi Part time,Praktisi Part time,Prof Full time,S3 OnGoing',
                 'h_index' => 'nullable|numeric|min:0',
                 // Validasi S1 (wajib)
                 'riwayat.s1.nama_universitas' => 'required|string|max:255',
@@ -253,7 +253,7 @@ class RekrutasiDosenController extends Controller
                 'alamat' => 'nullable|string',
                 'jabatan_fungsional_akademik' => 'nullable|string',
                 'bidang_keahlian' => 'nullable|string',
-                'jalur_lamaran' => 'nullable|in:S3 Prof Full time,S2 Praktisi Part time,Praktisi Part time,Prof Full time,OnGoing',
+                'jalur_lamaran' => 'nullable|in:S3 Prof Full time,S2 Praktisi Part time,S3 Praktisi Part time,S2 Prof Full time,S3 OnGoing',
                 'h_index' => 'nullable|numeric|min:0',
                 // Validasi S1 (wajib)
                 'riwayat.s1.nama_universitas' => 'required|string|max:255',
@@ -919,7 +919,7 @@ class RekrutasiDosenController extends Controller
     <Cell ss:StyleID="Instruction"><Data ss:Type="String">Laki-laki / Perempuan</Data></Cell>
     <Cell ss:StyleID="Instruction"><Data ss:Type="String">Pilih dari daftar tahun ajar</Data></Cell>
     <Cell ss:StyleID="Instruction"><Data ss:Type="String">Pilih dari daftar program studi</Data></Cell>
-    <Cell ss:StyleID="Instruction"><Data ss:Type="String">Pilih: S3 Prof Full time / S2 Praktisi Part time / Praktisi Part time / Prof Full time / OnGoing</Data></Cell>
+    <Cell ss:StyleID="Instruction"><Data ss:Type="String">Pilih: S3 Prof Full time / S2 Praktisi Part time / S3 Praktisi Part time / S2 Prof Full time / S3 OnGoing</Data></Cell>
     <Cell ss:StyleID="Instruction"><Data ss:Type="String">Angka desimal (contoh: 12 atau 8.5 atau 0.5)</Data></Cell>
     <Cell ss:StyleID="Instruction"><Data ss:Type="String">Nama universitas S1 (WAJIB)</Data></Cell>
     <Cell ss:StyleID="Instruction"><Data ss:Type="String">Nama prodi S1 (WAJIB)</Data></Cell>
@@ -1220,11 +1220,11 @@ class RekrutasiDosenController extends Controller
             // Validate Jalur Lamaran (optional, enum)
             $jalurLamaran = null;
             if (!empty($row['jalur_lamaran'])) {
-                $validJalur = ['S3 Prof Full time', 'S2 Praktisi Part time', 'Praktisi Part time', 'Prof Full time', 'OnGoing'];
+                $validJalur = ['S3 Prof Full time', 'S2 Praktisi Part time', 'S3 Praktisi Part time', 'S2 Prof Full time', 'S3 OnGoing'];
                 if (in_array($row['jalur_lamaran'], $validJalur)) {
                     $jalurLamaran = $row['jalur_lamaran'];
                 } else {
-                    $errors[] = 'Jalur lamaran tidak valid (pilihan: S3 Prof Full time, S2 Praktisi Part time, Praktisi Part time, Prof Full time, OnGoing)';
+                    $errors[] = 'Jalur lamaran tidak valid (pilihan: S3 Prof Full time, S2 Praktisi Part time, S3 Praktisi Part time, S2 Prof Full time, S3 OnGoing)';
                 }
             }
 

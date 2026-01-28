@@ -72,7 +72,7 @@ class CalonDosenSeeder extends Seeder
                 'jabatan_fungsional_akademik' => 'Lektor Kepala',
                 'bidang_keahlian' => 'Machine Learning',
                 'status_penerimaan' => 'Diterima',
-                'jalur_lamaran' => 'Prof Full time',
+                'jalur_lamaran' => 'S2 Prof Full time',
                 'h_index' => 8.3,
             ],
             [
@@ -87,7 +87,7 @@ class CalonDosenSeeder extends Seeder
                 'jabatan_fungsional_akademik' => 'Lektor',
                 'bidang_keahlian' => 'Computer Vision',
                 'status_penerimaan' => 'Seleksi',
-                'jalur_lamaran' => 'OnGoing',
+                'jalur_lamaran' => 'S3 OnGoing',
                 'h_index' => 4.7,
             ],
 
@@ -134,7 +134,7 @@ class CalonDosenSeeder extends Seeder
                 'jabatan_fungsional_akademik' => 'Lektor',
                 'bidang_keahlian' => 'Computer Networks',
                 'status_penerimaan' => 'Ditolak',
-                'jalur_lamaran' => 'Prof Full time',
+                'jalur_lamaran' => 'S2 Prof Full time',
                 'h_index' => 6.5,
             ],
             [
@@ -149,7 +149,7 @@ class CalonDosenSeeder extends Seeder
                 'jabatan_fungsional_akademik' => 'Asisten Ahli',
                 'bidang_keahlian' => 'Database Systems',
                 'status_penerimaan' => 'Seleksi',
-                'jalur_lamaran' => 'Praktisi Part time',
+                'jalur_lamaran' => 'S3 Praktisi Part time',
                 'h_index' => 1.5,
             ],
 
@@ -166,7 +166,7 @@ class CalonDosenSeeder extends Seeder
                 'jabatan_fungsional_akademik' => 'NJFA',
                 'bidang_keahlian' => 'Web Development',
                 'status_penerimaan' => 'Ditolak',
-                'jalur_lamaran' => 'OnGoing',
+                'jalur_lamaran' => 'S3 OnGoing',
                 'h_index' => 0.5,
             ],
             [
@@ -181,7 +181,7 @@ class CalonDosenSeeder extends Seeder
                 'jabatan_fungsional_akademik' => 'NJFA',
                 'bidang_keahlian' => 'Data Analytics',
                 'status_penerimaan' => 'Seleksi',
-                'jalur_lamaran' => 'Praktisi Part time',
+                'jalur_lamaran' => 'S3 Praktisi Part time',
                 'h_index' => 1.2,
             ],
             [
@@ -196,7 +196,7 @@ class CalonDosenSeeder extends Seeder
                 'jabatan_fungsional_akademik' => 'NJFA',
                 'bidang_keahlian' => 'Mobile Development',
                 'status_penerimaan' => 'Seleksi',
-                'jalur_lamaran' => 'OnGoing',
+                'jalur_lamaran' => 'S3 OnGoing',
                 'h_index' => 0.8,
             ],
         ];

@@ -11,7 +11,10 @@ return new class extends Migration {
     public function up()
     {
         Schema::table('prodi', function (Blueprint $table) {
-            $table->enum('jenjang', ['s1', 's2', 's3'])->after('nama_prodi');
+            // Check if column doesn't exist before adding
+            if (!Schema::hasColumn('prodi', 'jenjang')) {
+                $table->enum('jenjang', ['s1', 's2', 's3'])->after('nama_prodi');
+            }
         });
     }
     /**
@@ -20,7 +23,9 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::table('prodi', function (Blueprint $table) {
-            //
+            if (Schema::hasColumn('prodi', 'jenjang')) {
+                $table->dropColumn('jenjang');
+            }
         });
     }
 };
