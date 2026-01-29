@@ -675,6 +675,8 @@ class RekrutasiDosenController extends Controller
                 'nilai_kmp_mkp' => 'required|numeric|min:1|max:5',
                 'nilai_kmp_bdt' => 'required|numeric|min:1|max:5',
                 'nilai_keahlian_lainnya' => 'required|numeric|min:1|max:5',
+                'kesiapan' => 'required|in:YA,TIDAK/PIKIR-PIKIR',
+                'kesediaan' => 'required|in:YA,TIDAK/PIKIR-PIKIR',
                 'catatan_penilai' => 'nullable|string',
                 'total_nilai' => 'required|numeric',
             ]);
@@ -696,6 +698,10 @@ class RekrutasiDosenController extends Controller
 
             // Get calon dosen data
             $calonDosen = \App\Models\CalonDosen::findOrFail($validated['calon_dosen_id']);
+
+            // Convert kesiapan and kesediaan from YA/TIDAK to boolean
+            $kesiapan = $validated['kesiapan'] === 'YA' ? true : false;
+            $kesediaan = $validated['kesediaan'] === 'YA' ? true : false;
 
             // Create penilaian detail
             $penilaian = \App\Models\PenilaianDetail::create([
@@ -720,6 +726,8 @@ class RekrutasiDosenController extends Controller
                 'nilai_kmp_bdt' => $validated['nilai_kmp_bdt'],
                 'nilai_keahlian_lainnya' => $validated['nilai_keahlian_lainnya'],
                 'rata_nilai' => $validated['total_nilai'],
+                'kesiapan' => $kesiapan,
+                'kesediaan' => $kesediaan,
                 'catatan_penilai' => $validated['catatan_penilai'],
             ]);
 

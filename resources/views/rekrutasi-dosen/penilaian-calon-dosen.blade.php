@@ -219,8 +219,8 @@
                                 </tr>
                                 <tr>
                                     <td>1</td>
-                                    <td>Penguasaan Materi Ajar (PMA)</td>
-                                    <td>8%</td>
+                                    <td>Penguasaan materi & audiens</td>
+                                    <td>7%</td>
                                     <td>
                                         <input type="number" class="form-control" name="nilai_b1" id="nilai_b1" 
                                                min="1" max="5" step="0.1" placeholder="1-5" required>
@@ -228,8 +228,8 @@
                                 </tr>
                                 <tr>
                                     <td>2</td>
-                                    <td>Sistematika Penyampaian Materi</td>
-                                    <td>6%</td>
+                                    <td>Sistematika (kemudahan dipahami)</td>
+                                    <td>7%</td>
                                     <td>
                                         <input type="number" class="form-control" name="nilai_b2" id="nilai_b2" 
                                                min="1" max="5" step="0.1" placeholder="1-5" required>
@@ -237,7 +237,7 @@
                                 </tr>
                                 <tr>
                                     <td>3</td>
-                                    <td>Kemampuan Storytelling (KST)</td>
+                                    <td>Kejelasan suara & tulisan</td>
                                     <td>6%</td>
                                     <td>
                                         <input type="number" class="form-control" name="nilai_b3" id="nilai_b3" 
@@ -251,8 +251,8 @@
                                 </tr>
                                 <tr>
                                     <td>1</td>
-                                    <td>Motivasi & Komitmen</td>
-                                    <td>8%</td>
+                                    <td>Motivasi</td>
+                                    <td>5%</td>
                                     <td>
                                         <input type="number" class="form-control" name="nilai_c1" id="nilai_c1" 
                                                min="1" max="5" step="0.1" placeholder="1-5" required>
@@ -260,8 +260,8 @@
                                 </tr>
                                 <tr>
                                     <td>2</td>
-                                    <td>Kemampuan Riset</td>
-                                    <td>8%</td>
+                                    <td>Kemampuan mengajar</td>
+                                    <td>5%</td>
                                     <td>
                                         <input type="number" class="form-control" name="nilai_c2" id="nilai_c2" 
                                                min="1" max="5" step="0.1" placeholder="1-5" required>
@@ -269,8 +269,8 @@
                                 </tr>
                                 <tr>
                                     <td>3</td>
-                                    <td>Pengabdian Masyarakat (Abdimas)</td>
-                                    <td>4%</td>
+                                    <td>Kemampuan mengembangkan kurikulum Pengajaran</td>
+                                    <td>5%</td>
                                     <td>
                                         <input type="number" class="form-control" name="nilai_c3" id="nilai_c3" 
                                                min="1" max="5" step="0.1" placeholder="1-5" required>
@@ -278,8 +278,8 @@
                                 </tr>
                                 <tr>
                                     <td>4</td>
-                                    <td>Kepribadian & Komunikasi</td>
-                                    <td>5%</td>
+                                    <td>Kemampuan penelitian & publikasi</td>
+                                    <td>10%</td>
                                     <td>
                                         <input type="number" class="form-control" name="nilai_c4" id="nilai_c4" 
                                                min="1" max="5" step="0.1" placeholder="1-5" required>
@@ -287,7 +287,7 @@
                                 </tr>
                                 <tr>
                                     <td>5</td>
-                                    <td>Wawasan Keilmuan</td>
+                                    <td>Kemampuan Abdimas</td>
                                     <td>5%</td>
                                     <td>
                                         <input type="number" class="form-control" name="nilai_c5" id="nilai_c5" 
@@ -296,7 +296,7 @@
                                 </tr>
                                 <tr>
                                     <td>6</td>
-                                    <td>Visi & Kontribusi untuk Prodi</td>
+                                    <td>Kemampuan Bekerjasama dengan tim</td>
                                     <td>5%</td>
                                     <td>
                                         <input type="number" class="form-control" name="nilai_c6" id="nilai_c6" 
@@ -305,7 +305,7 @@
                                 </tr>
                                 <tr>
                                     <td>7</td>
-                                    <td>Kemampuan Bekerjasama dalam Tim</td>
+                                    <td>Keahlian lainnya</td>
                                     <td>3%</td>
                                     <td>
                                         <input type="number" class="form-control" name="nilai_c7" id="nilai_c7" 
@@ -314,7 +314,7 @@
                                 </tr>
                                 <tr>
                                     <td>8</td>
-                                    <td>Kesesuaian dengan Budaya Organisasi</td>
+                                    <td>Komitmen waktu dan kesediaan melakukan hal diluar tugas pokok</td>
                                     <td>2%</td>
                                     <td>
                                         <input type="number" class="form-control" name="nilai_c8" id="nilai_c8" 
@@ -329,6 +329,36 @@
                                     <td>
                                         <input type="text" class="form-control fw-bold" id="total_nilai" 
                                                readonly placeholder="Auto Calculate">
+                                    </td>
+                                </tr>
+                                
+                                <!-- Kesiapan -->
+                                <tr>
+                                    <td colspan="2" class="text-center"><strong>Kesiapan bergabung segera?</strong></td>
+                                    <td colspan="2">
+                                        <div class="d-flex gap-3">
+                                            <label class="form-label mb-0">
+                                                <input type="radio" name="kesiapan" value="YA" required> YA
+                                            </label>
+                                            <label class="form-label mb-0">
+                                                <input type="radio" name="kesiapan" value="TIDAK/PIKIR-PIKIR" required> TIDAK/PIKIR-PIKIR
+                                            </label>
+                                        </div>
+                                    </td>
+                                </tr>
+                                
+                                <!-- Kesediaan -->
+                                <tr>
+                                    <td colspan="2" class="text-center"><strong>Bersedia dengan standard gaji?</strong></td>
+                                    <td colspan="2">
+                                        <div class="d-flex gap-3">
+                                            <label class="form-label mb-0">
+                                                <input type="radio" name="kesediaan" value="YA" required> YA
+                                            </label>
+                                            <label class="form-label mb-0">
+                                                <input type="radio" name="kesediaan" value="TIDAK/PIKIR-PIKIR" required> TIDAK/PIKIR-PIKIR
+                                            </label>
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>
@@ -394,15 +424,15 @@
                 total += rataA * 0.40;
                 
                 // Section B: Micro Teaching (20%)
-                total += parseFloat($('#nilai_b1').val() || 0) * 0.08;
-                total += parseFloat($('#nilai_b2').val() || 0) * 0.06;
+                total += parseFloat($('#nilai_b1').val() || 0) * 0.07;
+                total += parseFloat($('#nilai_b2').val() || 0) * 0.07;
                 total += parseFloat($('#nilai_b3').val() || 0) * 0.06;
                 
                 // Section C: Wawancara (40%)
-                total += parseFloat($('#nilai_c1').val() || 0) * 0.08;
-                total += parseFloat($('#nilai_c2').val() || 0) * 0.08;
-                total += parseFloat($('#nilai_c3').val() || 0) * 0.04;
-                total += parseFloat($('#nilai_c4').val() || 0) * 0.05;
+                total += parseFloat($('#nilai_c1').val() || 0) * 0.05;
+                total += parseFloat($('#nilai_c2').val() || 0) * 0.05;
+                total += parseFloat($('#nilai_c3').val() || 0) * 0.05;
+                total += parseFloat($('#nilai_c4').val() || 0) * 0.10;
                 total += parseFloat($('#nilai_c5').val() || 0) * 0.05;
                 total += parseFloat($('#nilai_c6').val() || 0) * 0.05;
                 total += parseFloat($('#nilai_c7').val() || 0) * 0.03;
@@ -444,6 +474,10 @@
                     nilai_kmp_mkp: parseFloat($('#nilai_c6').val() || 0),
                     nilai_kmp_bdt: parseFloat($('#nilai_c7').val() || 0),
                     nilai_keahlian_lainnya: parseFloat($('#nilai_c8').val() || 0),
+                    
+                    // Kesiapan & Kesediaan
+                    kesiapan: $('input[name="kesiapan"]:checked').val(),
+                    kesediaan: $('input[name="kesediaan"]:checked').val(),
                     
                     // Additional fields
                     catatan_penilai: $('#catatan').val(),
