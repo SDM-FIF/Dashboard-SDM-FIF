@@ -651,6 +651,103 @@ class RekrutasiDosenController extends Controller
         }
     }
 
+    public function storePenilaian(Request $request)
+    {
+        try {
+            Log::info('Store penilaian request:', $request->all());
+
+            // Validate request
+            $validated = $request->validate([
+                'jadwal_pengujian_id' => 'required|exists:jadwal_pengujian,id',
+                'calon_dosen_id' => 'required|exists:calon_dosen,id',
+                'nilai_jalur_lamaran' => 'required|numeric|min:1|max:5',
+                'nilai_jfa' => 'required|numeric|min:1|max:5',
+                'nilai_h_index' => 'required|numeric|min:1|max:5',
+                'rata_a' => 'required|numeric',
+                'nilai_pma' => 'required|numeric|min:1|max:5',
+                'nilai_sistematika' => 'required|numeric|min:1|max:5',
+                'nilai_kst' => 'required|numeric|min:1|max:5',
+                'nilai_motivasi' => 'required|numeric|min:1|max:5',
+                'nilai_kmp_mengajar' => 'required|numeric|min:1|max:5',
+                'nilai_kmp_abdimas' => 'required|numeric|min:1|max:5',
+                'nilai_kmp_pp' => 'required|numeric|min:1|max:5',
+                'nilai_kmt_wkm' => 'required|numeric|min:1|max:5',
+                'nilai_kmp_mkp' => 'required|numeric|min:1|max:5',
+                'nilai_kmp_bdt' => 'required|numeric|min:1|max:5',
+                'nilai_keahlian_lainnya' => 'required|numeric|min:1|max:5',
+                'catatan_penilai' => 'nullable|string',
+                'total_nilai' => 'required|numeric',
+            ]);
+
+            // Get authenticated dosen (assuming auth is set up)
+            // For now, we'll use the first dosen from the jadwal
+            $jadwal = \App\Models\JadwalPengujian::with('dosenPenguji')->findOrFail($validated['jadwal_pengujian_id']);
+            
+            // TODO: Get the actual authenticated dosen_id when auth is implemented
+            // For now, use the first dosen penguji
+            $dosenId = $jadwal->dosenPenguji->first()->id ?? null;
+            
+            if (!$dosenId) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Dosen penguji tidak ditemukan'
+                ], 400);
+            }
+
+            // Get calon dosen data
+            $calonDosen = \App\Models\CalonDosen::findOrFail($validated['calon_dosen_id']);
+
+            // Create penilaian detail
+            $penilaian = \App\Models\PenilaianDetail::create([
+                'dosen_id' => $dosenId,
+                'calon_dosen_id' => $validated['calon_dosen_id'],
+                'jadwal_pengujian_id' => $validated['jadwal_pengujian_id'],
+                'jalur_lamaran' => $calonDosen->jalur_lamaran,
+                'h_index' => $calonDosen->h_index,
+                'nilai_jalur_lamaran' => $validated['nilai_jalur_lamaran'],
+                'nilai_jfa' => $validated['nilai_jfa'],
+                'nilai_h_index' => $validated['nilai_h_index'],
+                'rata_a' => $validated['rata_a'],
+                'nilai_pma' => $validated['nilai_pma'],
+                'nilai_sistematika' => $validated['nilai_sistematika'],
+                'nilai_kst' => $validated['nilai_kst'],
+                'nilai_motivasi' => $validated['nilai_motivasi'],
+                'nilai_kmp_mengajar' => $validated['nilai_kmp_mengajar'],
+                'nilai_kmp_abdimas' => $validated['nilai_kmp_abdimas'],
+                'nilai_kmp_pp' => $validated['nilai_kmp_pp'],
+                'nilai_kmt_wkm' => $validated['nilai_kmt_wkm'],
+                'nilai_kmp_mkp' => $validated['nilai_kmp_mkp'],
+                'nilai_kmp_bdt' => $validated['nilai_kmp_bdt'],
+                'nilai_keahlian_lainnya' => $validated['nilai_keahlian_lainnya'],
+                'rata_nilai' => $validated['total_nilai'],
+                'catatan_penilai' => $validated['catatan_penilai'],
+            ]);
+
+            Log::info('Penilaian created successfully:', ['id' => $penilaian->id]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Penilaian berhasil disimpan',
+                'data' => $penilaian
+            ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Validation error:', $e->errors());
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('Error storing penilaian: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menyimpan penilaian: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function exportJadwalPengujianExcel()
     {
         $jadwalList = \App\Models\JadwalPengujian::with(['calonDosen', 'dosenPenguji', 'tahunAjar'])->get();

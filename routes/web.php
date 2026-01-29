@@ -289,6 +289,7 @@ Route::middleware('auth')->group(function () {
         
         // Penilaian Calon Dosen
         Route::get('/penilaian/{jadwal_id}', [RekrutasiDosenController::class, 'penilaian'])->name('penilaian');
+        Route::post('/penilaian/store', [RekrutasiDosenController::class, 'storePenilaian'])->name('penilaian.store');
 
         // Download Riwayat Pendidikan Files
         Route::get('/riwayat-file/{filename}', [RekrutasiDosenController::class, 'downloadRiwayatFile'])->name('riwayat.download');

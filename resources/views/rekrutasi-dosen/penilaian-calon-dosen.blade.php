@@ -160,8 +160,8 @@
                                 <tr>
                                     <th width="10%">No</th>
                                     <th width="50%">Kriteria Penilaian</th>
-                                    <th width="15%">Bobot (%)</th>
-                                    <th width="25%">Nilai (1-5)</th>
+                                    <th width="15%">Nilai</th>
+                                    <th width="25%">Keterangan</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -171,29 +171,45 @@
                                 </tr>
                                 <tr>
                                     <td>1</td>
-                                    <td>Jalur Lamaran / Pendidikan</td>
-                                    <td>10%</td>
+                                    <td>Jalur Lamaran / Pendidikan = {{ $calonDosen->jalur_lamaran ?? '-' }}</td>
                                     <td>
-                                        <input type="number" class="form-control" name="nilai_a1" id="nilai_a1" 
-                                               min="1" max="5" step="0.1" placeholder="1-5" required>
+                                        <input type="number" class="form-control" name="nilai_jalur_lamaran" id="nilai_jalur_lamaran" 
+                                               value="{{ 
+                                                   $calonDosen->jalur_lamaran == 'S3 Prof Full time' ? 5 :
+                                                   ($calonDosen->jalur_lamaran == 'S3 Praktisi Part time' ? 4 :
+                                                   ($calonDosen->jalur_lamaran == 'S3 OnGoing' ? 3 :
+                                                   ($calonDosen->jalur_lamaran == 'S2 Praktisi Part time' ? 2 :
+                                                   ($calonDosen->jalur_lamaran == 'S2 Prof Full time' ? 1 : 0))))
+                                               }}" readonly style="background-color: #e9ecef;">
+                                    </td>
+                                    <td rowspan="3" style="vertical-align: middle;">
+                                        <span id="rata_a_text" class="fw-bold">Rata-rata A = <span id="rata_a_value">0.00</span></span>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>2</td>
-                                    <td>Jabatan Fungsional Akademik (JFA)</td>
-                                    <td>15%</td>
+                                    <td>Jabatan Fungsional Akademik (JFA) = {{ $calonDosen->jabatan_fungsional_akademik ?? 'NJFA' }}</td>
                                     <td>
-                                        <input type="number" class="form-control" name="nilai_a2" id="nilai_a2" 
-                                               min="1" max="5" step="0.1" placeholder="1-5" required>
+                                        <input type="number" class="form-control" name="nilai_jfa" id="nilai_jfa" 
+                                               value="{{ 
+                                                   $calonDosen->jabatan_fungsional_akademik == 'Guru Besar' ? 5 :
+                                                   ($calonDosen->jabatan_fungsional_akademik == 'Lektor Kepala' ? 4 :
+                                                   ($calonDosen->jabatan_fungsional_akademik == 'Lektor' ? 3 :
+                                                   ($calonDosen->jabatan_fungsional_akademik == 'Asisten Ahli' ? 2 : 1)))
+                                               }}" readonly style="background-color: #e9ecef;">
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>3</td>
-                                    <td>H-Index</td>
-                                    <td>15%</td>
+                                    <td>H-Index = {{ $calonDosen->h_index ?? '0.00' }}</td>
                                     <td>
-                                        <input type="number" class="form-control" name="nilai_a3" id="nilai_a3" 
-                                               min="1" max="5" step="0.1" placeholder="1-5" required>
+                                        <input type="number" class="form-control" name="nilai_h_index" id="nilai_h_index" 
+                                               value="{{ 
+                                                   ($calonDosen->h_index ?? 0) > 10 ? 5 :
+                                                   (($calonDosen->h_index ?? 0) >= 5 ? 4 :
+                                                   (($calonDosen->h_index ?? 0) >= 2 ? 3 :
+                                                   (($calonDosen->h_index ?? 0) >= 1 ? 2 : 1)))
+                                               }}" readonly style="background-color: #e9ecef;">
                                     </td>
                                 </tr>
 
@@ -354,14 +370,28 @@
 
     <script>
         $(document).ready(function() {
+            // Calculate rata_a on page load
+            function calculateRataA() {
+                const nilaiJalurLamaran = parseFloat($('#nilai_jalur_lamaran').val() || 0);
+                const nilaiJFA = parseFloat($('#nilai_jfa').val() || 0);
+                const nilaiHIndex = parseFloat($('#nilai_h_index').val() || 0);
+                
+                const rataA = (nilaiJalurLamaran + nilaiJFA + nilaiHIndex) / 3;
+                $('#rata_a_value').text(rataA.toFixed(2));
+                
+                return rataA;
+            }
+            
+            // Calculate rata_a immediately on page load
+            calculateRataA();
+            
             // Auto calculate total nilai berbobot
             function calculateTotal() {
                 let total = 0;
                 
-                // Section A: Kualifikasi (40%)
-                total += parseFloat($('#nilai_a1').val() || 0) * 0.10;
-                total += parseFloat($('#nilai_a2').val() || 0) * 0.15;
-                total += parseFloat($('#nilai_a3').val() || 0) * 0.15;
+                // Section A: Kualifikasi (40%) - using the average
+                const rataA = calculateRataA();
+                total += rataA * 0.40;
                 
                 // Section B: Micro Teaching (20%)
                 total += parseFloat($('#nilai_b1').val() || 0) * 0.08;
@@ -381,21 +411,68 @@
                 $('#total_nilai').val(total.toFixed(2));
             }
             
-            // Trigger calculation on input change
-            $('input[name^="nilai_"]').on('input', calculateTotal);
+            // Trigger calculation on input change (only for sections B and C)
+            $('input[name^="nilai_b"], input[name^="nilai_c"]').on('input', calculateTotal);
             
             // Form submission
             $('#formPenilaian').on('submit', function(e) {
                 e.preventDefault();
                 
-                // TODO: Implement submit logic with role-based access (dosen penguji 1/2/3)
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: 'Penilaian berhasil disimpan.',
-                    confirmButtonText: 'OK'
-                }).then(() => {
-                    window.location.href = "{{ route('rekrutasi-dosen.jadwal-pengujian') }}";
+                // Prepare data to send
+                const formData = {
+                    _token: $('meta[name="csrf-token"]').attr('content'),
+                    jadwal_pengujian_id: {{ $jadwal->id }},
+                    calon_dosen_id: {{ $calonDosen->id }},
+                    
+                    // Section A - Kualifikasi (auto-calculated)
+                    nilai_jalur_lamaran: parseFloat($('#nilai_jalur_lamaran').val()),
+                    nilai_jfa: parseFloat($('#nilai_jfa').val()),
+                    nilai_h_index: parseFloat($('#nilai_h_index').val()),
+                    rata_a: calculateRataA(),
+                    
+                    // Section B - Micro Teaching
+                    nilai_pma: parseFloat($('#nilai_b1').val() || 0),
+                    nilai_sistematika: parseFloat($('#nilai_b2').val() || 0),
+                    nilai_kst: parseFloat($('#nilai_b3').val() || 0),
+                    
+                    // Section C - Wawancara
+                    nilai_motivasi: parseFloat($('#nilai_c1').val() || 0),
+                    nilai_kmp_mengajar: parseFloat($('#nilai_c2').val() || 0),
+                    nilai_kmp_abdimas: parseFloat($('#nilai_c3').val() || 0),
+                    nilai_kmp_pp: parseFloat($('#nilai_c4').val() || 0),
+                    nilai_kmt_wkm: parseFloat($('#nilai_c5').val() || 0),
+                    nilai_kmp_mkp: parseFloat($('#nilai_c6').val() || 0),
+                    nilai_kmp_bdt: parseFloat($('#nilai_c7').val() || 0),
+                    nilai_keahlian_lainnya: parseFloat($('#nilai_c8').val() || 0),
+                    
+                    // Additional fields
+                    catatan_penilai: $('#catatan').val(),
+                    total_nilai: parseFloat($('#total_nilai').val())
+                };
+                
+                // Send AJAX request
+                $.ajax({
+                    url: '{{ route("rekrutasi-dosen.penilaian.store") }}',
+                    method: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil!',
+                            text: 'Penilaian berhasil disimpan.',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            window.location.href = "{{ route('rekrutasi-dosen.jadwal-pengujian') }}";
+                        });
+                    },
+                    error: function(xhr) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: 'Terjadi kesalahan saat menyimpan penilaian: ' + (xhr.responseJSON?.message || 'Unknown error'),
+                            confirmButtonText: 'OK'
+                        });
+                    }
                 });
             });
         });
