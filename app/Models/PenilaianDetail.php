@@ -12,8 +12,6 @@ class PenilaianDetail extends Model
         'dosen_id',
         'calon_dosen_id',
         'jadwal_pengujian_id',
-        'jalur_lamaran',
-        'h_index',
         'nilai_jalur_lamaran',
         'nilai_h_index',
         'nilai_jfa',
@@ -40,7 +38,6 @@ class PenilaianDetail extends Model
     ];
 
     protected $casts = [
-        'h_index' => 'decimal:2',
         'nilai_jalur_lamaran' => 'decimal:2',
         'nilai_h_index' => 'decimal:2',
         'nilai_jfa' => 'decimal:2',
