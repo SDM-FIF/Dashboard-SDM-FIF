@@ -220,27 +220,27 @@
                                 <tr>
                                     <td>1</td>
                                     <td>Penguasaan materi & audiens</td>
-                                    <td>7%</td>
                                     <td>
-                                        <input type="number" class="form-control" name="nilai_b1" id="nilai_b1" 
+                                        <input type="number" class="form-control nilai-input" name="nilai_b1" id="nilai_b1" 
                                                min="1" max="5" step="0.1" placeholder="1-5" required>
+                                    </td>
+                                    <td rowspan="3" style="vertical-align: middle;">
+                                        <span id="rata_b_text" class="fw-bold">Rata-rata B = <span id="rata_b_value">0.00</span></span>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>2</td>
                                     <td>Sistematika (kemudahan dipahami)</td>
-                                    <td>7%</td>
                                     <td>
-                                        <input type="number" class="form-control" name="nilai_b2" id="nilai_b2" 
+                                        <input type="number" class="form-control nilai-input" name="nilai_b2" id="nilai_b2" 
                                                min="1" max="5" step="0.1" placeholder="1-5" required>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>3</td>
                                     <td>Kejelasan suara & tulisan</td>
-                                    <td>6%</td>
                                     <td>
-                                        <input type="number" class="form-control" name="nilai_b3" id="nilai_b3" 
+                                        <input type="number" class="form-control nilai-input" name="nilai_b3" id="nilai_b3" 
                                                min="1" max="5" step="0.1" placeholder="1-5" required>
                                     </td>
                                 </tr>
@@ -252,72 +252,67 @@
                                 <tr>
                                     <td>1</td>
                                     <td>Motivasi</td>
-                                    <td>5%</td>
                                     <td>
-                                        <input type="number" class="form-control" name="nilai_c1" id="nilai_c1" 
+                                        <input type="number" class="form-control nilai-input" name="nilai_c1" id="nilai_c1" 
                                                min="1" max="5" step="0.1" placeholder="1-5" required>
+                                    </td>
+                                    <td rowspan="8" style="vertical-align: middle;">
+                                        <span id="rata_c_text" class="fw-bold">Rata-rata C = <span id="rata_c_value">0.00</span></span>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>2</td>
                                     <td>Kemampuan mengajar</td>
-                                    <td>5%</td>
                                     <td>
-                                        <input type="number" class="form-control" name="nilai_c2" id="nilai_c2" 
+                                        <input type="number" class="form-control nilai-input" name="nilai_c2" id="nilai_c2" 
                                                min="1" max="5" step="0.1" placeholder="1-5" required>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>3</td>
                                     <td>Kemampuan mengembangkan kurikulum Pengajaran</td>
-                                    <td>5%</td>
                                     <td>
-                                        <input type="number" class="form-control" name="nilai_c3" id="nilai_c3" 
+                                        <input type="number" class="form-control nilai-input" name="nilai_c3" id="nilai_c3" 
                                                min="1" max="5" step="0.1" placeholder="1-5" required>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>4</td>
                                     <td>Kemampuan penelitian & publikasi</td>
-                                    <td>10%</td>
                                     <td>
-                                        <input type="number" class="form-control" name="nilai_c4" id="nilai_c4" 
+                                        <input type="number" class="form-control nilai-input" name="nilai_c4" id="nilai_c4" 
                                                min="1" max="5" step="0.1" placeholder="1-5" required>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>5</td>
                                     <td>Kemampuan Abdimas</td>
-                                    <td>5%</td>
                                     <td>
-                                        <input type="number" class="form-control" name="nilai_c5" id="nilai_c5" 
+                                        <input type="number" class="form-control nilai-input" name="nilai_c5" id="nilai_c5" 
                                                min="1" max="5" step="0.1" placeholder="1-5" required>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>6</td>
                                     <td>Kemampuan Bekerjasama dengan tim</td>
-                                    <td>5%</td>
                                     <td>
-                                        <input type="number" class="form-control" name="nilai_c6" id="nilai_c6" 
+                                        <input type="number" class="form-control nilai-input" name="nilai_c6" id="nilai_c6" 
                                                min="1" max="5" step="0.1" placeholder="1-5" required>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>7</td>
                                     <td>Keahlian lainnya</td>
-                                    <td>3%</td>
                                     <td>
-                                        <input type="number" class="form-control" name="nilai_c7" id="nilai_c7" 
+                                        <input type="number" class="form-control nilai-input" name="nilai_c7" id="nilai_c7" 
                                                min="1" max="5" step="0.1" placeholder="1-5" required>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>8</td>
                                     <td>Komitmen waktu dan kesediaan melakukan hal diluar tugas pokok</td>
-                                    <td>2%</td>
                                     <td>
-                                        <input type="number" class="form-control" name="nilai_c8" id="nilai_c8" 
+                                        <input type="number" class="form-control nilai-input" name="nilai_c8" id="nilai_c8" 
                                                min="1" max="5" step="0.1" placeholder="1-5" required>
                                     </td>
                                 </tr>
@@ -325,10 +320,13 @@
                                 <!-- Total -->
                                 <tr class="table-info">
                                     <td colspan="2" class="text-center"><strong>TOTAL NILAI (Rata-rata Berbobot)</strong></td>
-                                    <td class="text-center"><strong>100%</strong></td>
                                     <td>
                                         <input type="text" class="form-control fw-bold" id="total_nilai" 
-                                               readonly placeholder="Auto Calculate">
+                                               readonly placeholder="0.00" style="background-color: #e9ecef;">
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control fw-bold" id="keterangan_berbobot" 
+                                               readonly placeholder="-" style="background-color: #e9ecef;">
                                     </td>
                                 </tr>
                                 
@@ -386,10 +384,7 @@
 
                     <!-- Buttons -->
                     <div class="d-flex justify-content-end gap-2">
-                        <a href="{{ route('rekrutasi-dosen.jadwal-pengujian') }}" class="btn btn-secondary">
-                            <i class="bi bi-x-circle me-2"></i>Batal
-                        </a>
-                        <button type="submit" class="btn btn-primary">
+                        <button type="submit" class="btn btn-primary" id="btnSimpanPenilaian">
                             <i class="bi bi-check-circle me-2"></i>Simpan Penilaian
                         </button>
                     </div>
@@ -400,7 +395,7 @@
 
     <script>
         $(document).ready(function() {
-            // Calculate rata_a on page load
+            // Calculate rata_a on page load (Section A is auto-calculated)
             function calculateRataA() {
                 const nilaiJalurLamaran = parseFloat($('#nilai_jalur_lamaran').val() || 0);
                 const nilaiJFA = parseFloat($('#nilai_jfa').val() || 0);
@@ -412,41 +407,114 @@
                 return rataA;
             }
             
+            // Calculate rata_b (will be shown after save)
+            function calculateRataB() {
+                const nilaiB1 = parseFloat($('#nilai_b1').val() || 0);
+                const nilaiB2 = parseFloat($('#nilai_b2').val() || 0);
+                const nilaiB3 = parseFloat($('#nilai_b3').val() || 0);
+                
+                const rataB = (nilaiB1 + nilaiB2 + nilaiB3) / 3;
+                return rataB;
+            }
+            
+            // Calculate rata_c (will be shown after save)
+            function calculateRataC() {
+                const nilaiC1 = parseFloat($('#nilai_c1').val() || 0);
+                const nilaiC2 = parseFloat($('#nilai_c2').val() || 0);
+                const nilaiC3 = parseFloat($('#nilai_c3').val() || 0);
+                const nilaiC4 = parseFloat($('#nilai_c4').val() || 0);
+                const nilaiC5 = parseFloat($('#nilai_c5').val() || 0);
+                const nilaiC6 = parseFloat($('#nilai_c6').val() || 0);
+                const nilaiC7 = parseFloat($('#nilai_c7').val() || 0);
+                const nilaiC8 = parseFloat($('#nilai_c8').val() || 0);
+                
+                const rataC = (nilaiC1 + nilaiC2 + nilaiC3 + nilaiC4 + nilaiC5 + nilaiC6 + nilaiC7 + nilaiC8) / 8;
+                return rataC;
+            }
+            
+            // Get keterangan based on total nilai
+            function getKeterangan(nilai) {
+                if (nilai >= 4.5) return 'Sangat Baik';
+                if (nilai >= 3.5) return 'Baik';
+                if (nilai >= 2.5) return 'Cukup';
+                if (nilai >= 1.5) return 'Kurang';
+                return 'Sangat Kurang';
+            }
+            
             // Calculate rata_a immediately on page load
             calculateRataA();
             
-            // Auto calculate total nilai berbobot
-            function calculateTotal() {
-                let total = 0;
-                
-                // Section A: Kualifikasi (40%) - using the average
-                const rataA = calculateRataA();
-                total += rataA * 0.40;
-                
-                // Section B: Micro Teaching (20%)
-                total += parseFloat($('#nilai_b1').val() || 0) * 0.07;
-                total += parseFloat($('#nilai_b2').val() || 0) * 0.07;
-                total += parseFloat($('#nilai_b3').val() || 0) * 0.06;
-                
-                // Section C: Wawancara (40%)
-                total += parseFloat($('#nilai_c1').val() || 0) * 0.05;
-                total += parseFloat($('#nilai_c2').val() || 0) * 0.05;
-                total += parseFloat($('#nilai_c3').val() || 0) * 0.05;
-                total += parseFloat($('#nilai_c4').val() || 0) * 0.10;
-                total += parseFloat($('#nilai_c5').val() || 0) * 0.05;
-                total += parseFloat($('#nilai_c6').val() || 0) * 0.05;
-                total += parseFloat($('#nilai_c7').val() || 0) * 0.03;
-                total += parseFloat($('#nilai_c8').val() || 0) * 0.02;
-                
-                $('#total_nilai').val(total.toFixed(2));
-            }
-            
-            // Trigger calculation on input change (only for sections B and C)
-            $('input[name^="nilai_b"], input[name^="nilai_c"]').on('input', calculateTotal);
-            
-            // Form submission
+            // Form submission with validation
             $('#formPenilaian').on('submit', function(e) {
                 e.preventDefault();
+                
+                // Validation: Check all nilai inputs (B and C sections)
+                let isValid = true;
+                let errorMessage = '';
+                
+                // Check Section B inputs
+                for (let i = 1; i <= 3; i++) {
+                    const nilai = parseFloat($(`#nilai_b${i}`).val());
+                    if (!nilai || nilai < 1 || nilai > 5) {
+                        isValid = false;
+                        errorMessage = 'Semua kriteria penilaian Section B harus diisi dengan angka 1-5';
+                        break;
+                    }
+                }
+                
+                // Check Section C inputs
+                if (isValid) {
+                    for (let i = 1; i <= 8; i++) {
+                        const nilai = parseFloat($(`#nilai_c${i}`).val());
+                        if (!nilai || nilai < 1 || nilai > 5) {
+                            isValid = false;
+                            errorMessage = 'Semua kriteria penilaian Section C harus diisi dengan angka 1-5';
+                            break;
+                        }
+                    }
+                }
+                
+                // Check kesiapan
+                if (isValid && !$('input[name="kesiapan"]:checked').val()) {
+                    isValid = false;
+                    errorMessage = 'Pilihan "Kesiapan bergabung segera?" harus dipilih';
+                }
+                
+                // Check kesediaan
+                if (isValid && !$('input[name="kesediaan"]:checked').val()) {
+                    isValid = false;
+                    errorMessage = 'Pilihan "Bersedia dengan standard gaji?" harus dipilih';
+                }
+                
+                if (!isValid) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Validasi Gagal',
+                        text: errorMessage,
+                        confirmButtonText: 'OK'
+                    });
+                    return;
+                }
+                
+                // Calculate all averages
+                const rataA = calculateRataA();
+                const rataB = calculateRataB();
+                const rataC = calculateRataC();
+                const totalNilai = (rataA + rataB + rataC) / 3;
+                const keterangan = getKeterangan(totalNilai);
+                
+                // Update displays
+                $('#rata_b_value').text(rataB.toFixed(2));
+                $('#rata_c_value').text(rataC.toFixed(2));
+                $('#total_nilai').val(totalNilai.toFixed(2));
+                $('#keterangan_berbobot').val(keterangan);
+                
+                // Disable all input fields
+                $('.nilai-input').prop('readonly', true).css('background-color', '#e9ecef');
+                $('input[name="kesiapan"]').prop('disabled', true);
+                $('input[name="kesediaan"]').prop('disabled', true);
+                $('#catatan').prop('readonly', true);
+                $('#btnSimpanPenilaian').prop('disabled', true);
                 
                 // Prepare data to send
                 const formData = {
@@ -458,30 +526,35 @@
                     nilai_jalur_lamaran: parseFloat($('#nilai_jalur_lamaran').val()),
                     nilai_jfa: parseFloat($('#nilai_jfa').val()),
                     nilai_h_index: parseFloat($('#nilai_h_index').val()),
-                    rata_a: calculateRataA(),
+                    rata_a: rataA,
                     
                     // Section B - Micro Teaching
-                    nilai_pma: parseFloat($('#nilai_b1').val() || 0),
-                    nilai_sistematika: parseFloat($('#nilai_b2').val() || 0),
-                    nilai_kst: parseFloat($('#nilai_b3').val() || 0),
+                    nilai_pma: parseFloat($('#nilai_b1').val()),
+                    nilai_sistematika: parseFloat($('#nilai_b2').val()),
+                    nilai_kst: parseFloat($('#nilai_b3').val()),
+                    rata_b: rataB,
                     
                     // Section C - Wawancara
-                    nilai_motivasi: parseFloat($('#nilai_c1').val() || 0),
-                    nilai_kmp_mengajar: parseFloat($('#nilai_c2').val() || 0),
-                    nilai_kmp_abdimas: parseFloat($('#nilai_c3').val() || 0),
-                    nilai_kmp_pp: parseFloat($('#nilai_c4').val() || 0),
-                    nilai_kmt_wkm: parseFloat($('#nilai_c5').val() || 0),
-                    nilai_kmp_mkp: parseFloat($('#nilai_c6').val() || 0),
-                    nilai_kmp_bdt: parseFloat($('#nilai_c7').val() || 0),
-                    nilai_keahlian_lainnya: parseFloat($('#nilai_c8').val() || 0),
+                    nilai_motivasi: parseFloat($('#nilai_c1').val()),
+                    nilai_kmp_mengajar: parseFloat($('#nilai_c2').val()),
+                    nilai_kmp_mkp: parseFloat($('#nilai_c3').val()),
+                    nilai_kmp_pp: parseFloat($('#nilai_c4').val()),
+                    nilai_kmp_abdimas: parseFloat($('#nilai_c5').val()),
+                    nilai_kmp_bdt: parseFloat($('#nilai_c6').val()),
+                    nilai_keahlian_lainnya: parseFloat($('#nilai_c7').val()),
+                    nilai_kmt_wkm: parseFloat($('#nilai_c8').val()),
+                    rata_c: rataC,
+                    
+                    // Total
+                    rata_nilai: totalNilai,
+                    keterangan_berbobot: keterangan,
                     
                     // Kesiapan & Kesediaan
                     kesiapan: $('input[name="kesiapan"]:checked').val(),
                     kesediaan: $('input[name="kesediaan"]:checked').val(),
                     
                     // Additional fields
-                    catatan_penilai: $('#catatan').val(),
-                    total_nilai: parseFloat($('#total_nilai').val())
+                    catatan_penilai: $('#catatan').val()
                 };
                 
                 // Send AJAX request
@@ -500,6 +573,13 @@
                         });
                     },
                     error: function(xhr) {
+                        // Re-enable inputs if error
+                        $('.nilai-input').prop('readonly', false).css('background-color', '#fff');
+                        $('input[name="kesiapan"]').prop('disabled', false);
+                        $('input[name="kesediaan"]').prop('disabled', false);
+                        $('#catatan').prop('readonly', false);
+                        $('#btnSimpanPenilaian').prop('disabled', false);
+                        
                         Swal.fire({
                             icon: 'error',
                             title: 'Gagal!',
