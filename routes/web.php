@@ -6,6 +6,9 @@ use App\Http\Controllers\DosenController;
 use App\Http\Controllers\TenagaPendukungAkademikController;
 use App\Http\Controllers\RekrutasiDosenController;
 use App\Http\Controllers\MahasiswaController;
+use App\Http\Controllers\FakultasController;
+use App\Http\Controllers\ProdiController;
+use App\Http\Controllers\KompetisiController;
 
 // ============================
 // Auth Routes
@@ -182,6 +185,24 @@ Route::middleware('auth')->group(function () {
         return view('dashboard-dosen');
     })->name('dashboard-dosen');
 
+    // ============================
+    // 🆕 MASTER DATA ROUTES (Fakultas, Prodi, Kompetisi)
+    // ============================
+    // Menggunakan Route::resource agar otomatis ada index, create, store, edit, update, destroy
+    Route::prefix('master-data')->group(function () {
+        
+        // URL: /master-data/fakultas
+        // Route Name: fakultas.index, fakultas.create, fakultas.edit, dst.
+        Route::resource('fakultas', FakultasController::class);
+
+        // URL: /master-data/prodi
+        // Route Name: prodi.index, dst.
+        Route::resource('prodi', ProdiController::class);
+
+        // URL: /master-data/kompetisi
+        // Route Name: kompetisi.index, dst.
+        Route::resource('kompetisi', KompetisiController::class);
+    });
     // ============================
     // Manajemen Dosen Routes
     // ============================
