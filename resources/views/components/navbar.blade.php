@@ -140,142 +140,145 @@
                 </div>
             </li>
 
-           {{-- Rekrutasi Dosen Section --}}
-<li class="relative">
-    <button onclick="toggleDropdown('rekrutasiDropdown')"
-        class="w-full flex items-center justify-between px-6 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('rekrutasi-dosen*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
-        <div class="flex items-center">
-            <svg class="w-5 h-5 mr-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                <path
-                    d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V8c0-.55-.45-1-1-1s-1 .45-1 1v2H2c-.55 0-1 .45-1 1s.45 1 1 1h2v2c0 .55.45 1 1 1s1-.45 1-1v-2h2c.55 0 1-.45 1-1s-.45-1-1-1H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-            </svg>
-            <span>Rekrutasi Dosen</span>
-        </div>
-        <svg class="w-4 h-4 transform transition-transform duration-200 group-hover:scale-110"
-            id="rekrutasiArrow" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd"
-                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                clip-rule="evenodd" />
-        </svg>
-    </button>
-
-    {{-- Rekrutasi Dosen Dropdown Menu --}}
-    <div id="rekrutasiDropdown" class="hidden bg-red-700/50 backdrop-blur-sm">
-        <ul class="py-2 space-y-1">
-            <li>
-                <a href="{{ route('rekrutasi-dosen') }}"
-                    class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('rekrutasi-dosen') && !request()->routeIs('rekrutasi-dosen.*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
-                    Data Rekrutasi Dosen
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('import-rekruitasi') }}"
-                    class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('import-rekruitasi') || request()->routeIs('rekrutasi-dosen.import*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
-                    Import Rekrutasi Dosen
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('rekrutasi-dosen.jadwal-pengujian') }}"
-                    class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('rekrutasi-dosen.jadwal-pengujian') || request()->routeIs('rekrutasi-dosen.penilaian') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
-                    Jadwal Pengujian Dosen
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('rekrutasi-dosen.hasil-pengujian') }}"
-                    class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('rekrutasi-dosen.hasil-pengujian') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
-                    Hasil Pengujian
-                </a>
-            </li>
-        </ul>
-    </div>
-</li>
-
-                {{-- Manajemen Mahasiswa Section --}}
-                <li class="relative">
-                    {{-- Button Dropdown: Aktif (Kuning) jika route diawali dengan 'mahasiswa.' --}}
-                    <button onclick="toggleDropdown('mahasiswaDropdown')"
-                        class="w-full flex items-center justify-between px-6 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('mahasiswa.*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
-                        <div class="flex items-center">
-                            {{-- Icon Cap Graduation untuk Mahasiswa --}}
-                            <svg class="w-5 h-5 mr-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 3L1 9L12 15L21 10.09V17H23V9M5 13.18V17.18L12 21L19 17.18V13.18L12 17L5 13.18Z" />
-                            </svg>
-                            <span>Manajemen Mahasiswa</span>
-                        </div>
-                        
-                        {{-- Panah Dropdown --}}
-                        <svg class="w-4 h-4 transform transition-transform duration-200 {{ request()->routeIs('mahasiswa.*') ? 'rotate-180' : '' }} group-hover:scale-110" 
-                            id="mahasiswaArrow"
-                            fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd"
-                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                clip-rule="evenodd" />
-                        </svg>
-                    </button>
-
-                    {{-- Menu Dropdown: Hidden secara default kecuali sedang di route mahasiswa --}}
-                    <div id="mahasiswaDropdown" class="{{ request()->routeIs('mahasiswa.*') ? '' : 'hidden' }} bg-red-700/50 backdrop-blur-sm">
-                        <ul class="py-2 space-y-1">
-                            <li>
-                                {{-- Link Kelola Data --}}
-                                <a href="{{ route('mahasiswa.kelola-data') }}"
-                                    class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100 {{ request()->routeIs('mahasiswa.kelola-data') ? 'bg-red-600/60' : '' }}">
-                                    Kelola Data
-                                </a>
-                            </li>
-                            <li>
-                                {{-- Link Import Data --}}
-                                <a href="{{ route('mahasiswa.import.view') }}"
-                                    class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100 {{ request()->routeIs('mahasiswa.import.*') || request()->routeIs('mahasiswa.import-process') ? 'bg-red-600/60' : '' }}">
-                                    Import Data
-                                </a>
-                            </li>
-
-                        </ul>
-                    </div>
-                </li>
-
-            {{-- Master Data Section --}}
+            {{-- Rekrutasi Dosen Section --}}
             <li class="relative">
-                <button onclick="toggleDropdown('masterDataDropdown')"
-                    class="w-full flex items-center justify-between px-6 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('master-data*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
+                <button onclick="toggleDropdown('rekrutasiDropdown')"
+                    class="w-full flex items-center justify-between px-6 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('rekrutasi-dosen*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
                     <div class="flex items-center">
                         <svg class="w-5 h-5 mr-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                             <path
-                                d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
+                                d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V8c0-.55-.45-1-1-1s-1 .45-1 1v2H2c-.55 0-1 .45-1 1s.45 1 1 1h2v2c0 .55.45 1 1 1s1-.45 1-1v-2h2c.55 0 1-.45 1-1s-.45-1-1-1H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
                         </svg>
-                        <span>Master Data</span>
+                        <span>Rekrutasi Dosen</span>
                     </div>
                     <svg class="w-4 h-4 transform transition-transform duration-200 group-hover:scale-110"
-                        id="masterDataArrow" fill="currentColor" viewBox="0 0 20 20">
+                        id="rekrutasiArrow" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd"
                             d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
                             clip-rule="evenodd" />
                     </svg>
                 </button>
 
-                {{-- Master Data Dropdown Menu --}}
-                <div id="masterDataDropdown" class="hidden bg-red-700/50 backdrop-blur-sm">
+                {{-- Rekrutasi Dosen Dropdown Menu --}}
+                <div id="rekrutasiDropdown" class="hidden bg-red-700/50 backdrop-blur-sm">
                     <ul class="py-2 space-y-1">
                         <li>
-                            <a href="{{ route('master-data') }}"
-                                class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100">
-                                Data Fakultas
+                            <a href="{{ route('rekrutasi-dosen') }}"
+                                class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('rekrutasi-dosen') && !request()->routeIs('rekrutasi-dosen.*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
+                                Data Rekrutasi Dosen
                             </a>
                         </li>
                         <li>
-                            <a href="#"
-                                class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100">
-                                Data Mahasiswa
+                            <a href="{{ route('import-rekruitasi') }}"
+                                class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('import-rekruitasi') || request()->routeIs('rekrutasi-dosen.import*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
+                                Import Rekrutasi Dosen
                             </a>
                         </li>
                         <li>
-                            <a href="#"
-                                class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100">
-                                Data Mahasiswa Kompetisi
+                            <a href="{{ route('rekrutasi-dosen.jadwal-pengujian') }}"
+                                class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('rekrutasi-dosen.jadwal-pengujian') || request()->routeIs('rekrutasi-dosen.penilaian') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
+                                Jadwal Pengujian Dosen
                             </a>
                         </li>
-                        <!-- Add more dropdown items here -->
+                        <li>
+                            <a href="{{ route('rekrutasi-dosen.hasil-pengujian') }}"
+                                class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('rekrutasi-dosen.hasil-pengujian') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
+                                Hasil Pengujian
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+
+            {{-- Manajemen Mahasiswa Section --}}
+            <li class="relative">
+                {{-- Button Dropdown: Aktif (Kuning) jika route diawali dengan 'mahasiswa.' --}}
+                <button onclick="toggleDropdown('mahasiswaDropdown')"
+                    class="w-full flex items-center justify-between px-6 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('mahasiswa.*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
+                    <div class="flex items-center">
+                        {{-- Icon Cap Graduation untuk Mahasiswa --}}
+                        <svg class="w-5 h-5 mr-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M12 3L1 9L12 15L21 10.09V17H23V9M5 13.18V17.18L12 21L19 17.18V13.18L12 17L5 13.18Z" />
+                        </svg>
+                        <span>Manajemen Mahasiswa</span>
+                    </div>
+
+                    {{-- Panah Dropdown --}}
+                    <svg class="w-4 h-4 transform transition-transform duration-200 {{ request()->routeIs('mahasiswa.*') ? 'rotate-180' : '' }} group-hover:scale-110"
+                        id="mahasiswaArrow" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </button>
+
+                {{-- Menu Dropdown: Hidden secara default kecuali sedang di route mahasiswa --}}
+                <div id="mahasiswaDropdown"
+                    class="{{ request()->routeIs('mahasiswa.*') ? '' : 'hidden' }} bg-red-700/50 backdrop-blur-sm">
+                    <ul class="py-2 space-y-1">
+                        <li>
+                            {{-- Link Kelola Data --}}
+                            <a href="{{ route('mahasiswa.kelola-data') }}"
+                                class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100 {{ request()->routeIs('mahasiswa.kelola-data') ? 'bg-red-600/60' : '' }}">
+                                Kelola Data
+                            </a>
+                        </li>
+                        <li>
+                            {{-- Link Import Data --}}
+                            <a href="{{ route('mahasiswa.import.view') }}"
+                                class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100 {{ request()->routeIs('mahasiswa.import.*') || request()->routeIs('mahasiswa.import-process') ? 'bg-red-600/60' : '' }}">
+                                Import Data
+                            </a>
+                        </li>
+
+                    </ul>
+                </div>
+            </li>
+
+            {{-- Master Data Section (DIUPDATE) --}}
+            <li class="relative">
+                <button onclick="toggleDropdown('masterDataDropdown')"
+                    class="w-full flex items-center justify-between px-6 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->is('master-data*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
+                    <div class="flex items-center">
+                        {{-- Icon Database/Layers untuk Master Data --}}
+                        <svg class="w-5 h-5 mr-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M12 3C7.58 3 4 4.79 4 7s3.58 4 8 4 8-1.79 8-4-3.58-4-8-4M4 9v3c0 2.21 3.58 4 8 4s8-1.79 8-4V9c0 2.21-3.58 4-8 4s-8-1.79-8-4m0 5v3c0 2.21 3.58 4 8 4s8-1.79 8-4v-3c0 2.21-3.58 4-8 4s-8-1.79-8-4z" />
+                        </svg>
+                        <span>Master Data</span>
+                    </div>
+                    <svg class="w-4 h-4 transform transition-transform duration-200" id="masterDataArrow"
+                        fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd"
+                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </button>
+
+                <div id="masterDataDropdown" class="hidden bg-red-700/50 backdrop-blur-sm">
+                    <ul class="py-2 space-y-1">
+                        {{-- Data Fakultas --}}
+                        <li>
+                            <a href="{{ route('fakultas.index') }}"
+                                class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('fakultas.*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
+                                <i class="fas fa-university mr-2"></i> Data Fakultas
+                            </a>
+                        </li>
+                        {{-- Data Program Studi --}}
+                        <li>
+                            <a href="{{ route('prodi.index') }}"
+                                class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('prodi.*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
+                                <i class="fas fa-graduation-cap mr-2"></i> Data Program Studi
+                            </a>
+                        </li>
+                        {{-- Data Kompetisi --}}
+                        <li>
+                            <a href="{{ route('kompetisi.index') }}"
+                                class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('kompetisi.*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
+                                <i class="fas fa-trophy mr-2"></i> Data Kompetisi
+                            </a>
+                        </li>
                     </ul>
                 </div>
             </li>
