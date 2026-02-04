@@ -401,6 +401,13 @@
 
                     <!-- Buttons -->
                     <div class="d-flex justify-content-end gap-2">
+                        @if($existingPenilaian)
+                        <a href="{{ route('rekrutasi-dosen.penilaian.export', $existingPenilaian->id) }}" 
+                           class="btn btn-success" 
+                           style="background-color: #28a745; border-color: #28a745; color: white;">
+                            <i class="bi bi-download me-2"></i>Download Excel
+                        </a>
+                        @endif
                         <button type="submit" class="btn btn-primary" id="btnSimpanPenilaian">
                             <i class="bi bi-check-circle me-2"></i>{{ $existingPenilaian ? 'Update Penilaian' : 'Simpan Penilaian' }}
                         </button>

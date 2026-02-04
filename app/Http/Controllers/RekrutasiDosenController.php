@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CalonDosen;
 use App\Models\Prodi;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
@@ -637,7 +638,9 @@ class RekrutasiDosenController extends Controller
     {
         try {
             // Check authorization
-            if (!Auth::user()->hasRole(['Super Admin', 'Dosen Penguji 1', 'Dosen Penguji 2', 'Dosen Penguji 3'])) {
+            /** @var User $user */
+            $user = Auth::user();
+            if (!$user->hasRole(['Super Admin', 'Dosen Penguji 1', 'Dosen Penguji 2', 'Dosen Penguji 3'])) {
                 return redirect()->route('dashboard')
                     ->with('error', 'Anda tidak memiliki akses ke halaman ini.');
             }
@@ -696,17 +699,17 @@ class RekrutasiDosenController extends Controller
                 'catatan_penilai' => 'nullable|string',
             ]);
 
-            // Get authenticated dosen (assuming auth is set up)
-            // For now, we'll use the first dosen from the jadwal
+            // Get authenticated dosen from current logged in user
             $jadwal = \App\Models\JadwalPengujian::with('dosenPenguji')->findOrFail($validated['jadwal_pengujian_id']);
             
-            // Use the first dosen penguji as dosen_id (for compatibility)
-            $dosenId = $jadwal->dosenPenguji->first()->id ?? null;
+            // Get dosen_id from current logged in user
+            $currentDosen = \App\Models\Dosen::where('user_id', Auth::id())->first();
+            $dosenId = $currentDosen ? $currentDosen->id : null;
             
             if (!$dosenId) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Dosen penguji tidak ditemukan'
+                    'message' => 'Data dosen tidak ditemukan untuk user yang login'
                 ], 400);
             }
 
@@ -783,6 +786,52 @@ class RekrutasiDosenController extends Controller
                 'success' => false,
                 'message' => 'Terjadi kesalahan saat menyimpan penilaian: ' . $e->getMessage()
             ], 500);
+        }
+    }
+
+    public function exportPenilaianExcel($penilaianId)
+    {
+        try {
+            Log::info('Export penilaian called', ['penilaian_id' => $penilaianId, 'user_id' => Auth::id()]);
+            
+            // Get penilaian detail
+            $penilaian = \App\Models\PenilaianDetail::with(['calonDosen', 'jadwal.tahunAjar', 'dosen', 'user'])
+                ->findOrFail($penilaianId);
+
+            Log::info('Penilaian found', ['penilaian' => $penilaian->id]);
+
+            // Authorization check - only owner or Super Admin
+            /** @var User $user */
+            $user = Auth::user();
+            if (Auth::id() !== $penilaian->user_id && !$user->hasRole('Super Admin')) {
+                Log::warning('Unauthorized export attempt', ['user_id' => Auth::id(), 'penilaian_user_id' => $penilaian->user_id]);
+                abort(403, 'Anda tidak memiliki akses untuk mengunduh penilaian ini');
+            }
+
+            // Get dosen penguji data
+            $dosenPenguji = \App\Models\Dosen::where('user_id', $penilaian->user_id)->first();
+            
+            if (!$dosenPenguji) {
+                Log::error('Dosen penguji not found', ['user_id' => $penilaian->user_id]);
+                return redirect()->back()->with('error', 'Data dosen penguji tidak ditemukan');
+            }
+
+            Log::info('Dosen penguji found', ['dosen' => $dosenPenguji->nama_lengkap]);
+
+            $calonDosenName = str_replace(' ', '_', $penilaian->calonDosen->nama);
+            $filename = 'Penilaian_' . $calonDosenName . '_' . date('Ymd_His') . '.xlsx';
+
+            Log::info('Starting Excel export', ['filename' => $filename]);
+
+            return Excel::download(
+                new \App\Exports\PenilaianCalonDosenExport($penilaianId), 
+                $filename
+            );
+
+        } catch (\Exception $e) {
+            Log::error('Error exporting penilaian: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat mengunduh Excel: ' . $e->getMessage());
         }
     }
 
