@@ -139,10 +139,12 @@
                 {{-- Action Buttons Row --}}
                 <div class="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0">
                     {{-- Tambah Data Button --}}
+                    @if(Auth::check() && !Auth::user()->hasRole('User Biasa'))
                     <button onclick="openCreateModal()"
                         class="bg-[#FBB03B] hover:bg-orange-600 text-[#B91432] font-semibold px-6 py-2.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
                         <i class="fas fa-plus mr-2"></i>Tambah Data
                     </button>
+                    @endif
 
                     {{-- Right Side Controls --}}
                     <div class="flex flex-wrap items-center gap-3">
@@ -267,6 +269,7 @@
                                     <i class="fas fa-eye"></i>
                                 </button>
 
+                                @if(Auth::check() && !Auth::user()->hasRole('User Biasa'))
                                 {{-- Edit Button --}}
                                 <button data-id="{{ $item->id }}" class="btn-edit text-green-600 hover:text-green-800 transition-colors duration-200"
                                     title="Edit">
@@ -287,6 +290,7 @@
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
+                                @endif
                             </div>
                         </td>
                     </tr>

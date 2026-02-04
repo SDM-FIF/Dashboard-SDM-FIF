@@ -309,8 +309,9 @@ Route::middleware('auth')->group(function () {
         Route::delete('/jadwal-pengujian/{id}', [RekrutasiDosenController::class, 'destroyJadwalPengujian'])->name('jadwal-pengujian.destroy');
         
         // Penilaian Calon Dosen
-        Route::get('/penilaian/{jadwal_id}', [RekrutasiDosenController::class, 'penilaian'])->name('penilaian');
+        Route::get('/penilaian/export/{id}', [RekrutasiDosenController::class, 'exportPenilaianExcel'])->name('penilaian.export');
         Route::post('/penilaian/store', [RekrutasiDosenController::class, 'storePenilaian'])->name('penilaian.store');
+        Route::get('/penilaian/{jadwal_id}', [RekrutasiDosenController::class, 'penilaian'])->name('penilaian');
 
         // Download Riwayat Pendidikan Files
         Route::get('/riwayat-file/{filename}', [RekrutasiDosenController::class, 'downloadRiwayatFile'])->name('riwayat.download');

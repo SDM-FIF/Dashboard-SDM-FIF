@@ -45,6 +45,31 @@ class RoleSeeder extends Seeder
             'manage kompetisi'
         ]);
 
+        // Create Dosen Penguji roles
+        $dosenPenguji1 = Role::firstOrCreate(['name' => 'Dosen Penguji 1']);
+        $dosenPenguji1->givePermissionTo([
+            'view dashboard',
+            'manage rekrutasi'
+        ]);
+
+        $dosenPenguji2 = Role::firstOrCreate(['name' => 'Dosen Penguji 2']);
+        $dosenPenguji2->givePermissionTo([
+            'view dashboard',
+            'manage rekrutasi'
+        ]);
+
+        $dosenPenguji3 = Role::firstOrCreate(['name' => 'Dosen Penguji 3']);
+        $dosenPenguji3->givePermissionTo([
+            'view dashboard',
+            'manage rekrutasi'
+        ]);
+
+        // Create User Biasa role
+        $userBiasa = Role::firstOrCreate(['name' => 'User Biasa']);
+        $userBiasa->givePermissionTo([
+            'view dashboard'
+        ]);
+
          // ======================
         // TENAGA PENDUKUNG AKADEMIK (TPA)
         // ======================

@@ -335,8 +335,8 @@
                 </svg>
             </div>
             <div class="flex-1">
-                <p class="text-sm font-semibold">{{ Auth::user()->name ?? 'Admin' }}</p>
-                <p class="text-xs text-red-200 opacity-80">{{ Auth::user()->role ?? 'Administrator' }}</p>
+                <p class="text-sm font-semibold">{{ Auth::user()->nama_lengkap ?? Auth::user()->name ?? 'Admin' }}</p>
+                <p class="text-xs text-red-200 opacity-80">{{ Auth::user()->roles->first()->name ?? 'Administrator' }}</p>
             </div>
         </div>
 

@@ -10,6 +10,7 @@ class PenilaianDetail extends Model
 
     protected $fillable = [
         'dosen_id',
+        'user_id',
         'calon_dosen_id',
         'jadwal_pengujian_id',
         'nilai_jalur_lamaran',
@@ -67,6 +68,11 @@ class PenilaianDetail extends Model
         return $this->belongsTo(Dosen::class);
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
     public function calonDosen()
     {
         return $this->belongsTo(CalonDosen::class);
@@ -75,6 +81,12 @@ class PenilaianDetail extends Model
     public function jadwalPengujian()
     {
         return $this->belongsTo(JadwalPengujian::class);
+    }
+
+    // Alias untuk kemudahan akses
+    public function jadwal()
+    {
+        return $this->jadwalPengujian();
     }
 
     public function hasilPengujian()
