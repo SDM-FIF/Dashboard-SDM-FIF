@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CalonDosen;
 use App\Models\Prodi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\RekrutasiDosenExport;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -635,6 +636,12 @@ class RekrutasiDosenController extends Controller
     public function penilaian($jadwal_id)
     {
         try {
+            // Check authorization
+            if (!Auth::user()->hasRole(['Super Admin', 'Dosen Penguji 1', 'Dosen Penguji 2', 'Dosen Penguji 3'])) {
+                return redirect()->route('dashboard')
+                    ->with('error', 'Anda tidak memiliki akses ke halaman ini.');
+            }
+
             $jadwal = \App\Models\JadwalPengujian::with([
                 'calonDosen.prodi',
                 'dosenPenguji',
@@ -643,7 +650,12 @@ class RekrutasiDosenController extends Controller
 
             $calonDosen = $jadwal->calonDosen;
 
-            return view('rekrutasi-dosen.penilaian-calon-dosen', compact('jadwal', 'calonDosen'));
+            // Check if there's existing penilaian by current user
+            $existingPenilaian = \App\Models\PenilaianDetail::where('jadwal_pengujian_id', $jadwal_id)
+                ->where('user_id', Auth::id())
+                ->first();
+
+            return view('rekrutasi-dosen.penilaian-calon-dosen', compact('jadwal', 'calonDosen', 'existingPenilaian'));
         } catch (\Exception $e) {
             Log::error('Error loading penilaian page: ' . $e->getMessage());
             return redirect()->route('jadwal-pengujian')
@@ -688,8 +700,7 @@ class RekrutasiDosenController extends Controller
             // For now, we'll use the first dosen from the jadwal
             $jadwal = \App\Models\JadwalPengujian::with('dosenPenguji')->findOrFail($validated['jadwal_pengujian_id']);
             
-            // TODO: Get the actual authenticated dosen_id when auth is implemented
-            // For now, use the first dosen penguji
+            // Use the first dosen penguji as dosen_id (for compatibility)
             $dosenId = $jadwal->dosenPenguji->first()->id ?? null;
             
             if (!$dosenId) {
@@ -706,9 +717,14 @@ class RekrutasiDosenController extends Controller
             $kesiapan = $validated['kesiapan'] === 'YA' ? true : false;
             $kesediaan = $validated['kesediaan'] === 'YA' ? true : false;
 
-            // Create penilaian detail
-            $penilaian = \App\Models\PenilaianDetail::create([
+            // Check if penilaian already exists (by user_id)
+            $existingPenilaian = \App\Models\PenilaianDetail::where('jadwal_pengujian_id', $validated['jadwal_pengujian_id'])
+                ->where('user_id', Auth::id())
+                ->first();
+
+            $penilaianData = [
                 'dosen_id' => $dosenId,
+                'user_id' => Auth::id(),
                 'calon_dosen_id' => $validated['calon_dosen_id'],
                 'jadwal_pengujian_id' => $validated['jadwal_pengujian_id'],
                 'nilai_jalur_lamaran' => $validated['nilai_jalur_lamaran'],
@@ -733,9 +749,19 @@ class RekrutasiDosenController extends Controller
                 'kesiapan' => $kesiapan,
                 'kesediaan' => $kesediaan,
                 'catatan_penilai' => $validated['catatan_penilai'],
-            ]);
+            ];
 
-            Log::info('Penilaian created successfully:', ['id' => $penilaian->id]);
+            if ($existingPenilaian) {
+                // Update existing penilaian
+                $existingPenilaian->update($penilaianData);
+                $penilaian = $existingPenilaian;
+                Log::info('Penilaian updated successfully:', ['id' => $penilaian->id]);
+            } else {
+                // Create new penilaian
+                $penilaian = \App\Models\PenilaianDetail::create($penilaianData);
+                Log::info('Penilaian created successfully:', ['id' => $penilaian->id]);
+            }
+
 
             return response()->json([
                 'success' => true,

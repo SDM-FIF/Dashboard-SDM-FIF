@@ -10,6 +10,7 @@ class PenilaianDetail extends Model
 
     protected $fillable = [
         'dosen_id',
+        'user_id',
         'calon_dosen_id',
         'jadwal_pengujian_id',
         'nilai_jalur_lamaran',

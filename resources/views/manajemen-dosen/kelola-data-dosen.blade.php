@@ -153,11 +153,13 @@
                 {{-- Action Buttons Row --}}
                 <div class="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0">
                     {{-- Tambah Data Button --}}
+                    @if(Auth::check() && !Auth::user()->hasRole('User Biasa'))
                     <a href="{{ route('manajemen-dosen.create') }}"
                        class="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2">
                         <i class="fas fa-plus"></i>
                         <span>Tambah Data</span>
                     </a>
+                    @endif
 
                     {{-- Right Side Controls --}}
                     <div class="flex flex-wrap items-center space-x-4">
@@ -236,6 +238,7 @@
                                                 <i class="fas fa-eye"></i>
                                             </a>
                                             
+                                            @if(Auth::check() && !Auth::user()->hasRole('User Biasa'))
                                             {{-- Edit Button --}}
                                             <a href="{{ route('manajemen-dosen.edit', $dosenItem->id) }}" 
                                                class="text-green-600 hover:text-green-800 transition-colors duration-200" 
@@ -256,6 +259,7 @@
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
+                                            @endif
                                         </div>
                                     </td>
                                 </tr>

@@ -126,10 +126,12 @@
                 {{-- Action Buttons Row --}}
                 <div class="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0">
                     {{-- Tambah Data Button --}}
+                    @if(Auth::check() && !Auth::user()->hasRole('User Biasa'))
                     <button type="button" id="btnTambahData"
                         class="bg-[#FBB03B] hover:bg-orange-600 text-[#B91432] font-semibold px-6 py-2.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
                         <i class="fas fa-plus mr-2"></i>Tambah Data
                     </button>
+                    @endif
 
                     {{-- Export Dropdown --}}
                     <div class="relative">
@@ -202,14 +204,19 @@
                                             data-id="{{ $jadwal->id }}" title="Detail">
                                         <i class="fas fa-eye"></i>
                                     </button>
+                                    @if(Auth::check() && !Auth::user()->hasRole('User Biasa'))
                                     <button type="button" class="btn-edit text-green-600 hover:text-green-800 transition-colors duration-200" 
                                             data-id="{{ $jadwal->id }}" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </button>
+                                    @endif
+                                    @if(Auth::check() && Auth::user()->hasRole(['Super Admin', 'Dosen Penguji 1', 'Dosen Penguji 2', 'Dosen Penguji 3']))
                                     <button type="button" class="btn-penilaian text-purple-600 hover:text-purple-800 transition-colors duration-200" 
                                             data-id="{{ $jadwal->id }}" title="Penilaian Calon Dosen">
                                         <i class="fas fa-clipboard-check"></i>
                                     </button>
+                                    @endif
+                                    @if(Auth::check() && !Auth::user()->hasRole('User Biasa'))
                                     <button type="button" class="btn-berita-acara text-orange-600 hover:text-orange-800 transition-colors duration-200" 
                                             data-id="{{ $jadwal->id }}" title="Berita Acara">
                                         <i class="fas fa-file-signature"></i>
@@ -218,6 +225,7 @@
                                             data-id="{{ $jadwal->id }}" title="Hapus">
                                         <i class="fas fa-trash"></i>
                                     </button>
+                                    @endif
                                 </div>
                             </td>
                         </tr>

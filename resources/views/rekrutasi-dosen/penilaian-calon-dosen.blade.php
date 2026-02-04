@@ -222,10 +222,11 @@
                                     <td>Penguasaan materi & audiens</td>
                                     <td>
                                         <input type="number" class="form-control nilai-input" name="nilai_b1" id="nilai_b1" 
-                                               min="1" max="5" step="0.1" placeholder="1-5" required>
+                                               min="1" max="5" step="0.1" placeholder="1-5" 
+                                               value="{{ $existingPenilaian->nilai_pma ?? '' }}" required>
                                     </td>
                                     <td rowspan="3" style="vertical-align: middle;">
-                                        <span id="rata_b_text" class="fw-bold">Rata-rata B = <span id="rata_b_value">0.00</span></span>
+                                        <span id="rata_b_text" class="fw-bold">Rata-rata B = <span id="rata_b_value">{{ $existingPenilaian ? number_format($existingPenilaian->rata_b, 2) : '0.00' }}</span></span>
                                     </td>
                                 </tr>
                                 <tr>
@@ -233,7 +234,8 @@
                                     <td>Sistematika (kemudahan dipahami)</td>
                                     <td>
                                         <input type="number" class="form-control nilai-input" name="nilai_b2" id="nilai_b2" 
-                                               min="1" max="5" step="0.1" placeholder="1-5" required>
+                                               min="1" max="5" step="0.1" placeholder="1-5" 
+                                               value="{{ $existingPenilaian->nilai_sistematika ?? '' }}" required>
                                     </td>
                                 </tr>
                                 <tr>
@@ -241,7 +243,8 @@
                                     <td>Kejelasan suara & tulisan</td>
                                     <td>
                                         <input type="number" class="form-control nilai-input" name="nilai_b3" id="nilai_b3" 
-                                               min="1" max="5" step="0.1" placeholder="1-5" required>
+                                               min="1" max="5" step="0.1" placeholder="1-5" 
+                                               value="{{ $existingPenilaian->nilai_kst ?? '' }}" required>
                                     </td>
                                 </tr>
 
@@ -254,10 +257,11 @@
                                     <td>Motivasi</td>
                                     <td>
                                         <input type="number" class="form-control nilai-input" name="nilai_c1" id="nilai_c1" 
-                                               min="1" max="5" step="0.1" placeholder="1-5" required>
+                                               min="1" max="5" step="0.1" placeholder="1-5" 
+                                               value="{{ $existingPenilaian->nilai_motivasi ?? '' }}" required>
                                     </td>
                                     <td rowspan="8" style="vertical-align: middle;">
-                                        <span id="rata_c_text" class="fw-bold">Rata-rata C = <span id="rata_c_value">0.00</span></span>
+                                        <span id="rata_c_text" class="fw-bold">Rata-rata C = <span id="rata_c_value">{{ $existingPenilaian ? number_format($existingPenilaian->rata_c, 2) : '0.00' }}</span></span>
                                     </td>
                                 </tr>
                                 <tr>
@@ -265,7 +269,8 @@
                                     <td>Kemampuan mengajar</td>
                                     <td>
                                         <input type="number" class="form-control nilai-input" name="nilai_c2" id="nilai_c2" 
-                                               min="1" max="5" step="0.1" placeholder="1-5" required>
+                                               min="1" max="5" step="0.1" placeholder="1-5" 
+                                               value="{{ $existingPenilaian->nilai_kmp_mengajar ?? '' }}" required>
                                     </td>
                                 </tr>
                                 <tr>
@@ -273,7 +278,8 @@
                                     <td>Kemampuan mengembangkan kurikulum Pengajaran</td>
                                     <td>
                                         <input type="number" class="form-control nilai-input" name="nilai_c3" id="nilai_c3" 
-                                               min="1" max="5" step="0.1" placeholder="1-5" required>
+                                               min="1" max="5" step="0.1" placeholder="1-5" 
+                                               value="{{ $existingPenilaian->nilai_kmp_mkp ?? '' }}" required>
                                     </td>
                                 </tr>
                                 <tr>
@@ -281,7 +287,8 @@
                                     <td>Kemampuan penelitian & publikasi</td>
                                     <td>
                                         <input type="number" class="form-control nilai-input" name="nilai_c4" id="nilai_c4" 
-                                               min="1" max="5" step="0.1" placeholder="1-5" required>
+                                               min="1" max="5" step="0.1" placeholder="1-5" 
+                                               value="{{ $existingPenilaian->nilai_kmp_pp ?? '' }}" required>
                                     </td>
                                 </tr>
                                 <tr>
@@ -289,7 +296,8 @@
                                     <td>Kemampuan Abdimas</td>
                                     <td>
                                         <input type="number" class="form-control nilai-input" name="nilai_c5" id="nilai_c5" 
-                                               min="1" max="5" step="0.1" placeholder="1-5" required>
+                                               min="1" max="5" step="0.1" placeholder="1-5" 
+                                               value="{{ $existingPenilaian->nilai_kmp_abdimas ?? '' }}" required>
                                     </td>
                                 </tr>
                                 <tr>
@@ -297,7 +305,8 @@
                                     <td>Kemampuan Bekerjasama dengan tim</td>
                                     <td>
                                         <input type="number" class="form-control nilai-input" name="nilai_c6" id="nilai_c6" 
-                                               min="1" max="5" step="0.1" placeholder="1-5" required>
+                                               min="1" max="5" step="0.1" placeholder="1-5" 
+                                               value="{{ $existingPenilaian->nilai_kmp_bdt ?? '' }}" required>
                                     </td>
                                 </tr>
                                 <tr>
@@ -305,7 +314,8 @@
                                     <td>Keahlian lainnya</td>
                                     <td>
                                         <input type="number" class="form-control nilai-input" name="nilai_c7" id="nilai_c7" 
-                                               min="1" max="5" step="0.1" placeholder="1-5" required>
+                                               min="1" max="5" step="0.1" placeholder="1-5" 
+                                               value="{{ $existingPenilaian->nilai_keahlian_lainnya ?? '' }}" required>
                                     </td>
                                 </tr>
                                 <tr>
@@ -313,7 +323,8 @@
                                     <td>Komitmen waktu dan kesediaan melakukan hal diluar tugas pokok</td>
                                     <td>
                                         <input type="number" class="form-control nilai-input" name="nilai_c8" id="nilai_c8" 
-                                               min="1" max="5" step="0.1" placeholder="1-5" required>
+                                               min="1" max="5" step="0.1" placeholder="1-5" 
+                                               value="{{ $existingPenilaian->nilai_kmt_wkm ?? '' }}" required>
                                     </td>
                                 </tr>
 
@@ -322,10 +333,12 @@
                                     <td colspan="2" class="text-center"><strong>TOTAL NILAI (Rata-rata Berbobot)</strong></td>
                                     <td>
                                         <input type="text" class="form-control fw-bold" id="total_nilai" 
+                                               value="{{ $existingPenilaian ? number_format($existingPenilaian->rata_nilai, 2) : '' }}" 
                                                readonly placeholder="0.00" style="background-color: #e9ecef;">
                                     </td>
                                     <td>
                                         <input type="text" class="form-control fw-bold" id="keterangan_berbobot" 
+                                               value="{{ $existingPenilaian->keterangan_berbobot ?? '' }}" 
                                                readonly placeholder="-" style="background-color: #e9ecef;">
                                     </td>
                                 </tr>
@@ -336,10 +349,12 @@
                                     <td colspan="2">
                                         <div class="d-flex gap-3">
                                             <label class="form-label mb-0">
-                                                <input type="radio" name="kesiapan" value="YA" required> YA
+                                                <input type="radio" name="kesiapan" value="YA" 
+                                                       {{ ($existingPenilaian && $existingPenilaian->kesiapan == 1) ? 'checked' : '' }} required> YA
                                             </label>
                                             <label class="form-label mb-0">
-                                                <input type="radio" name="kesiapan" value="TIDAK/PIKIR-PIKIR" required> TIDAK/PIKIR-PIKIR
+                                                <input type="radio" name="kesiapan" value="TIDAK/PIKIR-PIKIR" 
+                                                       {{ ($existingPenilaian && $existingPenilaian->kesiapan == 0) ? 'checked' : '' }} required> TIDAK/PIKIR-PIKIR
                                             </label>
                                         </div>
                                     </td>
@@ -351,10 +366,12 @@
                                     <td colspan="2">
                                         <div class="d-flex gap-3">
                                             <label class="form-label mb-0">
-                                                <input type="radio" name="kesediaan" value="YA" required> YA
+                                                <input type="radio" name="kesediaan" value="YA" 
+                                                       {{ ($existingPenilaian && $existingPenilaian->kesediaan == 1) ? 'checked' : '' }} required> YA
                                             </label>
                                             <label class="form-label mb-0">
-                                                <input type="radio" name="kesediaan" value="TIDAK/PIKIR-PIKIR" required> TIDAK/PIKIR-PIKIR
+                                                <input type="radio" name="kesediaan" value="TIDAK/PIKIR-PIKIR" 
+                                                       {{ ($existingPenilaian && $existingPenilaian->kesediaan == 0) ? 'checked' : '' }} required> TIDAK/PIKIR-PIKIR
                                             </label>
                                         </div>
                                     </td>
@@ -379,13 +396,13 @@
                     <div class="mb-3">
                         <label for="catatan" class="form-label"><strong>Catatan/Komentar:</strong></label>
                         <textarea class="form-control" id="catatan" name="catatan" rows="3" 
-                                  placeholder="Tambahkan catatan atau komentar (opsional)"></textarea>
+                                  placeholder="Tambahkan catatan atau komentar (opsional)">{{ $existingPenilaian->catatan_penilai ?? '' }}</textarea>
                     </div>
 
                     <!-- Buttons -->
                     <div class="d-flex justify-content-end gap-2">
                         <button type="submit" class="btn btn-primary" id="btnSimpanPenilaian">
-                            <i class="bi bi-check-circle me-2"></i>Simpan Penilaian
+                            <i class="bi bi-check-circle me-2"></i>{{ $existingPenilaian ? 'Update Penilaian' : 'Simpan Penilaian' }}
                         </button>
                     </div>
                 </form>
@@ -509,13 +526,6 @@
                 $('#total_nilai').val(totalNilai.toFixed(2));
                 $('#keterangan_berbobot').val(keterangan);
                 
-                // Disable all input fields
-                $('.nilai-input').prop('readonly', true).css('background-color', '#e9ecef');
-                $('input[name="kesiapan"]').prop('disabled', true);
-                $('input[name="kesediaan"]').prop('disabled', true);
-                $('#catatan').prop('readonly', true);
-                $('#btnSimpanPenilaian').prop('disabled', true);
-                
                 // Prepare data to send
                 const formData = {
                     _token: $('meta[name="csrf-token"]').attr('content'),
@@ -569,7 +579,8 @@
                             text: 'Penilaian berhasil disimpan.',
                             confirmButtonText: 'OK'
                         }).then(() => {
-                            window.location.href = "{{ route('rekrutasi-dosen.jadwal-pengujian') }}";
+                            // Reload halaman agar data ter-load ulang
+                            window.location.reload();
                         });
                     },
                     error: function(xhr) {
