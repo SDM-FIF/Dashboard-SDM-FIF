@@ -310,6 +310,7 @@ Route::middleware('auth')->group(function () {
         
         // Penilaian Calon Dosen
         Route::get('/penilaian/export/{id}', [RekrutasiDosenController::class, 'exportPenilaianExcel'])->name('penilaian.export');
+        Route::get('/penilaian/export-pdf/{id}', [RekrutasiDosenController::class, 'exportPenilaianPdf'])->name('penilaian.export-pdf');
         Route::post('/penilaian/store', [RekrutasiDosenController::class, 'storePenilaian'])->name('penilaian.store');
         Route::get('/penilaian/{jadwal_id}', [RekrutasiDosenController::class, 'penilaian'])->name('penilaian');
 
@@ -318,6 +319,12 @@ Route::middleware('auth')->group(function () {
 
         // Hasil Pengujian
         Route::get('/hasil-pengujian', [RekrutasiDosenController::class, 'hasilPengujian'])->name('hasil-pengujian');
+        Route::get('/hasil-pengujian/combined-pdf/{calon_dosen_id}', [RekrutasiDosenController::class, 'hasilPengujianCombinedPdf'])->name('hasil-pengujian.combined-pdf');
+
+        // Berita Acara (only accessible by Dosen Penguji 1)
+        Route::get('/berita-acara/{jadwal_id}', [RekrutasiDosenController::class, 'beritaAcara'])->name('berita-acara');
+        Route::post('/berita-acara/{jadwal_id}', [RekrutasiDosenController::class, 'storeBeritaAcara'])->name('berita-acara.store');
+        Route::get('/berita-acara/{jadwal_id}/download', [RekrutasiDosenController::class, 'downloadBeritaAcara'])->name('berita-acara.download');
 
         // ⚠️ EXPORT ROUTES - HARUS DI ATAS {id} ⚠️
         Route::get('/export-excel', [RekrutasiDosenController::class, 'exportExcel'])->name('export-excel');

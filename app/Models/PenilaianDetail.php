@@ -36,6 +36,12 @@ class PenilaianDetail extends Model
         'kesiapan',
         'kesediaan',
         'catatan_penilai',
+        'rekomendasi_akhir',
+        'prodi_rekomendasi',
+        'status_rekomendasi',
+        'jfa_rekomendasi',
+        'pendidikan_rekomendasi',
+        'kk_rekomendasi',
     ];
 
     protected $casts = [
@@ -60,6 +66,7 @@ class PenilaianDetail extends Model
         'rata_akhir' => 'decimal:2',
         'kesiapan' => 'boolean',
         'kesediaan' => 'boolean',
+        'rekomendasi_akhir' => 'boolean',
     ];
 
     // Relasi
@@ -92,5 +99,53 @@ class PenilaianDetail extends Model
     public function hasilPengujian()
     {
         return $this->hasOne(HasilPengujian::class);
+    }
+
+    public function prodiRekomendasi()
+    {
+        return $this->belongsTo(Prodi::class, 'prodi_rekomendasi');
+    }
+
+    public function kkRekomendasi()
+    {
+        return $this->belongsTo(KelompokKeahlian::class, 'kk_rekomendasi');
+    }
+
+    // Constants for enum values
+    const STATUS_REKOMENDASI_FULL_TIME = 'Full Time';
+    const STATUS_REKOMENDASI_PART_TIME = 'Part Time';
+
+    const JFA_NJFA = 'NJFA';
+    const JFA_ASISTEN_AHLI = 'Asisten Ahli';
+    const JFA_LEKTOR = 'Lektor';
+    const JFA_LEKTOR_KEPALA = 'Lektor Kepala';
+
+    const PENDIDIKAN_S2 = 'S2';
+    const PENDIDIKAN_S3 = 'S3';
+
+    public static function getStatusRekomendasiOptions()
+    {
+        return [
+            self::STATUS_REKOMENDASI_FULL_TIME,
+            self::STATUS_REKOMENDASI_PART_TIME,
+        ];
+    }
+
+    public static function getJfaRekomendasiOptions()
+    {
+        return [
+            self::JFA_NJFA,
+            self::JFA_ASISTEN_AHLI,
+            self::JFA_LEKTOR,
+            self::JFA_LEKTOR_KEPALA,
+        ];
+    }
+
+    public static function getPendidikanRekomendasiOptions()
+    {
+        return [
+            self::PENDIDIKAN_S2,
+            self::PENDIDIKAN_S3,
+        ];
     }
 }
