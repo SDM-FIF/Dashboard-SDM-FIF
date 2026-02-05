@@ -835,9 +835,66 @@ class RekrutasiDosenController extends Controller
         }
     }
 
+    public function exportPenilaianPdf($penilaianId)
+    {
+        try {
+            // Increase memory limit for PDF generation
+            ini_set('memory_limit', '256M');
+            
+            Log::info('Export penilaian PDF called', ['penilaian_id' => $penilaianId, 'user_id' => Auth::id()]);
+            
+            // Get penilaian detail
+            $penilaian = \App\Models\PenilaianDetail::with(['calonDosen', 'jadwal.tahunAjar', 'dosen', 'user'])
+                ->findOrFail($penilaianId);
+
+            Log::info('Penilaian found for PDF', ['penilaian' => $penilaian->id]);
+
+            // Authorization check - only owner or Super Admin
+            /** @var User $user */
+            $user = Auth::user();
+            if (Auth::id() !== $penilaian->user_id && !$user->hasRole('Super Admin')) {
+                Log::warning('Unauthorized PDF export attempt', ['user_id' => Auth::id(), 'penilaian_user_id' => $penilaian->user_id]);
+                abort(403, 'Anda tidak memiliki akses untuk mengunduh penilaian ini');
+            }
+
+            // Get dosen penguji data
+            $dosenPenguji = \App\Models\Dosen::where('user_id', $penilaian->user_id)->first();
+            
+            if (!$dosenPenguji) {
+                Log::error('Dosen penguji not found for PDF', ['user_id' => $penilaian->user_id]);
+                return redirect()->back()->with('error', 'Data dosen penguji tidak ditemukan');
+            }
+
+            Log::info('Dosen penguji found for PDF', ['dosen' => $dosenPenguji->nama_lengkap]);
+
+            // Use PDF export class
+            $pdfExport = new \App\Exports\PenilaianCalonDosenPdfExport($penilaianId);
+            $data = $pdfExport->getData();
+
+            $calonDosenName = str_replace(' ', '_', $penilaian->calonDosen->nama);
+            $filename = 'Penilaian_' . $calonDosenName . '_' . date('Ymd_His') . '.pdf';
+
+            Log::info('Starting PDF export', ['filename' => $filename]);
+
+            // Generate PDF using DomPDF with optimized settings
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('exports.penilaian-pdf', $data);
+            $pdf->setPaper('A4', 'portrait');
+            $pdf->setOption('isRemoteEnabled', true);
+            $pdf->setOption('isHtml5ParserEnabled', true);
+            
+            return $pdf->download($filename);
+
+        } catch (\Exception $e) {
+            Log::error('Error exporting penilaian PDF: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat mengunduh PDF: ' . $e->getMessage());
+        }
+    }
+
     public function exportJadwalPengujianExcel()
     {
         $jadwalList = \App\Models\JadwalPengujian::with(['calonDosen', 'dosenPenguji', 'tahunAjar'])->get();
+
 
         $filename = 'jadwal-pengujian-' . date('Y-m-d-His') . '.xls';
 

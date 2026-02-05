@@ -289,6 +289,7 @@ Route::middleware('auth')->group(function () {
         
         // Penilaian Calon Dosen
         Route::get('/penilaian/export/{id}', [RekrutasiDosenController::class, 'exportPenilaianExcel'])->name('penilaian.export');
+        Route::get('/penilaian/export-pdf/{id}', [RekrutasiDosenController::class, 'exportPenilaianPdf'])->name('penilaian.export-pdf');
         Route::post('/penilaian/store', [RekrutasiDosenController::class, 'storePenilaian'])->name('penilaian.store');
         Route::get('/penilaian/{jadwal_id}', [RekrutasiDosenController::class, 'penilaian'])->name('penilaian');
 
