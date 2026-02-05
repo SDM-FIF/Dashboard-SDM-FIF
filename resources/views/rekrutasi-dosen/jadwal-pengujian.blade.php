@@ -210,17 +210,45 @@
                                         <i class="fas fa-edit"></i>
                                     </button>
                                     @endif
-                                    @if(Auth::check() && Auth::user()->hasRole(['Super Admin', 'Dosen Penguji 1', 'Dosen Penguji 2', 'Dosen Penguji 3']))
+                                    @php
+                                        // Check if current user is one of the dosen penguji for this jadwal
+                                        $currentUserId = Auth::id();
+                                        $isDosenPenguji = false;
+                                        $isDosenPenguji1 = false;
+                                        
+                                        if (Auth::check()) {
+                                            foreach ($jadwal->dosenPenguji as $dosen) {
+                                                if ($dosen->user_id == $currentUserId) {
+                                                    $isDosenPenguji = true;
+                                                    if ($dosen->pivot->urutan == 1) {
+                                                        $isDosenPenguji1 = true;
+                                                    }
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    @endphp
+                                    @if(Auth::check() && (Auth::user()->hasRole('Super Admin') || $isDosenPenguji))
                                     <button type="button" class="btn-penilaian text-purple-600 hover:text-purple-800 transition-colors duration-200" 
                                             data-id="{{ $jadwal->id }}" title="Penilaian Calon Dosen">
                                         <i class="fas fa-clipboard-check"></i>
                                     </button>
                                     @endif
+                                    @if($isDosenPenguji1)
+                                        @php
+                                            // Check if all dosen penguji have submitted penilaian
+                                            $jumlahDosenPenguji = $jadwal->dosenPenguji->count();
+                                            $jumlahPenilaian = $jadwal->penilaianDetails->count();
+                                            $allPenilaianSubmitted = $jumlahPenilaian >= $jumlahDosenPenguji && $jumlahDosenPenguji > 0;
+                                        @endphp
+                                        @if($allPenilaianSubmitted)
+                                        <button type="button" class="btn-berita-acara text-orange-600 hover:text-orange-800 transition-colors duration-200" 
+                                                data-id="{{ $jadwal->id }}" title="Berita Acara">
+                                            <i class="fas fa-file-signature"></i>
+                                        </button>
+                                        @endif
+                                    @endif
                                     @if(Auth::check() && !Auth::user()->hasRole('User Biasa'))
-                                    <button type="button" class="btn-berita-acara text-orange-600 hover:text-orange-800 transition-colors duration-200" 
-                                            data-id="{{ $jadwal->id }}" title="Berita Acara">
-                                        <i class="fas fa-file-signature"></i>
-                                    </button>
                                     <button type="button" class="btn-delete text-red-600 hover:text-red-800 transition-colors duration-200" 
                                             data-id="{{ $jadwal->id }}" title="Hapus">
                                         <i class="fas fa-trash"></i>
@@ -781,15 +809,7 @@
         document.querySelectorAll('.btn-berita-acara').forEach(button => {
             button.addEventListener('click', function() {
                 const id = this.getAttribute('data-id');
-                // TODO: Navigate to berita acara page or open berita acara modal
-                Swal.fire({
-                    icon: 'info',
-                    title: 'Berita Acara',
-                    text: `Halaman berita acara untuk jadwal ID: ${id} akan segera tersedia.`,
-                    confirmButtonColor: '#C41E3A'
-                });
-                // Future implementation:
-                // window.location.href = `/rekrutasi-dosen/berita-acara/${id}`;
+                window.location.href = `/rekrutasi-dosen/berita-acara/${id}`;
             });
         });
     </script>

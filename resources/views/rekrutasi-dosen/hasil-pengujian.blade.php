@@ -91,7 +91,7 @@
                                         @if(!empty($dosenPengujiList))
                                             @foreach($dosenPengujiList as $key => $dosen)
                                                 @if($dosen)
-                                                    <div class="mb-1">{{ $key + 1 }}. {{ $dosen->nama_lengkap }}</div>
+                                                    <div class="mb-1">{{ $key + 1 }}. {{ $dosen->front_title }} {{ $dosen->nama_lengkap }}, {{ $dosen->back_title }}</div>
                                                 @else
                                                     <div class="mb-1 text-gray-400">{{ $key + 1 }}. -</div>
                                                 @endif

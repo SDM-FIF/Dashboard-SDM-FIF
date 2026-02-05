@@ -1135,6 +1135,245 @@ class RekrutasiDosenController extends Controller
     }
 
     /**
+     * Display Berita Acara form
+     */
+    public function beritaAcara($jadwalId)
+    {
+        // Check if user is logged in
+        if (!Auth::check()) {
+            return redirect()->back()->with('error', 'Anda harus login terlebih dahulu');
+        }
+
+        $jadwal = \App\Models\JadwalPengujian::with([
+            'calonDosen',
+            'dosenPenguji',
+            'penilaianDetails.user.dosen'
+        ])->findOrFail($jadwalId);
+
+        // Get dosen penguji 1 for this jadwal
+        $dosenPenguji1 = $jadwal->dosenPenguji->firstWhere('pivot.urutan', 1);
+        
+        if (!$dosenPenguji1) {
+            return redirect()->back()->with('error', 'Dosen penguji 1 tidak ditemukan untuk jadwal ini');
+        }
+
+        // Check if current user is the dosen penguji 1 for THIS specific jadwal
+        $currentUser = Auth::user();
+        if ($currentUser->id !== $dosenPenguji1->user_id) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses ke berita acara ini. Hanya dosen penguji 1 untuk jadwal ini yang dapat mengakses.');
+        }
+
+        $calonDosen = $jadwal->calonDosen;
+        $allDosenPenguji = $jadwal->dosenPenguji;
+        
+        // Check if all dosen penguji have submitted their penilaian
+        $jumlahDosenPenguji = $allDosenPenguji->count();
+        $jumlahPenilaian = $jadwal->penilaianDetails->count();
+        
+        if ($jumlahPenilaian < $jumlahDosenPenguji) {
+            return redirect()->back()->with('error', 'Berita acara belum dapat diakses. Semua dosen penguji harus memberikan penilaian terlebih dahulu.');
+        }
+
+        // Get penilaian list ordered by urutan
+        $penilaianList = [];
+        for ($i = 1; $i <= 3; $i++) {
+            $dosen = $allDosenPenguji->firstWhere('pivot.urutan', $i);
+            if ($dosen) {
+                $penilaian = $jadwal->penilaianDetails->firstWhere('user_id', $dosen->user_id);
+                if ($penilaian) {
+                    $penilaianList[] = $penilaian;
+                }
+            }
+        }
+
+        // Calculate rata_akhir (average of all dosen penguji)
+        $totalNilai = 0;
+        $count = 0;
+        foreach ($penilaianList as $penilaian) {
+            if ($penilaian->rata_nilai) {
+                $totalNilai += $penilaian->rata_nilai;
+                $count++;
+            }
+        }
+        $nilaiRataAkhir = $count > 0 ? $totalNilai / $count : 0;
+
+        // Get penilaian from dosen penguji 1 for checking if already submitted
+        $dosenPenguji1 = $allDosenPenguji->firstWhere('pivot.urutan', 1);
+        $penilaianDosenPenguji1 = $dosenPenguji1 ? 
+            $jadwal->penilaianDetails->firstWhere('user_id', $dosenPenguji1->user_id) : null;
+
+        $isSubmitted = $penilaianDosenPenguji1 && $penilaianDosenPenguji1->rata_akhir !== null;
+
+        // Get master data
+        $prodiList = \App\Models\Prodi::orderBy('nama_prodi')->get();
+        $kelompokKeahlianList = \App\Models\KelompokKeahlian::orderBy('nama_kelompok_keahlian')->get();
+
+        return view('rekrutasi-dosen.berita-acara', compact(
+            'jadwal',
+            'calonDosen',
+            'penilaianList',
+            'nilaiRataAkhir',
+            'penilaianDosenPenguji1',
+            'isSubmitted',
+            'prodiList',
+            'kelompokKeahlianList'
+        ));
+    }
+
+    /**
+     * Store Berita Acara data
+     */
+    public function storeBeritaAcara(Request $request, $jadwalId)
+    {
+        // Check if user is logged in
+        if (!Auth::check()) {
+            return redirect()->back()->with('error', 'Anda harus login terlebih dahulu');
+        }
+
+        $jadwal = \App\Models\JadwalPengujian::with('dosenPenguji')->findOrFail($jadwalId);
+        
+        // Get dosen penguji 1 for this jadwal
+        $dosenPenguji1 = $jadwal->dosenPenguji->firstWhere('pivot.urutan', 1);
+        
+        if (!$dosenPenguji1) {
+            return redirect()->back()->with('error', 'Dosen penguji 1 tidak ditemukan untuk jadwal ini');
+        }
+
+        // Check if current user is the dosen penguji 1 for THIS specific jadwal
+        $currentUser = Auth::user();
+        if ($currentUser->id !== $dosenPenguji1->user_id) {
+            return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk menyimpan berita acara ini');
+        }
+
+        $request->validate([
+            'rekomendasi_akhir' => 'required|boolean',
+            'rata_akhir' => 'required|numeric',
+            'prodi_rekomendasi' => 'required_if:rekomendasi_akhir,1|nullable|exists:prodi,id',
+            'status_rekomendasi' => 'required_if:rekomendasi_akhir,1|nullable|in:Full Time,Part Time',
+            'jfa_rekomendasi' => 'required_if:rekomendasi_akhir,1|nullable|in:NJFA,Asisten Ahli,Lektor,Lektor Kepala',
+            'pendidikan_rekomendasi' => 'required_if:rekomendasi_akhir,1|nullable|in:S2,S3',
+            'kk_rekomendasi' => 'required_if:rekomendasi_akhir,1|nullable|exists:kelompok_keahlian,id',
+        ]);
+        
+        if (!$dosenPenguji1) {
+            return redirect()->back()->with('error', 'Dosen penguji 1 tidak ditemukan');
+        }
+
+        // Get penilaian detail for dosen penguji 1
+        $penilaian = \App\Models\PenilaianDetail::where('jadwal_pengujian_id', $jadwalId)
+            ->where('user_id', $dosenPenguji1->user_id)
+            ->first();
+
+        if (!$penilaian) {
+            return redirect()->back()->with('error', 'Penilaian dari dosen penguji 1 tidak ditemukan');
+        }
+
+        // Update penilaian with berita acara data
+        $updateData = [
+            'rata_akhir' => $request->rata_akhir,
+            'rekomendasi_akhir' => $request->rekomendasi_akhir,
+        ];
+
+        if ($request->rekomendasi_akhir == 1) {
+            $updateData['prodi_rekomendasi'] = $request->prodi_rekomendasi;
+            $updateData['status_rekomendasi'] = $request->status_rekomendasi;
+            $updateData['jfa_rekomendasi'] = $request->jfa_rekomendasi;
+            $updateData['pendidikan_rekomendasi'] = $request->pendidikan_rekomendasi;
+            $updateData['kk_rekomendasi'] = $request->kk_rekomendasi;
+        } else {
+            // Set null if tidak direkomendasikan
+            $updateData['prodi_rekomendasi'] = null;
+            $updateData['status_rekomendasi'] = null;
+            $updateData['jfa_rekomendasi'] = null;
+            $updateData['pendidikan_rekomendasi'] = null;
+            $updateData['kk_rekomendasi'] = null;
+        }
+
+        $penilaian->update($updateData);
+
+        return redirect()->route('rekrutasi-dosen.berita-acara', $jadwalId)
+            ->with('success', 'Berita acara berhasil disimpan');
+    }
+
+    /**
+     * Download Berita Acara PDF
+     */
+    public function downloadBeritaAcara($jadwalId)
+    {
+        // Check if user is logged in
+        if (!Auth::check()) {
+            return redirect()->back()->with('error', 'Anda harus login terlebih dahulu');
+        }
+
+        try {
+            ini_set('memory_limit', '256M');
+
+            $jadwal = \App\Models\JadwalPengujian::with([
+                'calonDosen',
+                'dosenPenguji',
+                'penilaianDetails.user.dosen'
+            ])->findOrFail($jadwalId);
+
+            // Get dosen penguji 1 for this jadwal
+            $dosenPenguji1 = $jadwal->dosenPenguji->firstWhere('pivot.urutan', 1);
+            
+            if (!$dosenPenguji1) {
+                return redirect()->back()->with('error', 'Dosen penguji 1 tidak ditemukan untuk jadwal ini');
+            }
+
+            // Check if current user is the dosen penguji 1 for THIS specific jadwal
+            $currentUser = Auth::user();
+            if ($currentUser->id !== $dosenPenguji1->user_id) {
+                return redirect()->back()->with('error', 'Anda tidak memiliki akses untuk mengunduh berita acara ini');
+            }
+
+            $calonDosen = $jadwal->calonDosen;
+            $allDosenPenguji = $jadwal->dosenPenguji;
+            
+            // Get penilaian list ordered by urutan
+            $penilaianList = [];
+            for ($i = 1; $i <= 3; $i++) {
+                $dosen = $allDosenPenguji->firstWhere('pivot.urutan', $i);
+                if ($dosen) {
+                    $penilaian = $jadwal->penilaianDetails->firstWhere('user_id', $dosen->user_id);
+                    if ($penilaian) {
+                        $penilaianList[] = $penilaian;
+                    }
+                }
+            }
+
+            // Get penilaian dosen penguji 1 for rekomendasi data
+            $dosenPenguji1 = $allDosenPenguji->firstWhere('pivot.urutan', 1);
+            $penilaianDosenPenguji1 = $dosenPenguji1 ? 
+                $jadwal->penilaianDetails->firstWhere('user_id', $dosenPenguji1->user_id) : null;
+
+            if (!$penilaianDosenPenguji1 || $penilaianDosenPenguji1->rata_akhir === null) {
+                return redirect()->back()->with('error', 'Berita acara belum disimpan');
+            }
+
+            $nilaiRataAkhir = $penilaianDosenPenguji1->rata_akhir;
+
+            $filename = 'Berita_Acara_' . str_replace(' ', '_', $calonDosen->nama) . '_' . date('Ymd_His') . '.pdf';
+
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('exports.berita-acara-pdf', compact(
+                'jadwal',
+                'calonDosen',
+                'penilaianList',
+                'nilaiRataAkhir',
+                'penilaianDosenPenguji1'
+            ));
+            
+            $pdf->setPaper('A4', 'portrait');
+
+            return $pdf->stream($filename);
+
+        } catch (\Exception $e) {
+            Log::error('Error generating berita acara PDF: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat mengunduh PDF: ' . $e->getMessage());
+        }
+    }
+
+    /**
      * Download template Excel (empty)
      */
     public function downloadTemplate()

@@ -300,6 +300,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/hasil-pengujian', [RekrutasiDosenController::class, 'hasilPengujian'])->name('hasil-pengujian');
         Route::get('/hasil-pengujian/combined-pdf/{calon_dosen_id}', [RekrutasiDosenController::class, 'hasilPengujianCombinedPdf'])->name('hasil-pengujian.combined-pdf');
 
+        // Berita Acara (only accessible by Dosen Penguji 1)
+        Route::get('/berita-acara/{jadwal_id}', [RekrutasiDosenController::class, 'beritaAcara'])->name('berita-acara');
+        Route::post('/berita-acara/{jadwal_id}', [RekrutasiDosenController::class, 'storeBeritaAcara'])->name('berita-acara.store');
+        Route::get('/berita-acara/{jadwal_id}/download', [RekrutasiDosenController::class, 'downloadBeritaAcara'])->name('berita-acara.download');
+
         // ⚠️ EXPORT ROUTES - HARUS DI ATAS {id} ⚠️
         Route::get('/export-excel', [RekrutasiDosenController::class, 'exportExcel'])->name('export-excel');
         Route::get('/export-csv', [RekrutasiDosenController::class, 'exportCsv'])->name('export-csv');
