@@ -298,6 +298,7 @@ Route::middleware('auth')->group(function () {
 
         // Hasil Pengujian
         Route::get('/hasil-pengujian', [RekrutasiDosenController::class, 'hasilPengujian'])->name('hasil-pengujian');
+        Route::get('/hasil-pengujian/combined-pdf/{calon_dosen_id}', [RekrutasiDosenController::class, 'hasilPengujianCombinedPdf'])->name('hasil-pengujian.combined-pdf');
 
         // ⚠️ EXPORT ROUTES - HARUS DI ATAS {id} ⚠️
         Route::get('/export-excel', [RekrutasiDosenController::class, 'exportExcel'])->name('export-excel');

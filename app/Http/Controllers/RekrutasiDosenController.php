@@ -1061,8 +1061,77 @@ class RekrutasiDosenController extends Controller
 
     public function hasilPengujian()
     {
-        // UBAH PATH VIEW DI SINI
-        return view('rekrutasi-dosen.hasil-pengujian-dosen');
+        // Get all calon dosen with their jadwal pengujian and penilaian
+        $calonDosenList = \App\Models\CalonDosen::with([
+            'jadwalPengujian.dosenPenguji',
+            'jadwalPengujian.penilaianDetails.user.dosen'
+        ])->get();
+
+        return view('rekrutasi-dosen.hasil-pengujian', compact('calonDosenList'));
+    }
+
+    public function hasilPengujianCombinedPdf($calonDosenId)
+    {
+        try {
+            ini_set('memory_limit', '512M');
+            
+            Log::info('Combined PDF export called', ['calon_dosen_id' => $calonDosenId]);
+            
+            $calonDosen = \App\Models\CalonDosen::with([
+                'jadwalPengujian.dosenPenguji',
+                'jadwalPengujian.penilaianDetails.user.dosen',
+                'prodi'
+            ])->findOrFail($calonDosenId);
+
+            $jadwal = $calonDosen->jadwalPengujian->first();
+            
+            if (!$jadwal) {
+                return redirect()->back()->with('error', 'Jadwal pengujian tidak ditemukan');
+            }
+
+            // Get penilaian from all 3 dosen penguji based on urutan
+            $penilaianList = [];
+            $allDosenPenguji = $jadwal->dosenPenguji;
+            
+            for ($i = 1; $i <= 3; $i++) {
+                $dosen = $allDosenPenguji->firstWhere('pivot.urutan', $i);
+                
+                if ($dosen) {
+                    $penilaian = \App\Models\PenilaianDetail::where('jadwal_pengujian_id', $jadwal->id)
+                        ->where('user_id', $dosen->user_id)
+                        ->with('user.dosen')
+                        ->first();
+                    
+                    if ($penilaian) {
+                        $pdfExport = new \App\Exports\PenilaianCalonDosenPdfExport($penilaian->id);
+                        $data = $pdfExport->getData();
+                        $penilaianList[] = $data;
+                    }
+                }
+            }
+
+            if (empty($penilaianList)) {
+                return redirect()->back()->with('error', 'Belum ada penilaian untuk calon dosen ini');
+            }
+
+            $filename = 'Hasil_Pengujian_' . str_replace(' ', '_', $calonDosen->nama) . '_' . date('Ymd_His') . '.pdf';
+
+            // Generate combined PDF
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('exports.hasil-pengujian-combined', [
+                'penilaianList' => $penilaianList,
+                'calonDosen' => $calonDosen
+            ]);
+            $pdf->setPaper('A4', 'portrait');
+            $pdf->setOption('isRemoteEnabled', true);
+            $pdf->setOption('isHtml5ParserEnabled', true);
+            
+            return $pdf->stream($filename);
+
+        } catch (\Exception $e) {
+            Log::error('Error generating combined PDF: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat mengunduh PDF: ' . $e->getMessage());
+        }
     }
 
     /**

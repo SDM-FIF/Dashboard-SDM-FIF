@@ -44,6 +44,11 @@ class JadwalPengujian extends Model
                     ->orderBy('urutan');
     }
 
+    public function penilaianDetails()
+    {
+        return $this->hasMany(PenilaianDetail::class, 'jadwal_pengujian_id');
+    }
+
     public function hasilPengujian()
     {
         return $this->hasOne(HasilPengujian::class);
