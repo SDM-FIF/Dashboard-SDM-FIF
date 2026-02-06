@@ -15,6 +15,7 @@
         .header {
             text-align: center;
             margin-bottom: 20px;
+            position: relative;
         }
         .header h2 {
             margin: 5px 0;
@@ -65,19 +66,20 @@
         }
         .logo {
             position: absolute;
-            top: 20px;
-            right: 30px;
-            width: 120px;
+            left: 0;
+            top: 0;
+            width: 50px;
+            height: auto;
         }
     </style>
 </head>
 <body>
-    {{-- Logo --}}
-    <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('images/logo-telkom-university.png'))) }}" 
-         class="logo" alt="Logo Telkom University">
-
     {{-- Header --}}
     <div class="header">
+        {{-- Logo --}}
+        <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('images/LogoTelkom.png'))) }}" 
+             class="logo" alt="Logo Telkom University">
+        
         <h2>BERITA ACARA</h2>
         <h2>MICROTEACHING & INTERVIEW</h2>
     </div>
@@ -186,6 +188,53 @@
 
     <div class="content" style="margin-top: 30px;">
         <p>Berita acara ini dibuat dengan sesungguhnya untuk dipergunakan sebagaimana mestinya.</p>
+    </div>
+
+    {{-- Section Penilai dengan QR Code --}}
+    <div style="margin-top: 50px;">
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr>
+                <td style="width: 33.33%; text-align: center; vertical-align: top;">
+                    <strong style="font-size: 11pt;">PENILAI 1</strong>
+                    <div style="margin-top: 10px;">
+                        @if(isset($dosenPengujiData[1]))
+                            @if($dosenPengujiData[1]['qrCode'])
+                                <img src="{{ $dosenPengujiData[1]['qrCode'] }}" alt="QR Code Penilai 1" style="width: 120px; height: 120px;">
+                            @endif
+                            <p style="margin-top: 10px; font-size: 10pt;">
+                                ({{ $dosenPengujiData[1]['dosen']->front_title }} {{ $dosenPengujiData[1]['dosen']->nama_lengkap }}, {{ $dosenPengujiData[1]['dosen']->back_title }})
+                            </p>
+                        @endif
+                    </div>
+                </td>
+                <td style="width: 33.33%; text-align: center; vertical-align: top;">
+                    <strong style="font-size: 11pt;">PENILAI 2</strong>
+                    <div style="margin-top: 10px;">
+                        @if(isset($dosenPengujiData[2]))
+                            @if($dosenPengujiData[2]['qrCode'])
+                                <img src="{{ $dosenPengujiData[2]['qrCode'] }}" alt="QR Code Penilai 2" style="width: 120px; height: 120px;">
+                            @endif
+                            <p style="margin-top: 10px; font-size: 10pt;">
+                                ({{ $dosenPengujiData[2]['dosen']->front_title }} {{ $dosenPengujiData[2]['dosen']->nama_lengkap }}, {{ $dosenPengujiData[2]['dosen']->back_title }})
+                            </p>
+                        @endif
+                    </div>
+                </td>
+                <td style="width: 33.33%; text-align: center; vertical-align: top;">
+                    <strong style="font-size: 11pt;">PENILAI 3</strong>
+                    <div style="margin-top: 10px;">
+                        @if(isset($dosenPengujiData[3]))
+                            @if($dosenPengujiData[3]['qrCode'])
+                                <img src="{{ $dosenPengujiData[3]['qrCode'] }}" alt="QR Code Penilai 3" style="width: 120px; height: 120px;">
+                            @endif
+                            <p style="margin-top: 10px; font-size: 10pt;">
+                                ({{ $dosenPengujiData[3]['dosen']->front_title }} {{ $dosenPengujiData[3]['dosen']->nama_lengkap }}, {{ $dosenPengujiData[3]['dosen']->back_title }})
+                            </p>
+                        @endif
+                    </div>
+                </td>
+            </tr>
+        </table>
     </div>
 </body>
 </html>

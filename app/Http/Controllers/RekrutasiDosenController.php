@@ -12,6 +12,8 @@ use App\Exports\RekrutasiDosenExport;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\QROptions;
 
 class RekrutasiDosenController extends Controller
 {
@@ -1342,6 +1344,18 @@ class RekrutasiDosenController extends Controller
                 }
             }
 
+            // Get dosen penguji 1, 2, 3 with QR codes
+            $dosenPengujiData = [];
+            for ($i = 1; $i <= 3; $i++) {
+                $dosen = $allDosenPenguji->firstWhere('pivot.urutan', $i);
+                if ($dosen) {
+                    $dosenPengujiData[$i] = [
+                        'dosen' => $dosen,
+                        'qrCode' => $this->generateQrCodeBase64($dosen)
+                    ];
+                }
+            }
+
             // Get penilaian dosen penguji 1 for rekomendasi data
             $dosenPenguji1 = $allDosenPenguji->firstWhere('pivot.urutan', 1);
             $penilaianDosenPenguji1 = $dosenPenguji1 ? 
@@ -1360,7 +1374,8 @@ class RekrutasiDosenController extends Controller
                 'calonDosen',
                 'penilaianList',
                 'nilaiRataAkhir',
-                'penilaianDosenPenguji1'
+                'penilaianDosenPenguji1',
+                'dosenPengujiData'
             ));
             
             $pdf->setPaper('A4', 'portrait');
@@ -1370,6 +1385,41 @@ class RekrutasiDosenController extends Controller
         } catch (\Exception $e) {
             Log::error('Error generating berita acara PDF: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Terjadi kesalahan saat mengunduh PDF: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Generate QR Code as base64 for dosen
+     */
+    protected function generateQrCodeBase64($dosen)
+    {
+        if (!$dosen || !$dosen->nip) {
+            return null;
+        }
+        
+        try {
+            // JSON data for QR Code
+            $qrData = json_encode([
+                'nip' => $dosen->nip,
+                'nama' => ($dosen->front_title ?? '') . ' ' . 
+                          ($dosen->nama_lengkap ?? '') . ', ' . 
+                          ($dosen->back_title ?? '')
+            ], JSON_UNESCAPED_UNICODE);
+            
+            // Generate QR Code with smaller size for PDF
+            $options = new QROptions([
+                'outputType' => QRCode::OUTPUT_IMAGE_PNG,
+                'eccLevel' => QRCode::ECC_M,
+                'scale' => 5,
+                'imageBase64' => true,
+            ]);
+            
+            $qrcode = new QRCode($options);
+            return $qrcode->render($qrData);
+            
+        } catch (\Exception $e) {
+            Log::error('Failed to generate QR Code for dosen: ' . $e->getMessage());
+            return null;
         }
     }
 
