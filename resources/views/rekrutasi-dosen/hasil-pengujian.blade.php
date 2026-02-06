@@ -142,17 +142,39 @@
                                     <td class="px-4 py-4 whitespace-nowrap text-center text-sm">
                                         @php
                                             $hasPenilaian = collect($penilaianList)->filter()->isNotEmpty();
+                                            // Check if berita acara is submitted (rata_akhir exists in dosen penguji 1's penilaian)
+                                            $hasBeritaAcara = false;
+                                            if ($jadwal && $penilaianList[0] && $penilaianList[0]->rata_akhir !== null) {
+                                                $hasBeritaAcara = true;
+                                            }
                                         @endphp
-                                        @if($hasPenilaian)
-                                            <a href="{{ route('rekrutasi-dosen.hasil-pengujian.combined-pdf', $calon->id) }}" 
-                                               target="_blank"
-                                               class="text-purple-600 hover:text-purple-800 transition-colors duration-200" 
-                                               title="Lihat Hasil Pengujian">
-                                                <i class="fas fa-clipboard-check text-xl"></i>
-                                            </a>
-                                        @else
-                                            <span class="text-gray-400">-</span>
-                                        @endif
+                                        <div class="flex items-center justify-center space-x-3">
+                                            @if($hasPenilaian)
+                                                <a href="{{ route('rekrutasi-dosen.hasil-pengujian.combined-pdf', $calon->id) }}" 
+                                                   target="_blank"
+                                                   class="text-purple-600 hover:text-purple-800 transition-colors duration-200" 
+                                                   title="Lihat Hasil Pengujian">
+                                                    <i class="fas fa-clipboard-check text-xl"></i>
+                                                </a>
+                                            @else
+                                                <span class="text-gray-400">
+                                                    <i class="fas fa-clipboard-check text-xl"></i>
+                                                </span>
+                                            @endif
+                                            
+                                            @if($hasBeritaAcara)
+                                                <a href="{{ route('rekrutasi-dosen.hasil-pengujian.berita-acara', $jadwal->id) }}" 
+                                                   target="_blank"
+                                                   class="text-orange-600 hover:text-orange-800 transition-colors duration-200" 
+                                                   title="Lihat Berita Acara">
+                                                    <i class="fas fa-file-signature text-xl"></i>
+                                                </a>
+                                            @else
+                                                <span class="text-gray-400">
+                                                    <i class="fas fa-file-signature text-xl"></i>
+                                                </span>
+                                            @endif
+                                        </div>
                                     </td>
                                 </tr>
                                 @empty

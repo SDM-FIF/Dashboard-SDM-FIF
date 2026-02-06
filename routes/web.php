@@ -299,6 +299,7 @@ Route::middleware('auth')->group(function () {
         // Hasil Pengujian
         Route::get('/hasil-pengujian', [RekrutasiDosenController::class, 'hasilPengujian'])->name('hasil-pengujian');
         Route::get('/hasil-pengujian/combined-pdf/{calon_dosen_id}', [RekrutasiDosenController::class, 'hasilPengujianCombinedPdf'])->name('hasil-pengujian.combined-pdf');
+        Route::get('/hasil-pengujian/berita-acara/{jadwal_id}', [RekrutasiDosenController::class, 'publicDownloadBeritaAcara'])->name('hasil-pengujian.berita-acara');
 
         // Berita Acara (only accessible by Dosen Penguji 1)
         Route::get('/berita-acara/{jadwal_id}', [RekrutasiDosenController::class, 'beritaAcara'])->name('berita-acara');
