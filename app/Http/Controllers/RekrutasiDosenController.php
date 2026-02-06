@@ -12,6 +12,8 @@ use App\Exports\RekrutasiDosenExport;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\QROptions;
 
 class RekrutasiDosenController extends Controller
 {
@@ -1342,6 +1344,18 @@ class RekrutasiDosenController extends Controller
                 }
             }
 
+            // Get dosen penguji 1, 2, 3 with QR codes
+            $dosenPengujiData = [];
+            for ($i = 1; $i <= 3; $i++) {
+                $dosen = $allDosenPenguji->firstWhere('pivot.urutan', $i);
+                if ($dosen) {
+                    $dosenPengujiData[$i] = [
+                        'dosen' => $dosen,
+                        'qrCode' => $this->generateQrCodeBase64($dosen)
+                    ];
+                }
+            }
+
             // Get penilaian dosen penguji 1 for rekomendasi data
             $dosenPenguji1 = $allDosenPenguji->firstWhere('pivot.urutan', 1);
             $penilaianDosenPenguji1 = $dosenPenguji1 ? 
@@ -1360,7 +1374,8 @@ class RekrutasiDosenController extends Controller
                 'calonDosen',
                 'penilaianList',
                 'nilaiRataAkhir',
-                'penilaianDosenPenguji1'
+                'penilaianDosenPenguji1',
+                'dosenPengujiData'
             ));
             
             $pdf->setPaper('A4', 'portrait');
@@ -1369,6 +1384,119 @@ class RekrutasiDosenController extends Controller
 
         } catch (\Exception $e) {
             Log::error('Error generating berita acara PDF: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan saat mengunduh PDF: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Generate QR Code as base64 for dosen
+     */
+    protected function generateQrCodeBase64($dosen)
+    {
+        if (!$dosen || !$dosen->nip) {
+            return null;
+        }
+        
+        try {
+            // JSON data for QR Code
+            $qrData = json_encode([
+                'nip' => $dosen->nip,
+                'nama' => ($dosen->front_title ?? '') . ' ' . 
+                          ($dosen->nama_lengkap ?? '') . ', ' . 
+                          ($dosen->back_title ?? '')
+            ], JSON_UNESCAPED_UNICODE);
+            
+            // Generate QR Code with smaller size for PDF
+            $options = new QROptions([
+                'outputType' => QRCode::OUTPUT_IMAGE_PNG,
+                'eccLevel' => QRCode::ECC_M,
+                'scale' => 5,
+                'imageBase64' => true,
+            ]);
+            
+            $qrcode = new QRCode($options);
+            return $qrcode->render($qrData);
+            
+        } catch (\Exception $e) {
+            Log::error('Failed to generate QR Code for dosen: ' . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Download Berita Acara PDF for public access (dari hasil pengujian)
+     */
+    public function publicDownloadBeritaAcara($jadwalId)
+    {
+        // Check if user is logged in
+        if (!Auth::check()) {
+            return redirect()->back()->with('error', 'Anda harus login terlebih dahulu');
+        }
+
+        try {
+            ini_set('memory_limit', '256M');
+
+            $jadwal = \App\Models\JadwalPengujian::with([
+                'calonDosen',
+                'dosenPenguji',
+                'penilaianDetails.user.dosen'
+            ])->findOrFail($jadwalId);
+
+            $calonDosen = $jadwal->calonDosen;
+            $allDosenPenguji = $jadwal->dosenPenguji;
+            
+            // Get penilaian list ordered by urutan
+            $penilaianList = [];
+            for ($i = 1; $i <= 3; $i++) {
+                $dosen = $allDosenPenguji->firstWhere('pivot.urutan', $i);
+                if ($dosen) {
+                    $penilaian = $jadwal->penilaianDetails->firstWhere('user_id', $dosen->user_id);
+                    if ($penilaian) {
+                        $penilaianList[] = $penilaian;
+                    }
+                }
+            }
+
+            // Get dosen penguji 1, 2, 3 with QR codes
+            $dosenPengujiData = [];
+            for ($i = 1; $i <= 3; $i++) {
+                $dosen = $allDosenPenguji->firstWhere('pivot.urutan', $i);
+                if ($dosen) {
+                    $dosenPengujiData[$i] = [
+                        'dosen' => $dosen,
+                        'qrCode' => $this->generateQrCodeBase64($dosen)
+                    ];
+                }
+            }
+
+            // Get penilaian dosen penguji 1 for rekomendasi data
+            $dosenPenguji1 = $allDosenPenguji->firstWhere('pivot.urutan', 1);
+            $penilaianDosenPenguji1 = $dosenPenguji1 ? 
+                $jadwal->penilaianDetails->firstWhere('user_id', $dosenPenguji1->user_id) : null;
+
+            if (!$penilaianDosenPenguji1 || $penilaianDosenPenguji1->rata_akhir === null) {
+                return redirect()->back()->with('error', 'Berita acara belum disimpan');
+            }
+
+            $nilaiRataAkhir = $penilaianDosenPenguji1->rata_akhir;
+
+            $filename = 'Berita_Acara_' . str_replace(' ', '_', $calonDosen->nama) . '_' . date('Ymd_His') . '.pdf';
+
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('exports.berita-acara-pdf', compact(
+                'jadwal',
+                'calonDosen',
+                'penilaianList',
+                'nilaiRataAkhir',
+                'penilaianDosenPenguji1',
+                'dosenPengujiData'
+            ));
+            
+            $pdf->setPaper('A4', 'portrait');
+
+            return $pdf->stream($filename);
+
+        } catch (\Exception $e) {
+            Log::error('Error generating public berita acara PDF: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Terjadi kesalahan saat mengunduh PDF: ' . $e->getMessage());
         }
     }
