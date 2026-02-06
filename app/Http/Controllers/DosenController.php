@@ -8,6 +8,8 @@ use App\Models\KelompokKeahlian;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Exports\DosenExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class DosenController extends Controller
 {
@@ -18,39 +20,57 @@ class DosenController extends Controller
     {
         $query = Dosen::with(['user', 'prodi.fakultas', 'kelompokKeahlian']);
 
-        // Filter berdasarkan request
-        if ($request->filled('lokasi_kerja')) {
-            $query->where('lokasi_kerja', $request->lokasi_kerja);
-        }
-
-        if ($request->filled('jabatan')) {
-            $query->where('jabatan', $request->jabatan);
-        }
-
-        if ($request->filled('kelompok_keahlian_id')) {
-            $query->where('kelompok_keahlian_id', $request->kelompok_keahlian_id);
-        }
-
+        // Filter by prodi_id (Lokasi Kerja uses prodi data)
         if ($request->filled('prodi_id')) {
             $query->where('prodi_id', $request->prodi_id);
         }
 
-        // Search by name
-        if ($request->filled('search')) {
-            $query->where('nama_lengkap', 'like', '%' . $request->search . '%');
+        // Filter by jabatan (JFA)
+        if ($request->filled('jabatan')) {
+            $query->where('jabatan', $request->jabatan);
         }
 
-        $dosen = $query->paginate(10);
+        // Filter by kelompok_keahlian_id
+        if ($request->filled('kelompok_keahlian_id')) {
+            $query->where('kelompok_keahlian_id', $request->kelompok_keahlian_id);
+        }
+
+        // Filter by status_pegawai
+        if ($request->filled('status_pegawai')) {
+            $query->where('status_pegawai', $request->status_pegawai);
+        }
+
+        // Search by name, NIP, or kode_dosen
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('nama_lengkap', 'like', '%' . $search . '%')
+                  ->orWhere('nip', 'like', '%' . $search . '%')
+                  ->orWhere('kode_dosen', 'like', '%' . $search . '%');
+            });
+        }
+
+        // Sorting
+        $sortField = $request->get('sort_field', 'id');
+        $sortDirection = $request->get('sort_direction', 'desc');
+        
+        if (in_array($sortField, ['nip', 'kode_dosen', 'nama_lengkap', 'jabatan', 'status_pegawai'])) {
+            $query->orderBy($sortField, $sortDirection);
+        } else {
+            $query->orderBy('id', 'desc');
+        }
+
+        $dosen = $query->paginate(10)->withQueryString();
 
         // Data untuk filter dropdown
         $filterData = [
-            'lokasi_kerja' => Dosen::distinct()->pluck('lokasi_kerja')->filter(),
-            'jabatan' => Dosen::distinct()->pluck('jabatan')->filter(),
-            'kelompok_keahlian' => KelompokKeahlian::all(),
-            'prodi' => Prodi::with('fakultas')->get()
+            'prodi' => Prodi::with('fakultas')->orderBy('nama_prodi')->get(),
+            'jabatan' => Dosen::distinct()->pluck('jabatan')->filter()->sort()->values(),
+            'kelompok_keahlian' => KelompokKeahlian::orderBy('nama_kelompok_keahlian')->get(),
+            'status_pegawai' => Dosen::distinct()->pluck('status_pegawai')->filter()->sort()->values()
         ];
 
-        return view('manajemen-dosen.data-dosen', compact('dosen', 'filterData'));
+        return view('manajemen-dosen.kelola-data-dosen', compact('dosen', 'filterData'));
     }
 
     /**
@@ -77,10 +97,9 @@ class DosenController extends Controller
             'front_title' => 'nullable|string|max:50',
             'nama_lengkap' => 'required|string|max:255',
             'back_title' => 'nullable|string|max:50',
-            'jabatan' => 'required|in:NJFA,Asisten Ahli,Lektor,Lektor Kepala,Profesor',
+            'jabatan' => 'required|in:NJFA,Asisten Ahli,Lektor,Lektor Kepala,Profesor,Guru Besar',
             'nip' => 'required|string|max:50|unique:dosen,nip',
             'kode_dosen' => 'required|string|max:20|unique:dosen,kode_dosen',
-            'lokasi_kerja' => 'required|in:Informatika,Rekayasa Perangkat Lunak,Data Sains,Teknologi Informasi',
             'status_pegawai' => 'required|in:Tetap,Perbantuan,Profesional Full Time,Profesional Part Time',
             'username' => 'required|string|max:100|unique:user,username',
             'password' => 'required|string|min:8|confirmed',
@@ -108,14 +127,16 @@ class DosenController extends Controller
                 'jabatan' => $validated['jabatan'],
                 'nip' => $validated['nip'],
                 'kode_dosen' => $validated['kode_dosen'],
-                'lokasi_kerja' => $validated['lokasi_kerja'],
                 'status_pegawai' => $validated['status_pegawai'],
             ]);
 
-            return redirect()->route('manajemen-dosen.kelola-data')->with('success', 'Data dosen berhasil ditambahkan!');
+            return redirect()->route('manajemen-dosen.kelola-data')
+                ->with('success', 'Data dosen berhasil ditambahkan!');
 
         } catch (\Exception $e) {
-            return back()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()])->withInput();
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
+                ->withInput();
         }
     }
 
@@ -188,10 +209,9 @@ class DosenController extends Controller
             'front_title' => 'nullable|string|max:50',
             'nama_lengkap' => 'required|string|max:255',
             'back_title' => 'nullable|string|max:50',
-            'jabatan' => 'required|in:NJFA,Asisten Ahli,Lektor,Lektor Kepala,Profesor',
+            'jabatan' => 'required|in:NJFA,Asisten Ahli,Lektor,Lektor Kepala,Profesor,Guru Besar',
             'nip' => 'required|string|max:50|unique:dosen,nip,' . $dosen->user_id . ',user_id',
             'kode_dosen' => 'required|string|max:20|unique:dosen,kode_dosen,' . $dosen->user_id . ',user_id',
-            'lokasi_kerja' => 'required|in:Informatika,Rekayasa Perangkat Lunak,Data Sains,Teknologi Informasi',
             'status_pegawai' => 'required|in:Tetap,Perbantuan,Profesional Full Time,Profesional Part Time',
             'username' => 'required|string|max:100|unique:user,username,' . $dosen->user_id,
             'password' => 'nullable|string|min:8|confirmed',
@@ -223,13 +243,13 @@ class DosenController extends Controller
                 'jabatan' => $validated['jabatan'],
                 'nip' => $validated['nip'],
                 'kode_dosen' => $validated['kode_dosen'],
-                'lokasi_kerja' => $validated['lokasi_kerja'],
+                'status_pegawai' => $validated['status_pegawai'],
             ]);
 
             return redirect()->route('manajemen-dosen.kelola-data')->with('success', 'Data dosen berhasil diperbarui!');
 
         } catch (\Exception $e) {
-            return back()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()])->withInput();
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage())->withInput();
         }
     }
 
@@ -386,93 +406,69 @@ class DosenController extends Controller
         // ALUR PRODUKSI - OPERASI NORMAL
         $query = Dosen::with(['user', 'prodi.fakultas', 'kelompokKeahlian']);
 
-        // Filter berdasarkan input user (SUDAH DITES ✅)
-        if ($request->filled('lokasi_kerja')) {
-            $query->where('lokasi_kerja', $request->lokasi_kerja);
+        // Filter by prodi_id (Lokasi Kerja uses prodi data)
+        if ($request->filled('prodi_id')) {
+            $query->where('prodi_id', $request->prodi_id);
         }
 
-        // Filter JFA - mapping ke kolom jabatan di database (SUDAH DITES ✅)
-        if ($request->filled('jfa')) {
-            $query->where('jabatan', $request->jfa);
+        // Filter by jabatan (JFA)
+        if ($request->filled('jabatan')) {
+            $query->where('jabatan', $request->jabatan);
         }
 
-        // Filter Kelompok Keahlian (SUDAH DITES ✅)
+        // Filter Kelompok Keahlian
         if ($request->filled('kelompok_keahlian_id')) {
             $query->where('kelompok_keahlian_id', $request->kelompok_keahlian_id);
         }
 
-        // Filter Status Pegawai (SUDAH DITES ✅)
+        // Filter Status Pegawai
         if ($request->filled('status_pegawai')) {
             $query->where('status_pegawai', $request->status_pegawai);
         }
 
-        // Pencarian berdasarkan nama (SUDAH DITES ✅)
+        // Search by name, NIP, or kode_dosen
         if ($request->filled('search')) {
-            $query->where('nama_lengkap', 'like', '%' . $request->search . '%');
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('nama_lengkap', 'like', '%' . $search . '%')
+                  ->orWhere('nip', 'like', '%' . $search . '%')
+                  ->orWhere('kode_dosen', 'like', '%' . $search . '%');
+            });
         }
-
-        // Date Range Filter - Skip karena tabel dosen tidak memiliki timestamps
-        // if ($request->filled('start_date') && $request->filled('end_date')) {
-        //     $query->whereBetween('created_at', [
-        //         $request->start_date . ' 00:00:00',
-        //         $request->end_date . ' 23:59:59'
-        //     ]);
-        // }
 
         // Sorting
-        $sortBy = $request->get('sort', 'terbaru');
-        switch ($sortBy) {
-            case 'terbaru':
-                $query->orderBy('id', 'desc'); // Sort by ID descending (latest first)
-                break;
-            case 'terlama':
-                $query->orderBy('id', 'asc'); // Sort by ID ascending (oldest first)
-                break;
-            case 'nama-az':
-                $query->orderBy('nama_lengkap', 'asc');
-                break;
-            case 'nama-za':
-                $query->orderBy('nama_lengkap', 'desc');
-                break;
-            case 'nip-asc':
-                $query->orderBy('nip', 'asc');
-                break;
-            case 'nip-desc':
-                $query->orderBy('nip', 'desc');
-                break;
-            default:
-                $query->orderBy('id', 'desc'); // Default sort by ID descending
+        $sortField = $request->get('sort_field', 'id');
+        $sortDirection = $request->get('sort_direction', 'desc');
+        
+        if (in_array($sortField, ['nip', 'kode_dosen', 'nama_lengkap', 'jabatan', 'status_pegawai'])) {
+            $query->orderBy($sortField, $sortDirection);
+        } else {
+            $query->orderBy('id', 'desc');
         }
 
-        // Pagination - 15 data per halaman (SUDAH DITES ✅)
-        $dosen = $query->paginate(15);
+        // Pagination - 10 data per halaman
+        $dosen = $query->paginate(10)->withQueryString();
 
-        // Data untuk dropdown filter (SUDAH DITES ✅) - Updated dengan enum values baru
+        // Data untuk dropdown filter (pull from database)
         $filterData = [
-            'lokasi_kerja' => [
-                'Informatika',
-                'Rekayasa Perangkat Lunak', 
-                'Data Sains',
-                'Teknologi Informasi'
-            ],
-            'jfa_options' => [
-                'NJFA',
-                'Asisten Ahli',
-                'Lektor', 
-                'Lektor Kepala',
-                'Profesor'
-            ],
-            'kelompok_keahlian' => KelompokKeahlian::all(),
-            'status_pegawai' => [
-                'Tetap', 
-                'Perbantuan', 
-                'Profesional Full Time', 
-                'Profesional Part Time'
-            ],
+            'prodi' => Prodi::with('fakultas')->orderBy('nama_prodi')->get(),
+            'jabatan' => Dosen::distinct()->pluck('jabatan')->filter()->sort()->values(),
+            'kelompok_keahlian' => KelompokKeahlian::orderBy('nama_kelompok_keahlian')->get(),
+            'status_pegawai' => Dosen::distinct()->pluck('status_pegawai')->filter()->sort()->values()
         ];
 
         // Kirim ke view (SIAP UNTUK FRONTEND)
         return view('manajemen-dosen.kelola-data-dosen', compact('dosen', 'filterData'));
+    }
+
+    /**
+     * Export dosen data to Excel.
+     */
+    public function export(Request $request)
+    {
+        $filters = $request->only(['prodi_id', 'jabatan', 'kelompok_keahlian_id', 'status_pegawai', 'search']);
+        
+        return Excel::download(new DosenExport($filters), 'data-dosen-' . date('Y-m-d') . '.xlsx');
     }
 
     /**
@@ -521,10 +517,18 @@ class DosenController extends Controller
                 'profesor' => Dosen::where('jabatan', 'Profesor')->count(),
             ],
             'per_lokasi' => [
-                'informatika' => Dosen::where('lokasi_kerja', 'Informatika')->count(),
-                'rpl' => Dosen::where('lokasi_kerja', 'Rekayasa Perangkat Lunak')->count(),
-                'data_sains' => Dosen::where('lokasi_kerja', 'Data Sains')->count(),
-                'ti' => Dosen::where('lokasi_kerja', 'Teknologi Informasi')->count(),
+                'informatika' => Dosen::whereHas('prodi', function($q) {
+                    $q->where('nama_prodi', 'like', '%Informatika%');
+                })->count(),
+                'rpl' => Dosen::whereHas('prodi', function($q) {
+                    $q->where('nama_prodi', 'like', '%Rekayasa Perangkat Lunak%');
+                })->count(),
+                'data_sains' => Dosen::whereHas('prodi', function($q) {
+                    $q->where('nama_prodi', 'like', '%Data%');
+                })->count(),
+                'ti' => Dosen::whereHas('prodi', function($q) {
+                    $q->where('nama_prodi', 'like', '%Teknologi Informasi%');
+                })->count(),
             ],
             'per_kelompok_keahlian' => []
         ];

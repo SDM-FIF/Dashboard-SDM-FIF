@@ -208,6 +208,7 @@ Route::middleware('auth')->group(function () {
     // ============================
     Route::prefix('manajemen-dosen')->name('manajemen-dosen.')->group(function () {
         Route::get('/kelola-data', [DosenController::class, 'kelolaData'])->name('kelola-data');
+        Route::get('/export', [DosenController::class, 'export'])->name('export');
         Route::get('/import-data', [DosenController::class, 'importForm'])->name('import-data');
         Route::post('/import-data', [DosenController::class, 'importProcess'])->name('import-process');
         Route::get('/laporan', [DosenController::class, 'laporan'])->name('laporan');
