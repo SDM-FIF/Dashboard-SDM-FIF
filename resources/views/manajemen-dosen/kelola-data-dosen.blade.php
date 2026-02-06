@@ -123,23 +123,53 @@
         </div>
 
         {{-- Data Table Section --}}
-        <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+        <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-visible">
             {{-- Table Header Section --}}
             <div class="p-6 border-b border-gray-200">
-                <h2 class="text-xl font-bold text-[#C41E3A] mb-4">Data Dosen</h2>
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-[#C41E3A]">Data Dosen</h2>
+                </div>
+
+                {{-- Action Buttons Row --}}
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0">
+                    {{-- Tambah Data Button --}}
+                    @if(Auth::check() && !Auth::user()->hasRole('User Biasa'))
+                    <a href="{{ route('manajemen-dosen.create') }}"
+                        class="bg-[#FBB03B] hover:bg-orange-600 text-[#B91432] font-semibold px-6 py-2.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
+                        <i class="fas fa-plus mr-2"></i>Tambah Data
+                    </a>
+                    @endif
+
+                    {{-- Right Side Controls --}}
+                    <div class="flex flex-wrap items-center gap-3">
+                        {{-- Export Button --}}
                         @if(Auth::check() && !Auth::user()->hasRole('User Biasa'))
-                        <a href="{{ route('manajemen-dosen.create') }}"
-                           class="bg-[#FBB03B] hover:bg-orange-600 text-black font-semibold px-6 py-2.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex items-center space-x-2">
-                            <i class="fas fa-plus"></i>
-                            <span>Tambah Data</span>
-                        </a>
-                        <a href="{{ route('manajemen-dosen.export', request()->query()) }}"
-                           class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex items-center space-x-2">
-                            <i class="fas fa-file-excel"></i>
-                            <span>Export Excel</span>
-                        </a>
+                        <div class="relative inline-block text-left">
+                            <button type="button" id="exportBtn" class="px-4 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all duration-200 flex items-center space-x-2">
+                                <i class="fas fa-download"></i>
+                                <span>Export</span>
+                                <i class="fas fa-chevron-down text-xs ml-1"></i>
+                            </button>
+
+                            <!-- Dropdown Export -->
+                            <div id="exportDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200" style="z-index: 9999;">
+                                <a href="{{ route('manajemen-dosen.export-excel', request()->query()) }}"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-t-lg">
+                                    <i class="fas fa-file-excel text-green-600 mr-2"></i>
+                                    Export Excel
+                                </a>
+                                <a href="{{ route('manajemen-dosen.export-csv', request()->query()) }}"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <i class="fas fa-file-csv text-blue-600 mr-2"></i>
+                                    Export CSV
+                                </a>
+                                <a href="{{ route('manajemen-dosen.export-pdf', request()->query()) }}"
+                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-b-lg">
+                                    <i class="fas fa-file-pdf text-red-600 mr-2"></i>
+                                    Export PDF
+                                </a>
+                            </div>
+                        </div>
                         @endif
                     </div>
                 </div>
@@ -196,6 +226,9 @@
                                 </a>
                             </th>
                             <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
+                                <span>Kelompok Keahlian</span>
+                            </th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                                 <span>Lokasi Kerja</span>
                             </th>
                             <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
@@ -226,13 +259,16 @@
                                     </td>
                                     <td class="px-4 py-4 text-sm text-gray-900">
                                         <div class="font-medium">
-                                            {{ $dosenItem->front_title }} {{ $dosenItem->nama_lengkap }}, {{ $dosenItem->back_title }}
+                                            @if($dosenItem->front_title){{ $dosenItem->front_title }} @endif{{ $dosenItem->nama_lengkap }}@if($dosenItem->back_title), {{ $dosenItem->back_title }}@endif
                                         </div>
                                     </td>
                                     <td class="px-4 py-4 text-sm text-gray-900">
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                                             {{ $dosenItem->jabatan }}
                                         </span>
+                                    </td>
+                                    <td class="px-4 py-4 text-sm text-gray-900">
+                                        {{ $dosenItem->kelompokKeahlian->nama_kelompok_keahlian ?? '-' }}
                                     </td>
                                     <td class="px-4 py-4 text-sm text-gray-900">
                                         {{ $dosenItem->prodi->nama_prodi ?? '-' }}
@@ -279,7 +315,7 @@
                         @else
                             {{-- Empty State --}}
                             <tr>
-                                <td colspan="7" class="px-6 py-12 text-center text-gray-500">
+                                <td colspan="8" class="px-6 py-12 text-center text-gray-500">
                                     <i class="fas fa-users text-4xl mb-2"></i>
                                     <p>Tidak ada data dosen</p>
                                 </td>
@@ -289,20 +325,6 @@
                 </table>
             </div>
 
-            {{-- Pagination --}}
-            @if(isset($dosen) && $dosen->hasPages())
-                <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
-                    <div class="flex items-center justify-between">
-                        <div class="text-sm text-gray-700">
-                            Menampilkan {{ $dosen->firstItem() }} sampai {{ $dosen->lastItem() }} 
-                            dari {{ $dosen->total() }} hasil
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            {{ $dosen->links() }}
-                        </div>
-                    </div>
-                </div>
-            @endif
         </div>
     </main>
 
@@ -310,6 +332,46 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Export dropdown toggle
+            const exportBtn = document.getElementById('exportBtn');
+            const exportDropdown = document.getElementById('exportDropdown');
+
+            console.log('Export Button:', exportBtn);
+            console.log('Export Dropdown:', exportDropdown);
+
+            if (exportBtn && exportDropdown) {
+                exportBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Button clicked, toggling dropdown');
+                    
+                    // Toggle visibility
+                    if (exportDropdown.classList.contains('hidden')) {
+                        exportDropdown.classList.remove('hidden');
+                    } else {
+                        exportDropdown.classList.add('hidden');
+                    }
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!exportBtn.contains(e.target) && !exportDropdown.contains(e.target)) {
+                        exportDropdown.classList.add('hidden');
+                    }
+                });
+
+                // Prevent dropdown links from being blocked
+                const exportLinks = exportDropdown.querySelectorAll('a');
+                exportLinks.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        // Link will navigate normally
+                    });
+                });
+            } else {
+                console.error('Export button or dropdown not found!');
+            }
+
             // Success/Error Messages with SweetAlert2
             @if(session('success'))
                 Swal.fire({
@@ -389,22 +451,6 @@
                     });
                 });
             });
-
-            // Export functionality (placeholder)
-            const exportDropdown = document.getElementById('exportDropdown');
-            if (exportDropdown) {
-                exportDropdown.addEventListener('change', function() {
-                    if (this.value) {
-                        Swal.fire({
-                            icon: 'info',
-                            title: 'Segera Hadir',
-                            text: `Export ${this.value.toUpperCase()} akan segera tersedia`,
-                            confirmButtonColor: '#FBB03B'
-                        });
-                        this.value = '';
-                    }
-                });
-            }
         });
     </script>
 </body>

@@ -208,7 +208,10 @@ Route::middleware('auth')->group(function () {
     // ============================
     Route::prefix('manajemen-dosen')->name('manajemen-dosen.')->group(function () {
         Route::get('/kelola-data', [DosenController::class, 'kelolaData'])->name('kelola-data');
-        Route::get('/export', [DosenController::class, 'export'])->name('export');
+        Route::get('/export-excel', [DosenController::class, 'exportExcel'])->name('export-excel');
+        Route::get('/export-csv', [DosenController::class, 'exportCsv'])->name('export-csv');
+        Route::get('/export-pdf', [DosenController::class, 'exportPdf'])->name('export-pdf');
+        Route::get('/export', [DosenController::class, 'exportExcel'])->name('export'); // Backward compatibility
         Route::get('/import-data', [DosenController::class, 'importForm'])->name('import-data');
         Route::post('/import-data', [DosenController::class, 'importProcess'])->name('import-process');
         Route::get('/laporan', [DosenController::class, 'laporan'])->name('laporan');

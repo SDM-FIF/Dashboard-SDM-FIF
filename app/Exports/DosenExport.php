@@ -66,7 +66,7 @@ class DosenExport implements FromView, WithEvents, ShouldAutoSize
         return [
             AfterSheet::class => function(AfterSheet $event) {
                 // Style header row
-                $event->sheet->getStyle('A1:H1')->applyFromArray([
+                $event->sheet->getStyle('A1:G1')->applyFromArray([
                     'font' => [
                         'bold' => true,
                         'color' => ['rgb' => 'FFFFFF'],
@@ -85,8 +85,17 @@ class DosenExport implements FromView, WithEvents, ShouldAutoSize
                 // Set row height
                 $event->sheet->getDelegate()->getRowDimension(1)->setRowHeight(25);
 
-                // Apply borders
+                // Format NIP column as text to prevent scientific notation
                 $highestRow = $event->sheet->getDelegate()->getHighestRow();
+                for ($row = 2; $row <= $highestRow; $row++) {
+                    $event->sheet->getDelegate()->setCellValueExplicit(
+                        'A' . $row,
+                        $event->sheet->getDelegate()->getCell('A' . $row)->getValue(),
+                        \PhpOffice\PhpSpreadsheet\Cell\DataType::TYPE_STRING
+                    );
+                }
+
+                // Apply borders
                 $highestColumn = $event->sheet->getDelegate()->getHighestColumn();
                 
                 $event->sheet->getStyle('A1:' . $highestColumn . $highestRow)

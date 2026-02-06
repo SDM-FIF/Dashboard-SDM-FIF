@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Exports\DosenExport;
 use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class DosenController extends Controller
 {
@@ -60,7 +61,7 @@ class DosenController extends Controller
             $query->orderBy('id', 'desc');
         }
 
-        $dosen = $query->paginate(10)->withQueryString();
+        $dosen = $query->get();
 
         // Data untuk filter dropdown
         $filterData = [
@@ -446,8 +447,8 @@ class DosenController extends Controller
             $query->orderBy('id', 'desc');
         }
 
-        // Pagination - 10 data per halaman
-        $dosen = $query->paginate(10)->withQueryString();
+        // Get all data (no pagination - show all records)
+        $dosen = $query->get();
 
         // Data untuk dropdown filter (pull from database)
         $filterData = [
@@ -464,11 +465,71 @@ class DosenController extends Controller
     /**
      * Export dosen data to Excel.
      */
-    public function export(Request $request)
+    public function exportExcel(Request $request)
     {
         $filters = $request->only(['prodi_id', 'jabatan', 'kelompok_keahlian_id', 'status_pegawai', 'search']);
         
         return Excel::download(new DosenExport($filters), 'data-dosen-' . date('Y-m-d') . '.xlsx');
+    }
+
+    /**
+     * Export dosen data to CSV.
+     */
+    public function exportCsv(Request $request)
+    {
+        try {
+            $filters = $request->only(['prodi_id', 'jabatan', 'kelompok_keahlian_id', 'status_pegawai', 'search']);
+            $fileName = 'data-dosen-' . date('Y-m-d-His') . '.csv';
+
+            return Excel::download(
+                new DosenExport($filters),
+                $fileName,
+                \Maatwebsite\Excel\Excel::CSV,
+                [
+                    'Content-Type' => 'text/csv',
+                ]
+            );
+        } catch (\Exception $e) {
+            logger()->error('Export CSV Error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Export CSV gagal: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Export dosen data to PDF.
+     */
+    public function exportPdf(Request $request)
+    {
+        $query = Dosen::with(['user', 'prodi.fakultas', 'kelompokKeahlian']);
+
+        // Apply filters
+        if ($request->filled('prodi_id')) {
+            $query->where('prodi_id', $request->prodi_id);
+        }
+        if ($request->filled('jabatan')) {
+            $query->where('jabatan', $request->jabatan);
+        }
+        if ($request->filled('kelompok_keahlian_id')) {
+            $query->where('kelompok_keahlian_id', $request->kelompok_keahlian_id);
+        }
+        if ($request->filled('status_pegawai')) {
+            $query->where('status_pegawai', $request->status_pegawai);
+        }
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('nama_lengkap', 'like', '%' . $search . '%')
+                  ->orWhere('nip', 'like', '%' . $search . '%')
+                  ->orWhere('kode_dosen', 'like', '%' . $search . '%');
+            });
+        }
+
+        $dosen = $query->orderBy('nama_lengkap', 'asc')->get();
+
+        $pdf = Pdf::loadView('manajemen-dosen.export-pdf', compact('dosen'));
+        $pdf->setPaper('a4', 'landscape');
+
+        return $pdf->download('data-dosen-' . date('Y-m-d-His') . '.pdf');
     }
 
     /**
