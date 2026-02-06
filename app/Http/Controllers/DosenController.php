@@ -92,7 +92,6 @@ class DosenController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'fakultas_id' => 'required|exists:fakultas,id',
             'prodi_id' => 'required|exists:prodi,id',
             'kelompok_keahlian_id' => 'required|exists:kelompok_keahlian,id',
             'front_title' => 'nullable|string|max:50',
@@ -102,19 +101,34 @@ class DosenController extends Controller
             'nip' => 'required|string|max:50|unique:dosen,nip',
             'kode_dosen' => 'required|string|max:20|unique:dosen,kode_dosen',
             'status_pegawai' => 'required|in:Tetap,Perbantuan,Profesional Full Time,Profesional Part Time',
-            'username' => 'required|string|max:100|unique:user,username',
-            'password' => 'required|string|min:8|confirmed',
+            'pendidikan_terakhir' => 'required|in:S1,S2,S3',
+            'status_dosen' => 'nullable|string',
         ]);
 
         try {
-            // Create user first
+            // Get fakultas_id from prodi
+            $prodi = Prodi::findOrFail($validated['prodi_id']);
+            $fakultas_id = $prodi->fakultas_id;
+
+            // Generate username from nama_lengkap (without spaces and lowercase)
+            $baseUsername = strtolower(str_replace(' ', '', $validated['nama_lengkap']));
+            $username = $baseUsername;
+            $counter = 1;
+            
+            // Check if username exists, if yes add number suffix
+            while (User::where('username', $username)->exists()) {
+                $username = $baseUsername . $counter;
+                $counter++;
+            }
+
+            // Create user first (auto-generate username and default password)
             $user = User::create([
-                'fakultas_id' => $validated['fakultas_id'],
+                'fakultas_id' => $fakultas_id,
                 'prodi_id' => $validated['prodi_id'],
-                'role_id' => 2, // Assuming 2 is dosen role, adjust as needed
+                'role_id' => 2, // Role dosen
                 'nama_lengkap' => $validated['nama_lengkap'],
-                'username' => $validated['username'],
-                'password' => Hash::make($validated['password']),
+                'username' => $username, // Use nama_lengkap without spaces as username
+                'password' => Hash::make('password123'), // Default password
             ]);
 
             // Create dosen
@@ -129,12 +143,39 @@ class DosenController extends Controller
                 'nip' => $validated['nip'],
                 'kode_dosen' => $validated['kode_dosen'],
                 'status_pegawai' => $validated['status_pegawai'],
+                'pendidikan_terakhir' => $validated['pendidikan_terakhir'],
+                'status_dosen' => $validated['status_dosen'] ?? 'Aktif',
             ]);
+
+            // Check if AJAX request
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Data dosen berhasil ditambahkan!',
+                    'data' => $dosen
+                ]);
+            }
 
             return redirect()->route('manajemen-dosen.kelola-data')
                 ->with('success', 'Data dosen berhasil ditambahkan!');
 
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Validasi gagal',
+                    'errors' => $e->errors()
+                ], 422);
+            }
+            throw $e;
         } catch (\Exception $e) {
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+                ], 500);
+            }
+
             return redirect()->back()
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage())
                 ->withInput();

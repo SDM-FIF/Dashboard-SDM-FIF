@@ -134,10 +134,10 @@
                 <div class="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0">
                     {{-- Tambah Data Button --}}
                     @if(Auth::check() && !Auth::user()->hasRole('User Biasa'))
-                    <a href="{{ route('manajemen-dosen.create') }}"
+                    <button onclick="openCreateModal()"
                         class="bg-[#FBB03B] hover:bg-orange-600 text-[#B91432] font-semibold px-6 py-2.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
                         <i class="fas fa-plus mr-2"></i>Tambah Data
-                    </a>
+                    </button>
                     @endif
 
                     {{-- Right Side Controls --}}
@@ -452,6 +452,180 @@
                 });
             });
         });
+
+        // Modal Functions - Global scope
+        function openCreateModal() {
+                Swal.fire({
+                    title: '<i class="fas fa-user-plus mr-2"></i>Tambah Data Dosen',
+                    html: `
+                        <form id="swalCreateForm" class="text-left">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">NIP <span class="text-red-500">*</span></label>
+                                    <input type="text" name="nip" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Kode Dosen <span class="text-red-500">*</span></label>
+                                    <input type="text" name="kode_dosen" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Gelar Depan</label>
+                                    <input type="text" name="front_title" placeholder="Dr., Prof. Dr., dll" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap <span class="text-red-500">*</span></label>
+                                    <input type="text" name="nama_lengkap" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Gelar Belakang</label>
+                                    <input type="text" name="back_title" placeholder="S.Kom, M.Kom, M.T, dll" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Jabatan Fungsional Akademik <span class="text-red-500">*</span></label>
+                                    <select name="jabatan" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                                        <option value="">Pilih Jabatan</option>
+                                        <option value="NJFA">NJFA</option>
+                                        <option value="Asisten Ahli">Asisten Ahli</option>
+                                        <option value="Lektor">Lektor</option>
+                                        <option value="Lektor Kepala">Lektor Kepala</option>
+                                        <option value="Profesor">Profesor</option>
+                                        <option value="Guru Besar">Guru Besar</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Status Pegawai <span class="text-red-500">*</span></label>
+                                    <select name="status_pegawai" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                                        <option value="">Pilih Status</option>
+                                        <option value="Tetap">Tetap</option>
+                                        <option value="Perbantuan">Perbantuan</option>
+                                        <option value="Profesional Full Time">Profesional Full Time</option>
+                                        <option value="Profesional Part Time">Profesional Part Time</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Pendidikan Terakhir <span class="text-red-500">*</span></label>
+                                    <select name="pendidikan_terakhir" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                                        <option value="">Pilih Pendidikan</option>
+                                        <option value="S1">S1</option>
+                                        <option value="S2">S2</option>
+                                        <option value="S3">S3</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Prodi/Lokasi Kerja <span class="text-red-500">*</span></label>
+                                    <select name="prodi_id" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                                        <option value="">Pilih Prodi</option>
+                                        @if(isset($filterData['prodi']))
+                                            @foreach($filterData['prodi'] as $prodi)
+                                                <option value="{{ $prodi->id }}">{{ $prodi->nama_prodi }}</option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Kelompok Keahlian <span class="text-red-500">*</span></label>
+                                    <select name="kelompok_keahlian_id" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                                        <option value="">Pilih Kelompok Keahlian</option>
+                                        @if(isset($filterData['kelompok_keahlian']))
+                                            @foreach($filterData['kelompok_keahlian'] as $kelompok)
+                                                <option value="{{ $kelompok->id }}">{{ $kelompok->nama_kelompok_keahlian }}</option>
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Status Dosen</label>
+                                    <select name="status_dosen" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                                        <option value="Aktif">Aktif</option>
+                                        <option value="Tugas Belajar">Tugas Belajar</option>
+                                        <option value="Izin Belajar">Izin Belajar</option>
+                                        <option value="CLTY">CLTY</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                    `,
+                    width: '850px',
+                    showCancelButton: true,
+                    confirmButtonColor: '#C41E3A',
+                    cancelButtonColor: '#6B7280',
+                    confirmButtonText: '<i class="fas fa-save mr-2"></i>Simpan',
+                    cancelButtonText: '<i class="fas fa-times mr-2"></i>Batal',
+                    customClass: {
+                        popup: 'rounded-lg',
+                        confirmButton: 'px-6 py-2.5 rounded-lg font-semibold',
+                        cancelButton: 'px-6 py-2.5 rounded-lg font-semibold',
+                        title: 'text-[#C41E3A]'
+                    },
+                    preConfirm: () => {
+                        const form = document.getElementById('swalCreateForm');
+                        const formData = new FormData(form);
+                        
+                        // Validasi required fields
+                        if (!formData.get('nip') || !formData.get('kode_dosen') || !formData.get('nama_lengkap') || 
+                            !formData.get('jabatan') || !formData.get('status_pegawai') || !formData.get('pendidikan_terakhir') ||
+                            !formData.get('prodi_id') || !formData.get('kelompok_keahlian_id')) {
+                            Swal.showValidationMessage('Mohon lengkapi semua field yang wajib diisi (*)');
+                            return false;
+                        }
+                        
+                        return formData;
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const formData = result.value;
+                        
+                        Swal.fire({
+                            title: 'Menyimpan...',
+                            allowOutsideClick: false,
+                            didOpen: () => Swal.showLoading()
+                        });
+
+                        fetch('{{ route("manajemen-dosen.store") }}', {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            },
+                            body: formData
+                        })
+                        .then(response => {
+                            if (!response.ok && response.status !== 422) {
+                                throw new Error('HTTP error! status: ' + response.status);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.success) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Berhasil!',
+                                    text: data.message || 'Data dosen berhasil ditambahkan',
+                                    showConfirmButton: false,
+                                    timer: 2000
+                                }).then(() => location.reload());
+                            } else {
+                                let errorMessage = 'Gagal menyimpan data';
+                                if (data.message) {
+                                    errorMessage = data.message;
+                                }
+                                if (data.errors) {
+                                    errorMessage += '<br><br>' + Object.values(data.errors).flat().join('<br>');
+                                }
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    html: errorMessage
+                                });
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Fetch error:', error);
+                            Swal.fire('Error', 'Terjadi kesalahan: ' + error.message, 'error');
+                        });
+                    }
+                });
+            }
     </script>
 </body>
 </html>
