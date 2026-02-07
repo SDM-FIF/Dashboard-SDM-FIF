@@ -14,9 +14,6 @@
     
     {{-- Main Content --}}
     <main class="flex-1 p-4 md:p-6 min-h-screen">
-        {{-- Top Search Bar --}}
-        <x-topbar />
-
         {{-- Header Section --}}
         <div class="mb-6">
             {{-- Breadcrumb Navigation --}}

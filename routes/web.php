@@ -215,6 +215,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/import-data', [DosenController::class, 'importForm'])->name('import-data');
         Route::post('/import-data', [DosenController::class, 'importProcess'])->name('import-process');
         Route::get('/laporan', [DosenController::class, 'laporan'])->name('laporan');
+        Route::get('/laporan/export-pdf', [DosenController::class, 'exportLaporanPDF'])->name('laporan.export-pdf');
 
         // CRUD Routes
         Route::get('/create', [DosenController::class, 'create'])->name('create');

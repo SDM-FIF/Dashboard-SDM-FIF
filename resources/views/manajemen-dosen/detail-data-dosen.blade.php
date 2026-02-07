@@ -14,9 +14,6 @@
     
     {{-- Main Content --}}
     <main class="flex-1 p-4 md:p-6 min-h-screen">
-        {{-- Top Search Bar --}}
-        <x-topbar />
-
         {{-- Page Title --}}
         <div class="mb-8">
             <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Detail Data Dosen</h1>

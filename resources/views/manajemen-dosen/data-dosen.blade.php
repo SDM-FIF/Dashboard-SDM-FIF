@@ -10,8 +10,6 @@
     <x-navbar />
     
     <main class="flex-1 p-4 md:p-6 min-h-screen">
-        <x-topbar />
-
         <!-- Title -->
         <h1 class="text-2xl md:text-3xl lg:text-4xl font-semibold mb-4 md:mb-6 text-center md:text-left">
             Data Dosen FIF
