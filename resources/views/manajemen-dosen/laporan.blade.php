@@ -18,16 +18,13 @@
 
     {{-- Main Content --}}
     <main class="flex-1 p-4 md:p-6 min-h-screen">
-        {{-- Top Search Bar --}}
-        <x-topbar />
-
         {{-- Page Title --}}
         <div class="mb-8">
             <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Laporan Dosen</h1>
         </div>
 
         {{-- Summary Cards --}}
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
             {{-- Total Dosen --}}
             <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
                 <div class="flex items-center justify-between">
@@ -41,12 +38,12 @@
                 </div>
             </div>
 
-            {{-- Dosen Tetap --}}
+            {{-- Dosen Aktif --}}
             <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-600">Dosen Tetap</p>
-                        <p class="text-3xl font-bold text-green-600">{{ $statistik['per_status']['tetap'] }}</p>
+                        <p class="text-sm font-medium text-gray-600">Dosen Aktif</p>
+                        <p class="text-3xl font-bold text-green-600">{{ $statistik['per_status_dosen']['aktif'] }}</p>
                     </div>
                     <div class="p-3 bg-green-100 rounded-full">
                         <i class="fas fa-user-check text-green-600 text-xl"></i>
@@ -54,28 +51,41 @@
                 </div>
             </div>
 
-            {{-- Dosen Profesional --}}
+            {{-- Dosen Tugas Belajar --}}
             <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-600">Dosen Profesional</p>
-                        <p class="text-3xl font-bold text-blue-600">{{ $statistik['per_status']['profesional_full'] + $statistik['per_status']['profesional_part'] }}</p>
+                        <p class="text-sm font-medium text-gray-600">Tugas Belajar</p>
+                        <p class="text-3xl font-bold text-blue-600">{{ $statistik['per_status_dosen']['tugas_belajar'] }}</p>
                     </div>
                     <div class="p-3 bg-blue-100 rounded-full">
-                        <i class="fas fa-user-tie text-blue-600 text-xl"></i>
+                        <i class="fas fa-user-graduate text-blue-600 text-xl"></i>
                     </div>
                 </div>
             </div>
 
-            {{-- Dosen Profesor --}}
+            {{-- Dosen Izin Belajar --}}
             <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
                 <div class="flex items-center justify-between">
                     <div>
-                        <p class="text-sm font-medium text-gray-600">Profesor</p>
-                        <p class="text-3xl font-bold text-purple-600">{{ $statistik['per_jfa']['profesor'] }}</p>
+                        <p class="text-sm font-medium text-gray-600">Izin Belajar</p>
+                        <p class="text-3xl font-bold text-yellow-600">{{ $statistik['per_status_dosen']['izin_belajar'] }}</p>
+                    </div>
+                    <div class="p-3 bg-yellow-100 rounded-full">
+                        <i class="fas fa-book-reader text-yellow-600 text-xl"></i>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Dosen CLTY --}}
+            <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-sm font-medium text-gray-600">Dosen CLTY</p>
+                        <p class="text-3xl font-bold text-purple-600">{{ $statistik['per_status_dosen']['clty'] }}</p>
                     </div>
                     <div class="p-3 bg-purple-100 rounded-full">
-                        <i class="fas fa-graduation-cap text-purple-600 text-xl"></i>
+                        <i class="fas fa-user-clock text-purple-600 text-xl"></i>
                     </div>
                 </div>
             </div>
@@ -115,34 +125,19 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @forelse($statistik['per_prodi'] as $prodi)
                             <tr class="border-b border-gray-100">
-                                <td class="py-3 text-gray-800">Informatika</td>
-                                <td class="text-right py-3 font-medium">{{ $statistik['per_lokasi']['informatika'] }}</td>
+                                <td class="py-3 text-gray-800">{{ $prodi['nama'] }}</td>
+                                <td class="text-right py-3 font-medium">{{ $prodi['jumlah'] }}</td>
                                 <td class="text-right py-3 text-sm text-gray-600">
-                                    {{ $statistik['total_dosen'] > 0 ? round(($statistik['per_lokasi']['informatika'] / $statistik['total_dosen']) * 100, 1) : 0 }}%
+                                    {{ $statistik['total_dosen'] > 0 ? round(($prodi['jumlah'] / $statistik['total_dosen']) * 100, 1) : 0 }}%
                                 </td>
                             </tr>
-                            <tr class="border-b border-gray-100">
-                                <td class="py-3 text-gray-800">Rekayasa Perangkat Lunak</td>
-                                <td class="text-right py-3 font-medium">{{ $statistik['per_lokasi']['rpl'] }}</td>
-                                <td class="text-right py-3 text-sm text-gray-600">
-                                    {{ $statistik['total_dosen'] > 0 ? round(($statistik['per_lokasi']['rpl'] / $statistik['total_dosen']) * 100, 1) : 0 }}%
-                                </td>
-                            </tr>
-                            <tr class="border-b border-gray-100">
-                                <td class="py-3 text-gray-800">Data Sains</td>
-                                <td class="text-right py-3 font-medium">{{ $statistik['per_lokasi']['data_sains'] }}</td>
-                                <td class="text-right py-3 text-sm text-gray-600">
-                                    {{ $statistik['total_dosen'] > 0 ? round(($statistik['per_lokasi']['data_sains'] / $statistik['total_dosen']) * 100, 1) : 0 }}%
-                                </td>
-                            </tr>
+                            @empty
                             <tr>
-                                <td class="py-3 text-gray-800">Teknologi Informasi</td>
-                                <td class="text-right py-3 font-medium">{{ $statistik['per_lokasi']['ti'] }}</td>
-                                <td class="text-right py-3 text-sm text-gray-600">
-                                    {{ $statistik['total_dosen'] > 0 ? round(($statistik['per_lokasi']['ti'] / $statistik['total_dosen']) * 100, 1) : 0 }}%
-                                </td>
+                                <td colspan="3" class="py-3 text-center text-gray-500">Tidak ada data</td>
                             </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -161,15 +156,19 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($statistik['per_kelompok_keahlian'] as $kelompok => $jumlah)
+                            @forelse($statistik['per_kelompok_keahlian'] as $kelompok)
                             <tr class="border-b border-gray-100">
-                                <td class="py-3 text-gray-800">{{ $kelompok }}</td>
-                                <td class="text-right py-3 font-medium">{{ $jumlah }}</td>
+                                <td class="py-3 text-gray-800">{{ $kelompok['nama'] }}</td>
+                                <td class="text-right py-3 font-medium">{{ $kelompok['jumlah'] }}</td>
                                 <td class="text-right py-3 text-sm text-gray-600">
-                                    {{ $statistik['total_dosen'] > 0 ? round(($jumlah / $statistik['total_dosen']) * 100, 1) : 0 }}%
+                                    {{ $statistik['total_dosen'] > 0 ? round(($kelompok['jumlah'] / $statistik['total_dosen']) * 100, 1) : 0 }}%
                                 </td>
                             </tr>
-                            @endforeach
+                            @empty
+                            <tr>
+                                <td colspan="3" class="py-3 text-center text-gray-500">Tidak ada data</td>
+                            </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -180,16 +179,11 @@
         <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
             <h3 class="text-xl font-bold text-gray-800 mb-4">Export Laporan</h3>
             <div class="flex flex-wrap gap-4">
-                <button onclick="exportPDF()"
+                <a href="{{ route('manajemen-dosen.laporan.export-pdf') }}"
                     class="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 rounded-lg flex items-center space-x-2 transition-all duration-200">
                     <i class="fas fa-file-pdf"></i>
                     <span>Export PDF</span>
-                </button>
-                <button onclick="exportExcel()"
-                    class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg flex items-center space-x-2 transition-all duration-200">
-                    <i class="fas fa-file-excel"></i>
-                    <span>Export Excel</span>
-                </button>
+                </a>
                 <button onclick="printReport()"
                     class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg flex items-center space-x-2 transition-all duration-200">
                     <i class="fas fa-print"></i>
@@ -212,7 +206,7 @@
                 'asistenAhli' => $statistik['per_jfa']['asisten_ahli'] ?? 0,
                 'lektor' => $statistik['per_jfa']['lektor'] ?? 0,
                 'lektorKepala' => $statistik['per_jfa']['lektor_kepala'] ?? 0,
-                'profesor' => $statistik['per_jfa']['profesor'] ?? 0
+                'guruBesar' => $statistik['per_jfa']['guru_besar'] ?? 0
             ]
         ];
     @endphp
@@ -262,7 +256,7 @@
             new Chart(jfaCtx, {
                 type: 'bar',
                 data: {
-                    labels: ['NJFA', 'Asisten Ahli', 'Lektor', 'Lektor Kepala', 'Profesor'],
+                    labels: ['NJFA', 'Asisten Ahli', 'Lektor', 'Lektor Kepala', 'Guru Besar'],
                     datasets: [{
                         label: 'Jumlah Dosen',
                         data: [
@@ -270,14 +264,14 @@
                             statistikData.perJfa.asistenAhli,
                             statistikData.perJfa.lektor,
                             statistikData.perJfa.lektorKepala,
-                            statistikData.perJfa.profesor
+                            statistikData.perJfa.guruBesar
                         ],
                         backgroundColor: [
                             '#EF4444', // Red
-                            '#F59E0B', // Yellow
+                            '#F59E0B', // Orange
                             '#10B981', // Green
                             '#3B82F6', // Blue
-                            '#8B5CF6' // Purple
+                            '#EC4899'  // Pink
                         ],
                         borderRadius: 4,
                         borderSkipped: false,
@@ -304,14 +298,6 @@
         });
 
         // Export Functions
-        function exportPDF() {
-            alert('Export PDF akan segera tersedia');
-        }
-
-        function exportExcel() {
-            alert('Export Excel akan segera tersedia');
-        }
-
         function printReport() {
             window.print();
         }

@@ -8,6 +8,7 @@ use App\Models\KelompokKeahlian;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use App\Exports\DosenExport;
 use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
@@ -184,7 +185,7 @@ class DosenController extends Controller
                     if ($request->hasFile("riwayat.{$jenjang}.ijazah")) {
                         $ijazah = $request->file("riwayat.{$jenjang}.ijazah");
                         $ijazahName = time() . '_' . $jenjang . '_ijazah.' . $ijazah->getClientOriginalExtension();
-                        \Storage::disk('public')->putFileAs('riwayat_pendidikan', $ijazah, $ijazahName);
+                        Storage::disk('public')->putFileAs('riwayat_pendidikan', $ijazah, $ijazahName);
                         $riwayatData['ijazah'] = 'riwayat_pendidikan/' . $ijazahName;
                     }
 
@@ -192,7 +193,7 @@ class DosenController extends Controller
                     if ($request->hasFile("riwayat.{$jenjang}.transkrip_nilai")) {
                         $transkrip = $request->file("riwayat.{$jenjang}.transkrip_nilai");
                         $transkripName = time() . '_' . $jenjang . '_transkrip.' . $transkrip->getClientOriginalExtension();
-                        \Storage::disk('public')->putFileAs('riwayat_pendidikan', $transkrip, $transkripName);
+                        Storage::disk('public')->putFileAs('riwayat_pendidikan', $transkrip, $transkripName);
                         $riwayatData['transkrip_nilai'] = 'riwayat_pendidikan/' . $transkripName;
                     }
 
@@ -410,7 +411,7 @@ class DosenController extends Controller
                         if ($request->hasFile("riwayat.{$jenjang}.ijazah")) {
                             $ijazah = $request->file("riwayat.{$jenjang}.ijazah");
                             $ijazahName = time() . '_' . $jenjang . '_ijazah.' . $ijazah->getClientOriginalExtension();
-                            \Storage::disk('public')->putFileAs('riwayat_pendidikan', $ijazah, $ijazahName);
+                            Storage::disk('public')->putFileAs('riwayat_pendidikan', $ijazah, $ijazahName);
                             $riwayatData['ijazah'] = 'riwayat_pendidikan/' . $ijazahName;
                         }
 
@@ -418,7 +419,7 @@ class DosenController extends Controller
                         if ($request->hasFile("riwayat.{$jenjang}.transkrip_nilai")) {
                             $transkrip = $request->file("riwayat.{$jenjang}.transkrip_nilai");
                             $transkripName = time() . '_' . $jenjang . '_transkrip.' . $transkrip->getClientOriginalExtension();
-                            \Storage::disk('public')->putFileAs('riwayat_pendidikan', $transkrip, $transkripName);
+                            Storage::disk('public')->putFileAs('riwayat_pendidikan', $transkrip, $transkripName);
                             $riwayatData['transkrip_nilai'] = 'riwayat_pendidikan/' . $transkripName;
                         }
 
@@ -808,6 +809,12 @@ class DosenController extends Controller
         // Statistik untuk laporan
         $statistik = [
             'total_dosen' => Dosen::count(),
+            'per_status_dosen' => [
+                'aktif' => Dosen::where('status_dosen', 'Aktif')->count(),
+                'tugas_belajar' => Dosen::where('status_dosen', 'Tugas Belajar')->count(),
+                'izin_belajar' => Dosen::where('status_dosen', 'Izin Belajar')->count(),
+                'clty' => Dosen::where('status_dosen', 'CLTY')->count(),
+            ],
             'per_status' => [
                 'tetap' => Dosen::where('status_pegawai', 'Tetap')->count(),
                 'perbantuan' => Dosen::where('status_pegawai', 'Perbantuan')->count(),
@@ -819,32 +826,91 @@ class DosenController extends Controller
                 'asisten_ahli' => Dosen::where('jabatan', 'Asisten Ahli')->count(),
                 'lektor' => Dosen::where('jabatan', 'Lektor')->count(),
                 'lektor_kepala' => Dosen::where('jabatan', 'Lektor Kepala')->count(),
-                'profesor' => Dosen::where('jabatan', 'Profesor')->count(),
+                'guru_besar' => Dosen::where('jabatan', 'Guru Besar')->count(),
             ],
-            'per_lokasi' => [
-                'informatika' => Dosen::whereHas('prodi', function($q) {
-                    $q->where('nama_prodi', 'like', '%Informatika%');
-                })->count(),
-                'rpl' => Dosen::whereHas('prodi', function($q) {
-                    $q->where('nama_prodi', 'like', '%Rekayasa Perangkat Lunak%');
-                })->count(),
-                'data_sains' => Dosen::whereHas('prodi', function($q) {
-                    $q->where('nama_prodi', 'like', '%Data%');
-                })->count(),
-                'ti' => Dosen::whereHas('prodi', function($q) {
-                    $q->where('nama_prodi', 'like', '%Teknologi Informasi%');
-                })->count(),
-            ],
+            'per_prodi' => [],
             'per_kelompok_keahlian' => []
         ];
 
-        // Statistik per kelompok keahlian
-        $kelompokKeahlian = KelompokKeahlian::all();
-        foreach ($kelompokKeahlian as $kelompok) {
-            $statistik['per_kelompok_keahlian'][$kelompok->nama_kelompok_keahlian] = 
-                Dosen::where('kelompok_keahlian_id', $kelompok->id)->count();
+        // Statistik per prodi (dinamis dari database)
+        $prodiList = Prodi::with(['dosen'])->get();
+        foreach ($prodiList as $prodi) {
+            $jumlah = $prodi->dosen->count();
+            if ($jumlah > 0) { // Hanya tampilkan prodi yang memiliki dosen
+                $statistik['per_prodi'][] = [
+                    'nama' => $prodi->nama_prodi,
+                    'jumlah' => $jumlah
+                ];
+            }
+        }
+
+        // Statistik per kelompok keahlian (dinamis dari database)
+        // Pastikan CITI selalu muncul meskipun 0
+        $kelompokKeahlianList = KelompokKeahlian::orderBy('nama_kelompok_keahlian')->get();
+        foreach ($kelompokKeahlianList as $kelompok) {
+            $jumlah = $kelompok->dosen->count();
+            // Tampilkan semua kelompok termasuk yang 0
+            $statistik['per_kelompok_keahlian'][] = [
+                'nama' => $kelompok->nama_kelompok_keahlian,
+                'jumlah' => $jumlah
+            ];
         }
 
         return view('manajemen-dosen.laporan', compact('statistik'));
+    }
+
+    /**
+     * Export laporan dosen to PDF
+     */
+    public function exportLaporanPDF()
+    {
+        // Ambil data yang sama dengan laporan
+        $statistik = [
+            'total_dosen' => Dosen::count(),
+            'per_status_dosen' => [
+                'aktif' => Dosen::where('status_dosen', 'Aktif')->count(),
+                'tugas_belajar' => Dosen::where('status_dosen', 'Tugas Belajar')->count(),
+                'izin_belajar' => Dosen::where('status_dosen', 'Izin Belajar')->count(),
+                'clty' => Dosen::where('status_dosen', 'CLTY')->count(),
+            ],
+            'per_status' => [
+                'tetap' => Dosen::where('status_pegawai', 'Tetap')->count(),
+                'perbantuan' => Dosen::where('status_pegawai', 'Perbantuan')->count(),
+                'profesional_full' => Dosen::where('status_pegawai', 'Profesional Full Time')->count(),
+                'profesional_part' => Dosen::where('status_pegawai', 'Profesional Part Time')->count(),
+            ],
+            'per_jfa' => [
+                'njfa' => Dosen::where('jabatan', 'NJFA')->count(),
+                'asisten_ahli' => Dosen::where('jabatan', 'Asisten Ahli')->count(),
+                'lektor' => Dosen::where('jabatan', 'Lektor')->count(),
+                'lektor_kepala' => Dosen::where('jabatan', 'Lektor Kepala')->count(),
+                'guru_besar' => Dosen::where('jabatan', 'Guru Besar')->count(),
+            ],
+            'per_prodi' => [],
+            'per_kelompok_keahlian' => []
+        ];
+
+        $prodiList = Prodi::with(['dosen'])->get();
+        foreach ($prodiList as $prodi) {
+            $jumlah = $prodi->dosen->count();
+            if ($jumlah > 0) {
+                $statistik['per_prodi'][] = [
+                    'nama' => $prodi->nama_prodi,
+                    'jumlah' => $jumlah
+                ];
+            }
+        }
+
+        $kelompokKeahlianList = KelompokKeahlian::orderBy('nama_kelompok_keahlian')->get();
+        foreach ($kelompokKeahlianList as $kelompok) {
+            $jumlah = $kelompok->dosen->count();
+            $statistik['per_kelompok_keahlian'][] = [
+                'nama' => $kelompok->nama_kelompok_keahlian,
+                'jumlah' => $jumlah
+            ];
+        }
+
+        $pdf = Pdf::loadView('manajemen-dosen.laporan-pdf', compact('statistik'));
+        return $pdf->download('laporan-dosen-' . date('Y-m-d') . '.pdf');
     }
 }

@@ -11,8 +11,6 @@
     <x-navbar />
     
     <main class="flex-1 p-4 md:p-6 min-h-screen">
-        <x-topbar />
-
         <div class="mb-6 flex items-center justify-between">
             <h1 class="text-3xl md:text-4xl font-bold text-[#C41E3A]">Detail Rekrutasi Dosen</h1>
             <a href="{{ route('rekrutasi-dosen') }}" 

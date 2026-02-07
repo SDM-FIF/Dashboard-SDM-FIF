@@ -30,9 +30,6 @@
 
     {{-- Main Content --}}
     <main class="flex-1 p-4 md:p-6 min-h-screen">
-        {{-- Top Search Bar --}}
-        <x-topbar />
-
         {{-- Page Title --}}
         <div class="mb-6">
             <h1 class="text-3xl md:text-4xl font-bold text-[#C41E3A]">Rekrutasi Dosen</h1>

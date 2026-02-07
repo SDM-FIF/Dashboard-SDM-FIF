@@ -65,8 +65,6 @@
     
     {{-- Main Content --}}
     <main class="flex-1 p-4 md:p-6 min-h-screen">
-        {{-- Top Bar --}}
-        <x-topbar />
 
         {{-- Page Title --}}
         <div class="mb-6">

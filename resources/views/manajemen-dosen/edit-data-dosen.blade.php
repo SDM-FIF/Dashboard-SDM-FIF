@@ -15,9 +15,6 @@
     
     {{-- Main Content --}}
     <main class="flex-1 p-4 md:p-6 min-h-screen">
-        {{-- Top Search Bar --}}
-        <x-topbar />
-
         {{-- Page Title & Navigation --}}
         <div class="mb-6">
             <div class="flex items-center space-x-2 text-sm text-gray-600 mb-3">

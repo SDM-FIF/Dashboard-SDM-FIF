@@ -84,9 +84,6 @@
     
     {{-- Main Content --}}
     <main class="flex-1 p-4 md:p-6 min-h-screen">
-        {{-- Top Bar --}}
-        <x-topbar />
-
         <div class="form-content">
             <div class="container-fluid">
                 <!-- Header -->
