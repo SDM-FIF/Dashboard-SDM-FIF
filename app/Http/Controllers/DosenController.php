@@ -103,6 +103,23 @@ class DosenController extends Controller
             'status_pegawai' => 'required|in:Tetap,Perbantuan,Profesional Full Time,Profesional Part Time',
             'pendidikan_terakhir' => 'required|in:S1,S2,S3',
             'status_dosen' => 'nullable|string',
+            // Validasi S1 (wajib)
+            'riwayat.s1.nama_universitas' => 'required|string|max:255',
+            'riwayat.s1.prodi_pendidikan' => 'required|string|max:255',
+            'riwayat.s1.tanggal_lulus' => 'required|date',
+            'riwayat.s1.ijazah' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'riwayat.s1.transkrip_nilai' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            // Validasi S2 dan S3 (opsional)
+            'riwayat.s2.nama_universitas' => 'nullable|string|max:255',
+            'riwayat.s2.prodi_pendidikan' => 'nullable|string|max:255',
+            'riwayat.s2.tanggal_lulus' => 'nullable|date',
+            'riwayat.s2.ijazah' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'riwayat.s2.transkrip_nilai' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'riwayat.s3.nama_universitas' => 'nullable|string|max:255',
+            'riwayat.s3.prodi_pendidikan' => 'nullable|string|max:255',
+            'riwayat.s3.tanggal_lulus' => 'nullable|date',
+            'riwayat.s3.ijazah' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            'riwayat.s3.transkrip_nilai' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
 
         try {
@@ -147,6 +164,42 @@ class DosenController extends Controller
                 'status_dosen' => $validated['status_dosen'] ?? 'Aktif',
             ]);
 
+            // Simpan riwayat pendidikan jika ada
+            if ($request->has('riwayat')) {
+                foreach ($request->riwayat as $jenjang => $data) {
+                    // Skip jika data kosong
+                    if (empty($data['nama_universitas']) && empty($data['prodi_pendidikan'])) {
+                        continue;
+                    }
+
+                    $riwayatData = [
+                        'dosen_id' => $dosen->id,
+                        'jenjang' => strtoupper($jenjang), // s1 -> S1
+                        'nama_universitas' => $data['nama_universitas'] ?? null,
+                        'prodi_pendidikan' => $data['prodi_pendidikan'] ?? null,
+                        'tanggal_lulus' => $data['tanggal_lulus'] ?? null,
+                    ];
+
+                    // Handle file upload ijazah
+                    if ($request->hasFile("riwayat.{$jenjang}.ijazah")) {
+                        $ijazah = $request->file("riwayat.{$jenjang}.ijazah");
+                        $ijazahName = time() . '_' . $jenjang . '_ijazah.' . $ijazah->getClientOriginalExtension();
+                        \Storage::disk('public')->putFileAs('riwayat_pendidikan', $ijazah, $ijazahName);
+                        $riwayatData['ijazah'] = 'riwayat_pendidikan/' . $ijazahName;
+                    }
+
+                    // Handle file upload transkrip
+                    if ($request->hasFile("riwayat.{$jenjang}.transkrip_nilai")) {
+                        $transkrip = $request->file("riwayat.{$jenjang}.transkrip_nilai");
+                        $transkripName = time() . '_' . $jenjang . '_transkrip.' . $transkrip->getClientOriginalExtension();
+                        \Storage::disk('public')->putFileAs('riwayat_pendidikan', $transkrip, $transkripName);
+                        $riwayatData['transkrip_nilai'] = 'riwayat_pendidikan/' . $transkripName;
+                    }
+
+                    \App\Models\RiwayatPendidikanDosen::create($riwayatData);
+                }
+            }
+
             // Check if AJAX request
             if ($request->wantsJson() || $request->ajax()) {
                 return response()->json([
@@ -188,7 +241,15 @@ class DosenController extends Controller
     public function show(Request $request, Dosen $dosen)
     {
         // Load relasi untuk dosen yang dipilih
-        $dosen->load(['user', 'prodi.fakultas', 'kelompokKeahlian']);
+        $dosen->load(['user', 'prodi.fakultas', 'kelompokKeahlian', 'riwayatPendidikan']);
+        
+        // Check if AJAX request
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'dosen' => $dosen
+            ]);
+        }
         
         // Get all dosen untuk ditampilkan di list data dosen dengan filter
         $query = Dosen::with(['user', 'prodi.fakultas', 'kelompokKeahlian']);
@@ -244,6 +305,148 @@ class DosenController extends Controller
      */
     public function update(Request $request, Dosen $dosen)
     {
+        // Validasi untuk Ajax request (dari modal)
+        if ($request->ajax() || $request->wantsJson()) {
+            $validated = $request->validate([
+                'prodi_id' => 'required|exists:prodi,id',
+                'kelompok_keahlian_id' => 'required|exists:kelompok_keahlian,id',
+                'front_title' => 'nullable|string|max:50',
+                'nama_lengkap' => 'required|string|max:255',
+                'back_title' => 'nullable|string|max:50',
+                'jabatan' => 'required|in:NJFA,Asisten Ahli,Lektor,Lektor Kepala,Profesor,Guru Besar',
+                'nip' => 'required|string|max:50|unique:dosen,nip,' . $dosen->id,
+                'kode_dosen' => 'required|string|max:20|unique:dosen,kode_dosen,' . $dosen->id,
+                'status_pegawai' => 'required|in:Tetap,Perbantuan,Profesional Full Time,Profesional Part Time',
+                'pendidikan_terakhir' => 'required|in:S1,S2,S3',
+                'status_dosen' => 'nullable|string',
+                // Validasi riwayat pendidikan (semua jenjang opsional untuk update)
+                'riwayat.s1.nama_universitas' => 'nullable|string|max:255',
+                'riwayat.s1.prodi_pendidikan' => 'nullable|string|max:255',
+                'riwayat.s1.tanggal_lulus' => 'nullable|date',
+                'riwayat.s1.ijazah' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                'riwayat.s1.transkrip_nilai' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                // Validasi S2 dan S3 (opsional)
+                'riwayat.s2.nama_universitas' => 'nullable|string|max:255',
+                'riwayat.s2.prodi_pendidikan' => 'nullable|string|max:255',
+                'riwayat.s2.tanggal_lulus' => 'nullable|date',
+                'riwayat.s2.ijazah' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                'riwayat.s2.transkrip_nilai' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                'riwayat.s3.nama_universitas' => 'nullable|string|max:255',
+                'riwayat.s3.prodi_pendidikan' => 'nullable|string|max:255',
+                'riwayat.s3.tanggal_lulus' => 'nullable|date',
+                'riwayat.s3.ijazah' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+                'riwayat.s3.transkrip_nilai' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
+            ]);
+
+            // Validasi konsistensi: jika ada salah satu field riwayat yang diisi, maka field wajib lainnya harus diisi
+            if ($request->has('riwayat')) {
+                foreach (['s1', 's2', 's3'] as $jenjang) {
+                    if ($request->has("riwayat.{$jenjang}")) {
+                        $dataJenjang = $request->input("riwayat.{$jenjang}");
+                        $hasNamaUniv = !empty($dataJenjang['nama_universitas']);
+                        $hasProdi = !empty($dataJenjang['prodi_pendidikan']);
+                        $hasTanggalLulus = !empty($dataJenjang['tanggal_lulus']);
+                        
+                        // Jika ada salah satu yang diisi, maka harus lengkap
+                        if (($hasNamaUniv || $hasProdi || $hasTanggalLulus) && 
+                            (!$hasNamaUniv || !$hasProdi || !$hasTanggalLulus)) {
+                            return response()->json([
+                                'success' => false,
+                                'message' => 'Data riwayat pendidikan ' . strtoupper($jenjang) . ' harus diisi lengkap (universitas, prodi, dan tanggal lulus)!'
+                            ], 422);
+                        }
+                    }
+                }
+            }
+
+            try {
+                // Get fakultas_id from prodi
+                $prodi = Prodi::findOrFail($validated['prodi_id']);
+                $fakultas_id = $prodi->fakultas_id;
+
+                // Update user
+                $userData = [
+                    'fakultas_id' => $fakultas_id,
+                    'prodi_id' => $validated['prodi_id'],
+                    'nama_lengkap' => $validated['nama_lengkap'],
+                ];
+
+                $dosen->user->update($userData);
+
+                // Update dosen
+                $dosen->update([
+                    'prodi_id' => $validated['prodi_id'],
+                    'kelompok_keahlian_id' => $validated['kelompok_keahlian_id'],
+                    'front_title' => $validated['front_title'],
+                    'nama_lengkap' => $validated['nama_lengkap'],
+                    'back_title' => $validated['back_title'],
+                    'jabatan' => $validated['jabatan'],
+                    'nip' => $validated['nip'],
+                    'kode_dosen' => $validated['kode_dosen'],
+                    'status_pegawai' => $validated['status_pegawai'],
+                    'pendidikan_terakhir' => $validated['pendidikan_terakhir'],
+                    'status_dosen' => $validated['status_dosen'] ?? 'Aktif',
+                ]);
+
+                // Update riwayat pendidikan
+                if ($request->has('riwayat')) {
+                    foreach ($request->riwayat as $jenjang => $data) {
+                        // Skip jika data kosong
+                        if (empty($data['nama_universitas']) && empty($data['prodi_pendidikan'])) {
+                            // Hapus jika ada data lama
+                            \App\Models\RiwayatPendidikanDosen::where('dosen_id', $dosen->id)
+                                ->where('jenjang', strtoupper($jenjang))
+                                ->delete();
+                            continue;
+                        }
+
+                        $riwayatData = [
+                            'nama_universitas' => $data['nama_universitas'] ?? null,
+                            'prodi_pendidikan' => $data['prodi_pendidikan'] ?? null,
+                            'tanggal_lulus' => $data['tanggal_lulus'] ?? null,
+                        ];
+
+                        // Handle file upload ijazah
+                        if ($request->hasFile("riwayat.{$jenjang}.ijazah")) {
+                            $ijazah = $request->file("riwayat.{$jenjang}.ijazah");
+                            $ijazahName = time() . '_' . $jenjang . '_ijazah.' . $ijazah->getClientOriginalExtension();
+                            \Storage::disk('public')->putFileAs('riwayat_pendidikan', $ijazah, $ijazahName);
+                            $riwayatData['ijazah'] = 'riwayat_pendidikan/' . $ijazahName;
+                        }
+
+                        // Handle file upload transkrip
+                        if ($request->hasFile("riwayat.{$jenjang}.transkrip_nilai")) {
+                            $transkrip = $request->file("riwayat.{$jenjang}.transkrip_nilai");
+                            $transkripName = time() . '_' . $jenjang . '_transkrip.' . $transkrip->getClientOriginalExtension();
+                            \Storage::disk('public')->putFileAs('riwayat_pendidikan', $transkrip, $transkripName);
+                            $riwayatData['transkrip_nilai'] = 'riwayat_pendidikan/' . $transkripName;
+                        }
+
+                        // Update or create riwayat
+                        \App\Models\RiwayatPendidikanDosen::updateOrCreate(
+                            [
+                                'dosen_id' => $dosen->id,
+                                'jenjang' => strtoupper($jenjang)
+                            ],
+                            $riwayatData
+                        );
+                    }
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Data dosen berhasil diperbarui!'
+                ]);
+
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+                ], 500);
+            }
+        }
+
+        // Validasi untuk non-Ajax request (dari halaman edit terpisah)
         $validated = $request->validate([
             'fakultas_id' => 'required|exists:fakultas,id',
             'prodi_id' => 'required|exists:prodi,id',
