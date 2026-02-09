@@ -34,7 +34,7 @@
             @foreach($rekrutasi as $item)
             <tr>
                 <td>{{ $item->no_registrasi }}</td>
-                <td>{{ $item->nama }}</td>
+                <td>{{ $item->nama_lengkap }}</td>
                 <td>{{ strtoupper($item->prodi->jenjang ?? '-') }}</td>
                 <td>{{ $item->prodi->nama_prodi ?? '-' }}</td>
                 <td>{{ $item->tahunAjar->label ?? '-' }}</td>

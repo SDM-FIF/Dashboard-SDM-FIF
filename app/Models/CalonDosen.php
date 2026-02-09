@@ -15,7 +15,9 @@ class CalonDosen extends Model
         'no_registrasi',
         'prodi_id',
         'tahun_ajar_id',
+        'front_title',
         'nama',
+        'back_title',
         'jenis_kelamin',
         'tempat_lahir',
         'tanggal_lahir',
@@ -83,7 +85,13 @@ class CalonDosen extends Model
      */
     public function getNamaLengkapAttribute()
     {
-        return $this->nama;
+        $parts = array_filter([
+            $this->front_title,
+            $this->nama,
+            $this->back_title
+        ]);
+        
+        return implode(' ', $parts);
     }
 
     /**
