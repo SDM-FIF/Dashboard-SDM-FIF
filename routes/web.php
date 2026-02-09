@@ -212,8 +212,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/export-csv', [DosenController::class, 'exportCsv'])->name('export-csv');
         Route::get('/export-pdf', [DosenController::class, 'exportPdf'])->name('export-pdf');
         Route::get('/export', [DosenController::class, 'exportExcel'])->name('export'); // Backward compatibility
-        Route::get('/import-data', [DosenController::class, 'importForm'])->name('import-data');
-        Route::post('/import-data', [DosenController::class, 'importProcess'])->name('import-process');
+        
+        // Import Routes
+        Route::get('/import', [DosenController::class, 'importView'])->name('import.view');
+        Route::get('/import/template', [DosenController::class, 'downloadTemplate'])->name('import.template');
+        Route::post('/import/upload', [DosenController::class, 'uploadImport'])->name('import.upload');
+        Route::post('/import/save', [DosenController::class, 'saveImport'])->name('import.save');
+        Route::get('/import/result', [DosenController::class, 'importResult'])->name('import.result');
+        Route::get('/import/download-result', [DosenController::class, 'downloadImportResult'])->name('import.download-result');
+        
         Route::get('/laporan', [DosenController::class, 'laporan'])->name('laporan');
         Route::get('/laporan/export-pdf', [DosenController::class, 'exportLaporanPDF'])->name('laporan.export-pdf');
 
@@ -374,10 +381,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/kelola-tpa', function () {
         return view('kelola-tpa');
     })->name('kelola-tpa');
-
-    Route::get('/import-dosen', function () {
-        return view('import-dosen');
-    })->name('import-dosen');
 
     Route::get('/import-file-dosen', function () {
         return view('import-file-dosen');

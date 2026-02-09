@@ -780,25 +780,772 @@ class DosenController extends Controller
     /**
      * Form Import Data
      */
-    public function importForm()
+    /**
+     * Show import view
+     */
+    public function importView(Request $request)
     {
-        return view('manajemen-dosen.import-data');
+        // Get current step from request
+        $step = $request->get('step');
+        
+        // If step is not specified, determine based on session
+        if (!$step) {
+            if (session()->has('import_result_dosen')) {
+                // If result exists, redirect to result page
+                return redirect()->route('manajemen-dosen.import.result');
+            } elseif (session()->has('import_data_dosen')) {
+                // If import data exists, go to step 2
+                $step = 2;
+            } else {
+                // Default to step 1
+                $step = 1;
+            }
+        }
+        
+        // If navigating to step 1, clear import data but keep import_result if exists
+        if ($step == 1 && $request->has('step')) {
+            session()->forget(['import_data_dosen', 'show_import_dosen']);
+        }
+        
+        // Clear all import sessions if reset is requested
+        if ($request->get('reset') == '1') {
+            session()->forget(['import_data_dosen', 'show_import_dosen', 'import_result_dosen', 'file_uploaded_dosen']);
+        }
+
+        return view('manajemen-dosen.import-data-dosen');
     }
 
     /**
-     * Process Import Data
+     * Download import template
      */
-    public function importProcess(Request $request)
+    public function downloadTemplate()
+    {
+        $fakultasList = \App\Models\Fakultas::pluck('nama_fakultas')->toArray();
+        $prodiList = \App\Models\Prodi::pluck('nama_prodi')->toArray();
+        $kelompokKeahlianList = \App\Models\KelompokKeahlian::pluck('nama_kelompok_keahlian')->toArray();
+
+        $filename = 'template-import-dosen-' . date('Y-m-d-His') . '.xls';
+
+        $headers = [
+            'Content-Type' => 'application/vnd.ms-excel',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
+
+        $callback = function () use ($fakultasList, $prodiList, $kelompokKeahlianList) {
+            echo $this->generateTemplateXML($fakultasList, $prodiList, $kelompokKeahlianList);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Generate template XML for Excel
+     */
+    private function generateTemplateXML($fakultasList, $prodiList, $kelompokKeahlianList)
+    {
+        return '<?xml version="1.0" encoding="UTF-8"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
+ <Styles>
+  <Style ss:ID="Header">
+   <Font ss:Bold="1" ss:Color="#FFFFFF" ss:Size="11"/>
+   <Interior ss:Color="#C41E3A" ss:Pattern="Solid"/>
+   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="Instruction">
+   <Font ss:Italic="1" ss:Color="#666666" ss:Size="9"/>
+   <Interior ss:Color="#FFFFCC" ss:Pattern="Solid"/>
+   <Alignment ss:Horizontal="Left" ss:Vertical="Center"/>
+  </Style>
+  <Style ss:ID="Example">
+   <Interior ss:Color="#E8F4F8" ss:Pattern="Solid"/>
+  </Style>
+ </Styles>
+ <Worksheet ss:Name="Template Data Dosen">
+  <Table>
+   <Column ss:Width="150"/>
+   <Column ss:Width="200"/>
+   <Column ss:Width="150"/>
+   <Column ss:Width="150"/>
+   <Column ss:Width="150"/>
+   <Column ss:Width="200"/>
+   <Column ss:Width="200"/>
+   <Column ss:Width="150"/>
+   <Column ss:Width="200"/>
+   <Column ss:Width="200"/>
+   <Column ss:Width="200"/>
+   <Column ss:Width="120"/>
+   <Column ss:Width="200"/>
+   <Column ss:Width="200"/>
+   <Column ss:Width="120"/>
+   <Column ss:Width="200"/>
+   <Column ss:Width="200"/>
+   <Column ss:Width="120"/>
+   <Row ss:Height="25">
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Gelar Depan</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Nama Lengkap</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Gelar Belakang</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">NIP</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Kode Dosen</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Program Studi</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Kelompok Keahlian</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">JFA</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Status Pegawai</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Universitas S1</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Program Studi S1</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Tanggal Lulus S1</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Universitas S2</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Program Studi S2</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Tanggal Lulus S2</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Universitas S3</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Program Studi S3</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Tanggal Lulus S3</Data></Cell>
+   </Row>
+   <Row ss:Height="30">
+    <Cell ss:StyleID="Instruction"><Data ss:Type="String">Gelar depan (opsional): Dr., Prof., dll</Data></Cell>
+    <Cell ss:StyleID="Instruction"><Data ss:Type="String">Nama lengkap dosen (WAJIB)</Data></Cell>
+    <Cell ss:StyleID="Instruction"><Data ss:Type="String">Gelar belakang (opsional): S.Kom, M.Kom, Ph.D</Data></Cell>
+    <Cell ss:StyleID="Instruction"><Data ss:Type="String">Nomor Induk Pegawai (WAJIB)</Data></Cell>
+    <Cell ss:StyleID="Instruction"><Data ss:Type="String">Kode dosen (WAJIB, harus unik): DSN001, DSN002</Data></Cell>
+    <Cell ss:StyleID="Instruction"><Data ss:Type="String">Nama program studi (WAJIB)</Data></Cell>
+    <Cell ss:StyleID="Instruction"><Data ss:Type="String">Nama kelompok keahlian (WAJIB)</Data></Cell>
+    <Cell ss:StyleID="Instruction"><Data ss:Type="String">WAJIB: NJFA / Asisten Ahli / Lektor / Lektor Kepala / Profesor</Data></Cell>
+    <Cell ss:StyleID="Instruction"><Data ss:Type="String">WAJIB: Tetap / Perbantuan / Profesional Full Time / Profesional Part Time</Data></Cell>
+    <Cell ss:StyleID="Instruction"><Data ss:Type="String">Nama universitas S1 (WAJIB)</Data></Cell>
+    <Cell ss:StyleID="Instruction"><Data ss:Type="String">Nama prodi S1 (WAJIB)</Data></Cell>
+    <Cell ss:StyleID="Instruction"><Data ss:Type="String">Format: dd/mm/yyyy (WAJIB)</Data></Cell>
+    <Cell ss:StyleID="Instruction"><Data ss:Type="String">Nama universitas S2 (opsional)</Data></Cell>
+    <Cell ss:StyleID="Instruction"><Data ss:Type="String">Nama prodi S2 (opsional)</Data></Cell>
+    <Cell ss:StyleID="Instruction"><Data ss:Type="String">Format: dd/mm/yyyy (opsional)</Data></Cell>
+    <Cell ss:StyleID="Instruction"><Data ss:Type="String">Nama universitas S3 (opsional)</Data></Cell>
+    <Cell ss:StyleID="Instruction"><Data ss:Type="String">Nama prodi S3 (opsional)</Data></Cell>
+    <Cell ss:StyleID="Instruction"><Data ss:Type="String">Format: dd/mm/yyyy (opsional)</Data></Cell>
+   </Row>
+   <Row ss:Height="22">
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Dr.</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">John Doe</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">M.Kom, Ph.D</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">1234567890</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">DSN001</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">' . ($prodiList[0] ?? 'Sistem Informasi') . '</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">' . ($kelompokKeahlianList[0] ?? 'Artificial Intelligence') . '</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Lektor</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Tetap</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Universitas Indonesia</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Teknik Informatika</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">15/08/2010</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Institut Teknologi Bandung</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Ilmu Komputer</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">20/09/2015</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String"></Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String"></Data></Cell>
+   </Row>
+  </Table>
+ </Worksheet>
+</Workbook>';
+    }
+
+    /**
+     * Upload and validate import file
+     */
+    public function uploadImport(Request $request)
     {
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv|max:2048'
         ]);
 
-        // Process import file here
-        // Implementasi Excel import nanti
-        
-        return redirect()->route('manajemen-dosen.kelola-data')
-            ->with('success', 'Data berhasil diimport!');
+        try {
+            $file = $request->file('file');
+            $data = $this->parseImportFile($file);
+
+            if (empty($data)) {
+                return redirect()->back()
+                    ->with('error', 'File kosong atau format tidak sesuai. Pastikan file berisi data yang valid.');
+            }
+
+            // Validate data
+            $validatedData = $this->validateImportData($data);
+
+            // Store in session
+            session([
+                'import_data_dosen' => $validatedData, 
+                'show_import_dosen' => true,
+                'file_uploaded_dosen' => true
+            ]);
+
+            $validCount = collect($validatedData)->where('is_valid', true)->count();
+            $totalCount = count($validatedData);
+
+            return redirect()->route('manajemen-dosen.import.view', ['step' => 2])
+                ->with('success', "File berhasil diupload! {$validCount} dari {$totalCount} data valid.");
+        } catch (\Exception $e) {
+            logger()->error('Upload error: ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Error upload file: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Parse uploaded file (Excel/CSV)
+     */
+    private function parseImportFile($file)
+    {
+        $extension = $file->getClientOriginalExtension();
+        $path = $file->getRealPath();
+        $data = [];
+
+        if ($extension === 'csv') {
+            $handle = fopen($path, 'r');
+
+            // Skip header (UTF-8 BOM aware)
+            $firstLine = fgets($handle);
+            if (strpos($firstLine, "\xEF\xBB\xBF") === 0) {
+                $firstLine = substr($firstLine, 3);
+            }
+            
+            // Skip instruction row (second row)
+            fgetcsv($handle);
+
+            while (($row = fgetcsv($handle)) !== false) {
+                if (count($row) >= 16) {
+                    $hasData = false;
+                    foreach (array_slice($row, 0, 5) as $cell) {
+                        if (!empty(trim($cell))) {
+                            $hasData = true;
+                            break;
+                        }
+                    }
+                    
+                    if ($hasData) {
+                        $data[] = [
+                            'front_title' => trim($row[0] ?? ''),
+                            'nama_lengkap' => trim($row[1]),
+                            'back_title' => trim($row[2] ?? ''),
+                            'nip' => trim($row[3]),
+                            'kode_dosen' => trim($row[4]),
+                            'prodi' => trim($row[5]),
+                            'kelompok_keahlian' => trim($row[6]),
+                            'jabatan' => trim($row[7]),
+                            'status_pegawai' => trim($row[8]),
+                            'universitas_s1' => trim($row[9]),
+                            'prodi_s1' => trim($row[10]),
+                            'tanggal_lulus_s1' => trim($row[11]),
+                            'universitas_s2' => trim($row[12] ?? ''),
+                            'prodi_s2' => trim($row[13] ?? ''),
+                            'tanggal_lulus_s2' => trim($row[14] ?? ''),
+                            'universitas_s3' => trim($row[15] ?? ''),
+                            'prodi_s3' => trim($row[16] ?? ''),
+                            'tanggal_lulus_s3' => trim($row[17] ?? ''),
+                        ];
+                    }
+                }
+            }
+            fclose($handle);
+        } else {
+            // Parse Excel (XLS/XLSX)
+            try {
+                $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($path);
+                $worksheet = $spreadsheet->getActiveSheet();
+                $rows = $worksheet->toArray();
+
+                // Skip header row (row 1)
+                array_shift($rows);
+                
+                // Skip instruction row (row 2)
+                array_shift($rows);
+
+                foreach ($rows as $row) {
+                    if (count($row) >= 16) {
+                        $hasData = false;
+                        foreach (array_slice($row, 0, 5) as $cell) {
+                            if (!empty(trim($cell))) {
+                                $hasData = true;
+                                break;
+                            }
+                        }
+                        
+                        if ($hasData) {
+                            $data[] = [
+                                'front_title' => trim($row[0] ?? ''),
+                                'nama_lengkap' => trim($row[1] ?? ''),
+                                'back_title' => trim($row[2] ?? ''),
+                                'nip' => trim($row[3] ?? ''),
+                                'kode_dosen' => trim($row[4] ?? ''),
+                                'prodi' => trim($row[5] ?? ''),
+                                'kelompok_keahlian' => trim($row[6] ?? ''),
+                                'jabatan' => trim($row[7] ?? ''),
+                                'status_pegawai' => trim($row[8] ?? ''),
+                                'universitas_s1' => trim($row[9] ?? ''),
+                                'prodi_s1' => trim($row[10] ?? ''),
+                                'tanggal_lulus_s1' => trim($row[11] ?? ''),
+                                'universitas_s2' => trim($row[12] ?? ''),
+                                'prodi_s2' => trim($row[13] ?? ''),
+                                'tanggal_lulus_s2' => trim($row[14] ?? ''),
+                                'universitas_s3' => trim($row[15] ?? ''),
+                                'prodi_s3' => trim($row[16] ?? ''),
+                                'tanggal_lulus_s3' => trim($row[17] ?? ''),
+                            ];
+                        }
+                    }
+                }
+            } catch (\Exception $e) {
+                logger()->error('Excel parse error: ' . $e->getMessage());
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * Validate import data
+     */
+    private function validateImportData($data)
+    {
+        $validated = [];
+
+        foreach ($data as $index => $row) {
+            $errors = [];
+
+            // Validate Nama Lengkap (required)
+            if (empty($row['nama_lengkap'])) {
+                $errors[] = 'Nama lengkap kosong';
+            }
+
+            // Validate NIP (required)
+            if (empty($row['nip'])) {
+                $errors[] = 'NIP kosong';
+            } else {
+                // Check NIP uniqueness
+                if (\App\Models\Dosen::where('nip', $row['nip'])->exists()) {
+                    $errors[] = 'NIP sudah terdaftar';
+                }
+            }
+
+            // Validate Kode Dosen (required)
+            if (empty($row['kode_dosen'])) {
+                $errors[] = 'Kode dosen kosong';
+            } else {
+                // Check Kode Dosen uniqueness
+                if (\App\Models\Dosen::where('kode_dosen', $row['kode_dosen'])->exists()) {
+                    $errors[] = 'Kode dosen sudah terdaftar';
+                }
+            }
+
+            // Set Fakultas otomatis ke "Fakultas Informatika"
+            $fakultas = \App\Models\Fakultas::where('nama_fakultas', 'Fakultas Informatika')->first();
+            if (!$fakultas) {
+                $errors[] = 'Fakultas Informatika tidak ditemukan di database';
+            }
+
+            // Validate Prodi (required)
+            $prodi = null;
+            if (empty($row['prodi'])) {
+                $errors[] = 'Program studi kosong';
+            } else {
+                $prodi = \App\Models\Prodi::where('nama_prodi', $row['prodi'])->first();
+                if (!$prodi) {
+                    $errors[] = 'Program studi tidak ditemukan';
+                }
+            }
+
+            // Validate Kelompok Keahlian (required)
+            $kelompokKeahlian = null;
+            if (empty($row['kelompok_keahlian'])) {
+                $errors[] = 'Kelompok keahlian kosong';
+            } else {
+                $kelompokKeahlian = \App\Models\KelompokKeahlian::where('nama_kelompok_keahlian', $row['kelompok_keahlian'])->first();
+                if (!$kelompokKeahlian) {
+                    $errors[] = 'Kelompok keahlian tidak ditemukan';
+                }
+            }
+
+            // Validate JFA (required)
+            $validJFA = ['NJFA', 'Asisten Ahli', 'Lektor', 'Lektor Kepala', 'Profesor'];
+            if (empty($row['jabatan'])) {
+                $errors[] = 'JFA kosong';
+            } elseif (!in_array($row['jabatan'], $validJFA)) {
+                $errors[] = 'JFA tidak valid';
+            }
+
+            // Validate Status Pegawai (required)
+            $validStatusPegawai = ['Tetap', 'Perbantuan', 'Profesional Full Time', 'Profesional Part Time'];
+            if (empty($row['status_pegawai'])) {
+                $errors[] = 'Status pegawai kosong';
+            } elseif (!in_array($row['status_pegawai'], $validStatusPegawai)) {
+                $errors[] = 'Status pegawai tidak valid';
+            }
+
+            // Validate Riwayat Pendidikan S1 (required)
+            if (empty($row['universitas_s1'])) {
+                $errors[] = 'Universitas S1 kosong';
+            }
+            if (empty($row['prodi_s1'])) {
+                $errors[] = 'Program Studi S1 kosong';
+            }
+            if (empty($row['tanggal_lulus_s1'])) {
+                $errors[] = 'Tanggal Lulus S1 kosong';
+            } else {
+                // Validate date format
+                $date = \DateTime::createFromFormat('d/m/Y', $row['tanggal_lulus_s1']);
+                if (!$date || $date->format('d/m/Y') !== $row['tanggal_lulus_s1']) {
+                    $errors[] = 'Format Tanggal Lulus S1 tidak valid (harus dd/mm/yyyy)';
+                }
+            }
+
+            // Validate Riwayat Pendidikan S2 (optional, but if filled all fields must be complete)
+            $hasS2 = !empty($row['universitas_s2']) || !empty($row['prodi_s2']) || !empty($row['tanggal_lulus_s2']);
+            if ($hasS2) {
+                if (empty($row['universitas_s2'])) {
+                    $errors[] = 'Universitas S2 harus diisi jika mengisi data S2';
+                }
+                if (empty($row['prodi_s2'])) {
+                    $errors[] = 'Program Studi S2 harus diisi jika mengisi data S2';
+                }
+                if (empty($row['tanggal_lulus_s2'])) {
+                    $errors[] = 'Tanggal Lulus S2 harus diisi jika mengisi data S2';
+                } else {
+                    $date = \DateTime::createFromFormat('d/m/Y', $row['tanggal_lulus_s2']);
+                    if (!$date || $date->format('d/m/Y') !== $row['tanggal_lulus_s2']) {
+                        $errors[] = 'Format Tanggal Lulus S2 tidak valid (harus dd/mm/yyyy)';
+                    }
+                }
+            }
+
+            // Validate Riwayat Pendidikan S3 (optional, but if filled all fields must be complete)
+            $hasS3 = !empty($row['universitas_s3']) || !empty($row['prodi_s3']) || !empty($row['tanggal_lulus_s3']);
+            if ($hasS3) {
+                if (empty($row['universitas_s3'])) {
+                    $errors[] = 'Universitas S3 harus diisi jika mengisi data S3';
+                }
+                if (empty($row['prodi_s3'])) {
+                    $errors[] = 'Program Studi S3 harus diisi jika mengisi data S3';
+                }
+                if (empty($row['tanggal_lulus_s3'])) {
+                    $errors[] = 'Tanggal Lulus S3 harus diisi jika mengisi data S3';
+                } else {
+                    $date = \DateTime::createFromFormat('d/m/Y', $row['tanggal_lulus_s3']);
+                    if (!$date || $date->format('d/m/Y') !== $row['tanggal_lulus_s3']) {
+                        $errors[] = 'Format Tanggal Lulus S3 tidak valid (harus dd/mm/yyyy)';
+                    }
+                }
+            }
+
+            // Store validated data
+            $validated[] = [
+                'front_title' => $row['front_title'],
+                'nama_lengkap' => $row['nama_lengkap'],
+                'back_title' => $row['back_title'],
+                'nip' => $row['nip'],
+                'kode_dosen' => $row['kode_dosen'],
+                'fakultas_id' => $fakultas ? $fakultas->id : null,
+                'fakultas_name' => $fakultas ? $fakultas->nama_fakultas : 'Fakultas Informatika',
+                'prodi' => $row['prodi'],
+                'prodi_id' => $prodi ? $prodi->id : null,
+                'prodi_name' => $prodi ? $prodi->nama_prodi : $row['prodi'],
+                'kelompok_keahlian' => $row['kelompok_keahlian'],
+                'kelompok_keahlian_id' => $kelompokKeahlian ? $kelompokKeahlian->id : null,
+                'kelompok_keahlian_name' => $kelompokKeahlian ? $kelompokKeahlian->nama_kelompok_keahlian : $row['kelompok_keahlian'],
+                'jabatan' => $row['jabatan'],
+                'status_pegawai' => $row['status_pegawai'],
+                'status_dosen' => 'Aktif',
+                'universitas_s1' => $row['universitas_s1'],
+                'prodi_s1' => $row['prodi_s1'],
+                'tanggal_lulus_s1' => $row['tanggal_lulus_s1'],
+                'universitas_s2' => $row['universitas_s2'],
+                'prodi_s2' => $row['prodi_s2'],
+                'tanggal_lulus_s2' => $row['tanggal_lulus_s2'],
+                'universitas_s3' => $row['universitas_s3'],
+                'prodi_s3' => $row['prodi_s3'],
+                'tanggal_lulus_s3' => $row['tanggal_lulus_s3'],
+                'is_valid' => empty($errors),
+                'errors' => $errors
+            ];
+        }
+
+        return $validated;
+    }
+
+    /**
+     * Save validated import data to database
+     */
+    public function saveImport(Request $request)
+    {
+        $importData = session('import_data_dosen', []);
+
+        if (empty($importData)) {
+            return redirect()->route('manajemen-dosen.import.view', ['step' => 1])
+                ->with('error', 'Tidak ada data untuk disimpan.');
+        }
+
+        $successCount = 0;
+        $failCount = 0;
+        $savedData = [];
+
+        foreach ($importData as $row) {
+            if ($row['is_valid']) {
+                try {
+                    \DB::beginTransaction();
+
+                    // Auto-generate username from nama_lengkap
+                    $username = strtolower(str_replace(' ', '', $row['nama_lengkap']));
+                    
+                    // Check if username exists, add number suffix if needed
+                    $originalUsername = $username;
+                    $counter = 1;
+                    while (\App\Models\User::where('username', $username)->exists()) {
+                        $username = $originalUsername . $counter;
+                        $counter++;
+                    }
+
+                    // Get or create dosen role
+                    $role = \Spatie\Permission\Models\Role::firstOrCreate(
+                        ['name' => 'dosen', 'guard_name' => 'web']
+                    );
+
+                    // Create User with role_id
+                    $user = \App\Models\User::create([
+                        'nama_lengkap' => $row['nama_lengkap'],
+                        'username' => $username,
+                        'password' => bcrypt('password123'), // Default password
+                        'role_id' => $role->id,
+                    ]);
+
+                    // Assign dosen role via Spatie
+                    $user->assignRole($role);
+
+                    // Create Dosen
+                    $dosen = \App\Models\Dosen::create([
+                        'user_id' => $user->id,
+                        'front_title' => $row['front_title'],
+                        'nama_lengkap' => $row['nama_lengkap'],
+                        'back_title' => $row['back_title'],
+                        'nip' => $row['nip'],
+                        'kode_dosen' => $row['kode_dosen'],
+                        'prodi_id' => $row['prodi_id'],
+                        'kelompok_keahlian_id' => $row['kelompok_keahlian_id'],
+                        'jabatan' => $row['jabatan'],
+                        'status_pegawai' => $row['status_pegawai'],
+                        'status_dosen' => $row['status_dosen'],
+                    ]);
+
+                    // Save Riwayat Pendidikan S1 (required)
+                    if (!empty($row['universitas_s1']) && !empty($row['tanggal_lulus_s1'])) {
+                        $tanggalS1 = \DateTime::createFromFormat('d/m/Y', $row['tanggal_lulus_s1']);
+                        if ($tanggalS1) {
+                            \App\Models\RiwayatPendidikanDosen::create([
+                                'dosen_id' => $dosen->id,
+                                'jenjang' => 'S1',
+                                'nama_universitas' => $row['universitas_s1'],
+                                'prodi_pendidikan' => $row['prodi_s1'],
+                                'tanggal_lulus' => $tanggalS1->format('Y-m-d'),
+                            ]);
+                        }
+                    }
+
+                    // Save Riwayat Pendidikan S2 (optional)
+                    if (!empty($row['universitas_s2']) && !empty($row['prodi_s2']) && !empty($row['tanggal_lulus_s2'])) {
+                        $tanggalS2 = \DateTime::createFromFormat('d/m/Y', $row['tanggal_lulus_s2']);
+                        if ($tanggalS2) {
+                            \App\Models\RiwayatPendidikanDosen::create([
+                                'dosen_id' => $dosen->id,
+                                'jenjang' => 'S2',
+                                'nama_universitas' => $row['universitas_s2'],
+                                'prodi_pendidikan' => $row['prodi_s2'],
+                                'tanggal_lulus' => $tanggalS2->format('Y-m-d'),
+                            ]);
+                        }
+                    }
+
+                    // Save Riwayat Pendidikan S3 (optional)
+                    if (!empty($row['universitas_s3']) && !empty($row['prodi_s3']) && !empty($row['tanggal_lulus_s3'])) {
+                        $tanggalS3 = \DateTime::createFromFormat('d/m/Y', $row['tanggal_lulus_s3']);
+                        if ($tanggalS3) {
+                            \App\Models\RiwayatPendidikanDosen::create([
+                                'dosen_id' => $dosen->id,
+                                'jenjang' => 'S3',
+                                'nama_universitas' => $row['universitas_s3'],
+                                'prodi_pendidikan' => $row['prodi_s3'],
+                                'tanggal_lulus' => $tanggalS3->format('Y-m-d'),
+                            ]);
+                        }
+                    }
+
+                    \DB::commit();
+
+                    // Store row data for download
+                    $savedData[] = $row;
+                    
+                    $successCount++;
+                } catch (\Exception $e) {
+                    \DB::rollBack();
+                    \Log::error('Import save error for row: ' . $row['nama_lengkap']);
+                    \Log::error('Error message: ' . $e->getMessage());
+                    \Log::error('Stack trace: ' . $e->getTraceAsString());
+                    $failCount++;
+                }
+            } else {
+                $failCount++;
+            }
+        }
+
+        // Store result in session for "Selesai" page
+        session(['import_result_dosen' => [
+            'success' => $successCount,
+            'failed' => $failCount,
+            'data' => $savedData
+        ]]);
+
+        // Clear import data
+        session()->forget('import_data_dosen');
+
+        return redirect()->route('manajemen-dosen.import.result')
+            ->with('success', "Import selesai! {$successCount} data berhasil, {$failCount} data gagal.");
+    }
+
+    /**
+     * Show import result page
+     */
+    public function importResult()
+    {
+        $result = session('import_result_dosen', []);
+
+        return view('manajemen-dosen.import-result-dosen', compact('result'));
+    }
+
+    /**
+     * Download import result Excel
+     */
+    public function downloadImportResult()
+    {
+        $result = session('import_result_dosen', []);
+
+        if (empty($result['data'])) {
+            return redirect()->back()->with('error', 'Tidak ada data untuk didownload.');
+        }
+
+        $filename = 'hasil-import-dosen-' . date('Y-m-d-His') . '.xls';
+
+        $headers = [
+            'Content-Type' => 'application/vnd.ms-excel',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
+
+        $callback = function () use ($result) {
+            echo $this->generateResultExcel($result['data']);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Generate result Excel with valid data
+     */
+    private function generateResultExcel($data)
+    {
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+ xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">
+ <Styles>
+  <Style ss:ID="Header">
+   <Font ss:Bold="1" ss:Color="#FFFFFF" ss:Size="11"/>
+   <Interior ss:Color="#C41E3A" ss:Pattern="Solid"/>
+   <Alignment ss:Horizontal="Center" ss:Vertical="Center"/>
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="Data">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+   </Borders>
+  </Style>
+ </Styles>
+ <Worksheet ss:Name="Hasil Import">
+  <Table>
+   <Column ss:Width="150"/>
+   <Column ss:Width="200"/>
+   <Column ss:Width="150"/>
+   <Column ss:Width="150"/>
+   <Column ss:Width="150"/>
+   <Column ss:Width="200"/>
+   <Column ss:Width="200"/>
+   <Column ss:Width="150"/>
+   <Column ss:Width="200"/>
+   <Column ss:Width="200"/>
+   <Column ss:Width="200"/>
+   <Column ss:Width="120"/>
+   <Column ss:Width="200"/>
+   <Column ss:Width="200"/>
+   <Column ss:Width="120"/>
+   <Column ss:Width="200"/>
+   <Column ss:Width="200"/>
+   <Column ss:Width="120"/>
+   <Row ss:Height="25">
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Gelar Depan</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Nama Lengkap</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Gelar Belakang</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">NIP</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Kode Dosen</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Program Studi</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Kelompok Keahlian</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">JFA</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Status Pegawai</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Universitas S1</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Program Studi S1</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Tanggal Lulus S1</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Universitas S2</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Program Studi S2</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Tanggal Lulus S2</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Universitas S3</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Program Studi S3</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Tanggal Lulus S3</Data></Cell>
+   </Row>';
+
+        foreach ($data as $row) {
+            $xml .= '
+   <Row ss:Height="22">
+    <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($row['front_title'] ?? '') . '</Data></Cell>
+    <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($row['nama_lengkap']) . '</Data></Cell>
+    <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($row['back_title'] ?? '') . '</Data></Cell>
+    <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($row['nip']) . '</Data></Cell>
+    <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($row['kode_dosen']) . '</Data></Cell>
+    <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($row['prodi_name']) . '</Data></Cell>
+    <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($row['kelompok_keahlian_name']) . '</Data></Cell>
+    <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($row['jabatan']) . '</Data></Cell>
+    <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($row['status_pegawai']) . '</Data></Cell>
+    <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($row['universitas_s1'] ?? '') . '</Data></Cell>
+    <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($row['prodi_s1'] ?? '') . '</Data></Cell>
+    <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($row['tanggal_lulus_s1'] ?? '') . '</Data></Cell>
+    <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($row['universitas_s2'] ?? '') . '</Data></Cell>
+    <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($row['prodi_s2'] ?? '') . '</Data></Cell>
+    <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($row['tanggal_lulus_s2'] ?? '') . '</Data></Cell>
+    <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($row['universitas_s3'] ?? '') . '</Data></Cell>
+    <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($row['prodi_s3'] ?? '') . '</Data></Cell>
+    <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($row['tanggal_lulus_s3'] ?? '') . '</Data></Cell>
+   </Row>';
+        }
+
+        $xml .= '
+  </Table>
+ </Worksheet>
+</Workbook>';
+
+        return $xml;
     }
 
     /**
