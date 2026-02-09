@@ -86,8 +86,8 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('import-dosen') }}"
-                                class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100 {{ request()->routeIs('import-dosen') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
+                            <a href="{{ route('manajemen-dosen.import.view') }}"
+                                class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100 {{ request()->routeIs('manajemen-dosen.import.*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
                                 Import Data
                             </a>
                         </li>
