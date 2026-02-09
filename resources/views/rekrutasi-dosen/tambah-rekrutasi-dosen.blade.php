@@ -23,20 +23,52 @@
             <form action="{{ route('rekrutasi-dosen.store') }}" method="POST" class="space-y-6">
                 @csrf
 
-                {{-- Nama Calon --}}
-                <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-2">
-                        Nama Calon <span class="text-red-600">*</span>
-                    </label>
-                    <input type="text" 
-                           name="nama_calon" 
-                           value="{{ old('nama_calon') }}"
-                           required
-                           class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 @error('nama_calon') border-red-500 @enderror"
-                           placeholder="Contoh: Dr. Ahmad Nurul Huda, M.Kom">
-                    @error('nama_calon')
-                        <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
-                    @enderror
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {{-- Gelar Depan --}}
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            Gelar Depan
+                        </label>
+                        <input type="text" 
+                               name="front_title" 
+                               value="{{ old('front_title') }}"
+                               placeholder="Dr., Prof."
+                               class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 @error('front_title') border-red-500 @enderror">
+                        @error('front_title')
+                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Nama Lengkap --}}
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            Nama Lengkap <span class="text-red-600">*</span>
+                        </label>
+                        <input type="text" 
+                               name="nama" 
+                               value="{{ old('nama') }}"
+                               required
+                               class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 @error('nama') border-red-500 @enderror"
+                               placeholder="Nama lengkap calon dosen">
+                        @error('nama')
+                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    {{-- Gelar Belakang --}}
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            Gelar Belakang
+                        </label>
+                        <input type="text" 
+                               name="back_title" 
+                               value="{{ old('back_title') }}"
+                               placeholder="S.Kom, M.Kom, Ph.D"
+                               class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 @error('back_title') border-red-500 @enderror">
+                        @error('back_title')
+                            <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
                 </div>
 
                 {{-- Prodi --}}

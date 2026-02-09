@@ -125,8 +125,7 @@
         </div>
 
         {{-- Data Table Section --}}
-        {{-- Data Table Section --}}
-        <div class="bg-white rounded-lg shadow-md border border-gray-200 overflow-visible">
+        <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-visible">
             {{-- Table Header Section --}}
             <div class="p-6 border-b border-gray-200">
                 <div class="flex items-center justify-between mb-4">
@@ -175,41 +174,40 @@
                     </div>
                 </div>
             </div>
-        </div>
 
-        {{-- Table --}}
-        <div class="overflow-x-auto">
-            <table class="w-full">
+            {{-- Table --}}
+            <div class="overflow-x-auto">
+                <table class="min-w-full w-full">
                 {{-- Table Header --}}
                 <thead>
                     <tr class="bg-[#C41E3A] text-white">
-                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
-                            <a href="{{ route('rekrutasi-dosen', array_merge(request()->all(), ['sort' => 'no_registrasi', 'order' => request('order') == 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center hover:text-yellow-300">
-                                No. Registrasi
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
+                            <a href="{{ route('rekrutasi-dosen', array_merge(request()->all(), ['sort' => 'no_registrasi', 'order' => request('order') == 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center space-x-1 hover:text-gray-200">
+                                <span>No. Registrasi</span>
                                 @if(request('sort') == 'no_registrasi')
-                                <i class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }} ml-1 text-xs"></i>
+                                <i class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
                                 @else
-                                <i class="fas fa-sort ml-1 text-xs opacity-50"></i>
+                                <i class="fas fa-sort text-gray-300"></i>
                                 @endif
                             </a>
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
-                            <a href="{{ route('rekrutasi-dosen', array_merge(request()->all(), ['sort' => 'nama', 'order' => request('order') == 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center hover:text-yellow-300">
-                                Nama
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
+                            <a href="{{ route('rekrutasi-dosen', array_merge(request()->all(), ['sort' => 'nama', 'order' => request('order') == 'asc' ? 'desc' : 'asc'])) }}" class="flex items-center space-x-1 hover:text-gray-200">
+                                <span>Nama</span>
                                 @if(request('sort') == 'nama')
-                                <i class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }} ml-1 text-xs"></i>
+                                <i class="fas fa-sort-{{ request('order') == 'asc' ? 'up' : 'down' }}"></i>
                                 @else
-                                <i class="fas fa-sort ml-1 text-xs opacity-50"></i>
+                                <i class="fas fa-sort text-gray-300"></i>
                                 @endif
                             </a>
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Jenjang</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Prodi Tujuan</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Tahun Ajar</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Jalur Lamaran</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">H-Index</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Status</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">Aksi</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Jenjang</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Prodi Tujuan</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Tahun Ajar</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Jalur Lamaran</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">H-Index</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Status</th>
+                        <th class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider w-32">Aksi</th>
                     </tr>
                 </thead>
 
@@ -218,34 +216,36 @@
                     @if(isset($rekrutasi) && $rekrutasi->count() > 0)
                     @foreach($rekrutasi as $item)
                     <tr class="hover:bg-gray-50 transition-colors duration-150">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td class="px-4 py-4 text-sm text-gray-900">
                             {{ $item->no_registrasi }}
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {{ $item->nama }}
+                        <td class="px-4 py-4 text-sm text-gray-900">
+                            <div class="font-medium">
+                                {{ $item->nama_lengkap }}
+                            </div>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td class="px-4 py-4 text-sm text-gray-900">
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
                                 {{ strtoupper($item->prodi->jenjang ?? '-') }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td class="px-4 py-4 text-sm text-gray-900">
                             {{ $item->prodi->nama_prodi ?? '-' }}
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td class="px-4 py-4 text-sm text-gray-900">
                             {{ $item->tahunAjar->label ?? '-' }}
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td class="px-4 py-4 text-sm text-gray-900">
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                                 {{ $item->jalur_lamaran ?? '-' }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td class="px-4 py-4 text-sm text-gray-900">
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
                                 {{ $item->h_index ?? '-' }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                        <td class="px-4 py-4 text-sm text-gray-900">
                             @php
                             $statusClass = match($item->status_penerimaan) {
                                 'Diterima' => 'bg-green-100 text-green-800',
@@ -258,8 +258,8 @@
                                 {{ $item->status_penerimaan }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            <div class="flex items-center space-x-3">
+                        <td class="px-4 py-4 whitespace-nowrap text-center text-sm">
+                            <div class="flex items-center justify-center space-x-2">
                                 {{-- View Button --}}
                                 <button data-id="{{ $item->id }}" class="btn-detail text-blue-600 hover:text-blue-800 transition-colors duration-200"
                                     title="Lihat Detail">
@@ -281,7 +281,7 @@
                                     @method('DELETE')
                                     <button type="button"
                                         class="text-red-600 hover:text-red-800 transition-colors duration-200 delete-btn"
-                                        data-nama="{{ $item->nama }}"
+                                        data-nama="{{ $item->nama_lengkap }}"
                                         data-no-reg="{{ $item->no_registrasi }}"
                                         title="Hapus">
                                         <i class="fas fa-trash"></i>
@@ -295,7 +295,7 @@
                     @else
                     {{-- Empty State --}}
                     <tr>
-                        <td colspan="10" class="px-6 py-12 text-center text-gray-500">
+                        <td colspan="9" class="px-6 py-12 text-center text-gray-500">
                             <div class="flex flex-col items-center space-y-4">
                                 <i class="fas fa-users text-4xl text-gray-300"></i>
                                 <div>

@@ -30,8 +30,8 @@
 
                 {{-- Nama Calon --}}
                 <div class="border-b border-gray-200 pb-4">
-                    <label class="block text-sm font-semibold text-gray-500 mb-1">Nama Calon</label>
-                    <p class="text-lg text-gray-900">{{ $rekrutasi->nama_calon }}</p>
+                    <label class="block text-sm font-semibold text-gray-500 mb-1">Nama Lengkap</label>
+                    <p class="text-lg text-gray-900">{{ $rekrutasi->nama_lengkap }}</p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
