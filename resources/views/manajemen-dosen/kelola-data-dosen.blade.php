@@ -299,11 +299,20 @@
                                                 <i class="fas fa-edit"></i>
                                             </button>
                                             
-                                            {{-- Delete Button --}}
-                                            <button type="button" class="btn-delete text-red-600 hover:text-red-800 transition-colors duration-200" 
-                                                    data-id="{{ $dosenItem->id }}" title="Hapus">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
+                                            {{-- Delete Button - IMPROVED WITH SWEETALERT --}}
+                                            <form action="{{ route('manajemen-dosen.destroy', $dosenItem->id) }}"
+                                                method="POST"
+                                                class="inline-block delete-form">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="button"
+                                                    class="text-red-600 hover:text-red-800 transition-colors duration-200 delete-btn"
+                                                    data-nama="{{ $dosenItem->nama_lengkap }}"
+                                                    data-kode="{{ $dosenItem->kode_dosen }}"
+                                                    title="Hapus">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
                                             @endif
                                         </div>
                                     </td>
@@ -385,18 +394,21 @@
                     icon: 'success',
                     title: 'Berhasil!',
                     text: '{{ session('success') }}',
-                    confirmButtonColor: '#FBB03B',
-                    confirmButtonText: 'OK'
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    toast: true,
+                    position: 'top-end'
                 });
             @endif
 
             @if(session('error'))
                 Swal.fire({
                     icon: 'error',
-                    title: 'Gagal!',
+                    title: 'Error!',
                     text: '{{ session('error') }}',
-                    confirmButtonColor: '#C41E3A',
-                    confirmButtonText: 'OK'
+                    showConfirmButton: true,
+                    confirmButtonColor: '#C41E3A'
                 });
             @endif
 
@@ -416,43 +428,41 @@
                 });
             });
 
-            // Delete Button with SweetAlert2
-            document.querySelectorAll('.btn-delete').forEach(button => {
-                button.addEventListener('click', function() {
-                    const id = this.getAttribute('data-id');
-                    
+            // SWEETALERT DELETE CONFIRMATION
+            const deleteBtns = document.querySelectorAll('.delete-btn');
+
+            deleteBtns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    const form = this.closest('.delete-form');
+                    const nama = this.getAttribute('data-nama');
+                    const kode = this.getAttribute('data-kode');
+
                     Swal.fire({
-                        title: 'Konfirmasi Hapus',
-                        text: 'Apakah Anda yakin ingin menghapus data dosen ini?',
+                        title: 'Hapus Data Dosen?',
+                        html: `
+                        <div class="text-left space-y-2">
+                            <p class="text-gray-600">Anda akan menghapus data dosen:</p>
+                            <div class="bg-red-50 border border-red-200 rounded-lg p-3 mt-3">
+                                <p class="font-semibold text-red-800">${nama}</p>
+                                <p class="text-sm text-red-600">Kode Dosen: ${kode}</p>
+                            </div>
+                            <p class="text-sm text-red-600 mt-3">
+                                <i class="fas fa-exclamation-triangle mr-1"></i>
+                                Data yang dihapus tidak dapat dikembalikan!
+                            </p>
+                        </div>
+                    `,
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#C41E3A',
                         cancelButtonColor: '#6c757d',
                         confirmButtonText: 'Ya, Hapus',
-                        cancelButtonText: 'Batal'
+                        cancelButtonText: 'Batal',
+                        reverseButtons: true
                     }).then((result) => {
                         if (result.isConfirmed) {
-                            // Create and submit form for DELETE request
-                            const form = document.createElement('form');
-                            form.method = 'POST';
-                            form.action = `/manajemen-dosen/${id}`;
-                            
-                            const csrfToken = document.querySelector('meta[name="csrf-token"]');
-                            if (csrfToken) {
-                                const csrfInput = document.createElement('input');
-                                csrfInput.type = 'hidden';
-                                csrfInput.name = '_token';
-                                csrfInput.value = csrfToken.content;
-                                form.appendChild(csrfInput);
-                            }
-                            
-                            const methodInput = document.createElement('input');
-                            methodInput.type = 'hidden';
-                            methodInput.name = '_method';
-                            methodInput.value = 'DELETE';
-                            form.appendChild(methodInput);
-                            
-                            document.body.appendChild(form);
                             form.submit();
                         }
                     });

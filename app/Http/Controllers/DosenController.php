@@ -698,8 +698,8 @@ class DosenController extends Controller
             $query->orderBy('id', 'desc');
         }
 
-        // Get all data (no pagination - show all records)
-        $dosen = $query->get();
+        // Paginate with 10 items per page
+        $dosen = $query->paginate(10)->withQueryString();
 
         // Data untuk dropdown filter (pull from database)
         $filterData = [
