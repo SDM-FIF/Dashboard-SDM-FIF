@@ -60,7 +60,7 @@
             @foreach($jadwalList as $index => $jadwal)
             <tr>
                 <td>{{ $index + 1 }}</td>
-                <td>{{ $jadwal->calonDosen->nama }}</td>
+                <td>{{ $jadwal->calonDosen->nama_lengkap ?? $jadwal->calonDosen->nama }}</td>
                 <td>
                     @foreach($jadwal->dosenPenguji as $dosen)
                         {{ $dosen->pivot->urutan }}. {{ $dosen->front_title }} {{ $dosen->nama_lengkap }}, {{ $dosen->back_title }}<br>

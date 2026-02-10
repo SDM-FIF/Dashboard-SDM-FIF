@@ -465,6 +465,14 @@
             <form id="swalCreateForm" class="text-left">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Gelar Depan</label>
+<input type="text" name="front_title" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Gelar Belakang</label>
+<input type="text" name="back_title" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                    </div>
+                    <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap <span class="text-red-500">*</span></label>
 <input type="text" name="nama" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
                     </div>
@@ -520,8 +528,9 @@
 <input type="text" name="nomor_telepon" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Jabatan Fungsional Akademik</label>
-<select name="jabatan_fungsional_akademik" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Jabatan Fungsional Akademik <span class="text-red-500">*</span></label>
+<select name="jabatan_fungsional_akademik" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                            <option value="">Pilih Jabatan Fungsional</option>
                             <option value="NJFA">NJFA</option>
                             <option value="Asisten Ahli">Asisten Ahli</option>
                             <option value="Lektor">Lektor</option>
@@ -530,12 +539,12 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Bidang Keahlian</label>
-<input type="text" name="bidang_keahlian" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Bidang Keahlian <span class="text-red-500">*</span></label>
+<input type="text" name="bidang_keahlian" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Jalur Lamaran</label>
-<select name="jalur_lamaran" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Jalur Lamaran <span class="text-red-500">*</span></label>
+<select name="jalur_lamaran" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
                             <option value="">Pilih Jalur Lamaran</option>
                             <option value="S3 Prof Full time">S3 Prof Full time</option>
                             <option value="S2 Praktisi Part time">S2 Praktisi Part time</option>
@@ -545,8 +554,8 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">H-Index</label>
-<input type="number" name="h_index" step="0.01" min="0" placeholder="Contoh: 12 atau 8.5" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">H-Index <span class="text-red-500">*</span></label>
+<input type="number" name="h_index" required step="0.01" min="0" placeholder="Contoh: 12 atau 8.5" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
                     </div>
                     <div class="md:col-span-2">
                         <label class="block text-sm font-medium text-gray-700 mb-2">Alamat</label>
@@ -566,16 +575,16 @@
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Pendidikan S1</label>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama Universitas</label>
-<input type="text" name="riwayat[s1][nama_universitas]" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Nama Universitas <span class="text-red-500">*</span></label>
+<input type="text" name="riwayat[s1][nama_universitas]" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Program Studi</label>
-<input type="text" name="riwayat[s1][prodi_pendidikan]" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Program Studi <span class="text-red-500">*</span></label>
+<input type="text" name="riwayat[s1][prodi_pendidikan]" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Lulus</label>
-<input type="date" name="riwayat[s1][tanggal_lulus]" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Lulus <span class="text-red-500">*</span></label>
+<input type="date" name="riwayat[s1][tanggal_lulus]" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Upload Ijazah (PDF/JPG/PNG)</label>
@@ -656,7 +665,11 @@
             
             // Validasi required fields
             if (!formData.get('nama') || !formData.get('prodi_id') || !formData.get('tahun_ajar_id') || 
-                !formData.get('status_penerimaan') || !formData.get('jenis_kelamin')) {
+                !formData.get('status_penerimaan') || !formData.get('jenis_kelamin') ||
+                !formData.get('jabatan_fungsional_akademik') || !formData.get('bidang_keahlian') ||
+                !formData.get('jalur_lamaran') || !formData.get('h_index') ||
+                !formData.get('riwayat[s1][nama_universitas]') || !formData.get('riwayat[s1][prodi_pendidikan]') ||
+                !formData.get('riwayat[s1][tanggal_lulus]')) {
                 Swal.showValidationMessage('Mohon lengkapi semua field yang wajib diisi (*)');
                 return false;
             }
@@ -748,6 +761,14 @@
             html: `
                 <form id="swalEditForm" class="text-left">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Gelar Depan</label>
+<input type="text" name="front_title" value="${item.front_title || ''}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Gelar Belakang</label>
+<input type="text" name="back_title" value="${item.back_title || ''}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
+                        </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap <span class="text-red-500">*</span></label>
 <input type="text" name="nama" value="${item.nama}" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">

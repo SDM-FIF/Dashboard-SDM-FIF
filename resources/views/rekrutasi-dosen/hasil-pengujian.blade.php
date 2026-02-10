@@ -84,7 +84,7 @@
                                 @endphp
                                 <tr class="hover:bg-gray-50 transition-colors duration-150">
                                     <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{{ $index + 1 }}</td>
-                                    <td class="px-4 py-4 text-sm text-gray-900"><strong>{{ $calon->nama }}</strong></td>
+                                    <td class="px-4 py-4 text-sm text-gray-900"><strong>{{ $calon->nama_lengkap ?? $calon->nama }}</strong></td>
                                     <td class="px-4 py-4 text-sm text-gray-900">
                                         @if(!empty($dosenPengujiList))
                                             @foreach($dosenPengujiList as $key => $dosen)

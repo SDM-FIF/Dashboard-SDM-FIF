@@ -46,9 +46,15 @@ class DosenController extends Controller
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
-                $q->where('nama_lengkap', 'like', '%' . $search . '%')
-                  ->orWhere('nip', 'like', '%' . $search . '%')
-                  ->orWhere('kode_dosen', 'like', '%' . $search . '%');
+                $q->where('dosen.nama_lengkap', 'like', '%' . $search . '%')
+                  ->orWhere('dosen.nip', 'like', '%' . $search . '%')
+                  ->orWhere('dosen.kode_dosen', 'like', '%' . $search . '%')
+                  ->orWhereHas('prodi', function($q) use ($search) {
+                      $q->where('nama_prodi', 'like', '%' . $search . '%');
+                  })
+                  ->orWhereHas('kelompokKeahlian', function($q) use ($search) {
+                      $q->where('nama_kelompok_keahlian', 'like', '%' . $search . '%');
+                  });
             });
         }
 
@@ -62,7 +68,7 @@ class DosenController extends Controller
             $query->orderBy('id', 'desc');
         }
 
-        $dosen = $query->get();
+        $dosen = $query->paginate(10)->withQueryString();
 
         // Data untuk filter dropdown
         $filterData = [
@@ -692,8 +698,8 @@ class DosenController extends Controller
             $query->orderBy('id', 'desc');
         }
 
-        // Get all data (no pagination - show all records)
-        $dosen = $query->get();
+        // Paginate with 10 items per page
+        $dosen = $query->paginate(10)->withQueryString();
 
         // Data untuk dropdown filter (pull from database)
         $filterData = [
