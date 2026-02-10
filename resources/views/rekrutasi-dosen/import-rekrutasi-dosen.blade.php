@@ -138,7 +138,7 @@
                                 <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">JK</th>
                                 <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">Tahun Ajar</th>
                                 <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">Prodi</th>
-                                <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">Status Penerimaan</th>
+                                <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">Bidang Keahlian</th>
                                 <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">Jalur Lamaran</th>
                                 <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">H-Index</th>
                                 <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300" colspan="3" style="text-align: center;">Pendidikan S1</th>
@@ -186,13 +186,11 @@
                                     <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['jenis_kelamin'] }}</td>
                                     <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['tahun_ajar'] }}</td>
                                     <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['prodi_name'] }}</td>
-                                    <!-- Status Penerimaan -->
+                                    <!-- Bidang Keahlian -->
                                     <td class="px-2 py-2 text-xs border border-gray-300">
-                                        @if(!empty($row['status_penerimaan']))
-                                            <span class="px-2 py-1 text-xs font-semibold rounded 
-                                                {{ $row['status_penerimaan'] == 'Diterima' ? 'bg-green-100 text-green-800' : 
-                                                   ($row['status_penerimaan'] == 'Ditolak' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }}">
-                                                {{ $row['status_penerimaan'] }}
+                                        @if(!empty($row['bidang_keahlian']))
+                                            <span class="px-2 py-1 text-xs font-semibold rounded bg-blue-100 text-blue-800">
+                                                {{ $row['bidang_keahlian'] }}
                                             </span>
                                         @else
                                             -

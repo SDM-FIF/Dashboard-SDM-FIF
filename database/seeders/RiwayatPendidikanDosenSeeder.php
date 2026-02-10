@@ -40,41 +40,43 @@ class RiwayatPendidikanDosenSeeder extends Seeder
         $riwayatPendidikanData = [];
 
         foreach ($dosenList as $dosen) {
-            // Tentukan jenjang pendidikan berdasarkan pendidikan_terakhir dosen
-            $pendidikanTerakhir = $dosen->pendidikan_terakhir;
-            
-            // Data S1 (semua dosen pasti punya S1)
-            $riwayatPendidikanData[] = [
-                'dosen_id' => $dosen->id,
-                'jenjang' => 'S1',
-                'nama_universitas' => $this->getRandomUniversity(),
-                'prodi_pendidikan' => $this->getRandomProdi('S1'),
-                'tanggal_lulus' => Carbon::now()->subYears(rand(15, 25))->format('Y-m-d'),
-                'ijazah' => null, // File akan diupload manual nanti
-                'transkrip_nilai' => null, // File akan diupload manual nanti
-            ];
+            $levels = $this->getEducationLevelsFromTitles($dosen->front_title, $dosen->back_title, $dosen->pendidikan_terakhir);
 
-            // Data S2 (jika pendidikan terakhir S2 atau S3)
-            if (in_array($pendidikanTerakhir, ['S2', 'S3'])) {
+            $tahunS1 = Carbon::now()->subYears(rand(15, 25))->year;
+            $tahunS2 = $tahunS1 + rand(2, 4);
+            $tahunS3 = $tahunS2 + rand(3, 5);
+
+            if (in_array('S1', $levels, true)) {
                 $riwayatPendidikanData[] = [
                     'dosen_id' => $dosen->id,
-                    'jenjang' => 'S2',
+                    'jenjang' => 'S1',
                     'nama_universitas' => $this->getRandomUniversity(),
-                    'prodi_pendidikan' => $this->getRandomProdi('S2'),
-                    'tanggal_lulus' => Carbon::now()->subYears(rand(8, 15))->format('Y-m-d'),
+                    'prodi_pendidikan' => $this->getRandomProdi('S1'),
+                    'tanggal_lulus' => Carbon::create($tahunS1, 9, 15)->format('Y-m-d'),
                     'ijazah' => null,
                     'transkrip_nilai' => null,
                 ];
             }
 
-            // Data S3 (jika pendidikan terakhir S3)
-            if ($pendidikanTerakhir === 'S3') {
+            if (in_array('S2', $levels, true)) {
+                $riwayatPendidikanData[] = [
+                    'dosen_id' => $dosen->id,
+                    'jenjang' => 'S2',
+                    'nama_universitas' => $this->getRandomUniversity(),
+                    'prodi_pendidikan' => $this->getRandomProdi('S2'),
+                    'tanggal_lulus' => Carbon::create($tahunS2, 9, 15)->format('Y-m-d'),
+                    'ijazah' => null,
+                    'transkrip_nilai' => null,
+                ];
+            }
+
+            if (in_array('S3', $levels, true)) {
                 $riwayatPendidikanData[] = [
                     'dosen_id' => $dosen->id,
                     'jenjang' => 'S3',
                     'nama_universitas' => $this->getRandomUniversity(),
                     'prodi_pendidikan' => $this->getRandomProdi('S3'),
-                    'tanggal_lulus' => Carbon::now()->subYears(rand(3, 8))->format('Y-m-d'),
+                    'tanggal_lulus' => Carbon::create($tahunS3, 9, 15)->format('Y-m-d'),
                     'ijazah' => null,
                     'transkrip_nilai' => null,
                 ];
@@ -143,5 +145,31 @@ class RiwayatPendidikanDosenSeeder extends Seeder
         ];
 
         return $prodiOptions[array_rand($prodiOptions)];
+    }
+
+    private function getEducationLevelsFromTitles(?string $frontTitle, ?string $backTitle, ?string $pendidikanTerakhir): array
+    {
+        $front = strtolower(trim((string) $frontTitle));
+        $back = strtolower(trim((string) $backTitle));
+
+        $levels = ['S1'];
+
+        if ($back !== '' && preg_match('/\bm\./', $back)) {
+            $levels[] = 'S2';
+        }
+
+        if ($front !== '' && preg_match('/\bdr\.?/', $front)) {
+            $levels[] = 'S3';
+        }
+
+        if (count($levels) === 1 && in_array($pendidikanTerakhir, ['S2', 'S3'], true)) {
+            $levels[] = 'S2';
+        }
+
+        if (!in_array('S3', $levels, true) && $pendidikanTerakhir === 'S3') {
+            $levels[] = 'S3';
+        }
+
+        return array_values(array_unique($levels));
     }
 }

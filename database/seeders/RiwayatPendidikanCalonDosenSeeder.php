@@ -39,70 +39,46 @@ class RiwayatPendidikanCalonDosenSeeder extends Seeder
         // Data dummy riwayat pendidikan untuk setiap calon dosen
         $riwayatPendidikanData = [];
 
-        // Mapping data pendidikan untuk setiap calon dosen
-        // Format: [nama_calon => [jenjang => [data]]]
-        $educationMapping = [
-            // S3
-            'Dr. Andi Firmansyah, M.Kom' => [
-                'S1' => ['prodi' => 'Teknik Informatika', 'universitas' => 'Universitas Indonesia', 'tahun_lulus' => 2007],
-                'S2' => ['prodi' => 'Ilmu Komputer', 'universitas' => 'Institut Teknologi Bandung', 'tahun_lulus' => 2010],
-                'S3' => ['prodi' => 'Computer Science', 'universitas' => 'National University of Singapore', 'tahun_lulus' => 2015],
-            ],
-            'Dr. Siti Rahmawati, M.T' => [
-                'S1' => ['prodi' => 'Teknik Informatika', 'universitas' => 'Institut Teknologi Bandung', 'tahun_lulus' => 2009],
-                'S2' => ['prodi' => 'Teknik Informatika', 'universitas' => 'Institut Teknologi Bandung', 'tahun_lulus' => 2012],
-                'S3' => ['prodi' => 'Data Science', 'universitas' => 'University of Melbourne', 'tahun_lulus' => 2017],
-            ],
-            'Dr. Ahmad Wijaya, M.Sc' => [
-                'S1' => ['prodi' => 'Teknik Informatika', 'universitas' => 'Universitas Gadjah Mada', 'tahun_lulus' => 2005],
-                'S2' => ['prodi' => 'Computer Science', 'universitas' => 'University of Queensland', 'tahun_lulus' => 2008],
-                'S3' => ['prodi' => 'Computer Vision', 'universitas' => 'Tokyo Institute of Technology', 'tahun_lulus' => 2013],
-            ],
-            
-            // S2
-            'Budi Prasetyo, M.Kom' => [
-                'S1' => ['prodi' => 'Sistem Informasi', 'universitas' => 'Universitas Airlangga', 'tahun_lulus' => 2012],
-                'S2' => ['prodi' => 'Teknik Informatika', 'universitas' => 'Institut Teknologi Sepuluh Nopember', 'tahun_lulus' => 2016],
-            ],
-            'Dewi Anggraini, M.T' => [
-                'S1' => ['prodi' => 'Teknik Elektro', 'universitas' => 'Universitas Gadjah Mada', 'tahun_lulus' => 2014],
-                'S2' => ['prodi' => 'Teknologi Informasi', 'universitas' => 'Universitas Gadjah Mada', 'tahun_lulus' => 2018],
-            ],
-            'Rina Kurniawati, M.Kom' => [
-                'S1' => ['prodi' => 'Sistem Informasi', 'universitas' => 'Universitas Padjadjaran', 'tahun_lulus' => 2013],
-                'S2' => ['prodi' => 'Teknik Informatika', 'universitas' => 'Institut Teknologi Bandung', 'tahun_lulus' => 2017],
-            ],
-            
-            // S1
-            'Rudi Hermawan, S.Kom' => [
-                'S1' => ['prodi' => 'Teknik Informatika', 'universitas' => 'Universitas Diponegoro', 'tahun_lulus' => 2017],
-            ],
-            'Nina Kartika, S.Kom' => [
-                'S1' => ['prodi' => 'Sistem Informasi', 'universitas' => 'Universitas Brawijaya', 'tahun_lulus' => 2018],
-            ],
-            'Fajar Nugroho, S.Kom' => [
-                'S1' => ['prodi' => 'Teknik Informatika', 'universitas' => 'Universitas Sebelas Maret', 'tahun_lulus' => 2019],
-            ],
-        ];
-
         foreach ($calonDosenList as $calonDosen) {
-            // Cari data pendidikan berdasarkan nama
-            $educationData = $educationMapping[$calonDosen->nama] ?? null;
-            
-            if (!$educationData) {
-                continue; // Skip jika tidak ada data pendidikan
-            }
-            
-            // Loop untuk setiap jenjang pendidikan yang ada
-            foreach ($educationData as $jenjang => $data) {
+            $levels = $this->getEducationLevelsFromTitles($calonDosen->front_title, $calonDosen->back_title);
+
+            $tahunS1 = Carbon::now()->subYears(rand(6, 12))->year;
+            $tahunS2 = $tahunS1 + rand(2, 4);
+            $tahunS3 = $tahunS2 + rand(3, 5);
+
+            if (in_array('s1', $levels, true)) {
                 $riwayatPendidikanData[] = [
                     'calon_dosen_id' => $calonDosen->id,
-                    'jenjang' => strtolower($jenjang),
-                    'nama_universitas' => $data['universitas'],
-                    'prodi_pendidikan' => $data['prodi'],
-                    'tanggal_lulus' => Carbon::create($data['tahun_lulus'], 9, 15)->format('Y-m-d'),
-                    'ijazah' => null, // File akan diupload manual nanti
-                    'transkrip_nilai' => null, // File akan diupload manual nanti
+                    'jenjang' => 's1',
+                    'nama_universitas' => $this->getRandomUniversity(),
+                    'prodi_pendidikan' => $this->getRandomProdi('s1'),
+                    'tanggal_lulus' => Carbon::create($tahunS1, 9, 15)->format('Y-m-d'),
+                    'ijazah' => null,
+                    'transkrip_nilai' => null,
+                ];
+            }
+
+            if (in_array('s2', $levels, true)) {
+                $riwayatPendidikanData[] = [
+                    'calon_dosen_id' => $calonDosen->id,
+                    'jenjang' => 's2',
+                    'nama_universitas' => $this->getRandomUniversity(),
+                    'prodi_pendidikan' => $this->getRandomProdi('s2'),
+                    'tanggal_lulus' => Carbon::create($tahunS2, 9, 15)->format('Y-m-d'),
+                    'ijazah' => null,
+                    'transkrip_nilai' => null,
+                ];
+            }
+
+            if (in_array('s3', $levels, true)) {
+                $riwayatPendidikanData[] = [
+                    'calon_dosen_id' => $calonDosen->id,
+                    'jenjang' => 's3',
+                    'nama_universitas' => $this->getRandomUniversity(),
+                    'prodi_pendidikan' => $this->getRandomProdi('s3'),
+                    'tanggal_lulus' => Carbon::create($tahunS3, 9, 15)->format('Y-m-d'),
+                    'ijazah' => null,
+                    'transkrip_nilai' => null,
                 ];
             }
         }
@@ -123,5 +99,63 @@ class RiwayatPendidikanCalonDosenSeeder extends Seeder
         $this->command->info("   - S1: {$totalS1}");
         $this->command->info("   - S2: {$totalS2}");
         $this->command->info("   - S3: {$totalS3}");
+    }
+
+    private function getEducationLevelsFromTitles(?string $frontTitle, ?string $backTitle): array
+    {
+        $front = strtolower(trim((string) $frontTitle));
+        $back = strtolower(trim((string) $backTitle));
+
+        $levels = ['s1'];
+
+        if ($back !== '' && preg_match('/\bm\./', $back)) {
+            $levels[] = 's2';
+        }
+
+        if ($front !== '' && preg_match('/\bdr\.?/', $front)) {
+            $levels[] = 's3';
+        }
+
+        return array_values(array_unique($levels));
+    }
+
+    private function getRandomUniversity(): string
+    {
+        $universities = [
+            'Universitas Indonesia',
+            'Institut Teknologi Bandung',
+            'Universitas Gadjah Mada',
+            'Institut Teknologi Sepuluh Nopember',
+            'Universitas Diponegoro',
+            'Universitas Brawijaya',
+            'Universitas Airlangga',
+            'Universitas Padjadjaran',
+            'Universitas Hasanuddin',
+            'National University of Singapore',
+            'Nanyang Technological University',
+            'University of Melbourne',
+            'University of Queensland',
+            'Tokyo Institute of Technology',
+        ];
+
+        return $universities[array_rand($universities)];
+    }
+
+    private function getRandomProdi(string $jenjang): string
+    {
+        $prodiOptions = [
+            'Teknik Informatika',
+            'Ilmu Komputer',
+            'Sistem Informasi',
+            'Teknik Komputer',
+            'Informatika',
+            'Computer Science',
+            'Software Engineering',
+            'Data Science',
+            'Information Technology',
+            'Teknologi Informasi',
+        ];
+
+        return $prodiOptions[array_rand($prodiOptions)];
     }
 }

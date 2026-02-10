@@ -180,7 +180,7 @@
                         @forelse($jadwalList as $index => $jadwal)
                         <tr class="hover:bg-gray-50 transition-colors duration-150">
                             <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{{ $jadwalList->firstItem() + $index }}</td>
-                            <td class="px-4 py-4 text-sm text-gray-900">{{ $jadwal->calonDosen->nama ?? '-' }}</td>
+                            <td class="px-4 py-4 text-sm text-gray-900">{{ $jadwal->calonDosen->nama_lengkap ?? $jadwal->calonDosen->nama ?? '-' }}</td>
                             <td class="px-4 py-4 text-sm text-gray-900">
                                 @foreach($jadwal->dosenPenguji as $dosen)
                                     <div class="mb-1">{{ $loop->iteration }}. {{ $dosen->front_title }} {{ $dosen->nama_lengkap }}, {{ $dosen->back_title }}</div>
@@ -392,7 +392,7 @@
                             <select id="calonDosenSelect" name="calon_dosen_id" required class="swal2-input w-full" style="width: 100%;">
                                 <option value="">Pilih Calon Dosen</option>
                                 @foreach($calonDosenList as $calon)
-                                <option value="{{ $calon->id }}">{{ $calon->nama }}</option>
+                                <option value="{{ $calon->id }}">{{ $calon->nama_lengkap ?? $calon->nama }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -575,7 +575,7 @@
                                     <label class="block text-sm font-medium text-gray-700 mb-1">Calon Dosen <span class="text-red-500">*</span></label>
                                     <select id="editCalonDosenSelect" name="calon_dosen_id" required class="swal2-input w-full" style="width: 100%;">
                                         @foreach($calonDosenList as $calon)
-                                        <option value="{{ $calon->id }}" ${data.calon_dosen_id == {{ $calon->id }} ? 'selected' : ''}>{{ $calon->nama }}</option>
+                                        <option value="{{ $calon->id }}" ${data.calon_dosen_id == {{ $calon->id }} ? 'selected' : ''}>{{ $calon->nama_lengkap ?? $calon->nama }}</option>
                                         @endforeach
                                     </select>
                                 </div>

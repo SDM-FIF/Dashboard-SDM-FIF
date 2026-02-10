@@ -550,7 +550,7 @@ class RekrutasiDosenController extends Controller
             'calon_dosen_id' => $jadwal->calon_dosen_id,
             'dosen_penguji_ids' => $jadwal->dosenPenguji->pluck('id')->toArray(),
             'dosen_penguji_list' => $dosenPengujiList,
-            'calon_dosen_nama' => $jadwal->calonDosen->nama,
+            'calon_dosen_nama' => $jadwal->calonDosen->nama_lengkap ?? $jadwal->calonDosen->nama,
             'tahun_ajar' => $jadwal->tahunAjar->label,
             'jadwal_ujian' => \Carbon\Carbon::parse($jadwal->jadwal_ujian)->format('d F Y'),
             'jadwal_ujian_raw' => \Carbon\Carbon::parse($jadwal->jadwal_ujian)->format('Y-m-d'),
@@ -1040,7 +1040,7 @@ class RekrutasiDosenController extends Controller
                 
                 fputcsv($file, [
                     $index + 1,
-                    $jadwal->calonDosen->nama,
+                    $jadwal->calonDosen->nama_lengkap ?? $jadwal->calonDosen->nama,
                     $dosenPengujiNama,
                     $jadwal->tahunAjar->label,
                     $jadwal->metode_pelaksanaan,
@@ -1588,7 +1588,7 @@ class RekrutasiDosenController extends Controller
     <Cell ss:StyleID="Header"><Data ss:Type="String">Jenis Kelamin</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Tahun Ajar</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Prodi</Data></Cell>
-    <Cell ss:StyleID="Header"><Data ss:Type="String">Status Penerimaan</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Bidang Keahlian</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Jalur Lamaran</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">H-Index</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Universitas S1</Data></Cell>
@@ -1608,7 +1608,7 @@ class RekrutasiDosenController extends Controller
     <Cell ss:StyleID="Instruction"><Data ss:Type="String">Laki-laki / Perempuan</Data></Cell>
     <Cell ss:StyleID="Instruction"><Data ss:Type="String">Pilih dari daftar tahun ajar</Data></Cell>
     <Cell ss:StyleID="Instruction"><Data ss:Type="String">Pilih dari daftar program studi</Data></Cell>
-    <Cell ss:StyleID="Instruction"><Data ss:Type="String">Seleksi / Diterima / Ditolak</Data></Cell>
+    <Cell ss:StyleID="Instruction"><Data ss:Type="String">Bidang keahlian calon dosen</Data></Cell>
     <Cell ss:StyleID="Instruction"><Data ss:Type="String">Pilih: S3 Prof Full time / S2 Praktisi Part time / S3 Praktisi Part time / S2 Prof Full time / S3 OnGoing</Data></Cell>
     <Cell ss:StyleID="Instruction"><Data ss:Type="String">Angka desimal (contoh: 12 atau 8.5 atau 0.5)</Data></Cell>
     <Cell ss:StyleID="Instruction"><Data ss:Type="String">Nama universitas S1 (WAJIB)</Data></Cell>
@@ -1628,7 +1628,7 @@ class RekrutasiDosenController extends Controller
     <Cell ss:StyleID="Example"><Data ss:Type="String">Laki-laki</Data></Cell>
     <Cell ss:StyleID="Example"><Data ss:Type="String">' . ($tahunAjarList[0] ?? '2024/2025 Ganjil') . '</Data></Cell>
     <Cell ss:StyleID="Example"><Data ss:Type="String">' . ($prodiList[0] ?? 'Sistem Informasi') . '</Data></Cell>
-    <Cell ss:StyleID="Example"><Data ss:Type="String">Seleksi</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Data Science</Data></Cell>
     <Cell ss:StyleID="Example"><Data ss:Type="String">S2 Praktisi Part time</Data></Cell>
     <Cell ss:StyleID="Example"><Data ss:Type="String">9.5</Data></Cell>
     <Cell ss:StyleID="Example"><Data ss:Type="String">Universitas Indonesia</Data></Cell>
@@ -1726,7 +1726,7 @@ class RekrutasiDosenController extends Controller
                             'jenis_kelamin' => trim($row[3]),
                             'tahun_ajar' => trim($row[4]),
                             'prodi' => trim($row[5]),
-                            'status_penerimaan' => trim($row[6] ?? 'Seleksi'),
+                            'bidang_keahlian' => trim($row[6] ?? ''),
                             'jalur_lamaran' => trim($row[7] ?? ''),
                             'h_index' => trim($row[8] ?? ''),
                             // S1 (required)
@@ -1778,7 +1778,7 @@ class RekrutasiDosenController extends Controller
                                 'jenis_kelamin' => trim($row[3] ?? ''),
                                 'tahun_ajar' => trim($row[4] ?? ''),
                                 'prodi' => trim($row[5] ?? ''),
-                                'status_penerimaan' => trim($row[6] ?? 'Seleksi'),
+                                'bidang_keahlian' => trim($row[6] ?? ''),
                                 'jalur_lamaran' => trim($row[7] ?? ''),
                                 'h_index' => trim($row[8] ?? ''),
                                 // S1 (required)
@@ -1854,15 +1854,8 @@ class RekrutasiDosenController extends Controller
                 }
             }
 
-            // Validate Status Penerimaan (optional, default to Seleksi, enum)
+            // Status penerimaan selalu default ke Seleksi saat import
             $statusPenerimaan = 'Seleksi';
-            if (!empty($row['status_penerimaan'])) {
-                if (in_array($row['status_penerimaan'], ['Seleksi', 'Diterima', 'Ditolak'])) {
-                    $statusPenerimaan = $row['status_penerimaan'];
-                } else {
-                    $errors[] = 'Status penerimaan tidak valid (pilihan: Seleksi, Diterima, Ditolak)';
-                }
-            }
 
             // Validate S1 Education (all required)
             if (empty($row['universitas_s1'])) {
@@ -1955,6 +1948,7 @@ class RekrutasiDosenController extends Controller
                 'prodi_name' => $row['prodi'],
                 'prodi_id' => $prodiId,
                 'status_penerimaan' => $statusPenerimaan,
+                'bidang_keahlian' => $row['bidang_keahlian'] ?? null,
                 // S1 Education
                 'universitas_s1' => $row['universitas_s1'],
                 'prodi_s1' => $row['prodi_s1'],
@@ -2033,7 +2027,8 @@ class RekrutasiDosenController extends Controller
                         'jenis_kelamin' => $row['jenis_kelamin'],
                         'prodi_id' => $row['prodi_id'],
                         'tahun_ajar_id' => $row['tahun_ajar_id'],
-                        'status_penerimaan' => $row['status_penerimaan'] ?? 'Seleksi',
+                        'status_penerimaan' => 'Seleksi',
+                        'bidang_keahlian' => $row['bidang_keahlian'] ?? null,
                         'jalur_lamaran' => $row['jalur_lamaran'] ?? null,
                         'h_index' => $row['h_index'] ?? null,
                     ]);
@@ -2172,9 +2167,10 @@ class RekrutasiDosenController extends Controller
    <Column ss:Width="120"/>
    <Column ss:Width="100"/>
    <Column ss:Width="150"/>
-   <Column ss:Width="150"/>
-   <Column ss:Width="180"/>
-   <Column ss:Width="100"/>
+    <Column ss:Width="150"/>
+    <Column ss:Width="180"/>
+    <Column ss:Width="180"/>
+    <Column ss:Width="100"/>
    <Column ss:Width="200"/>
    <Column ss:Width="200"/>
    <Column ss:Width="120"/>
@@ -2192,6 +2188,7 @@ class RekrutasiDosenController extends Controller
     <Cell ss:StyleID="Header"><Data ss:Type="String">Jenis Kelamin</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Tahun Ajar</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Prodi</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Bidang Keahlian</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Jalur Lamaran</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">H-Index</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Universitas S1</Data></Cell>
@@ -2219,6 +2216,7 @@ class RekrutasiDosenController extends Controller
     <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($row['jenis_kelamin'], ENT_XML1, 'UTF-8') . '</Data></Cell>
     <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($row['tahun_ajar'], ENT_XML1, 'UTF-8') . '</Data></Cell>
     <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($row['prodi_name'], ENT_XML1, 'UTF-8') . '</Data></Cell>
+    <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($row['bidang_keahlian'] ?? '-', ENT_XML1, 'UTF-8') . '</Data></Cell>
     <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($row['jalur_lamaran'] ?? '-', ENT_XML1, 'UTF-8') . '</Data></Cell>
     <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($row['h_index'] ?? '-', ENT_XML1, 'UTF-8') . '</Data></Cell>
     <Cell ss:StyleID="Data"><Data ss:Type="String">' . htmlspecialchars($row['universitas_s1'] ?? '-', ENT_XML1, 'UTF-8') . '</Data></Cell>
