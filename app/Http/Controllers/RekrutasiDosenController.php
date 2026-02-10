@@ -1569,6 +1569,7 @@ class RekrutasiDosenController extends Controller
    <Column ss:Width="120"/>
    <Column ss:Width="150"/>
    <Column ss:Width="150"/>
+   <Column ss:Width="150"/>
    <Column ss:Width="200"/>
    <Column ss:Width="100"/>
    <Column ss:Width="200"/>
@@ -1587,6 +1588,7 @@ class RekrutasiDosenController extends Controller
     <Cell ss:StyleID="Header"><Data ss:Type="String">Jenis Kelamin</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Tahun Ajar</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Prodi</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">Status Penerimaan</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Jalur Lamaran</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">H-Index</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">Universitas S1</Data></Cell>
@@ -1606,6 +1608,7 @@ class RekrutasiDosenController extends Controller
     <Cell ss:StyleID="Instruction"><Data ss:Type="String">Laki-laki / Perempuan</Data></Cell>
     <Cell ss:StyleID="Instruction"><Data ss:Type="String">Pilih dari daftar tahun ajar</Data></Cell>
     <Cell ss:StyleID="Instruction"><Data ss:Type="String">Pilih dari daftar program studi</Data></Cell>
+    <Cell ss:StyleID="Instruction"><Data ss:Type="String">Seleksi / Diterima / Ditolak</Data></Cell>
     <Cell ss:StyleID="Instruction"><Data ss:Type="String">Pilih: S3 Prof Full time / S2 Praktisi Part time / S3 Praktisi Part time / S2 Prof Full time / S3 OnGoing</Data></Cell>
     <Cell ss:StyleID="Instruction"><Data ss:Type="String">Angka desimal (contoh: 12 atau 8.5 atau 0.5)</Data></Cell>
     <Cell ss:StyleID="Instruction"><Data ss:Type="String">Nama universitas S1 (WAJIB)</Data></Cell>
@@ -1625,6 +1628,7 @@ class RekrutasiDosenController extends Controller
     <Cell ss:StyleID="Example"><Data ss:Type="String">Laki-laki</Data></Cell>
     <Cell ss:StyleID="Example"><Data ss:Type="String">' . ($tahunAjarList[0] ?? '2024/2025 Ganjil') . '</Data></Cell>
     <Cell ss:StyleID="Example"><Data ss:Type="String">' . ($prodiList[0] ?? 'Sistem Informasi') . '</Data></Cell>
+    <Cell ss:StyleID="Example"><Data ss:Type="String">Seleksi</Data></Cell>
     <Cell ss:StyleID="Example"><Data ss:Type="String">S2 Praktisi Part time</Data></Cell>
     <Cell ss:StyleID="Example"><Data ss:Type="String">9.5</Data></Cell>
     <Cell ss:StyleID="Example"><Data ss:Type="String">Universitas Indonesia</Data></Cell>
@@ -1704,10 +1708,10 @@ class RekrutasiDosenController extends Controller
             fgetcsv($handle);
 
             while (($row = fgetcsv($handle)) !== false) {
-                if (count($row) >= 17) {
+                if (count($row) >= 18) {
                     // Include row even if fields are empty for validation
                     $hasData = false;
-                    foreach (array_slice($row, 0, 9) as $cell) { // Check only required fields
+                    foreach (array_slice($row, 0, 10) as $cell) { // Check only required fields
                         if (!empty(trim($cell))) {
                             $hasData = true;
                             break;
@@ -1722,20 +1726,21 @@ class RekrutasiDosenController extends Controller
                             'jenis_kelamin' => trim($row[3]),
                             'tahun_ajar' => trim($row[4]),
                             'prodi' => trim($row[5]),
-                            'jalur_lamaran' => trim($row[6] ?? ''),
-                            'h_index' => trim($row[7] ?? ''),
+                            'status_penerimaan' => trim($row[6] ?? 'Seleksi'),
+                            'jalur_lamaran' => trim($row[7] ?? ''),
+                            'h_index' => trim($row[8] ?? ''),
                             // S1 (required)
-                            'universitas_s1' => trim($row[8]),
-                            'prodi_s1' => trim($row[9]),
-                            'tanggal_lulus_s1' => trim($row[10]),
+                            'universitas_s1' => trim($row[9]),
+                            'prodi_s1' => trim($row[10]),
+                            'tanggal_lulus_s1' => trim($row[11]),
                             // S2 (optional)
-                            'universitas_s2' => trim($row[11] ?? ''),
-                            'prodi_s2' => trim($row[12] ?? ''),
-                            'tanggal_lulus_s2' => trim($row[13] ?? ''),
+                            'universitas_s2' => trim($row[12] ?? ''),
+                            'prodi_s2' => trim($row[13] ?? ''),
+                            'tanggal_lulus_s2' => trim($row[14] ?? ''),
                             // S3 (optional)
-                            'universitas_s3' => trim($row[14] ?? ''),
-                            'prodi_s3' => trim($row[15] ?? ''),
-                            'tanggal_lulus_s3' => trim($row[16] ?? ''),
+                            'universitas_s3' => trim($row[15] ?? ''),
+                            'prodi_s3' => trim($row[16] ?? ''),
+                            'tanggal_lulus_s3' => trim($row[17] ?? ''),
                         ];
                     }
                 }
@@ -1755,10 +1760,10 @@ class RekrutasiDosenController extends Controller
                 array_shift($rows);
 
                 foreach ($rows as $row) {
-                    if (count($row) >= 17) {
+                    if (count($row) >= 18) {
                         // Include row even if fields are empty for validation
                         $hasData = false;
-                        foreach (array_slice($row, 0, 9) as $cell) { // Check only required fields
+                        foreach (array_slice($row, 0, 10) as $cell) { // Check only required fields
                             if (!empty(trim($cell))) {
                                 $hasData = true;
                                 break;
@@ -1773,20 +1778,21 @@ class RekrutasiDosenController extends Controller
                                 'jenis_kelamin' => trim($row[3] ?? ''),
                                 'tahun_ajar' => trim($row[4] ?? ''),
                                 'prodi' => trim($row[5] ?? ''),
-                                'jalur_lamaran' => trim($row[6] ?? ''),
-                                'h_index' => trim($row[7] ?? ''),
+                                'status_penerimaan' => trim($row[6] ?? 'Seleksi'),
+                                'jalur_lamaran' => trim($row[7] ?? ''),
+                                'h_index' => trim($row[8] ?? ''),
                                 // S1 (required)
-                                'universitas_s1' => trim($row[8] ?? ''),
-                                'prodi_s1' => trim($row[9] ?? ''),
-                                'tanggal_lulus_s1' => trim($row[10] ?? ''),
+                                'universitas_s1' => trim($row[9] ?? ''),
+                                'prodi_s1' => trim($row[10] ?? ''),
+                                'tanggal_lulus_s1' => trim($row[11] ?? ''),
                                 // S2 (optional)
-                                'universitas_s2' => trim($row[11] ?? ''),
-                                'prodi_s2' => trim($row[12] ?? ''),
-                                'tanggal_lulus_s2' => trim($row[13] ?? ''),
+                                'universitas_s2' => trim($row[12] ?? ''),
+                                'prodi_s2' => trim($row[13] ?? ''),
+                                'tanggal_lulus_s2' => trim($row[14] ?? ''),
                                 // S3 (optional)
-                                'universitas_s3' => trim($row[14] ?? ''),
-                                'prodi_s3' => trim($row[15] ?? ''),
-                                'tanggal_lulus_s3' => trim($row[16] ?? ''),
+                                'universitas_s3' => trim($row[15] ?? ''),
+                                'prodi_s3' => trim($row[16] ?? ''),
+                                'tanggal_lulus_s3' => trim($row[17] ?? ''),
                             ];
                         }
                     }
@@ -1845,6 +1851,16 @@ class RekrutasiDosenController extends Controller
                     $prodiId = $prodi->id;
                 } else {
                     $errors[] = 'Prodi tidak ditemukan di database';
+                }
+            }
+
+            // Validate Status Penerimaan (optional, default to Seleksi, enum)
+            $statusPenerimaan = 'Seleksi';
+            if (!empty($row['status_penerimaan'])) {
+                if (in_array($row['status_penerimaan'], ['Seleksi', 'Diterima', 'Ditolak'])) {
+                    $statusPenerimaan = $row['status_penerimaan'];
+                } else {
+                    $errors[] = 'Status penerimaan tidak valid (pilihan: Seleksi, Diterima, Ditolak)';
                 }
             }
 
@@ -1938,6 +1954,7 @@ class RekrutasiDosenController extends Controller
                 'tahun_ajar_id' => $tahunAjarId,
                 'prodi_name' => $row['prodi'],
                 'prodi_id' => $prodiId,
+                'status_penerimaan' => $statusPenerimaan,
                 // S1 Education
                 'universitas_s1' => $row['universitas_s1'],
                 'prodi_s1' => $row['prodi_s1'],
@@ -2016,7 +2033,7 @@ class RekrutasiDosenController extends Controller
                         'jenis_kelamin' => $row['jenis_kelamin'],
                         'prodi_id' => $row['prodi_id'],
                         'tahun_ajar_id' => $row['tahun_ajar_id'],
-                        'status_penerimaan' => 'Seleksi',
+                        'status_penerimaan' => $row['status_penerimaan'] ?? 'Seleksi',
                         'jalur_lamaran' => $row['jalur_lamaran'] ?? null,
                         'h_index' => $row['h_index'] ?? null,
                     ]);

@@ -124,7 +124,7 @@
 
             {{-- Preview Import Table --}}
             <div>
-                <h3 class="text-lg font-bold text-[#C41E3A] mb-2">Preview Import Rekrutasi Dosen</h3>
+                <h3 class="text-lg font-bold text-[#C41E3A] mb-2">Preview Import Data Rekrutasi Dosen</h3>
                 <p class="text-sm text-gray-600 mb-4">Hanya data valid yang akan diproses</p>
                 
                 <div class="overflow-x-auto">
@@ -132,10 +132,13 @@
                         <thead>
                             <tr class="bg-[#C41E3A] text-white">
                                 <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">Valid</th>
+                                <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">Gelar Depan</th>
                                 <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">Nama Lengkap</th>
+                                <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">Gelar Belakang</th>
                                 <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">JK</th>
                                 <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">Tahun Ajar</th>
                                 <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">Prodi</th>
+                                <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">Status Penerimaan</th>
                                 <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">Jalur Lamaran</th>
                                 <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">H-Index</th>
                                 <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300" colspan="3" style="text-align: center;">Pendidikan S1</th>
@@ -144,6 +147,9 @@
                                 <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">Error</th>
                             </tr>
                             <tr class="bg-[#C41E3A] text-white">
+                                <th class="px-2 py-2 border border-gray-300"></th>
+                                <th class="px-2 py-2 border border-gray-300"></th>
+                                <th class="px-2 py-2 border border-gray-300"></th>
                                 <th class="px-2 py-2 border border-gray-300"></th>
                                 <th class="px-2 py-2 border border-gray-300"></th>
                                 <th class="px-2 py-2 border border-gray-300"></th>
@@ -174,10 +180,24 @@
                                             <i class="fas fa-times-circle text-red-500 text-lg"></i>
                                         @endif
                                     </td>
+                                    <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['front_title'] ?? '-' }}</td>
                                     <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['nama_calon'] }}</td>
+                                    <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['back_title'] ?? '-' }}</td>
                                     <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['jenis_kelamin'] }}</td>
                                     <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['tahun_ajar'] }}</td>
                                     <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['prodi_name'] }}</td>
+                                    <!-- Status Penerimaan -->
+                                    <td class="px-2 py-2 text-xs border border-gray-300">
+                                        @if(!empty($row['status_penerimaan']))
+                                            <span class="px-2 py-1 text-xs font-semibold rounded 
+                                                {{ $row['status_penerimaan'] == 'Diterima' ? 'bg-green-100 text-green-800' : 
+                                                   ($row['status_penerimaan'] == 'Ditolak' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }}">
+                                                {{ $row['status_penerimaan'] }}
+                                            </span>
+                                        @else
+                                            -
+                                        @endif
+                                    </td>
                                     <!-- Jalur Lamaran -->
                                     <td class="px-2 py-2 text-xs border border-gray-300">
                                         @if(!empty($row['jalur_lamaran']))
@@ -191,7 +211,7 @@
                                     <!-- H-Index -->
                                     <td class="px-2 py-2 text-xs border border-gray-300">
                                         @if(!empty($row['h_index']))
-                                            <span class="px-2 py-1 text-xs font-semibold rounded bg-yellow-100 text-yellow-800">
+                                            <span class="px-2 py-1 text-xs font-semibold rounded bg-purple-100 text-purple-800">
                                                 {{ $row['h_index'] }}
                                             </span>
                                         @else
@@ -201,33 +221,15 @@
                                     <!-- S1 -->
                                     <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['universitas_s1'] ?? '-' }}</td>
                                     <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['prodi_s1'] ?? '-' }}</td>
-                                    <td class="px-2 py-2 text-xs border border-gray-300">
-                                        @if(!empty($row['tanggal_lulus_s1']))
-                                            {{ \Carbon\Carbon::parse($row['tanggal_lulus_s1'])->format('d/m/Y') }}
-                                        @else
-                                            -
-                                        @endif
-                                    </td>
+                                    <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['tanggal_lulus_s1'] ?? '-' }}</td>
                                     <!-- S2 -->
                                     <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['universitas_s2'] ?? '-' }}</td>
                                     <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['prodi_s2'] ?? '-' }}</td>
-                                    <td class="px-2 py-2 text-xs border border-gray-300">
-                                        @if(!empty($row['tanggal_lulus_s2']))
-                                            {{ \Carbon\Carbon::parse($row['tanggal_lulus_s2'])->format('d/m/Y') }}
-                                        @else
-                                            -
-                                        @endif
-                                    </td>
+                                    <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['tanggal_lulus_s2'] ?? '-' }}</td>
                                     <!-- S3 -->
                                     <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['universitas_s3'] ?? '-' }}</td>
-                                    <td class="px-2 py-2 text-xs border border-gray-300" style="border-right: none !important;">{{ $row['prodi_s3'] ?? '-' }}</td>
-                                    <td class="px-2 py-2 text-xs border border-gray-300" style="border-left: none !important;">
-                                        @if(!empty($row['tanggal_lulus_s3']))
-                                            {{ \Carbon\Carbon::parse($row['tanggal_lulus_s3'])->format('d/m/Y') }}
-                                        @else
-                                            -
-                                        @endif
-                                    </td>
+                                    <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['prodi_s3'] ?? '-' }}</td>
+                                    <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['tanggal_lulus_s3'] ?? '-' }}</td>
                                     <td class="px-2 py-2 text-xs border border-gray-300">
                                         @if(!empty($row['errors']))
                                             <span class="text-red-600">{{ implode(', ', $row['errors']) }}</span>
@@ -239,10 +241,10 @@
                                 @endforeach
                             @else
                                 <tr>
-                                    <td colspan="15" class="px-4 py-12 text-center text-gray-500 border border-gray-300">
+                                    <td colspan="20" class="px-4 py-12 text-center text-gray-500 border border-gray-300">
                                         <div class="flex flex-col items-center">
                                             <i class="fas fa-inbox text-4xl mb-4 text-gray-400"></i>
-                                            <p>No data shown available in table</p>
+                                            <p>Tidak ada data untuk ditampilkan. Silakan upload file terlebih dahulu.</p>
                                         </div>
                                     </td>
                                 </tr>
