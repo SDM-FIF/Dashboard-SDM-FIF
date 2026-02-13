@@ -77,15 +77,18 @@
 
                             <!-- Dropdown Export -->
                             <div id="exportDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-[9999]">
-                                <a href="#" onclick="exportData('excel')" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-t-lg">
+                                <a href="{{ route('pengaturan.export.excel', ['search' => $search]) }}" 
+                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-t-lg">
                                     <i class="fas fa-file-excel text-green-600 mr-2"></i>
                                     Export Excel
                                 </a>
-                                <a href="#" onclick="exportData('csv')" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                <a href="{{ route('pengaturan.export.csv', ['search' => $search]) }}" 
+                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                                     <i class="fas fa-file-csv text-blue-600 mr-2"></i>
                                     Export CSV
                                 </a>
-                                <a href="#" onclick="exportData('pdf')" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-b-lg">
+                                <a href="{{ route('pengaturan.export.pdf', ['search' => $search]) }}" 
+                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-b-lg">
                                     <i class="fas fa-file-pdf text-red-600 mr-2"></i>
                                     Export PDF
                                 </a>
@@ -391,17 +394,6 @@
                         }
                     });
                 }
-            });
-        }
-
-        // Export Data (placeholder)
-        function exportData(format) {
-            Swal.fire({
-                title: 'Export Data',
-                html: `Fitur export ${format.toUpperCase()} akan segera tersedia.`,
-                icon: 'info',
-                confirmButtonText: 'OK',
-                confirmButtonColor: '#C41E3A'
             });
         }
 
