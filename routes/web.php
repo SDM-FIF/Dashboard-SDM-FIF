@@ -426,4 +426,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/pengaturan/role', [App\Http\Controllers\PengaturanController::class, 'storeRole'])->name('pengaturan.role.store');
     Route::put('/pengaturan/role/{id}', [App\Http\Controllers\PengaturanController::class, 'updateRole'])->name('pengaturan.role.update');
     Route::delete('/pengaturan/role/{id}', [App\Http\Controllers\PengaturanController::class, 'destroyRole'])->name('pengaturan.role.destroy');
+    
+    // Pengaturan - Export
+    Route::get('/pengaturan/export/excel', [App\Http\Controllers\PengaturanController::class, 'exportExcel'])->name('pengaturan.export.excel');
+    Route::get('/pengaturan/export/csv', [App\Http\Controllers\PengaturanController::class, 'exportCsv'])->name('pengaturan.export.csv');
+    Route::get('/pengaturan/export/pdf', [App\Http\Controllers\PengaturanController::class, 'exportPdf'])->name('pengaturan.export.pdf');
 });
