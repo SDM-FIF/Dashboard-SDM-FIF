@@ -421,8 +421,9 @@ Route::middleware('auth')->group(function () {
         return view('reports.master-data');
     })->name('master-data');
 
-    // System
-    Route::get('/pengaturan', function () {
-        return view('system.pengaturan');
-    })->name('pengaturan');
+    // System - Pengaturan
+    Route::get('/pengaturan', [App\Http\Controllers\PengaturanController::class, 'index'])->name('pengaturan');
+    Route::post('/pengaturan/role', [App\Http\Controllers\PengaturanController::class, 'storeRole'])->name('pengaturan.role.store');
+    Route::put('/pengaturan/role/{id}', [App\Http\Controllers\PengaturanController::class, 'updateRole'])->name('pengaturan.role.update');
+    Route::delete('/pengaturan/role/{id}', [App\Http\Controllers\PengaturanController::class, 'destroyRole'])->name('pengaturan.role.destroy');
 });
