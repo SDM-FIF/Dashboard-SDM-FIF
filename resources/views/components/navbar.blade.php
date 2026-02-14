@@ -29,30 +29,41 @@
                 {{-- Dashboard Dropdown Menu --}}
                 <div id="dashboardDropdown" class="hidden bg-red-700/50 backdrop-blur-sm">
                     <ul class="py-2 space-y-1">
+                        @can('dashboard-sdm.view')
                         <li>
                             <a href="{{ route('dashboard') }}"
                                 class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('dashboard') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
                                 Dashboard SDM
                             </a>
                         </li>
+                        @endcan
+
+                        @can('dashboard-dosen.view')
                         <li>
                             <a href="{{ route('dashboard-dosen') }}"
                                 class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('dashboard-dosen') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
                                 Dashboard Dosen
                             </a>
                         </li>
+                        @endcan
+
+                        @can('dashboard-tpa.view')
                         <li>
                             <a href="{{ route('dashboard-tpa') }}"
                                 class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('dashboard-tpa') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
                                 Dashboard TPA
                             </a>
                         </li>
+                        @endcan
+
+                        @can('dashboard-kompetisi.view')
                         <li>
                             <a href="{{ route('dashboard-kompetisi') }}"
                                 class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('dashboard-kompetisi') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
                                 Dashboard Kompetisi
                             </a>
                         </li>
+                        @endcan
                     </ul>
                 </div>
             </li>

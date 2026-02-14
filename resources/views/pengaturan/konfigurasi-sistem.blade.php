@@ -141,11 +141,11 @@
                                             </button>
                                             
                                             {{-- Plotting --}}
-                                            <button onclick="openPlottingModal({{ $role->id }}, '{{ $role->name }}')"
-                                                    class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
+                                            <a href="{{ route('pengaturan.plotting', $role->id) }}"
+                                               class="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center">
                                                 <i class="fas fa-users-cog mr-2 text-blue-600"></i>
                                                 Plotting
-                                            </button>
+                                            </a>
                                             
                                             {{-- Delete --}}
                                             <form action="{{ route('pengaturan.role.destroy', $role->id) }}" 
@@ -357,21 +357,6 @@
             });
         }
 
-        // Open Plotting Modal (placeholder for future implementation)
-        function openPlottingModal(roleId, roleName) {
-            closeAllDropdowns(); // Close any open dropdowns
-            Swal.fire({
-                title: 'Plotting User ke Role',
-                html: `
-                    <p class="mb-4">Fitur plotting user ke role <strong>${roleName}</strong> akan segera tersedia.</p>
-                    <p class="text-sm text-gray-500">Anda dapat mengatur user yang memiliki role ini.</p>
-                `,
-                icon: 'info',
-                confirmButtonText: 'OK',
-                confirmButtonColor: '#C41E3A'
-            });
-        }
-
         // Confirm Delete
         function confirmDelete(roleId, roleName) {
             closeAllDropdowns(); // Close any open dropdowns
@@ -416,6 +401,25 @@
             title: 'Error!',
             text: '{{ session('error') }}',
             confirmButtonColor: '#C41E3A'
+        });
+        @endif
+
+        // Show validation errors with SweetAlert
+        @if($errors->any())
+        Swal.fire({
+            icon: 'error',
+            title: 'Validasi Gagal!',
+            html: `
+                <div class="text-left">
+                    <ul class="list-disc list-inside text-sm">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            `,
+            confirmButtonColor: '#C41E3A',
+            confirmButtonText: 'OK'
         });
         @endif
     </script>
