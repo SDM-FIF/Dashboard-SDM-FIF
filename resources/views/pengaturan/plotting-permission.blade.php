@@ -123,19 +123,19 @@
                                     <strong>{{ $data['sub_module'] }}</strong>
                                 </td>
                                 <td class="px-4 py-4 text-sm">
-                                    <div class="flex flex-wrap justify-center gap-4" data-row-key="{{ $data['sub_module_key'] }}">
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" data-row-key="{{ $data['sub_module_key'] }}">
                                         @foreach($data['permissions'] as $permType => $perm)
                                             @if($perm['id'])
-                                            <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-100 px-3 py-2 rounded-lg transition-colors">
+                                            <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-100 px-3 py-2 rounded-lg transition-colors min-w-0">
                                                 <input type="checkbox" 
                                                        name="permissions[]" 
                                                        value="{{ $perm['id'] }}"
                                                        {{ $perm['has_permission'] ? 'checked' : '' }}
-                                                       class="permission-checkbox w-4 h-4 text-[#C41E3A] border-gray-300 rounded focus:ring-[#C41E3A]"
+                                                       class="permission-checkbox w-4 h-4 text-[#C41E3A] border-gray-300 rounded focus:ring-[#C41E3A] flex-shrink-0"
                                                        data-row="{{ $data['sub_module_key'] }}"
                                                        data-type="{{ $permType }}"
                                                        onchange="handlePermissionChange(this)">
-                                                <span class="text-gray-700">{{ $perm['label'] }}</span>
+                                                <span class="text-gray-700 text-sm whitespace-nowrap overflow-hidden text-ellipsis">{{ $perm['label'] }}</span>
                                             </label>
                                             @endif
                                         @endforeach
@@ -189,25 +189,32 @@
             // Get all checkboxes in the same row
             const rowCheckboxes = document.querySelectorAll(`input[data-row="${row}"]`);
             
-            // If "All" is checked, check all other checkboxes in the row
-            if (type === 'all' && isChecked) {
+            // If "All" checkbox is clicked
+            if (type === 'all') {
+                // When All is checked, check all other checkboxes
+                // When All is unchecked, uncheck all other checkboxes
                 rowCheckboxes.forEach(cb => {
                     if (cb !== checkbox) {
-                        cb.checked = true;
+                        cb.checked = isChecked;
                     }
                 });
-            }
-            
-            // Special handling for Dashboard module (both checkboxes always in sync)
-            if (row.startsWith('dashboard-')) {
-                rowCheckboxes.forEach(cb => {
-                    cb.checked = isChecked;
-                });
-            }
-            
-            // If "All" is unchecked and we're not in Dashboard module, uncheck only All
-            if (type === 'all' && !isChecked && !row.startsWith('dashboard-')) {
-                // Just uncheck All, leave others as is
+            } else {
+                // If any other checkbox is unchecked, uncheck the "All" checkbox
+                if (!isChecked) {
+                    const allCheckbox = Array.from(rowCheckboxes).find(cb => cb.dataset.type === 'all');
+                    if (allCheckbox) {
+                        allCheckbox.checked = false;
+                    }
+                } else {
+                    // If all other checkboxes (except All) are checked, check the All checkbox
+                    const allCheckbox = Array.from(rowCheckboxes).find(cb => cb.dataset.type === 'all');
+                    const otherCheckboxes = Array.from(rowCheckboxes).filter(cb => cb.dataset.type !== 'all');
+                    const allOthersChecked = otherCheckboxes.every(cb => cb.checked);
+                    
+                    if (allCheckbox && allOthersChecked && otherCheckboxes.length > 0) {
+                        allCheckbox.checked = true;
+                    }
+                }
             }
         }
 

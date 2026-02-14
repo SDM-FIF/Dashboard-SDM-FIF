@@ -69,6 +69,7 @@
             </li>
 
             {{-- Manajemen Dosen Section --}}
+            @can('kelola-data-dosen.view')
             <li class="relative">
                 <button onclick="toggleDropdown('dosenDropdown')"
                     class="w-full flex items-center justify-between px-6 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('manajemen-dosen*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
@@ -96,22 +97,27 @@
                                 Kelola Data
                             </a>
                         </li>
+                        @can('import-data-dosen.view')
                         <li>
                             <a href="{{ route('manajemen-dosen.import.view') }}"
                                 class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100 {{ request()->routeIs('manajemen-dosen.import.*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
                                 Import Data
                             </a>
                         </li>
+                        @endcan
+                        @can('laporan-data-dosen.view')
                         <li>
                             <a href="{{ route('manajemen-dosen.laporan') }}"
                                 class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('manajemen-dosen.laporan') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
                                 Laporan Dosen
                             </a>
                         </li>
+                        @endcan
                         <!-- Add more dropdown items here -->
                     </ul>
                 </div>
             </li>
+            @endcan
 
             {{-- Manajemen TPA Section --}}
             <li class="relative">

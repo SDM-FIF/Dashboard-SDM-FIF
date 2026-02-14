@@ -183,6 +183,11 @@ class PengaturanController extends Controller
                 'dashboard-dosen' => 'Dashboard Dosen',
                 'dashboard-tpa' => 'Dashboard TPA',
                 'dashboard-kompetisi' => 'Dashboard Kompetisi',
+            ],
+            'Manajemen Dosen' => [
+                'kelola-data-dosen' => 'Kelola Data',
+                'import-data-dosen' => 'Import Data',
+                'laporan-data-dosen' => 'Laporan Dosen',
             ]
         ];
         
@@ -190,27 +195,39 @@ class PengaturanController extends Controller
         $permissionData = [];
         foreach ($moduleGroups as $parentModule => $subModules) {
             foreach ($subModules as $key => $label) {
-                $allPermission = Permission::where('name', "{$key}.all")->first();
-                $viewPermission = Permission::where('name', "{$key}.view")->first();
+                // Define all possible permission types
+                $permissionTypes = ['all', 'view', 'detail', 'create', 'edit', 'delete'];
+                
+                $permissions = [];
+                foreach ($permissionTypes as $type) {
+                    $permission = Permission::where('name', "{$key}.{$type}")->first();
+                    
+                    if ($permission) {
+                        // Custom label for each permission type
+                        $typeLabel = match($type) {
+                            'all' => 'All',
+                            'view' => "Akses View {$label}",
+                            'detail' => "Akses Detail {$label}",
+                            'create' => "Akses Create {$label}",
+                            'edit' => "Akses Edit {$label}",
+                            'delete' => "Akses Delete {$label}",
+                            default => ucfirst($type)
+                        };
+                        
+                        $permissions[$type] = [
+                            'id' => $permission->id,
+                            'name' => $permission->name,
+                            'label' => $typeLabel,
+                            'has_permission' => $role->hasPermissionTo($permission->name)
+                        ];
+                    }
+                }
                 
                 $permissionData[] = [
                     'parent_module' => $parentModule,
                     'sub_module' => $label,
                     'sub_module_key' => $key,
-                    'permissions' => [
-                        'all' => [
-                            'id' => $allPermission->id ?? null,
-                            'name' => $allPermission->name ?? null,
-                            'label' => 'All',
-                            'has_permission' => $allPermission ? $role->hasPermissionTo($allPermission->name) : false
-                        ],
-                        'view' => [
-                            'id' => $viewPermission->id ?? null,
-                            'name' => $viewPermission->name ?? null,
-                            'label' => "Akses View {$label}",
-                            'has_permission' => $viewPermission ? $role->hasPermissionTo($viewPermission->name) : false
-                        ]
-                    ]
+                    'permissions' => $permissions
                 ];
             }
         }
