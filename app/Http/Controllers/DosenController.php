@@ -86,6 +86,8 @@ class DosenController extends Controller
      */
     public function create()
     {
+        $this->authorize('kelola-data-dosen.create');
+        
         $prodi = Prodi::with('fakultas')->get();
         $kelompokKeahlian = KelompokKeahlian::all();
         $fakultas = \App\Models\Fakultas::all();
@@ -98,6 +100,7 @@ class DosenController extends Controller
      */
     public function store(Request $request)
     {
+        $this->authorize('kelola-data-dosen.create');
         $validated = $request->validate([
             'prodi_id' => 'required|exists:prodi,id',
             'kelompok_keahlian_id' => 'required|exists:kelompok_keahlian,id',
@@ -247,6 +250,8 @@ class DosenController extends Controller
      */
     public function show(Request $request, Dosen $dosen)
     {
+        $this->authorize('kelola-data-dosen.detail');
+        
         // Load relasi untuk dosen yang dipilih
         $dosen->load(['user', 'prodi.fakultas', 'kelompokKeahlian', 'riwayatPendidikan']);
         
@@ -299,6 +304,8 @@ class DosenController extends Controller
      */
     public function edit(Dosen $dosen)
     {
+        $this->authorize('kelola-data-dosen.edit');
+        
         $dosen->load(['user', 'prodi', 'kelompokKeahlian']);
         $prodi = Prodi::with('fakultas')->get();
         $kelompokKeahlian = KelompokKeahlian::all();
@@ -312,6 +319,7 @@ class DosenController extends Controller
      */
     public function update(Request $request, Dosen $dosen)
     {
+        $this->authorize('kelola-data-dosen.edit');
         // Validasi untuk Ajax request (dari modal)
         if ($request->ajax() || $request->wantsJson()) {
             $validated = $request->validate([
@@ -510,6 +518,8 @@ class DosenController extends Controller
      */
     public function destroy(Dosen $dosen)
     {
+        $this->authorize('kelola-data-dosen.delete');
+        
         try {
             $user = $dosen->user;
             $dosen->delete();
@@ -537,6 +547,8 @@ class DosenController extends Controller
      */
     public function kelolaData(Request $request)
     {
+        // Authorization check
+        $this->authorize('kelola-data-dosen.view');
         // ==============================================
         // FUNGSI TES CADANGAN (DALAM COMMENT)
         // Uncomment salah satu untuk debug/testing
@@ -791,6 +803,8 @@ class DosenController extends Controller
      */
     public function importView(Request $request)
     {
+        $this->authorize('import-data-dosen.view');
+        
         // Get current step from request
         $step = $request->get('step');
         
@@ -826,6 +840,8 @@ class DosenController extends Controller
      */
     public function downloadTemplate()
     {
+        $this->authorize('import-data-dosen.view');
+        
         $fakultasList = \App\Models\Fakultas::pluck('nama_fakultas')->toArray();
         $prodiList = \App\Models\Prodi::pluck('nama_prodi')->toArray();
         $kelompokKeahlianList = \App\Models\KelompokKeahlian::pluck('nama_kelompok_keahlian')->toArray();
@@ -964,6 +980,8 @@ class DosenController extends Controller
      */
     public function uploadImport(Request $request)
     {
+        $this->authorize('import-data-dosen.view');
+        
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv|max:2048'
         ]);
@@ -1284,6 +1302,8 @@ class DosenController extends Controller
      */
     public function saveImport(Request $request)
     {
+        $this->authorize('import-data-dosen.view');
+        
         $importData = session('import_data_dosen', []);
 
         if (empty($importData)) {
@@ -1421,6 +1441,8 @@ class DosenController extends Controller
      */
     public function importResult()
     {
+        $this->authorize('import-data-dosen.view');
+        
         $result = session('import_result_dosen', []);
 
         return view('manajemen-dosen.import-result-dosen', compact('result'));
@@ -1431,6 +1453,8 @@ class DosenController extends Controller
      */
     public function downloadImportResult()
     {
+        $this->authorize('import-data-dosen.view');
+        
         $result = session('import_result_dosen', []);
 
         if (empty($result['data'])) {
@@ -1559,6 +1583,8 @@ class DosenController extends Controller
      */
     public function laporan()
     {
+        $this->authorize('laporan-data-dosen.view');
+        
         // Statistik untuk laporan
         $statistik = [
             'total_dosen' => Dosen::count(),
@@ -1617,6 +1643,8 @@ class DosenController extends Controller
      */
     public function exportLaporanPDF()
     {
+        $this->authorize('laporan-data-dosen.view');
+        
         // Ambil data yang sama dengan laporan
         $statistik = [
             'total_dosen' => Dosen::count(),

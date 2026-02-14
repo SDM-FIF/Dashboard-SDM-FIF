@@ -130,17 +130,17 @@
                 {{-- Action Buttons Row --}}
                 <div class="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0">
                     {{-- Tambah Data Button --}}
-                    @if(Auth::check() && !Auth::user()->hasRole('User Biasa'))
+                    @can('kelola-data-dosen.create')
                     <button onclick="openCreateModal()"
                         class="bg-[#FBB03B] hover:bg-orange-600 text-[#B91432] font-semibold px-6 py-2.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
                         <i class="fas fa-plus mr-2"></i>Tambah Data
                     </button>
-                    @endif
+                    @endcan
 
                     {{-- Right Side Controls --}}
                     <div class="flex flex-wrap items-center gap-3">
                         {{-- Export Button --}}
-                        @if(Auth::check() && !Auth::user()->hasRole('User Biasa'))
+                        @can('kelola-data-dosen.view')
                         <div class="relative inline-block text-left">
                             <button type="button" id="exportBtn" class="px-4 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all duration-200 flex items-center space-x-2">
                                 <i class="fas fa-download"></i>
@@ -167,7 +167,7 @@
                                 </a>
                             </div>
                         </div>
-                        @endif
+                        @endcan
                     </div>
                 </div>
             </div>
@@ -287,19 +287,23 @@
                                     <td class="px-4 py-4 whitespace-nowrap text-center text-sm">
                                         <div class="flex items-center justify-center space-x-2">
                                             {{-- View Button --}}
+                                            @can('kelola-data-dosen.detail')
                                             <button type="button" class="btn-detail text-blue-600 hover:text-blue-800 transition-colors duration-200" 
                                                     data-id="{{ $dosenItem->id }}" title="Detail">
                                                 <i class="fas fa-eye"></i>
                                             </button>
+                                            @endcan
                                             
-                                            @if(Auth::check() && !Auth::user()->hasRole('User Biasa'))
                                             {{-- Edit Button --}}
+                                            @can('kelola-data-dosen.edit')
                                             <button type="button" class="btn-edit text-green-600 hover:text-green-800 transition-colors duration-200" 
                                                     data-id="{{ $dosenItem->id }}" title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </button>
+                                            @endcan
                                             
                                             {{-- Delete Button - IMPROVED WITH SWEETALERT --}}
+                                            @can('kelola-data-dosen.delete')
                                             <form action="{{ route('manajemen-dosen.destroy', $dosenItem->id) }}"
                                                 method="POST"
                                                 class="inline-block delete-form">
@@ -313,7 +317,7 @@
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
-                                            @endif
+                                            @endcan
                                         </div>
                                     </td>
                                 </tr>

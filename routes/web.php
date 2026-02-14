@@ -234,31 +234,37 @@ Route::middleware('auth')->group(function () {
     // ============================
     // Manajemen Dosen Routes
     // ============================
-    Route::prefix('manajemen-dosen')->name('manajemen-dosen.')->group(function () {
+    Route::prefix('manajemen-dosen')->name('manajemen-dosen.')->middleware('can:kelola-data-dosen.view')->group(function () {
+        // Kelola Data Routes (View permission required)
         Route::get('/kelola-data', [DosenController::class, 'kelolaData'])->name('kelola-data');
         Route::get('/export-excel', [DosenController::class, 'exportExcel'])->name('export-excel');
         Route::get('/export-csv', [DosenController::class, 'exportCsv'])->name('export-csv');
         Route::get('/export-pdf', [DosenController::class, 'exportPdf'])->name('export-pdf');
         Route::get('/export', [DosenController::class, 'exportExcel'])->name('export'); // Backward compatibility
         
-        // Import Routes
-        Route::get('/import', [DosenController::class, 'importView'])->name('import.view');
-        Route::get('/import/template', [DosenController::class, 'downloadTemplate'])->name('import.template');
-        Route::post('/import/upload', [DosenController::class, 'uploadImport'])->name('import.upload');
-        Route::post('/import/save', [DosenController::class, 'saveImport'])->name('import.save');
-        Route::get('/import/result', [DosenController::class, 'importResult'])->name('import.result');
-        Route::get('/import/download-result', [DosenController::class, 'downloadImportResult'])->name('import.download-result');
+        // Import Routes (Protected - Super Admin only)
+        Route::middleware('can:import-data-dosen.view')->group(function () {
+            Route::get('/import', [DosenController::class, 'importView'])->name('import.view');
+            Route::get('/import/template', [DosenController::class, 'downloadTemplate'])->name('import.template');
+            Route::post('/import/upload', [DosenController::class, 'uploadImport'])->name('import.upload');
+            Route::post('/import/save', [DosenController::class, 'saveImport'])->name('import.save');
+            Route::get('/import/result', [DosenController::class, 'importResult'])->name('import.result');
+            Route::get('/import/download-result', [DosenController::class, 'downloadImportResult'])->name('import.download-result');
+        });
         
-        Route::get('/laporan', [DosenController::class, 'laporan'])->name('laporan');
-        Route::get('/laporan/export-pdf', [DosenController::class, 'exportLaporanPDF'])->name('laporan.export-pdf');
+        // Laporan Routes (All roles can access)
+        Route::middleware('can:laporan-data-dosen.view')->group(function () {
+            Route::get('/laporan', [DosenController::class, 'laporan'])->name('laporan');
+            Route::get('/laporan/export-pdf', [DosenController::class, 'exportLaporanPDF'])->name('laporan.export-pdf');
+        });
 
-        // CRUD Routes
-        Route::get('/create', [DosenController::class, 'create'])->name('create');
-        Route::post('/store', [DosenController::class, 'store'])->name('store');
-        Route::get('/{dosen}', [DosenController::class, 'show'])->name('show');
-        Route::get('/{dosen}/edit', [DosenController::class, 'edit'])->name('edit');
-        Route::put('/{dosen}', [DosenController::class, 'update'])->name('update');
-        Route::delete('/{dosen}', [DosenController::class, 'destroy'])->name('destroy');
+        // CRUD Routes with specific permissions
+        Route::get('/create', [DosenController::class, 'create'])->name('create')->middleware('can:kelola-data-dosen.create');
+        Route::post('/store', [DosenController::class, 'store'])->name('store')->middleware('can:kelola-data-dosen.create');
+        Route::get('/{dosen}', [DosenController::class, 'show'])->name('show')->middleware('can:kelola-data-dosen.detail');
+        Route::get('/{dosen}/edit', [DosenController::class, 'edit'])->name('edit')->middleware('can:kelola-data-dosen.edit');
+        Route::put('/{dosen}', [DosenController::class, 'update'])->name('update')->middleware('can:kelola-data-dosen.edit');
+        Route::delete('/{dosen}', [DosenController::class, 'destroy'])->name('destroy')->middleware('can:kelola-data-dosen.delete');
     });
 
     // ============================
