@@ -29,6 +29,21 @@ Route::post('/logout', [AuthController::class, 'logout'])
 // Landing & Welcome
 // ============================
 Route::get('/', function () {
+    // If user is authenticated, redirect to first accessible dashboard
+    if (Auth::check()) {
+        // Check dashboard permissions in order
+        if (Auth::user()->can('dashboard-sdm.view')) {
+            return redirect()->route('dashboard');
+        } elseif (Auth::user()->can('dashboard-dosen.view')) {
+            return redirect()->route('dashboard-dosen');
+        } elseif (Auth::user()->can('dashboard-tpa.view')) {
+            return redirect()->route('dashboard-tpa');
+        } elseif (Auth::user()->can('dashboard-kompetisi.view')) {
+            return redirect()->route('dashboard-kompetisi');
+        }
+        // Default fallback to dashboard (for Super Admin or if no specific permissions)
+        return redirect()->route('dashboard');
+    }
     return view('landingpage');
 })->name('landingpage');
 
@@ -175,8 +190,21 @@ Route::prefix('debug')->group(function () {
 // Protected Routes (harus login)
 // ============================
 Route::middleware('auth')->group(function () {
-    // Dashboard
+    // Dashboard - with permission check and smart redirect
     Route::get('/dashboard', function () {
+        // Check if user has permission to view Dashboard SDM
+        if (!Auth::user()->can('dashboard-sdm.view')) {
+            // Redirect to first available dashboard
+            if (Auth::user()->can('dashboard-dosen.view')) {
+                return redirect()->route('dashboard-dosen');
+            } elseif (Auth::user()->can('dashboard-tpa.view')) {
+                return redirect()->route('dashboard-tpa');
+            } elseif (Auth::user()->can('dashboard-kompetisi.view')) {
+                return redirect()->route('dashboard-kompetisi');
+            }
+            // If no dashboard permission, show error
+            abort(403, 'Anda tidak memiliki akses ke dashboard manapun.');
+        }
         return view('dashboard');
     })->name('dashboard');
 
@@ -426,6 +454,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/pengaturan/role', [App\Http\Controllers\PengaturanController::class, 'storeRole'])->name('pengaturan.role.store');
     Route::put('/pengaturan/role/{id}', [App\Http\Controllers\PengaturanController::class, 'updateRole'])->name('pengaturan.role.update');
     Route::delete('/pengaturan/role/{id}', [App\Http\Controllers\PengaturanController::class, 'destroyRole'])->name('pengaturan.role.destroy');
+    
+    // Pengaturan - Plotting Permission
+    Route::get('/pengaturan/plotting/{roleId}', [App\Http\Controllers\PengaturanController::class, 'plotting'])->name('pengaturan.plotting');
+    Route::put('/pengaturan/plotting/{roleId}/update', [App\Http\Controllers\PengaturanController::class, 'updatePermissions'])->name('pengaturan.plotting.update');
     
     // Pengaturan - Export
     Route::get('/pengaturan/export/excel', [App\Http\Controllers\PengaturanController::class, 'exportExcel'])->name('pengaturan.export.excel');
