@@ -120,6 +120,7 @@
             @endcan
 
             {{-- Manajemen TPA Section --}}
+            @can('kelola-data-tpa.view')
             <li class="relative">
                 <button onclick="toggleDropdown('tpaDropdown')"
                     class="w-full flex items-center justify-between px-6 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('manajemen-tpa.*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
@@ -147,15 +148,18 @@
                                 Kelola Data
                             </a>
                         </li>
+                        @can('import-data-tpa.view')
                         <li>
                             <a href="{{ route('manajemen-tpa.import-data') }}"
                                 class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100 {{ request()->routeIs('manajemen-tpa.import-data') || request()->routeIs('manajemen-tpa.import-process') ? 'bg-red-600/60' : '' }}">
                                 Import Data
                             </a>
                         </li>
+                        @endcan
                     </ul>
                 </div>
             </li>
+            @endcan
 
             {{-- Rekrutasi Dosen Section --}}
             <li class="relative">
