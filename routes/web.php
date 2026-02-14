@@ -331,49 +331,67 @@ Route::middleware('auth')->group(function () {
     // ============================
     // 🆕 Rekrutasi Dosen Routes (TAMBAHAN BARU)
     // ============================
-    Route::prefix('rekrutasi-dosen')->name('rekrutasi-dosen.')->group(function () {
+    Route::prefix('rekrutasi-dosen')->name('rekrutasi-dosen.')->middleware('can:rekrutasi-data-dosen.view')->group(function () {
         // Overview / Main List
         Route::get('/', [RekrutasiDosenController::class, 'index'])->name('index');
 
-        // Import Routes
-        Route::get('/import', [RekrutasiDosenController::class, 'importView'])->name('import.view');
-        Route::post('/import', [RekrutasiDosenController::class, 'import'])->name('import');
-        // Import Routes - Detail
-        Route::get('/import/template', [RekrutasiDosenController::class, 'downloadTemplate'])->name('import.template');
-        Route::post('/import/upload', [RekrutasiDosenController::class, 'uploadImport'])->name('import.upload');
-        Route::post('/import/save', [RekrutasiDosenController::class, 'saveImport'])->name('import.save');
-        Route::get('/import/result', [RekrutasiDosenController::class, 'importResult'])->name('import.result');
-        Route::get('/import/download-result', [RekrutasiDosenController::class, 'downloadImportResult'])->name('import.download-result');
+        // Import Routes - Super Admin Only
+        Route::middleware('can:import-rekrutasi-dosen.view')->group(function () {
+            Route::get('/import', [RekrutasiDosenController::class, 'importView'])->name('import.view');
+            Route::post('/import', [RekrutasiDosenController::class, 'import'])->name('import');
+            // Import Routes - Detail
+            Route::get('/import/template', [RekrutasiDosenController::class, 'downloadTemplate'])->name('import.template');
+            Route::post('/import/upload', [RekrutasiDosenController::class, 'uploadImport'])->name('import.upload');
+            Route::post('/import/save', [RekrutasiDosenController::class, 'saveImport'])->name('import.save');
+            Route::get('/import/result', [RekrutasiDosenController::class, 'importResult'])->name('import.result');
+            Route::get('/import/download-result', [RekrutasiDosenController::class, 'downloadImportResult'])->name('import.download-result');
+        });
 
-        // Jadwal Pengujian
-        Route::get('/jadwal-pengujian', [RekrutasiDosenController::class, 'jadwalPengujian'])->name('jadwal-pengujian');
-        Route::post('/jadwal-pengujian', [RekrutasiDosenController::class, 'storeJadwalPengujian'])->name('jadwal-pengujian.store');
-        Route::get('/jadwal-pengujian/export-excel', [RekrutasiDosenController::class, 'exportJadwalPengujianExcel'])->name('jadwal-pengujian.export-excel');
-        Route::get('/jadwal-pengujian/export-csv', [RekrutasiDosenController::class, 'exportJadwalPengujianCsv'])->name('jadwal-pengujian.export-csv');
-        Route::get('/jadwal-pengujian/export-pdf', [RekrutasiDosenController::class, 'exportJadwalPengujianPdf'])->name('jadwal-pengujian.export-pdf');
-        Route::get('/jadwal-pengujian/{id}', [RekrutasiDosenController::class, 'showJadwalPengujian'])->name('jadwal-pengujian.show');
-        Route::get('/jadwal-pengujian/{id}/edit', [RekrutasiDosenController::class, 'editJadwalPengujian'])->name('jadwal-pengujian.edit');
-        Route::match(['put', 'post'], '/jadwal-pengujian/{id}', [RekrutasiDosenController::class, 'updateJadwalPengujian'])->name('jadwal-pengujian.update');
-        Route::delete('/jadwal-pengujian/{id}', [RekrutasiDosenController::class, 'destroyJadwalPengujian'])->name('jadwal-pengujian.destroy');
+        // Jadwal Pengujian - Protected Routes
+        Route::middleware('can:jadwal-pengujian.view')->group(function () {
+            Route::get('/jadwal-pengujian', [RekrutasiDosenController::class, 'jadwalPengujian'])->name('jadwal-pengujian');
+            Route::get('/jadwal-pengujian/export-excel', [RekrutasiDosenController::class, 'exportJadwalPengujianExcel'])->name('jadwal-pengujian.export-excel');
+            Route::get('/jadwal-pengujian/export-csv', [RekrutasiDosenController::class, 'exportJadwalPengujianCsv'])->name('jadwal-pengujian.export-csv');
+            Route::get('/jadwal-pengujian/export-pdf', [RekrutasiDosenController::class, 'exportJadwalPengujianPdf'])->name('jadwal-pengujian.export-pdf');
+            
+            // Detail - requires separate permission
+            Route::get('/jadwal-pengujian/{id}', [RekrutasiDosenController::class, 'showJadwalPengujian'])->name('jadwal-pengujian.show')->middleware('can:jadwal-pengujian.detail');
+            
+            // Create/Edit/Delete - Super Admin only
+            Route::post('/jadwal-pengujian', [RekrutasiDosenController::class, 'storeJadwalPengujian'])->name('jadwal-pengujian.store')->middleware('can:jadwal-pengujian.create');
+            Route::get('/jadwal-pengujian/{id}/edit', [RekrutasiDosenController::class, 'editJadwalPengujian'])->name('jadwal-pengujian.edit')->middleware('can:jadwal-pengujian.edit');
+            Route::match(['put', 'post'], '/jadwal-pengujian/{id}', [RekrutasiDosenController::class, 'updateJadwalPengujian'])->name('jadwal-pengujian.update')->middleware('can:jadwal-pengujian.edit');
+            Route::delete('/jadwal-pengujian/{id}', [RekrutasiDosenController::class, 'destroyJadwalPengujian'])->name('jadwal-pengujian.destroy')->middleware('can:jadwal-pengujian.delete');
+        });
         
-        // Penilaian Calon Dosen
-        Route::get('/penilaian/export/{id}', [RekrutasiDosenController::class, 'exportPenilaianExcel'])->name('penilaian.export');
-        Route::get('/penilaian/export-pdf/{id}', [RekrutasiDosenController::class, 'exportPenilaianPdf'])->name('penilaian.export-pdf');
-        Route::post('/penilaian/store', [RekrutasiDosenController::class, 'storePenilaian'])->name('penilaian.store');
-        Route::get('/penilaian/{jadwal_id}', [RekrutasiDosenController::class, 'penilaian'])->name('penilaian');
+        // Penilaian Calon Dosen - Protected Routes
+        Route::middleware('can:penilaian-dosen.access')->group(function () {
+            Route::get('/penilaian/{jadwal_id}', [RekrutasiDosenController::class, 'penilaian'])->name('penilaian');
+            Route::get('/penilaian/export/{id}', [RekrutasiDosenController::class, 'exportPenilaianExcel'])->name('penilaian.export');
+            Route::get('/penilaian/export-pdf/{id}', [RekrutasiDosenController::class, 'exportPenilaianPdf'])->name('penilaian.export-pdf');
+            
+            // Submit - requires separate permission (Dosen Penguji only, not Super Admin)
+            Route::post('/penilaian/store', [RekrutasiDosenController::class, 'storePenilaian'])->name('penilaian.store')->middleware('can:penilaian-dosen.submit');
+        });
 
         // Download Riwayat Pendidikan Files
         Route::get('/riwayat-file/{filename}', [RekrutasiDosenController::class, 'downloadRiwayatFile'])->name('riwayat.download');
 
         // Hasil Pengujian
-        Route::get('/hasil-pengujian', [RekrutasiDosenController::class, 'hasilPengujian'])->name('hasil-pengujian');
-        Route::get('/hasil-pengujian/combined-pdf/{calon_dosen_id}', [RekrutasiDosenController::class, 'hasilPengujianCombinedPdf'])->name('hasil-pengujian.combined-pdf');
-        Route::get('/hasil-pengujian/berita-acara/{jadwal_id}', [RekrutasiDosenController::class, 'publicDownloadBeritaAcara'])->name('hasil-pengujian.berita-acara');
+        Route::middleware('can:hasil-pengujian.view')->group(function () {
+            Route::get('/hasil-pengujian', [RekrutasiDosenController::class, 'hasilPengujian'])->name('hasil-pengujian');
+            Route::get('/hasil-pengujian/combined-pdf/{calon_dosen_id}', [RekrutasiDosenController::class, 'hasilPengujianCombinedPdf'])->name('hasil-pengujian.combined-pdf');
+            Route::get('/hasil-pengujian/berita-acara/{jadwal_id}', [RekrutasiDosenController::class, 'publicDownloadBeritaAcara'])->name('hasil-pengujian.berita-acara');
+        });
 
-        // Berita Acara (only accessible by Dosen Penguji 1)
-        Route::get('/berita-acara/{jadwal_id}', [RekrutasiDosenController::class, 'beritaAcara'])->name('berita-acara');
-        Route::post('/berita-acara/{jadwal_id}', [RekrutasiDosenController::class, 'storeBeritaAcara'])->name('berita-acara.store');
-        Route::get('/berita-acara/{jadwal_id}/download', [RekrutasiDosenController::class, 'downloadBeritaAcara'])->name('berita-acara.download');
+        // Berita Acara - Protected Routes (Dosen Penguji 1 & Super Admin only)
+        Route::middleware('can:berita-acara.access')->group(function () {
+            Route::get('/berita-acara/{jadwal_id}', [RekrutasiDosenController::class, 'beritaAcara'])->name('berita-acara');
+            Route::get('/berita-acara/{jadwal_id}/download', [RekrutasiDosenController::class, 'downloadBeritaAcara'])->name('berita-acara.download');
+            
+            // Submit - requires separate permission (Dosen Penguji 1 only, not Super Admin)
+            Route::post('/berita-acara/{jadwal_id}', [RekrutasiDosenController::class, 'storeBeritaAcara'])->name('berita-acara.store')->middleware('can:berita-acara.submit');
+        });
 
         // ⚠️ EXPORT ROUTES - HARUS DI ATAS {id} ⚠️
         Route::get('/export-excel', [RekrutasiDosenController::class, 'exportExcel'])->name('export-excel');

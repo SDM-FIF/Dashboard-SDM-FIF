@@ -135,12 +135,12 @@
                 {{-- Action Buttons Row --}}
                 <div class="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0">
                     {{-- Tambah Data Button --}}
-                    @if(Auth::check() && !Auth::user()->hasRole('User Biasa'))
+                    @can('rekrutasi-data-dosen.create')
                     <button onclick="openCreateModal()"
                         class="bg-[#FBB03B] hover:bg-orange-600 text-[#B91432] font-semibold px-6 py-2.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
                         <i class="fas fa-plus mr-2"></i>Tambah Data
                     </button>
-                    @endif
+                    @endcan
 
                     {{-- Right Side Controls --}}
                     <div class="flex flex-wrap items-center gap-3">
@@ -261,19 +261,23 @@
                         <td class="px-4 py-4 whitespace-nowrap text-center text-sm">
                             <div class="flex items-center justify-center space-x-2">
                                 {{-- View Button --}}
+                                @can('rekrutasi-data-dosen.detail')
                                 <button data-id="{{ $item->id }}" class="btn-detail text-blue-600 hover:text-blue-800 transition-colors duration-200"
                                     title="Lihat Detail">
                                     <i class="fas fa-eye"></i>
                                 </button>
+                                @endcan
 
-                                @if(Auth::check() && !Auth::user()->hasRole('User Biasa'))
                                 {{-- Edit Button --}}
+                                @can('rekrutasi-data-dosen.edit')
                                 <button data-id="{{ $item->id }}" class="btn-edit text-green-600 hover:text-green-800 transition-colors duration-200"
                                     title="Edit">
                                     <i class="fas fa-edit"></i>
                                 </button>
+                                @endcan
 
                                 {{-- Delete Button - IMPROVED WITH SWEETALERT --}}
+                                @can('rekrutasi-data-dosen.delete')
                                 <form action="{{ route('rekrutasi-dosen.destroy', $item->id) }}"
                                     method="POST"
                                     class="inline-block delete-form">
@@ -287,7 +291,7 @@
                                         <i class="fas fa-trash"></i>
                                     </button>
                                 </form>
-                                @endif
+                                @endcan
                             </div>
                         </td>
                     </tr>
@@ -302,11 +306,13 @@
                                     <h3 class="text-lg font-medium text-gray-900 mb-1">Tidak ada data rekrutasi</h3>
                                     <p class="text-sm text-gray-500">Belum ada data rekrutasi yang tersedia.</p>
                                 </div>
+                                @can('rekrutasi-data-dosen.create')
                                 <button onclick="openCreateModal()"
                                     class="inline-flex items-center px-4 py-2 bg-[#C41E3A] hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors duration-200">
                                     <i class="fas fa-plus mr-2"></i>
                                     Tambah Data Rekrutasi
                                 </button>
+                                @endcan
                             </div>
                         </td>
                     </tr>

@@ -405,9 +405,26 @@
                             <i class="bi bi-download me-2"></i>Download
                         </a>
                         @endif
+                        
+                        @if($beritaAcaraSubmitted)
+                        {{-- Berita Acara sudah disubmit, penilaian LOCKED --}}
+                        <button type="button" class="btn btn-warning" disabled 
+                                title="Penilaian terkunci karena Berita Acara sudah disubmit">
+                            <i class="bi bi-lock-fill me-2"></i>Penilaian Terkunci
+                        </button>
+                        @else
+                        {{-- Berita Acara belum disubmit, penilaian dapat diedit --}}
+                        @can('penilaian-dosen.submit')
                         <button type="submit" class="btn btn-primary" id="btnSimpanPenilaian">
                             <i class="bi bi-check-circle me-2"></i>{{ $existingPenilaian ? 'Update Penilaian' : 'Simpan Penilaian' }}
                         </button>
+                        @else
+                        <button type="button" class="btn btn-secondary" id="btnSimpanPenilaianDisabled" disabled 
+                                title="Super Admin hanya dapat melihat (read-only monitoring)">
+                            <i class="bi bi-eye me-2"></i>Read-Only Mode
+                        </button>
+                        @endcan
+                        @endif
                     </div>
                 </form>
             </div>
@@ -464,6 +481,15 @@
             
             // Calculate rata_a immediately on page load
             calculateRataA();
+            
+            // Disable all form inputs if Berita Acara has been submitted
+            @if($beritaAcaraSubmitted)
+            $('#formPenilaian input, #formPenilaian select, #formPenilaian textarea').prop('disabled', true);
+            $('#formPenilaian').find('.form-control, .form-check-input').css({
+                'background-color': '#f5f5f5',
+                'cursor': 'not-allowed'
+            });
+            @endif
             
             // Form submission with validation
             $('#formPenilaian').on('submit', function(e) {

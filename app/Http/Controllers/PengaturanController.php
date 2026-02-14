@@ -192,6 +192,14 @@ class PengaturanController extends Controller
             'Manajemen TPA' => [
                 'kelola-data-tpa' => 'Kelola Data',
                 'import-data-tpa' => 'Import Data',
+            ],
+            'Rekrutasi Dosen' => [
+                'rekrutasi-data-dosen' => 'Data Rekrutasi Dosen',
+                'import-rekrutasi-dosen' => 'Import Rekrutasi Dosen',
+                'jadwal-pengujian' => 'Jadwal Pengujian Dosen',
+                'penilaian-dosen' => 'Penilaian Calon Dosen',
+                'berita-acara' => 'Berita Acara',
+                'hasil-pengujian' => 'Hasil Pengujian',
             ]
         ];
         
@@ -199,8 +207,17 @@ class PengaturanController extends Controller
         $permissionData = [];
         foreach ($moduleGroups as $parentModule => $subModules) {
             foreach ($subModules as $key => $label) {
-                // Define all possible permission types
-                $permissionTypes = ['all', 'view', 'detail', 'create', 'edit', 'delete'];
+                // Define permission types based on module
+                if ($key === 'penilaian-dosen' || $key === 'berita-acara') {
+                    // Special handling for penilaian-dosen and berita-acara (access & submit)
+                    $permissionTypes = ['all', 'access', 'submit'];
+                } elseif ($key === 'hasil-pengujian') {
+                    // Hasil Pengujian only needs all + view
+                    $permissionTypes = ['all', 'view'];
+                } else {
+                    // Standard permission types for other modules
+                    $permissionTypes = ['all', 'view', 'detail', 'create', 'edit', 'delete'];
+                }
                 
                 $permissions = [];
                 foreach ($permissionTypes as $type) {
@@ -215,14 +232,73 @@ class PengaturanController extends Controller
                             'create' => "Akses Create {$label}",
                             'edit' => "Akses Edit {$label}",
                             'delete' => "Akses Delete {$label}",
+                            'access' => "Akses {$label}",
+                            'submit' => "Akses Submit {$label}",
                             default => ucfirst($type)
                         };
+                        
+                        // Determine if checkbox should be disabled and its state
+                        $isDisabled = false;
+                        $forceChecked = false;
+                        $forceUnchecked = false;
+                        
+                        // Special logic for Penilaian Calon Dosen
+                        if ($key === 'penilaian-dosen') {
+                            if (in_array($role->name, ['Dosen Penguji 1', 'Dosen Penguji 2', 'Dosen Penguji 3'])) {
+                                // Dosen Penguji 1/2/3: All checked & disabled
+                                $isDisabled = true;
+                                $forceChecked = true;
+                            } elseif ($role->name === 'Super Admin') {
+                                // Super Admin: Only 'access' checked, 'submit' unchecked, all disabled
+                                $isDisabled = true;
+                                if ($type === 'access' || $type === 'all') {
+                                    $forceChecked = true;
+                                } else {
+                                    $forceUnchecked = true;
+                                }
+                            } else {
+                                // Other roles: All unchecked & disabled
+                                $isDisabled = true;
+                                $forceUnchecked = true;
+                            }
+                        }
+                        
+                        // Special logic for Berita Acara
+                        if ($key === 'berita-acara') {
+                            if ($role->name === 'Dosen Penguji 1') {
+                                // Dosen Penguji 1: All checked & disabled
+                                $isDisabled = true;
+                                $forceChecked = true;
+                            } elseif ($role->name === 'Super Admin') {
+                                // Super Admin: Only 'access' checked, 'submit' unchecked, all disabled
+                                $isDisabled = true;
+                                if ($type === 'access' || $type === 'all') {
+                                    $forceChecked = true;
+                                } else {
+                                    $forceUnchecked = true;
+                                }
+                            } else {
+                                // Other roles (including Dosen Penguji 2/3): All unchecked & disabled
+                                $isDisabled = true;
+                                $forceUnchecked = true;
+                            }
+                        }
+
+                        // Hasil Pengujian is editable manually (no forced state)
+                        
+                        $hasPermission = $role->hasPermissionTo($permission->name);
+                        if ($forceChecked) {
+                            $hasPermission = true;
+                        } elseif ($forceUnchecked) {
+                            $hasPermission = false;
+                        }
                         
                         $permissions[$type] = [
                             'id' => $permission->id,
                             'name' => $permission->name,
                             'label' => $typeLabel,
-                            'has_permission' => $role->hasPermissionTo($permission->name)
+                            'has_permission' => $hasPermission,
+                            'is_disabled' => $isDisabled
                         ];
                     }
                 }

@@ -188,9 +188,16 @@
                 {{-- Buttons --}}
                 <div class="flex items-center gap-4 mt-8">
                     @if(!$isSubmitted)
-                    <button type="submit" class="bg-[#FBB03B] hover:bg-orange-600 text-[#B91432] font-semibold px-8 py-2.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
-                        <i class="fas fa-save mr-2"></i>Submit
-                    </button>
+                        @can('berita-acara.submit')
+                        <button type="submit" class="bg-[#FBB03B] hover:bg-orange-600 text-[#B91432] font-semibold px-8 py-2.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
+                            <i class="fas fa-save mr-2"></i>Submit
+                        </button>
+                        @else
+                        <button type="button" class="bg-gray-400 text-gray-700 font-semibold px-8 py-2.5 rounded-lg cursor-not-allowed" disabled
+                                title="Super Admin hanya dapat melihat (read-only monitoring)">
+                            <i class="fas fa-eye mr-2"></i>Read-Only Mode
+                        </button>
+                        @endcan
                     @else
                     <a href="{{ route('rekrutasi-dosen.berita-acara.download', $jadwal->id) }}" 
                        target="_blank"
