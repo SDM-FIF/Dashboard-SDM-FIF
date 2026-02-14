@@ -19,6 +19,8 @@ class RekrutasiDosenController extends Controller
 {
     public function index(Request $request)
     {
+        $this->authorize('rekrutasi-data-dosen.view');
+        
         $query = CalonDosen::with(['prodi', 'tahunAjar']);
 
         // Filter by Prodi
@@ -74,6 +76,8 @@ class RekrutasiDosenController extends Controller
 
     public function create()
     {
+        $this->authorize('rekrutasi-data-dosen.create');
+        
         $prodi = Prodi::all();
         // Ambil tahun ajar dari database
         $tahunAjar = \App\Models\TahunAjar::orderBy('tahun', 'desc')->orderBy('semester', 'desc')->get();
@@ -83,6 +87,8 @@ class RekrutasiDosenController extends Controller
 
     public function store(Request $request)
     {
+        $this->authorize('rekrutasi-data-dosen.create');
+        
         try {
             // Debug: Log request data
             Log::info('Store request data:', [
@@ -213,6 +219,8 @@ class RekrutasiDosenController extends Controller
 
     public function show(Request $request, $id)
     {
+        $this->authorize('rekrutasi-data-dosen.detail');
+        
         $rekrutasi = CalonDosen::with(['prodi', 'tahunAjar', 'riwayatPendidikan', 'jadwalPengujian.dosenPenguji'])->findOrFail($id);
 
         if ($request->ajax()) {
@@ -227,6 +235,8 @@ class RekrutasiDosenController extends Controller
 
     public function edit($id)
     {
+        $this->authorize('rekrutasi-data-dosen.edit');
+        
         $rekrutasi = CalonDosen::findOrFail($id);
         $prodi = Prodi::all();
         // Ambil tahun ajar dari database
@@ -237,6 +247,8 @@ class RekrutasiDosenController extends Controller
 
     public function update(Request $request, $id)
     {
+        $this->authorize('rekrutasi-data-dosen.edit');
+        
         try {
             $rekrutasi = CalonDosen::findOrFail($id);
 
@@ -401,6 +413,8 @@ class RekrutasiDosenController extends Controller
 
     public function destroy($id)
     {
+        $this->authorize('rekrutasi-data-dosen.delete');
+        
         $rekrutasi = CalonDosen::findOrFail($id);
         $rekrutasi->delete();
 
@@ -410,6 +424,8 @@ class RekrutasiDosenController extends Controller
 
     public function importView(Request $request)
     {
+        $this->authorize('import-rekrutasi-dosen.view');
+        
         // Get current step from request
         $step = $request->get('step');
         
@@ -442,6 +458,8 @@ class RekrutasiDosenController extends Controller
 
     public function import(Request $request)
     {
+        $this->authorize('import-rekrutasi-dosen.view');
+        
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv|max:2048'
         ]);
@@ -454,6 +472,8 @@ class RekrutasiDosenController extends Controller
 
     public function jadwalPengujian(Request $request)
     {
+        $this->authorize('jadwal-pengujian.view');
+        
         $query = \App\Models\JadwalPengujian::with(['calonDosen', 'dosenPenguji', 'tahunAjar']);
 
         // Apply filters
@@ -475,6 +495,19 @@ class RekrutasiDosenController extends Controller
 
         $jadwalList = $query->orderBy('id', 'desc')->paginate(10)->withQueryString();
 
+        // Get current user's dosen record
+        $currentDosen = \App\Models\Dosen::where('user_id', Auth::id())->first();
+        
+        // Determine which jadwal user can access penilaian for
+        $jadwalWithPenilaianAccess = [];
+        if ($currentDosen) {
+            foreach ($jadwalList as $jadwal) {
+                if ($jadwal->dosenPenguji->contains($currentDosen->id)) {
+                    $jadwalWithPenilaianAccess[] = $jadwal->id;
+                }
+            }
+        }
+
         // Get metode pelaksanaan options (enum values)
         $metodeList = ['Online', 'Onsite'];
 
@@ -483,11 +516,13 @@ class RekrutasiDosenController extends Controller
         $dosenList = \App\Models\Dosen::all();
         $tahunAjarList = \App\Models\TahunAjar::all();
 
-        return view('rekrutasi-dosen.jadwal-pengujian', compact('jadwalList', 'metodeList', 'calonDosenList', 'dosenList', 'tahunAjarList'));
+        return view('rekrutasi-dosen.jadwal-pengujian', compact('jadwalList', 'metodeList', 'calonDosenList', 'dosenList', 'tahunAjarList', 'jadwalWithPenilaianAccess'));
     }
 
     public function storeJadwalPengujian(Request $request)
     {
+        $this->authorize('jadwal-pengujian.create');
+        
         try {
             $validated = $request->validate([
                 'tahun_ajar_id' => 'required|exists:tahun_ajar,id',
@@ -534,6 +569,8 @@ class RekrutasiDosenController extends Controller
 
     public function showJadwalPengujian($id)
     {
+        $this->authorize('jadwal-pengujian.detail');
+        
         $jadwal = \App\Models\JadwalPengujian::with(['calonDosen', 'dosenPenguji', 'tahunAjar'])->findOrFail($id);
 
         // Format dosen penguji array
@@ -564,6 +601,8 @@ class RekrutasiDosenController extends Controller
 
     public function editJadwalPengujian($id)
     {
+        $this->authorize('jadwal-pengujian.edit');
+        
         $jadwal = \App\Models\JadwalPengujian::findOrFail($id);
         $calonDosenList = \App\Models\CalonDosen::all();
         $dosenList = \App\Models\Dosen::all();
@@ -574,6 +613,8 @@ class RekrutasiDosenController extends Controller
 
     public function updateJadwalPengujian(Request $request, $id)
     {
+        $this->authorize('jadwal-pengujian.edit');
+        
         try {
             $validated = $request->validate([
                 'tahun_ajar_id' => 'required|exists:tahun_ajar,id',
@@ -623,6 +664,8 @@ class RekrutasiDosenController extends Controller
 
     public function destroyJadwalPengujian($id)
     {
+        $this->authorize('jadwal-pengujian.delete');
+        
         try {
             $jadwal = \App\Models\JadwalPengujian::findOrFail($id);
             $jadwal->delete();
@@ -643,19 +686,25 @@ class RekrutasiDosenController extends Controller
     public function penilaian($jadwal_id)
     {
         try {
-            // Check authorization
-            /** @var User $user */
-            $user = Auth::user();
-            if (!$user->hasRole(['Super Admin', 'Dosen Penguji 1', 'Dosen Penguji 2', 'Dosen Penguji 3'])) {
-                return redirect()->route('dashboard')
-                    ->with('error', 'Anda tidak memiliki akses ke halaman ini.');
-            }
-
+            // Check permission first
+            $this->authorize('penilaian-dosen.access');
+            
             $jadwal = \App\Models\JadwalPengujian::with([
                 'calonDosen.prodi',
                 'dosenPenguji',
                 'tahunAjar'
             ])->findOrFail($jadwal_id);
+            
+            // Dynamic check: Is user a penguji for this specific jadwal?
+            $user = Auth::user();
+            if (!$user->hasRole('Super Admin')) {
+                $currentDosen = \App\Models\Dosen::where('user_id', Auth::id())->first();
+                
+                if (!$currentDosen || !$jadwal->dosenPenguji->contains($currentDosen->id)) {
+                    return redirect()->route('rekrutasi-dosen.jadwal-pengujian')
+                        ->with('error', 'Anda bukan penguji untuk calon dosen ini.');
+                }
+            }
 
             $calonDosen = $jadwal->calonDosen;
 
@@ -664,7 +713,13 @@ class RekrutasiDosenController extends Controller
                 ->where('user_id', Auth::id())
                 ->first();
 
-            return view('rekrutasi-dosen.penilaian-calon-dosen', compact('jadwal', 'calonDosen', 'existingPenilaian'));
+            // Check if berita acara has been submitted (rata_akhir is filled)
+            // If submitted, penilaian is locked and can only be downloaded
+            $beritaAcaraSubmitted = \App\Models\PenilaianDetail::where('jadwal_pengujian_id', $jadwal_id)
+                ->whereNotNull('rata_akhir')
+                ->exists();
+
+            return view('rekrutasi-dosen.penilaian-calon-dosen', compact('jadwal', 'calonDosen', 'existingPenilaian', 'beritaAcaraSubmitted'));
         } catch (\Exception $e) {
             Log::error('Error loading penilaian page: ' . $e->getMessage());
             return redirect()->route('jadwal-pengujian')
@@ -675,6 +730,14 @@ class RekrutasiDosenController extends Controller
     public function storePenilaian(Request $request)
     {
         try {
+            // Check if Super Admin trying to submit (prevent)
+            if (Auth::user()->hasRole('Super Admin')) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Super Admin hanya dapat melihat penilaian (read-only monitoring), tidak dapat submit penilaian.'
+                ], 403);
+            }
+            
             Log::info('Store penilaian request:', $request->all());
 
             // Validate request
@@ -717,6 +780,26 @@ class RekrutasiDosenController extends Controller
                     'success' => false,
                     'message' => 'Data dosen tidak ditemukan untuk user yang login'
                 ], 400);
+            }
+            
+            // Check if user is actually a penguji for this jadwal
+            if (!$jadwal->dosenPenguji->contains($currentDosen->id)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Anda bukan penguji untuk calon dosen ini'
+                ], 403);
+            }
+            
+            // Check if berita acara already submitted (penilaian is LOCKED if rata_akhir exists)
+            $beritaAcaraSubmitted = \App\Models\PenilaianDetail::where('jadwal_pengujian_id', $validated['jadwal_pengujian_id'])
+                ->whereNotNull('rata_akhir')
+                ->exists();
+                
+            if ($beritaAcaraSubmitted) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Berita acara sudah di-submit. Penilaian tidak dapat diubah lagi.'
+                ], 403);
             }
 
             // Get calon dosen data
@@ -1145,11 +1228,9 @@ class RekrutasiDosenController extends Controller
      */
     public function beritaAcara($jadwalId)
     {
-        // Check if user is logged in
-        if (!Auth::check()) {
-            return redirect()->back()->with('error', 'Anda harus login terlebih dahulu');
-        }
-
+        // Check permission first
+        $this->authorize('berita-acara.access');
+        
         $jadwal = \App\Models\JadwalPengujian::with([
             'calonDosen',
             'dosenPenguji',
@@ -1163,10 +1244,12 @@ class RekrutasiDosenController extends Controller
             return redirect()->back()->with('error', 'Dosen penguji 1 tidak ditemukan untuk jadwal ini');
         }
 
-        // Check if current user is the dosen penguji 1 for THIS specific jadwal
+        // Dynamic check: Is user the dosen penguji 1 for THIS specific jadwal?
         $currentUser = Auth::user();
-        if ($currentUser->id !== $dosenPenguji1->user_id) {
-            return redirect()->back()->with('error', 'Anda tidak memiliki akses ke berita acara ini. Hanya dosen penguji 1 untuk jadwal ini yang dapat mengakses.');
+        if (!$currentUser->hasRole('Super Admin')) {
+            if ($currentUser->id !== $dosenPenguji1->user_id) {
+                return redirect()->back()->with('error', 'Anda tidak memiliki akses ke berita acara ini. Hanya dosen penguji 1 untuk jadwal ini yang dapat mengakses.');
+            }
         }
 
         $calonDosen = $jadwal->calonDosen;
@@ -1231,11 +1314,11 @@ class RekrutasiDosenController extends Controller
      */
     public function storeBeritaAcara(Request $request, $jadwalId)
     {
-        // Check if user is logged in
-        if (!Auth::check()) {
-            return redirect()->back()->with('error', 'Anda harus login terlebih dahulu');
+        // Check if Super Admin trying to submit (prevent)
+        if (Auth::user()->hasRole('Super Admin')) {
+            return redirect()->back()->with('error', 'Super Admin hanya dapat melihat berita acara (read-only monitoring), tidak dapat submit berita acara.');
         }
-
+        
         $jadwal = \App\Models\JadwalPengujian::with('dosenPenguji')->findOrFail($jadwalId);
         
         // Get dosen penguji 1 for this jadwal
@@ -1306,6 +1389,8 @@ class RekrutasiDosenController extends Controller
      */
     public function downloadBeritaAcara($jadwalId)
     {
+        $this->authorize('berita-acara.access');
+        
         // Check if user is logged in
         if (!Auth::check()) {
             return redirect()->back()->with('error', 'Anda harus login terlebih dahulu');
@@ -1510,6 +1595,8 @@ class RekrutasiDosenController extends Controller
      */
     public function downloadTemplate()
     {
+        $this->authorize('import-rekrutasi-dosen.view');
+        
         $filename = 'template-rekrutasi-dosen.xls';
 
         $headers = [
@@ -1651,6 +1738,8 @@ class RekrutasiDosenController extends Controller
      */
     public function uploadImport(Request $request)
     {
+        $this->authorize('import-rekrutasi-dosen.view');
+        
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv|max:2048'
         ]);
@@ -2005,6 +2094,8 @@ class RekrutasiDosenController extends Controller
      */
     public function saveImport(Request $request)
     {
+        $this->authorize('import-rekrutasi-dosen.view');
+        
         $importData = session('import_data', []);
 
         if (empty($importData)) {
@@ -2099,6 +2190,8 @@ class RekrutasiDosenController extends Controller
      */
     public function importResult()
     {
+        $this->authorize('import-rekrutasi-dosen.view');
+        
         $result = session('import_result', []);
 
         return view('rekrutasi-dosen.import-result', compact('result'));
@@ -2109,6 +2202,8 @@ class RekrutasiDosenController extends Controller
      */
     public function downloadImportResult()
     {
+        $this->authorize('import-rekrutasi-dosen.view');
+        
         $result = session('import_result', []);
 
         if (empty($result['data'])) {

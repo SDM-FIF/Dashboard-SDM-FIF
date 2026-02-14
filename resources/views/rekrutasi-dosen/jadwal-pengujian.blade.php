@@ -124,12 +124,12 @@
                 {{-- Action Buttons Row --}}
                 <div class="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0">
                     {{-- Tambah Data Button --}}
-                    @if(Auth::check() && !Auth::user()->hasRole('User Biasa'))
+                    @can('jadwal-pengujian.create')
                     <button type="button" id="btnTambahData"
                         class="bg-[#FBB03B] hover:bg-orange-600 text-[#B91432] font-semibold px-6 py-2.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
                         <i class="fas fa-plus mr-2"></i>Tambah Data
                     </button>
-                    @endif
+                    @endcan
 
                     {{-- Export Dropdown --}}
                     <div class="relative">
@@ -198,60 +198,79 @@
                             </td>
                             <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
                                 <div class="flex items-center justify-center space-x-2">
+                                    @can('jadwal-pengujian.detail')
                                     <button type="button" class="btn-detail text-blue-600 hover:text-blue-800 transition-colors duration-200" 
                                             data-id="{{ $jadwal->id }}" title="Detail">
                                         <i class="fas fa-eye"></i>
                                     </button>
-                                    @if(Auth::check() && !Auth::user()->hasRole('User Biasa'))
+                                    @endcan
+                                    @can('jadwal-pengujian.edit')
                                     <button type="button" class="btn-edit text-green-600 hover:text-green-800 transition-colors duration-200" 
                                             data-id="{{ $jadwal->id }}" title="Edit">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    @endif
-                                    @php
-                                        // Check if current user is one of the dosen penguji for this jadwal
-                                        $currentUserId = Auth::id();
-                                        $isDosenPenguji = false;
-                                        $isDosenPenguji1 = false;
-                                        
-                                        if (Auth::check()) {
-                                            foreach ($jadwal->dosenPenguji as $dosen) {
-                                                if ($dosen->user_id == $currentUserId) {
-                                                    $isDosenPenguji = true;
-                                                    if ($dosen->pivot->urutan == 1) {
+                                    @endcan
+                                    @can('penilaian-dosen.access')
+                                        @if(Auth::user()->hasRole('Super Admin') || in_array($jadwal->id, $jadwalWithPenilaianAccess))
+                                        <button type="button" class="btn-penilaian text-purple-600 hover:text-purple-800 transition-colors duration-200" 
+                                                data-id="{{ $jadwal->id }}" title="Penilaian Calon Dosen">
+                                            <i class="fas fa-clipboard-check"></i>
+                                        </button>
+                                        @endif
+                                    @endcan
+                                    @can('berita-acara.access')
+                                        @php
+                                            // Check if current user is dosen penguji 1 for this jadwal
+                                            $currentUserId = Auth::id();
+                                            $isDosenPenguji1 = false;
+                                            
+                                            if (Auth::check()) {
+                                                foreach ($jadwal->dosenPenguji as $dosen) {
+                                                    if ($dosen->user_id == $currentUserId && $dosen->pivot->urutan == 1) {
                                                         $isDosenPenguji1 = true;
+                                                        break;
                                                     }
-                                                    break;
                                                 }
                                             }
-                                        }
-                                    @endphp
-                                    @if(Auth::check() && (Auth::user()->hasRole('Super Admin') || $isDosenPenguji))
-                                    <button type="button" class="btn-penilaian text-purple-600 hover:text-purple-800 transition-colors duration-200" 
-                                            data-id="{{ $jadwal->id }}" title="Penilaian Calon Dosen">
-                                        <i class="fas fa-clipboard-check"></i>
-                                    </button>
-                                    @endif
-                                    @if($isDosenPenguji1)
-                                        @php
-                                            // Check if all dosen penguji have submitted penilaian
+                                            
+                                            // Check if berita acara is ACTUALLY submitted (not just penilaian complete)
+                                            // Berita acara is considered submitted when rata_akhir is filled by Dosen Penguji 1
+                                            $beritaAcaraSubmitted = false;
+                                            $dosenPenguji1 = $jadwal->dosenPenguji->firstWhere('pivot.urutan', 1);
+                                            if ($dosenPenguji1) {
+                                                $penilaianDosenPenguji1 = $jadwal->penilaianDetails->firstWhere('user_id', $dosenPenguji1->user_id);
+                                                if ($penilaianDosenPenguji1 && $penilaianDosenPenguji1->rata_akhir !== null) {
+                                                    $beritaAcaraSubmitted = true;
+                                                }
+                                            }
+                                            
+                                            // Also check if all penilaian submitted (for access permission)
                                             $jumlahDosenPenguji = $jadwal->dosenPenguji->count();
                                             $jumlahPenilaian = $jadwal->penilaianDetails->count();
                                             $allPenilaianSubmitted = $jumlahPenilaian >= $jumlahDosenPenguji && $jumlahDosenPenguji > 0;
                                         @endphp
-                                        @if($allPenilaianSubmitted)
-                                        <button type="button" class="btn-berita-acara text-orange-600 hover:text-orange-800 transition-colors duration-200" 
-                                                data-id="{{ $jadwal->id }}" title="Berita Acara">
-                                            <i class="fas fa-file-signature"></i>
-                                        </button>
+                                        @if($beritaAcaraSubmitted)
+                                            {{-- Show active icon if berita acara already submitted --}}
+                                            @if(Auth::user()->hasRole('Super Admin') || $isDosenPenguji1)
+                                            <button type="button" class="btn-berita-acara text-orange-600 hover:text-orange-800 transition-colors duration-200" 
+                                                    data-id="{{ $jadwal->id }}" title="Lihat Berita Acara">
+                                                <i class="fas fa-file-signature"></i>
+                                            </button>
+                                            @endif
+                                        @elseif($allPenilaianSubmitted && (Auth::user()->hasRole('Super Admin') || $isDosenPenguji1))
+                                            {{-- Show clickable icon if all penilaian submitted but berita acara not yet --}}
+                                            <button type="button" class="btn-berita-acara text-yellow-600 hover:text-orange-800 transition-colors duration-200" 
+                                                    data-id="{{ $jadwal->id }}" title="Buat Berita Acara (Belum Submit)">
+                                                <i class="fas fa-file-signature"></i>
+                                            </button>
                                         @endif
-                                    @endif
-                                    @if(Auth::check() && !Auth::user()->hasRole('User Biasa'))
+                                    @endcan
+                                    @can('jadwal-pengujian.delete')
                                     <button type="button" class="btn-delete text-red-600 hover:text-red-800 transition-colors duration-200" 
                                             data-id="{{ $jadwal->id }}" title="Hapus">
                                         <i class="fas fa-trash"></i>
                                     </button>
-                                    @endif
+                                    @endcan
                                 </div>
                             </td>
                         </tr>
@@ -370,9 +389,12 @@
         }
 
         // Open Create Modal
-        document.getElementById('btnTambahData').addEventListener('click', function() {
-            openCreateModal();
-        });
+        const btnTambahData = document.getElementById('btnTambahData');
+        if (btnTambahData) {
+            btnTambahData.addEventListener('click', function() {
+                openCreateModal();
+            });
+        }
 
         function openCreateModal() {
             Swal.fire({

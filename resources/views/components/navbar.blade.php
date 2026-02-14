@@ -162,6 +162,7 @@
             @endcan
 
             {{-- Rekrutasi Dosen Section --}}
+            @canany(['rekrutasi-data-dosen.view', 'jadwal-pengujian.view', 'penilaian-dosen.access', 'berita-acara.access', 'hasil-pengujian.view'])
             <li class="relative">
                 <button onclick="toggleDropdown('rekrutasiDropdown')"
                     class="w-full flex items-center justify-between px-6 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('rekrutasi-dosen*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
@@ -183,33 +184,42 @@
                 {{-- Rekrutasi Dosen Dropdown Menu --}}
                 <div id="rekrutasiDropdown" class="hidden bg-red-700/50 backdrop-blur-sm">
                     <ul class="py-2 space-y-1">
+                        @can('rekrutasi-data-dosen.view')
                         <li>
                             <a href="{{ route('rekrutasi-dosen') }}"
                                 class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('rekrutasi-dosen') && !request()->routeIs('rekrutasi-dosen.*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
                                 Data Rekrutasi Dosen
                             </a>
                         </li>
+                        @endcan
+                        @can('import-rekrutasi-dosen.view')
                         <li>
                             <a href="{{ route('import-rekruitasi') }}"
                                 class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('import-rekruitasi') || request()->routeIs('rekrutasi-dosen.import*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
                                 Import Rekrutasi Dosen
                             </a>
                         </li>
+                        @endcan
+                        @can('jadwal-pengujian.view')
                         <li>
                             <a href="{{ route('rekrutasi-dosen.jadwal-pengujian') }}"
                                 class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('rekrutasi-dosen.jadwal-pengujian') || request()->routeIs('rekrutasi-dosen.penilaian') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
                                 Jadwal Pengujian Dosen
                             </a>
                         </li>
+                        @endcan
+                        @can('hasil-pengujian.view')
                         <li>
                             <a href="{{ route('rekrutasi-dosen.hasil-pengujian') }}"
                                 class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('rekrutasi-dosen.hasil-pengujian') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
                                 Hasil Pengujian
                             </a>
                         </li>
+                        @endcan
                     </ul>
                 </div>
             </li>
+            @endcanany
 
             {{-- Manajemen Mahasiswa Section --}}
             <li class="relative">

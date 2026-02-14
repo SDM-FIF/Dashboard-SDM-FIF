@@ -126,16 +126,26 @@
                                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" data-row-key="{{ $data['sub_module_key'] }}">
                                         @foreach($data['permissions'] as $permType => $perm)
                                             @if($perm['id'])
-                                            <label class="flex items-center space-x-2 cursor-pointer hover:bg-gray-100 px-3 py-2 rounded-lg transition-colors min-w-0">
+                                            <label class="flex items-center space-x-2 {{ $perm['is_disabled'] ?? false ? 'cursor-not-allowed opacity-75' : 'cursor-pointer hover:bg-gray-100' }} px-3 py-2 rounded-lg transition-colors min-w-0">
                                                 <input type="checkbox" 
                                                        name="permissions[]" 
                                                        value="{{ $perm['id'] }}"
                                                        {{ $perm['has_permission'] ? 'checked' : '' }}
-                                                       class="permission-checkbox w-4 h-4 text-[#C41E3A] border-gray-300 rounded focus:ring-[#C41E3A] flex-shrink-0"
+                                                       {{ ($perm['is_disabled'] ?? false) ? 'disabled' : '' }}
+                                                       class="permission-checkbox w-4 h-4 text-[#C41E3A] border-gray-300 rounded focus:ring-[#C41E3A] flex-shrink-0 {{ ($perm['is_disabled'] ?? false) ? 'cursor-not-allowed' : '' }}"
                                                        data-row="{{ $data['sub_module_key'] }}"
                                                        data-type="{{ $permType }}"
                                                        onchange="handlePermissionChange(this)">
-                                                <span class="text-gray-700 text-sm whitespace-nowrap overflow-hidden text-ellipsis">{{ $perm['label'] }}</span>
+                                                {{-- Hidden input to preserve disabled checked permissions --}}
+                                                @if(($perm['is_disabled'] ?? false) && $perm['has_permission'])
+                                                    <input type="hidden" name="permissions[]" value="{{ $perm['id'] }}">
+                                                @endif
+                                                <span class="text-gray-700 text-sm whitespace-nowrap overflow-hidden text-ellipsis {{ ($perm['is_disabled'] ?? false) ? 'text-gray-500' : '' }}">
+                                                    {{ $perm['label'] }}
+                                                    @if($perm['is_disabled'] ?? false)
+                                                        <i class="fas fa-lock text-xs ml-1" title="Permission ini tidak dapat diubah untuk role ini"></i>
+                                                    @endif
+                                                </span>
                                             </label>
                                             @endif
                                         @endforeach
