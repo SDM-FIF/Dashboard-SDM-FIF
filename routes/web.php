@@ -270,7 +270,7 @@ Route::middleware('auth')->group(function () {
     // ============================
     // Manajemen TPA Routes
     // ============================
-    Route::prefix('manajemen-tpa')->name('manajemen-tpa.')->group(function () {
+    Route::prefix('manajemen-tpa')->name('manajemen-tpa.')->middleware('can:kelola-data-tpa.view')->group(function () {
         // Kelola Data & Laporan
         Route::get('/kelola-data', [TenagaPendukungAkademikController::class, 'kelolaData'])->name('kelola-data');
         Route::get('/laporan', [TenagaPendukungAkademikController::class, 'laporan'])->name('laporan');
@@ -278,20 +278,22 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/download-template', [TenagaPendukungAkademikController::class, 'downloadTemplate'])->name('download-template');
 
-        // Import Features (Upload -> Preview -> Store)
-        Route::get('/import-data', [TenagaPendukungAkademikController::class, 'importForm'])->name('import-data');
-        Route::post('/import-process', [TenagaPendukungAkademikController::class, 'importProcess'])->name('import-process');
-        Route::post('/import-store', [TenagaPendukungAkademikController::class, 'storeImport'])->name('import.store');
+        // Import Features (Protected - Super Admin only)
+        Route::middleware('can:import-data-tpa.view')->group(function () {
+            Route::get('/import-data', [TenagaPendukungAkademikController::class, 'importForm'])->name('import-data');
+            Route::post('/import-process', [TenagaPendukungAkademikController::class, 'importProcess'])->name('import-process');
+            Route::post('/import-store', [TenagaPendukungAkademikController::class, 'storeImport'])->name('import.store');
+        });
 
-        // CRUD Routes
-        Route::get('/create', [TenagaPendukungAkademikController::class, 'create'])->name('create');
-        Route::post('/store', [TenagaPendukungAkademikController::class, 'store'])->name('store');
+        // CRUD Routes with specific permissions
+        Route::get('/create', [TenagaPendukungAkademikController::class, 'create'])->name('create')->middleware('can:kelola-data-tpa.create');
+        Route::post('/store', [TenagaPendukungAkademikController::class, 'store'])->name('store')->middleware('can:kelola-data-tpa.create');
 
         // Letakkan route dengan parameter {tpa} di paling bawah agar tidak bentrok dengan route statis
-        Route::get('/{tpa}', [TenagaPendukungAkademikController::class, 'show'])->name('show');
-        Route::get('/{tpa}/edit', [TenagaPendukungAkademikController::class, 'edit'])->name('edit');
-        Route::put('/{tpa}', [TenagaPendukungAkademikController::class, 'update'])->name('update');
-        Route::delete('/{tpa}', [TenagaPendukungAkademikController::class, 'destroy'])->name('destroy');
+        Route::get('/{tpa}', [TenagaPendukungAkademikController::class, 'show'])->name('show')->middleware('can:kelola-data-tpa.detail');
+        Route::get('/{tpa}/edit', [TenagaPendukungAkademikController::class, 'edit'])->name('edit')->middleware('can:kelola-data-tpa.edit');
+        Route::put('/{tpa}', [TenagaPendukungAkademikController::class, 'update'])->name('update')->middleware('can:kelola-data-tpa.edit');
+        Route::delete('/{tpa}', [TenagaPendukungAkademikController::class, 'destroy'])->name('destroy')->middleware('can:kelola-data-tpa.delete');
     });
     // ============================
     // Manajemen Mahasiswa Routes

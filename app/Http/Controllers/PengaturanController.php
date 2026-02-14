@@ -188,6 +188,10 @@ class PengaturanController extends Controller
                 'kelola-data-dosen' => 'Kelola Data',
                 'import-data-dosen' => 'Import Data',
                 'laporan-data-dosen' => 'Laporan Dosen',
+            ],
+            'Manajemen TPA' => [
+                'kelola-data-tpa' => 'Kelola Data',
+                'import-data-tpa' => 'Import Data',
             ]
         ];
         

@@ -118,11 +118,13 @@
                 {{-- Action Buttons Row --}}
                 <div class="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0">
                     {{-- Tambah Data Button --}}
+                    @can('kelola-data-tpa.create')
                     <a href="{{ route('manajemen-tpa.create') }}"
                        class="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2">
                         <i class="fas fa-plus"></i>
                         <span>Tambah Data</span>
                     </a>
+                    @endcan
 
                     <div class="flex flex-wrap items-center space-x-4">
                         <div class="relative">
@@ -189,18 +191,23 @@
                                     </td>
                                     <td class="px-6 py-4 text-sm text-gray-900">
                                         <div class="flex items-center space-x-2">
+                                            @can('kelola-data-tpa.detail')
                                             <a href="{{ route('manajemen-tpa.show', $item->id) }}"
                                                class="text-blue-600 hover:text-blue-800 transition-colors duration-200"
                                                title="Lihat Detail">
                                                 <i class="fas fa-eye"></i>
                                             </a>
+                                            @endcan
 
+                                            @can('kelola-data-tpa.edit')
                                             <a href="{{ route('manajemen-tpa.edit', $item->id) }}"
                                                class="text-green-600 hover:text-green-800 transition-colors duration-200"
                                                title="Edit">
                                                 <i class="fas fa-edit"></i>
                                             </a>
+                                            @endcan
 
+                                            @can('kelola-data-tpa.delete')
                                             <form action="{{ route('manajemen-tpa.destroy', $item->id) }}"
                                                   method="POST"
                                                   class="inline-block"
@@ -213,6 +220,7 @@
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
+                                            @endcan
                                         </div>
                                     </td>
                                 </tr>
@@ -226,11 +234,13 @@
                                             <h3 class="text-lg font-medium text-gray-900 mb-1">Tidak ada data TPA</h3>
                                             <p class="text-sm text-gray-500">Belum ada data TPA yang tersedia atau sesuai dengan filter yang dipilih.</p>
                                         </div>
+                                        @can('kelola-data-tpa.create')
                                         <a href="{{ route('manajemen-tpa.create') }}"
                                            class="inline-flex items-center px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors duration-200">
                                             <i class="fas fa-plus mr-2"></i>
                                             Tambah TPA Pertama
                                         </a>
+                                        @endcan
                                     </div>
                                 </td>
                             </tr>
