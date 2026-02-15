@@ -14,6 +14,8 @@ class MahasiswaController extends Controller
      */
     public function index(Request $request)
     {
+        $this->authorize('kelola-data-mahasiswa.view');
+        
         // Eager load relasi prodi untuk efisiensi query
         $query = Mahasiswa::with('prodi');
 
@@ -83,6 +85,8 @@ class MahasiswaController extends Controller
      */
     public function importView(Request $request)
     {
+        $this->authorize('import-data-mahasiswa.view');
+        
         $step = $request->get('step');
         $reset = $request->get('reset');
 
@@ -117,6 +121,7 @@ class MahasiswaController extends Controller
      */
     public function uploadImport(Request $request)
     {
+        $this->authorize('import-data-mahasiswa.view');
 
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv|max:2048'
@@ -246,6 +251,8 @@ class MahasiswaController extends Controller
      */
     public function saveImport(Request $request)
     {
+        $this->authorize('import-data-mahasiswa.view');
+        
         $importData = session('import_data', []);
 
         if (empty($importData)) {
@@ -294,6 +301,8 @@ class MahasiswaController extends Controller
      */
     public function importResult()
     {
+        $this->authorize('import-data-mahasiswa.view');
+        
         $result = session('import_result', []);
         return view('mahasiswa.import-result', compact('result'));
     }
@@ -303,6 +312,8 @@ class MahasiswaController extends Controller
      */
     public function downloadTemplate()
     {
+        $this->authorize('import-data-mahasiswa.view');
+        
         $filename = 'template-mahasiswa.xls';
 
         $headers = [
@@ -358,8 +369,8 @@ class MahasiswaController extends Controller
      * Download Hasil Import (Log Sukses)
      */
     public function downloadImportResult()
-    {
-        $result = session('import_result', []);
+    {        $this->authorize('import-data-mahasiswa.view');
+                $result = session('import_result', []);
 
         if (empty($result['data'])) {
             return redirect()->back()->with('error', 'Tidak ada data untuk didownload.');
@@ -436,12 +447,16 @@ class MahasiswaController extends Controller
 
     public function create()
     {
+        $this->authorize('kelola-data-mahasiswa.create');
+        
         $prodi = Prodi::all();
         return view('mahasiswa.tambah-data', compact('prodi'));
     }
 
     public function store(Request $request)
     {
+        $this->authorize('kelola-data-mahasiswa.create');
+        
         $validated = $request->validate([
             'nama_lengkap' => 'required|string|max:255',
             'nim' => 'required|numeric|unique:mahasiswa,nim',
@@ -458,6 +473,8 @@ class MahasiswaController extends Controller
     }
     public function show(Request $request, Mahasiswa $mahasiswa)
     {
+        $this->authorize('kelola-data-mahasiswa.detail');
+        
         // 1. Ambil detail mahasiswa yang dipilih (Eager load relasi)
         $mahasiswa->load(['prodi']);
 
@@ -477,12 +494,16 @@ class MahasiswaController extends Controller
 
     public function edit(Mahasiswa $mahasiswa)
     {
+        $this->authorize('kelola-data-mahasiswa.edit');
+        
         $prodi = Prodi::all();
         return view('mahasiswa.edit-data', compact('mahasiswa', 'prodi'));
     }
 
     public function update(Request $request, Mahasiswa $mahasiswa)
     {
+        $this->authorize('kelola-data-mahasiswa.edit');
+        
         $validated = $request->validate([
             'nama_lengkap' => 'required|string|max:255',
             'nim' => 'required|numeric|unique:mahasiswa,nim,' . $mahasiswa->id,
@@ -500,6 +521,8 @@ class MahasiswaController extends Controller
 
     public function destroy(Mahasiswa $mahasiswa)
     {
+        $this->authorize('kelola-data-mahasiswa.delete');
+        
         try {
             $mahasiswa->delete();
             return redirect()->route('mahasiswa.kelola-data')->with('success', 'Data Mahasiswa berhasil dihapus!');
