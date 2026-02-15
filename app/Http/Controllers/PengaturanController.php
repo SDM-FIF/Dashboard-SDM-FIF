@@ -7,6 +7,7 @@ use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\RoleExport;
+use App\Exports\PlottingPermissionExport;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -355,6 +356,112 @@ class PengaturanController extends Controller
         return redirect()->route('pengaturan.plotting', $roleId)
             ->with('success', $message)
             ->with('is_own_role', $isEditingOwnRole);
+    }
+
+    /**
+     * Export plotting permission to Excel
+     */
+    public function exportPlottingExcel($roleId)
+    {
+        $role = Role::findOrFail($roleId);
+        $fileName = 'Plotting_Permission_' . str_replace(' ', '_', $role->name) . '_' . date('Y-m-d') . '.xlsx';
+        
+        return Excel::download(new PlottingPermissionExport($roleId), $fileName);
+    }
+
+    /**
+     * Export plotting permission to CSV
+     */
+    public function exportPlottingCsv($roleId)
+    {
+        $role = Role::findOrFail($roleId);
+        $fileName = 'Plotting_Permission_' . str_replace(' ', '_', $role->name) . '_' . date('Y-m-d') . '.csv';
+        
+        return Excel::download(new PlottingPermissionExport($roleId), $fileName, \Maatwebsite\Excel\Excel::CSV);
+    }
+
+    /**
+     * Export plotting permission to PDF
+     */
+    public function exportPlottingPdf($roleId)
+    {
+        $role = Role::findOrFail($roleId);
+        
+        // Prepare data like in plotting method
+        $moduleGroups = [
+            'Dashboard' => [
+                'dashboard-sdm' => 'Dashboard SDM',
+                'dashboard-dosen' => 'Dashboard Dosen',
+                'dashboard-tpa' => 'Dashboard TPA',
+                'dashboard-kompetisi' => 'Dashboard Kompetisi',
+            ],
+            'Manajemen Dosen' => [
+                'kelola-data-dosen' => 'Kelola Data',
+                'import-data-dosen' => 'Import Data',
+                'laporan-data-dosen' => 'Laporan Dosen',
+            ],
+            'Manajemen TPA' => [
+                'kelola-data-tpa' => 'Kelola Data',
+                'import-data-tpa' => 'Import Data',
+            ],
+            'Rekrutasi Dosen' => [
+                'rekrutasi-data-dosen' => 'Data Rekrutasi Dosen',
+                'import-rekrutasi-dosen' => 'Import Rekrutasi Dosen',
+                'jadwal-pengujian' => 'Jadwal Pengujian Dosen',
+                'penilaian-dosen' => 'Penilaian Calon Dosen',
+                'berita-acara' => 'Berita Acara',
+                'hasil-pengujian' => 'Hasil Pengujian',
+            ],
+            'Manajemen Mahasiswa' => [
+                'kelola-data-mahasiswa' => 'Kelola Data',
+                'import-data-mahasiswa' => 'Import Data',
+            ],
+            'Master Data' => [
+                'master-data-fakultas' => 'Data Fakultas',
+                'master-data-prodi' => 'Data Program Studi',
+                'master-data-kompetisi' => 'Data Kompetisi',
+            ]
+        ];
+
+        $permissionData = [];
+        foreach ($moduleGroups as $parentModule => $subModules) {
+            foreach ($subModules as $key => $label) {
+                // Define permission types based on module
+                if ($key === 'penilaian-dosen' || $key === 'berita-acara') {
+                    $permissionTypes = ['all', 'access', 'submit'];
+                } elseif ($key === 'hasil-pengujian') {
+                    $permissionTypes = ['all', 'view'];
+                } else {
+                    $permissionTypes = ['all', 'view', 'detail', 'create', 'edit', 'delete'];
+                }
+
+                $permissions = [];
+                foreach ($permissionTypes as $type) {
+                    $permission = Permission::where('name', "{$key}.{$type}")->first();
+                    if ($permission) {
+                        $hasPermission = $role->hasPermissionTo($permission->name);
+                        $permissions[$type] = $hasPermission ? 'Ya' : 'Tidak';
+                    }
+                }
+
+                $permissionData[] = [
+                    'parent_module' => $parentModule,
+                    'sub_module' => $label,
+                    'permissions' => $permissions
+                ];
+            }
+        }
+
+        $fileName = 'Plotting_Permission_' . str_replace(' ', '_', $role->name) . '_' . date('Y-m-d') . '.pdf';
+        
+        $pdf = Pdf::loadView('pengaturan.plotting-export-pdf', [
+            'role' => $role,
+            'permissionData' => $permissionData
+        ]);
+        
+        $pdf->setPaper('a4', 'landscape');
+        
+        return $pdf->download($fileName);
     }
 }
 

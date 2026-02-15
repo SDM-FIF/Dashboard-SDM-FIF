@@ -381,7 +381,13 @@
             </div>
             <div class="flex-1">
                 <p class="text-sm font-semibold">{{ Auth::user()->nama_lengkap ?? Auth::user()->name ?? 'Admin' }}</p>
-                <p class="text-xs text-red-200 opacity-80">{{ Auth::user()->roles->first()->name ?? 'Administrator' }}</p>
+                @if(Auth::user()->roles->count() > 0)
+                    <p class="text-xs text-red-200 opacity-80">
+                        {{ Auth::user()->roles->pluck('name')->join(' + ') }}
+                    </p>
+                @else
+                    <p class="text-xs text-red-200 opacity-80">Administrator</p>
+                @endif
             </div>
         </div>
 
