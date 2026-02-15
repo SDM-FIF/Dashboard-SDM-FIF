@@ -21,6 +21,7 @@ class Dosen extends Model
         'jabatan',
         'nip',
         'kode_dosen',
+        'lokasi_kerja',          // ✅ Tambahan untuk lokasi kerja dosen
         'status_pegawai',
         'pendidikan_terakhir',
         'sertifikasi_dosen',      // ✅ Tambahan baru
