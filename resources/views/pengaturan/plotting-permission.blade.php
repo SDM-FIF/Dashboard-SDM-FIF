@@ -300,15 +300,43 @@
             });
         }
 
-        // Export Data (placeholder)
+        // Export Data
         function exportData(format) {
+            const roleId = {{ $role->id }};
+            let url;
+            
+            switch(format) {
+                case 'excel':
+                    url = '{{ route('pengaturan.plotting.export.excel', ['roleId' => $role->id]) }}';
+                    break;
+                case 'csv':
+                    url = '{{ route('pengaturan.plotting.export.csv', ['roleId' => $role->id]) }}';
+                    break;
+                case 'pdf':
+                    url = '{{ route('pengaturan.plotting.export.pdf', ['roleId' => $role->id]) }}';
+                    break;
+                default:
+                    return;
+            }
+            
+            // Show loading message
             Swal.fire({
-                title: 'Export Data',
-                html: `Fitur export ${format.toUpperCase()} akan segera tersedia.`,
-                icon: 'info',
-                confirmButtonText: 'OK',
-                confirmButtonColor: '#C41E3A'
+                title: 'Mengunduh...',
+                html: `Sedang menyiapkan file ${format.toUpperCase()}`,
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                willOpen: () => {
+                    Swal.showLoading();
+                }
             });
+            
+            // Download file
+            window.location.href = url;
+            
+            // Close loading after a short delay
+            setTimeout(() => {
+                Swal.close();
+            }, 1500);
         }
 
         // Show success/error messages with SweetAlert

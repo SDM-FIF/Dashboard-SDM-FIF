@@ -525,6 +525,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/pengaturan/plotting/{roleId}', [App\Http\Controllers\PengaturanController::class, 'plotting'])->name('pengaturan.plotting');
     Route::put('/pengaturan/plotting/{roleId}/update', [App\Http\Controllers\PengaturanController::class, 'updatePermissions'])->name('pengaturan.plotting.update');
     
+    // Pengaturan - Plotting Permission Export
+    Route::get('/pengaturan/plotting/{roleId}/export/excel', [App\Http\Controllers\PengaturanController::class, 'exportPlottingExcel'])->name('pengaturan.plotting.export.excel');
+    Route::get('/pengaturan/plotting/{roleId}/export/csv', [App\Http\Controllers\PengaturanController::class, 'exportPlottingCsv'])->name('pengaturan.plotting.export.csv');
+    Route::get('/pengaturan/plotting/{roleId}/export/pdf', [App\Http\Controllers\PengaturanController::class, 'exportPlottingPdf'])->name('pengaturan.plotting.export.pdf');
+    
     // Pengaturan - Export
     Route::get('/pengaturan/export/excel', [App\Http\Controllers\PengaturanController::class, 'exportExcel'])->name('pengaturan.export.excel');
     Route::get('/pengaturan/export/csv', [App\Http\Controllers\PengaturanController::class, 'exportCsv'])->name('pengaturan.export.csv');
