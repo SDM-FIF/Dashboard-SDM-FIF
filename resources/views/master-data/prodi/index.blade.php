@@ -16,10 +16,12 @@
 
         <div class="flex justify-between items-center mb-8">
             <h1 class="text-3xl md:text-4xl font-bold text-gray-800">Data Program Studi</h1>
+            @can('master-data-prodi.create')
             <a href="{{ route('prodi.create') }}"
                 class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition shadow-md">
                 <i class="fas fa-plus mr-2"></i> Tambah Prodi
             </a>
+            @endcan
         </div>
 
         {{-- Filter & Search --}}
@@ -54,12 +56,15 @@
                             <td class="px-6 py-4 text-center">
                                 <div class="flex justify-center items-center space-x-3 text-lg">
                                     {{-- Tombol Edit --}}
+                                    @can('master-data-prodi.edit')
                                     <a href="{{ route('prodi.edit', $item->id) }}"
                                         class="text-green-600 hover:text-green-800 transition">
                                         <i class="fas fa-edit"></i>
                                     </a>
+                                    @endcan
 
                                     {{-- Form Delete --}}
+                                    @can('master-data-prodi.delete')
                                     <form action="{{ route('prodi.destroy', $item->id) }}" method="POST"
                                         onsubmit="return confirm('Apakah Anda yakin ingin menghapus Prodi {{ $item->nama_prodi }}?')">
                                         @csrf
@@ -68,6 +73,7 @@
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
+                                    @endcan
                                 </div>
                             </td>
                         </tr>

@@ -10,6 +10,8 @@ class ProdiController extends Controller
 {
     public function index(Request $request)
     {
+        $this->authorize('master-data-prodi.view');
+        
         $query = Prodi::with('fakultas');
 
         if ($request->has('search')) {
@@ -22,12 +24,16 @@ class ProdiController extends Controller
 
     public function create()
     {
+        $this->authorize('master-data-prodi.create');
+        
         $fakultas = Fakultas::all();
         return view('master-data.prodi.create', compact('fakultas'));
     }
 
     public function store(Request $request)
     {
+        $this->authorize('master-data-prodi.create');
+        
         $request->validate([
             'nama_prodi' => 'required|string|max:255',
             'fakultas_id' => 'required|exists:fakultas,id',
@@ -39,6 +45,8 @@ class ProdiController extends Controller
 
     public function edit($id)
     {
+        $this->authorize('master-data-prodi.edit');
+        
         // 1. Cari data prodi yang mau diedit
         $prodi = Prodi::findOrFail($id);
 
@@ -50,6 +58,8 @@ class ProdiController extends Controller
     }
     public function destroy($id)
     {
+        $this->authorize('master-data-prodi.delete');
+        
         $prodi = Prodi::findOrFail($id);
 
         // Opsional: Cek jika ada relasi sebelum hapus (biar gak error database constraint)
@@ -63,6 +73,8 @@ class ProdiController extends Controller
     }
     public function update(Request $request, $id)
     {
+        $this->authorize('master-data-prodi.edit');
+        
         $request->validate([
             'nama_prodi' => 'required|string|max:255',
             'fakultas_id' => 'required|exists:fakultas,id',

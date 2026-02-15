@@ -78,10 +78,12 @@
 
                                 <td class="px-6 py-4 text-center">
                                     <div class="flex justify-center space-x-3 text-lg">
-                                        <a href="{{ route('fakultas.edit', $item->id) }}"
-                                            class="text-green-600 hover:text-green-800">
-                                            <i class="fas fa-edit"></i>
-                                        </a>
+                                        @can('master-data-fakultas.edit')
+                                            <a href="{{ route('fakultas.edit', $item->id) }}"
+                                                class="text-green-600 hover:text-green-800">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                        @endcan
                                     </div>
                                 </td>
                             </tr>

@@ -274,6 +274,7 @@
             @endcanany
 
             {{-- Master Data Section (DIUPDATE) --}}
+            @canany(['master-data-fakultas.view', 'master-data-prodi.view', 'master-data-kompetisi.view'])
             <li class="relative">
                 <button onclick="toggleDropdown('masterDataDropdown')"
                     class="w-full flex items-center justify-between px-6 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->is('master-data*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
@@ -296,29 +297,36 @@
                 <div id="masterDataDropdown" class="hidden bg-red-700/50 backdrop-blur-sm">
                     <ul class="py-2 space-y-1">
                         {{-- Data Fakultas --}}
+                        @can('master-data-fakultas.view')
                         <li>
                             <a href="{{ route('fakultas.index') }}"
                                 class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('fakultas.*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
                                 <i class="fas fa-university mr-2"></i> Data Fakultas
                             </a>
                         </li>
+                        @endcan
                         {{-- Data Program Studi --}}
+                        @can('master-data-prodi.view')
                         <li>
                             <a href="{{ route('prodi.index') }}"
                                 class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('prodi.*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
                                 <i class="fas fa-graduation-cap mr-2"></i> Data Program Studi
                             </a>
                         </li>
+                        @endcan
                         {{-- Data Kompetisi --}}
+                        @can('master-data-kompetisi.view')
                         <li>
                             <a href="{{ route('kompetisi.index') }}"
                                 class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('kompetisi.*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
                                 <i class="fas fa-trophy mr-2"></i> Data Kompetisi
                             </a>
                         </li>
+                        @endcan
                     </ul>
                 </div>
             </li>
+            @endcanany
 
             {{-- Pengaturan Section --}}
             <li class="relative">

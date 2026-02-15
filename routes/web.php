@@ -217,19 +217,58 @@ Route::middleware('auth')->group(function () {
     // 🆕 MASTER DATA ROUTES (Fakultas, Prodi, Kompetisi)
     // ============================
     // Menggunakan Route::resource agar otomatis ada index, create, store, edit, update, destroy
-    Route::prefix('master-data')->group(function () {
+    Route::prefix('master-data')->middleware(['auth'])->group(function () {
         
-        // URL: /master-data/fakultas
-        // Route Name: fakultas.index, fakultas.create, fakultas.edit, dst.
-        Route::resource('fakultas', FakultasController::class);
+        // Fakultas - view permission for all roles, edit permission for Super Admin only
+        Route::middleware('can:master-data-fakultas.view')->group(function () {
+            Route::get('fakultas', [FakultasController::class, 'index'])->name('fakultas.index');
+            
+            Route::middleware('can:master-data-fakultas.edit')->group(function () {
+                Route::get('fakultas/create', [FakultasController::class, 'create'])->name('fakultas.create');
+                Route::post('fakultas', [FakultasController::class, 'store'])->name('fakultas.store');
+                Route::get('fakultas/{fakultas}/edit', [FakultasController::class, 'edit'])->name('fakultas.edit');
+                Route::put('fakultas/{fakultas}', [FakultasController::class, 'update'])->name('fakultas.update');
+                Route::delete('fakultas/{fakultas}', [FakultasController::class, 'destroy'])->name('fakultas.destroy');
+            });
+        });
 
-        // URL: /master-data/prodi
-        // Route Name: prodi.index, dst.
-        Route::resource('prodi', ProdiController::class);
+        // Prodi - view permission for all roles, create/edit/delete for Super Admin only
+        Route::middleware('can:master-data-prodi.view')->group(function () {
+            Route::get('prodi', [ProdiController::class, 'index'])->name('prodi.index');
+            
+            Route::middleware('can:master-data-prodi.create')->group(function () {
+                Route::get('prodi/create', [ProdiController::class, 'create'])->name('prodi.create');
+                Route::post('prodi', [ProdiController::class, 'store'])->name('prodi.store');
+            });
+            
+            Route::middleware('can:master-data-prodi.edit')->group(function () {
+                Route::get('prodi/{prodi}/edit', [ProdiController::class, 'edit'])->name('prodi.edit');
+                Route::put('prodi/{prodi}', [ProdiController::class, 'update'])->name('prodi.update');
+            });
+            
+            Route::middleware('can:master-data-prodi.delete')->group(function () {
+                Route::delete('prodi/{prodi}', [ProdiController::class, 'destroy'])->name('prodi.destroy');
+            });
+        });
 
-        // URL: /master-data/kompetisi
-        // Route Name: kompetisi.index, dst.
-        Route::resource('kompetisi', KompetisiController::class);
+        // Kompetisi - view permission for all roles, create/edit/delete for Super Admin only
+        Route::middleware('can:master-data-kompetisi.view')->group(function () {
+            Route::get('kompetisi', [KompetisiController::class, 'index'])->name('kompetisi.index');
+            
+            Route::middleware('can:master-data-kompetisi.create')->group(function () {
+                Route::get('kompetisi/create', [KompetisiController::class, 'create'])->name('kompetisi.create');
+                Route::post('kompetisi', [KompetisiController::class, 'store'])->name('kompetisi.store');
+            });
+            
+            Route::middleware('can:master-data-kompetisi.edit')->group(function () {
+                Route::get('kompetisi/{kompetisi}/edit', [KompetisiController::class, 'edit'])->name('kompetisi.edit');
+                Route::put('kompetisi/{kompetisi}', [KompetisiController::class, 'update'])->name('kompetisi.update');
+            });
+            
+            Route::middleware('can:master-data-kompetisi.delete')->group(function () {
+                Route::delete('kompetisi/{kompetisi}', [KompetisiController::class, 'destroy'])->name('kompetisi.destroy');
+            });
+        });
     });
     // ============================
     // Manajemen Dosen Routes

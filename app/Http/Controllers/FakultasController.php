@@ -10,6 +10,8 @@ class FakultasController extends Controller
 {
     public function index(Request $request)
     {
+        $this->authorize('master-data-fakultas.view');
+        
         $query = Fakultas::with(['dekan', 'wadek1', 'wadek2']);
 
         if ($request->filled('search')) {
@@ -31,6 +33,8 @@ class FakultasController extends Controller
 
    public function create()
     {
+        $this->authorize('master-data-fakultas.edit');
+        
         // Gunakan nama 'dosenList' agar sama dengan file Edit
         $dosenList = Dosen::orderBy('nama_lengkap', 'asc')->get();
         return view('master-data.fakultas.create', compact('dosenList'));
@@ -38,6 +42,8 @@ class FakultasController extends Controller
 
     public function edit($id)
     {
+        $this->authorize('master-data-fakultas.edit');
+        
         $fakultas = Fakultas::findOrFail($id);
         
         // Deklarasikan variabel $dosenList
@@ -49,6 +55,8 @@ class FakultasController extends Controller
 
     public function update(Request $request, $id)
     {
+        $this->authorize('master-data-fakultas.edit');
+        
         $request->validate([
             'nama_fakultas' => 'required',
             'id_dekan'      => 'nullable|exists:dosen,id',

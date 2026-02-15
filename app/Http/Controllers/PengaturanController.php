@@ -204,6 +204,11 @@ class PengaturanController extends Controller
             'Manajemen Mahasiswa' => [
                 'kelola-data-mahasiswa' => 'Kelola Data',
                 'import-data-mahasiswa' => 'Import Data',
+            ],
+            'Master Data' => [
+                'master-data-fakultas' => 'Data Fakultas',
+                'master-data-prodi' => 'Data Program Studi',
+                'master-data-kompetisi' => 'Data Kompetisi',
             ]
         ];
         
