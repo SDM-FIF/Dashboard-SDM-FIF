@@ -16,10 +16,12 @@
 
         <div class="flex justify-between items-center mb-8">
             <h1 class="text-3xl font-bold text-gray-800">Data Kompetisi</h1>
+            @can('master-data-kompetisi.create')
             <a href="{{ route('kompetisi.create') }}"
                 class="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition shadow-md">
                 <i class="fas fa-plus mr-2"></i> Tambah Kompetisi
             </a>
+            @endcan
         </div>
 
         <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
@@ -48,11 +50,14 @@
                             <td class="px-6 py-4 text-sm">{{ $item->tanggal_kompetisi->format('d M Y') }}</td>
                             <td class="px-6 py-4 text-center">
                                 <div class="flex justify-center items-center space-x-3">
+                                    @can('master-data-kompetisi.edit')
                                     <a href="{{ route('kompetisi.edit', $item->id) }}"
                                         class="text-green-600 hover:text-green-800 transition">
                                         <i class="fas fa-edit"></i>
                                     </a>
+                                    @endcan
 
+                                    @can('master-data-kompetisi.delete')
                                     <form action="{{ route('kompetisi.destroy', $item->id) }}" method="POST"
                                         onsubmit="return confirm('Apakah Anda yakin ingin menghapus kompetisi ini?')">
                                         @csrf
@@ -61,6 +66,7 @@
                                             <i class="fas fa-trash"></i>
                                         </button>
                                     </form>
+                                    @endcan
                                 </div>
                             </td>
                         </tr>
