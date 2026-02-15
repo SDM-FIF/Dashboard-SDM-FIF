@@ -211,6 +211,10 @@ class PengaturanController extends Controller
                 'master-data-fakultas' => 'Data Fakultas',
                 'master-data-prodi' => 'Data Program Studi',
                 'master-data-kompetisi' => 'Data Kompetisi',
+            ],
+            'Pengaturan' => [
+                'konfigurasi-sistem' => 'Konfigurasi Sistem',
+                'user-management' => 'User Management',
             ]
         ];
         
@@ -421,6 +425,10 @@ class PengaturanController extends Controller
                 'master-data-fakultas' => 'Data Fakultas',
                 'master-data-prodi' => 'Data Program Studi',
                 'master-data-kompetisi' => 'Data Kompetisi',
+            ],
+            'Pengaturan' => [
+                'konfigurasi-sistem' => 'Konfigurasi Sistem',
+                'user-management' => 'User Management',
             ]
         ];
 
