@@ -8,6 +8,7 @@ use Spatie\Permission\Models\Permission;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\RoleExport;
 use App\Exports\PlottingPermissionExport;
+use App\Exports\UserExport;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -457,6 +458,188 @@ class PengaturanController extends Controller
         $pdf = Pdf::loadView('pengaturan.plotting-export-pdf', [
             'role' => $role,
             'permissionData' => $permissionData
+        ]);
+        
+        $pdf->setPaper('a4', 'landscape');
+        
+        return $pdf->download($fileName);
+    }
+
+    /**
+     * Display user management page
+     */
+    public function userManagement(Request $request)
+    {
+        $search = $request->get('search', '');
+        
+        $users = User::with('roles')
+            ->when($search, function($query) use ($search) {
+                return $query->where(function($q) use ($search) {
+                    $q->where('nama_lengkap', 'like', '%' . $search . '%')
+                      ->orWhere('username', 'like', '%' . $search . '%');
+                });
+            })
+            ->orderBy('id', 'asc')
+            ->get();
+        
+        $roles = Role::all();
+        
+        return view('pengaturan.user-management', compact('users', 'roles', 'search'));
+    }
+
+    /**
+     * Store a newly created user
+     */
+    public function storeUser(Request $request)
+    {
+        $request->validate([
+            'nama_lengkap' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:user,username',
+            'password' => 'required|string|min:6',
+            'roles' => 'required|array|min:1',
+            'roles.*' => 'exists:roles,id',
+        ], [
+            'nama_lengkap.required' => 'Nama lengkap wajib diisi.',
+            'username.required' => 'Username wajib diisi.',
+            'username.unique' => 'Username "' . $request->username . '" sudah digunakan.',
+            'password.required' => 'Password wajib diisi.',
+            'password.min' => 'Password minimal 6 karakter.',
+            'roles.required' => 'Minimal 1 role harus dipilih.',
+        ]);
+
+        // Create user
+        $roleIds = $request->roles;
+        $firstRoleId = $roleIds[0]; // Ambil role pertama sebagai primary role
+        
+        $user = User::create([
+            'nama_lengkap' => $request->nama_lengkap,
+            'username' => $request->username,
+            'password' => Hash::make($request->password),
+            'role_id' => $firstRoleId, // Set role pertama sebagai primary role
+            'fakultas_id' => null,
+            'prodi_id' => null,
+        ]);
+
+        // Assign all roles via Spatie Permission
+        $roles = Role::whereIn('id', $roleIds)->get();
+        $user->syncRoles($roles);
+
+        return redirect()->route('pengaturan.user-management')
+            ->with('success', 'User berhasil ditambahkan.');
+    }
+
+    /**
+     * Update the specified user
+     */
+    public function updateUser(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+        
+        $request->validate([
+            'nama_lengkap' => 'required|string|max:255',
+            'username' => 'required|string|max:255|unique:user,username,' . $id,
+            'password' => 'nullable|string|min:6',
+            'roles' => 'required|array|min:1',
+            'roles.*' => 'exists:roles,id',
+        ], [
+            'nama_lengkap.required' => 'Nama lengkap wajib diisi.',
+            'username.required' => 'Username wajib diisi.',
+            'username.unique' => 'Username "' . $request->username . '" sudah digunakan.',
+            'password.min' => 'Password minimal 6 karakter.',
+            'roles.required' => 'Minimal 1 role harus dipilih.',
+        ]);
+
+        // Update user data
+        $user->nama_lengkap = $request->nama_lengkap;
+        $user->username = $request->username;
+        
+        // Update password only if provided
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+        
+        // Update role_id dengan role pertama sebagai primary role
+        $roleIds = $request->roles;
+        $user->role_id = $roleIds[0];
+        
+        $user->save();
+
+        // Update all roles via Spatie Permission
+        $roles = Role::whereIn('id', $roleIds)->get();
+        $user->syncRoles($roles);
+
+        return redirect()->route('pengaturan.user-management')
+            ->with('success', 'User berhasil diupdate.');
+    }
+
+    /**
+     * Remove the specified user
+     */
+    public function destroyUser($id)
+    {
+        $user = User::findOrFail($id);
+        
+        // Prevent deleting own account
+        if (auth()->id() == $user->id) {
+            return redirect()->route('pengaturan.user-management')
+                ->with('error', 'Anda tidak dapat menghapus akun Anda sendiri.');
+        }
+        
+        $user->delete();
+        
+        return redirect()->route('pengaturan.user-management')
+            ->with('success', 'User berhasil dihapus.');
+    }
+
+    /**
+     * Export users to Excel
+     */
+    public function exportUserExcel(Request $request)
+    {
+        $filters = [
+            'search' => $request->get('search', ''),
+        ];
+        
+        $fileName = 'Data_User_' . date('Y-m-d') . '.xlsx';
+        
+        return Excel::download(new UserExport($filters), $fileName);
+    }
+
+    /**
+     * Export users to CSV
+     */
+    public function exportUserCsv(Request $request)
+    {
+        $filters = [
+            'search' => $request->get('search', ''),
+        ];
+        
+        $fileName = 'Data_User_' . date('Y-m-d') . '.csv';
+        
+        return Excel::download(new UserExport($filters), $fileName, \Maatwebsite\Excel\Excel::CSV);
+    }
+
+    /**
+     * Export users to PDF
+     */
+    public function exportUserPdf(Request $request)
+    {
+        $search = $request->get('search', '');
+        
+        $users = User::with('roles')
+            ->when($search, function($query) use ($search) {
+                return $query->where(function($q) use ($search) {
+                    $q->where('nama_lengkap', 'like', '%' . $search . '%')
+                      ->orWhere('username', 'like', '%' . $search . '%');
+                });
+            })
+            ->orderBy('id', 'asc')
+            ->get();
+        
+        $fileName = 'Data_User_' . date('Y-m-d') . '.pdf';
+        
+        $pdf = Pdf::loadView('pengaturan.user-export-pdf', [
+            'users' => $users
         ]);
         
         $pdf->setPaper('a4', 'landscape');
