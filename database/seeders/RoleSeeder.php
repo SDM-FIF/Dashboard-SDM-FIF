@@ -27,6 +27,11 @@ class RoleSeeder extends Seeder
         $dosenPenguji2 = Role::firstOrCreate(['name' => 'Dosen Penguji 2']);
         $dosenPenguji3 = Role::firstOrCreate(['name' => 'Dosen Penguji 3']);
 
+        // Create Structural roles (Dekan, Wadek 1, Wadek 2)
+        $dekan = Role::firstOrCreate(['name' => 'Dekan']);
+        $wadek1 = Role::firstOrCreate(['name' => 'Wadek 1']);
+        $wadek2 = Role::firstOrCreate(['name' => 'Wadek 2']);
+
         // Create User Biasa role
         $userBiasa = Role::firstOrCreate(['name' => 'User Biasa']);
 
