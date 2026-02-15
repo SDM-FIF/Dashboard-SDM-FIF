@@ -352,13 +352,13 @@
                     <ul class="py-2 space-y-1">
                         <li>
                             <a href="{{ route('pengaturan') }}"
-                                class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('pengaturan*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
+                                class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('pengaturan') && !request()->routeIs('pengaturan.user-management*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
                                 Konfigurasi Sistem
                             </a>
                         </li>
                         <li>
-                            <a href="#"
-                                class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100">
+                            <a href="{{ route('pengaturan.user-management') }}"
+                                class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('pengaturan.user-management*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
                                 User Management
                             </a>
                         </li>

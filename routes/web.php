@@ -530,6 +530,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/pengaturan/plotting/{roleId}/export/csv', [App\Http\Controllers\PengaturanController::class, 'exportPlottingCsv'])->name('pengaturan.plotting.export.csv');
     Route::get('/pengaturan/plotting/{roleId}/export/pdf', [App\Http\Controllers\PengaturanController::class, 'exportPlottingPdf'])->name('pengaturan.plotting.export.pdf');
     
+    // Pengaturan - User Management
+    Route::get('/pengaturan/user-management', [App\Http\Controllers\PengaturanController::class, 'userManagement'])->name('pengaturan.user-management');
+    Route::post('/pengaturan/user', [App\Http\Controllers\PengaturanController::class, 'storeUser'])->name('pengaturan.user.store');
+    Route::put('/pengaturan/user/{id}', [App\Http\Controllers\PengaturanController::class, 'updateUser'])->name('pengaturan.user.update');
+    Route::delete('/pengaturan/user/{id}', [App\Http\Controllers\PengaturanController::class, 'destroyUser'])->name('pengaturan.user.destroy');
+    
+    // Pengaturan - User Export
+    Route::get('/pengaturan/user/export/excel', [App\Http\Controllers\PengaturanController::class, 'exportUserExcel'])->name('pengaturan.user.export.excel');
+    Route::get('/pengaturan/user/export/csv', [App\Http\Controllers\PengaturanController::class, 'exportUserCsv'])->name('pengaturan.user.export.csv');
+    Route::get('/pengaturan/user/export/pdf', [App\Http\Controllers\PengaturanController::class, 'exportUserPdf'])->name('pengaturan.user.export.pdf');
+    
     // Pengaturan - Export
     Route::get('/pengaturan/export/excel', [App\Http\Controllers\PengaturanController::class, 'exportExcel'])->name('pengaturan.export.excel');
     Route::get('/pengaturan/export/csv', [App\Http\Controllers\PengaturanController::class, 'exportCsv'])->name('pengaturan.export.csv');
