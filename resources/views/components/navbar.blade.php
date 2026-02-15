@@ -329,6 +329,7 @@
             @endcanany
 
             {{-- Pengaturan Section --}}
+            @canany(['konfigurasi-sistem.view', 'user-management.view'])
             <li class="relative">
                 <button onclick="toggleDropdown('pengaturanDropdown')"
                     class="w-full flex items-center justify-between px-6 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('pengaturan*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
@@ -350,22 +351,27 @@
                 {{-- Pengaturan Dropdown Menu --}}
                 <div id="pengaturanDropdown" class="hidden bg-red-700/50 backdrop-blur-sm">
                     <ul class="py-2 space-y-1">
+                        @can('konfigurasi-sistem.view')
                         <li>
                             <a href="{{ route('pengaturan') }}"
                                 class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('pengaturan') && !request()->routeIs('pengaturan.user-management*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
                                 Konfigurasi Sistem
                             </a>
                         </li>
+                        @endcan
+                        @can('user-management.view')
                         <li>
                             <a href="{{ route('pengaturan.user-management') }}"
                                 class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('pengaturan.user-management*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
                                 User Management
                             </a>
                         </li>
+                        @endcan
                         <!-- Add more dropdown items here -->
                     </ul>
                 </div>
             </li>
+            @endcanany
         </ul>
     </div>
 

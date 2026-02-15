@@ -515,11 +515,19 @@ Route::middleware('auth')->group(function () {
         return view('reports.master-data');
     })->name('master-data');
 
-    // System - Pengaturan
-    Route::get('/pengaturan', [App\Http\Controllers\PengaturanController::class, 'index'])->name('pengaturan');
-    Route::post('/pengaturan/role', [App\Http\Controllers\PengaturanController::class, 'storeRole'])->name('pengaturan.role.store');
-    Route::put('/pengaturan/role/{id}', [App\Http\Controllers\PengaturanController::class, 'updateRole'])->name('pengaturan.role.update');
-    Route::delete('/pengaturan/role/{id}', [App\Http\Controllers\PengaturanController::class, 'destroyRole'])->name('pengaturan.role.destroy');
+    // System - Pengaturan - Konfigurasi Sistem
+    Route::get('/pengaturan', [App\Http\Controllers\PengaturanController::class, 'index'])
+        ->name('pengaturan')
+        ->middleware('permission:konfigurasi-sistem.view');
+    Route::post('/pengaturan/role', [App\Http\Controllers\PengaturanController::class, 'storeRole'])
+        ->name('pengaturan.role.store')
+        ->middleware('permission:konfigurasi-sistem.create');
+    Route::put('/pengaturan/role/{id}', [App\Http\Controllers\PengaturanController::class, 'updateRole'])
+        ->name('pengaturan.role.update')
+        ->middleware('permission:konfigurasi-sistem.edit');
+    Route::delete('/pengaturan/role/{id}', [App\Http\Controllers\PengaturanController::class, 'destroyRole'])
+        ->name('pengaturan.role.destroy')
+        ->middleware('permission:konfigurasi-sistem.delete');
     
     // Pengaturan - Plotting Permission
     Route::get('/pengaturan/plotting/{roleId}', [App\Http\Controllers\PengaturanController::class, 'plotting'])->name('pengaturan.plotting');
@@ -531,18 +539,38 @@ Route::middleware('auth')->group(function () {
     Route::get('/pengaturan/plotting/{roleId}/export/pdf', [App\Http\Controllers\PengaturanController::class, 'exportPlottingPdf'])->name('pengaturan.plotting.export.pdf');
     
     // Pengaturan - User Management
-    Route::get('/pengaturan/user-management', [App\Http\Controllers\PengaturanController::class, 'userManagement'])->name('pengaturan.user-management');
-    Route::post('/pengaturan/user', [App\Http\Controllers\PengaturanController::class, 'storeUser'])->name('pengaturan.user.store');
-    Route::put('/pengaturan/user/{id}', [App\Http\Controllers\PengaturanController::class, 'updateUser'])->name('pengaturan.user.update');
-    Route::delete('/pengaturan/user/{id}', [App\Http\Controllers\PengaturanController::class, 'destroyUser'])->name('pengaturan.user.destroy');
+    Route::get('/pengaturan/user-management', [App\Http\Controllers\PengaturanController::class, 'userManagement'])
+        ->name('pengaturan.user-management')
+        ->middleware('permission:user-management.view');
+    Route::post('/pengaturan/user', [App\Http\Controllers\PengaturanController::class, 'storeUser'])
+        ->name('pengaturan.user.store')
+        ->middleware('permission:user-management.create');
+    Route::put('/pengaturan/user/{id}', [App\Http\Controllers\PengaturanController::class, 'updateUser'])
+        ->name('pengaturan.user.update')
+        ->middleware('permission:user-management.edit');
+    Route::delete('/pengaturan/user/{id}', [App\Http\Controllers\PengaturanController::class, 'destroyUser'])
+        ->name('pengaturan.user.destroy')
+        ->middleware('permission:user-management.delete');
     
     // Pengaturan - User Export
-    Route::get('/pengaturan/user/export/excel', [App\Http\Controllers\PengaturanController::class, 'exportUserExcel'])->name('pengaturan.user.export.excel');
-    Route::get('/pengaturan/user/export/csv', [App\Http\Controllers\PengaturanController::class, 'exportUserCsv'])->name('pengaturan.user.export.csv');
-    Route::get('/pengaturan/user/export/pdf', [App\Http\Controllers\PengaturanController::class, 'exportUserPdf'])->name('pengaturan.user.export.pdf');
+    Route::get('/pengaturan/user/export/excel', [App\Http\Controllers\PengaturanController::class, 'exportUserExcel'])
+        ->name('pengaturan.user.export.excel')
+        ->middleware('permission:user-management.view');
+    Route::get('/pengaturan/user/export/csv', [App\Http\Controllers\PengaturanController::class, 'exportUserCsv'])
+        ->name('pengaturan.user.export.csv')
+        ->middleware('permission:user-management.view');
+    Route::get('/pengaturan/user/export/pdf', [App\Http\Controllers\PengaturanController::class, 'exportUserPdf'])
+        ->name('pengaturan.user.export.pdf')
+        ->middleware('permission:user-management.view');
     
-    // Pengaturan - Export
-    Route::get('/pengaturan/export/excel', [App\Http\Controllers\PengaturanController::class, 'exportExcel'])->name('pengaturan.export.excel');
-    Route::get('/pengaturan/export/csv', [App\Http\Controllers\PengaturanController::class, 'exportCsv'])->name('pengaturan.export.csv');
-    Route::get('/pengaturan/export/pdf', [App\Http\Controllers\PengaturanController::class, 'exportPdf'])->name('pengaturan.export.pdf');
+    // Pengaturan - Konfigurasi Sistem Export
+    Route::get('/pengaturan/export/excel', [App\Http\Controllers\PengaturanController::class, 'exportExcel'])
+        ->name('pengaturan.export.excel')
+        ->middleware('permission:konfigurasi-sistem.view');
+    Route::get('/pengaturan/export/csv', [App\Http\Controllers\PengaturanController::class, 'exportCsv'])
+        ->name('pengaturan.export.csv')
+        ->middleware('permission:konfigurasi-sistem.view');
+    Route::get('/pengaturan/export/pdf', [App\Http\Controllers\PengaturanController::class, 'exportPdf'])
+        ->name('pengaturan.export.pdf')
+        ->middleware('permission:konfigurasi-sistem.view');
 });
