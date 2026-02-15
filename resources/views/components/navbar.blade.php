@@ -222,6 +222,7 @@
             @endcanany
 
             {{-- Manajemen Mahasiswa Section --}}
+            @canany(['kelola-data-mahasiswa.view', 'import-data-mahasiswa.view'])
             <li class="relative">
                 {{-- Button Dropdown: Aktif (Kuning) jika route diawali dengan 'mahasiswa.' --}}
                 <button onclick="toggleDropdown('mahasiswaDropdown')"
@@ -248,6 +249,7 @@
                 <div id="mahasiswaDropdown"
                     class="{{ request()->routeIs('mahasiswa.*') ? '' : 'hidden' }} bg-red-700/50 backdrop-blur-sm">
                     <ul class="py-2 space-y-1">
+                        @can('kelola-data-mahasiswa.view')
                         <li>
                             {{-- Link Kelola Data --}}
                             <a href="{{ route('mahasiswa.kelola-data') }}"
@@ -255,6 +257,8 @@
                                 Kelola Data
                             </a>
                         </li>
+                        @endcan
+                        @can('import-data-mahasiswa.view')
                         <li>
                             {{-- Link Import Data --}}
                             <a href="{{ route('mahasiswa.import.view') }}"
@@ -262,10 +266,12 @@
                                 Import Data
                             </a>
                         </li>
+                        @endcan
 
                     </ul>
                 </div>
             </li>
+            @endcanany
 
             {{-- Master Data Section (DIUPDATE) --}}
             <li class="relative">

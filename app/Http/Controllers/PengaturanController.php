@@ -200,6 +200,10 @@ class PengaturanController extends Controller
                 'penilaian-dosen' => 'Penilaian Calon Dosen',
                 'berita-acara' => 'Berita Acara',
                 'hasil-pengujian' => 'Hasil Pengujian',
+            ],
+            'Manajemen Mahasiswa' => [
+                'kelola-data-mahasiswa' => 'Kelola Data',
+                'import-data-mahasiswa' => 'Import Data',
             ]
         ];
         

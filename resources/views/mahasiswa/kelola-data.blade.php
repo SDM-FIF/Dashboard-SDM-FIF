@@ -120,11 +120,13 @@
 
                 <div
                     class="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0">
+                    @can('kelola-data-mahasiswa.create')
                     <a href="{{ route('mahasiswa.create') }}"
                         class="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-3 rounded-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 flex items-center space-x-2">
                         <i class="fas fa-user-plus"></i>
                         <span>Tambah Mahasiswa</span>
                     </a>
+                    @endcan
 
                     <div class="flex flex-wrap items-center space-x-4">
                         <select id="exportDropdown"
@@ -190,14 +192,19 @@
                                                         </td>
                                                         <td class="px-6 py-4 text-sm text-center">
                                                             <div class="flex items-center justify-center space-x-3">
+                                                                @can('kelola-data-mahasiswa.detail')
                                                                 <a href="{{ route('mahasiswa.show', $item->id) }}"
                                                                     class="text-blue-600 hover:text-blue-800" title="Detail">
                                                                     <i class="fas fa-eye"></i>
                                                                 </a>
+                                                                @endcan
+                                                                @can('kelola-data-mahasiswa.edit')
                                                                 <a href="{{ route('mahasiswa.edit', $item->id) }}"
                                                                     class="text-green-600 hover:text-green-800" title="Edit">
                                                                     <i class="fas fa-edit"></i>
                                                                 </a>
+                                                                @endcan
+                                                                @can('kelola-data-mahasiswa.delete')
                                                                 <form action="{{ route('mahasiswa.destroy', $item->id) }}" method="POST"
                                                                     class="inline"
                                                                     onsubmit="return confirm('Yakin ingin menghapus mahasiswa ini?')">
@@ -207,6 +214,7 @@
                                                                         <i class="fas fa-trash"></i>
                                                                     </button>
                                                                 </form>
+                                                                @endcan
                                                             </div>
                                                         </td>
                                                     </tr>

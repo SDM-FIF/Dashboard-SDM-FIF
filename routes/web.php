@@ -299,34 +299,35 @@ Route::middleware('auth')->group(function () {
     // Manajemen Mahasiswa Routes
     // ============================
 
-    Route::prefix('mahasiswa')->name('mahasiswa.')->group(function () {
+    Route::prefix('mahasiswa')->name('mahasiswa.')->middleware('can:kelola-data-mahasiswa.view')->group(function () {
 
-        // --- FITUR IMPORT (Pola Multi-Step) ---
-        // Halaman utama import & Step 1 (Upload View)
-        Route::get('/import', [MahasiswaController::class, 'importView'])->name('import.view');
-        // Proses Upload & Parsing (Step 1 ke Step 2)
-        Route::post('/import/upload', [MahasiswaController::class, 'uploadImport'])->name('import.upload');
-        // Proses Simpan ke Database (Step 2 ke Result)
-        Route::post('/import/save', [MahasiswaController::class, 'saveImport'])->name('import.save');
-        // Halaman Hasil Akhir (Step 3)
-        Route::get('/import/result', [MahasiswaController::class, 'importResult'])->name('import.result');
-
-        // --- DOWNLOADS ---
-        Route::get('/download-template', [MahasiswaController::class, 'downloadTemplate'])->name('download.template');
-        Route::get('/download-result', [MahasiswaController::class, 'downloadImportResult'])->name('download.result');
+        // --- FITUR IMPORT (Pola Multi-Step) - Super Admin Only ---
+        Route::middleware('can:import-data-mahasiswa.view')->group(function () {
+            // Halaman utama import & Step 1 (Upload View)
+            Route::get('/import', [MahasiswaController::class, 'importView'])->name('import.view');
+            // Proses Upload & Parsing (Step 1 ke Step 2)
+            Route::post('/import/upload', [MahasiswaController::class, 'uploadImport'])->name('import.upload');
+            // Proses Simpan ke Database (Step 2 ke Result)
+            Route::post('/import/save', [MahasiswaController::class, 'saveImport'])->name('import.save');
+            // Halaman Hasil Akhir (Step 3)
+            Route::get('/import/result', [MahasiswaController::class, 'importResult'])->name('import.result');
+            // Downloads
+            Route::get('/download-template', [MahasiswaController::class, 'downloadTemplate'])->name('download.template');
+            Route::get('/download-result', [MahasiswaController::class, 'downloadImportResult'])->name('download.result');
+        });
 
         // --- MANAJEMEN DATA (CRUD) ---
         Route::get('/kelola-data', [MahasiswaController::class, 'index'])->name('kelola-data');
         Route::get('/laporan', [MahasiswaController::class, 'laporan'])->name('laporan');
 
-        Route::get('/create', [MahasiswaController::class, 'create'])->name('create');
-        Route::post('/store', [MahasiswaController::class, 'store'])->name('store');
+        Route::get('/create', [MahasiswaController::class, 'create'])->name('create')->middleware('can:kelola-data-mahasiswa.create');
+        Route::post('/store', [MahasiswaController::class, 'store'])->name('store')->middleware('can:kelola-data-mahasiswa.create');
 
         // Route dengan Parameter diletakkan di bawah agar tidak "memakan" route statis di atas
-        Route::get('/{mahasiswa}', [MahasiswaController::class, 'show'])->name('show');
-        Route::get('/{mahasiswa}/edit', [MahasiswaController::class, 'edit'])->name('edit');
-        Route::put('/{mahasiswa}', [MahasiswaController::class, 'update'])->name('update');
-        Route::delete('/{mahasiswa}', [MahasiswaController::class, 'destroy'])->name('destroy');
+        Route::get('/{mahasiswa}', [MahasiswaController::class, 'show'])->name('show')->middleware('can:kelola-data-mahasiswa.detail');
+        Route::get('/{mahasiswa}/edit', [MahasiswaController::class, 'edit'])->name('edit')->middleware('can:kelola-data-mahasiswa.edit');
+        Route::put('/{mahasiswa}', [MahasiswaController::class, 'update'])->name('update')->middleware('can:kelola-data-mahasiswa.edit');
+        Route::delete('/{mahasiswa}', [MahasiswaController::class, 'destroy'])->name('destroy')->middleware('can:kelola-data-mahasiswa.delete');
     });
     // ============================
     // 🆕 Rekrutasi Dosen Routes (TAMBAHAN BARU)
