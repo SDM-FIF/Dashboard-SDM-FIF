@@ -1,52 +1,50 @@
 FROM php:8.2-cli
 
-# Install system dependencies
+# Install system dependencies + GD dependency
 RUN apt-get update && apt-get install -y \
     git \
     curl \
+    unzip \
+    zip \
+    nodejs \
+    npm \
     libpng-dev \
-    libjpeg-dev \
+    libjpeg62-turbo-dev \
     libfreetype6-dev \
     libonig-dev \
     libxml2-dev \
-    libzip-dev \
-    zip \
-    unzip \
-    nodejs \
-    npm
+    libzip-dev
 
-# Install PHP extensions (GD WAJIB untuk excel & qrcode)
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo_mysql mbstring exif pcntl bcmath zip
+# 🔥 INSTALL GD DENGAN BENAR
+RUN docker-php-ext-configure gd \
+    --with-freetype \
+    --with-jpeg \
+    && docker-php-ext-install gd
 
-# Install composer
+# install extension lain
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath zip
+
+# install composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
 
-# Copy semua file project
+# copy project
 COPY . .
 
-# 🔥 FIX UTAMA: ignore platform req (ext-gd railway bug)
-RUN composer install \
-    --no-dev \
-    --optimize-autoloader \
-    --no-interaction \
-    --ignore-platform-reqs
+# 🔥 CHECK GD TERINSTALL (debug penting)
+RUN php -m | grep gd
 
-# Build frontend (vite/laravel mix)
+# composer install (normal, no ignore)
+RUN composer install --no-dev --optimize-autoloader --no-interaction
+
+# build FE
 RUN npm install
 RUN npm run build
 
-# Laravel cache optimize
-RUN php artisan config:clear || true
-RUN php artisan route:clear || true
-RUN php artisan view:clear || true
-
-# Permission
+# permission
 RUN chmod -R 775 storage bootstrap/cache || true
 
 EXPOSE 8080
 
-# 🔥 Railway wajib pakai PORT dynamic
 CMD php artisan serve --host=0.0.0.0 --port=${PORT}
