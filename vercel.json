@@ -1,5 +1,4 @@
 {
-  "version": 2,
   "functions": {
     "api/index.php": {
       "runtime": "vercel-php@0.7.0"
@@ -11,14 +10,8 @@
       "dest": "public/build/$1"
     },
     {
-      "src": "/(css|js|images)/(.*)",
-      "dest": "public/$1/$2"
-    },
-    {
       "src": "/(.*)",
       "dest": "/api/index.php"
     }
-  ],
-  "buildCommand": "npm run build",
-  "installCommand": "npm install"
+  ]
 }
