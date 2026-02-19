@@ -1,0 +1,47 @@
+FROM php:8.2-cli
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    libonig-dev \
+    libxml2-dev \
+    libzip-dev \
+    zip \
+    unzip \
+    nodejs \
+    npm
+
+# Install PHP extensions (WAJIB sebelum composer)
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd pdo_mysql mbstring exif pcntl bcmath zip
+
+# Install composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www
+
+# Copy semua file dulu (biar ext kebaca composer)
+COPY . .
+
+# Install dependency php (setelah gd ada)
+RUN composer install --no-dev --optimize-autoloader --no-interaction
+
+# Install node deps + build FE
+RUN npm install
+RUN npm run build
+
+# Laravel cache optimize
+RUN php artisan config:clear || true
+RUN php artisan route:clear || true
+RUN php artisan view:clear || true
+
+# Permission
+RUN chmod -R 775 storage bootstrap/cache || true
+
+EXPOSE 8080
+
+CMD php artisan serve --host=0.0.0.0 --port=${PORT}
