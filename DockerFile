@@ -15,7 +15,7 @@ RUN apt-get update && apt-get install -y \
     nodejs \
     npm
 
-# Install PHP extensions (WAJIB sebelum composer)
+# Install PHP extensions (GD WAJIB untuk excel & qrcode)
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install gd pdo_mysql mbstring exif pcntl bcmath zip
 
@@ -24,13 +24,17 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
 
-# Copy semua file dulu (biar ext kebaca composer)
+# Copy semua file project
 COPY . .
 
-# Install dependency php (setelah gd ada)
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+# 🔥 FIX UTAMA: ignore platform req (ext-gd railway bug)
+RUN composer install \
+    --no-dev \
+    --optimize-autoloader \
+    --no-interaction \
+    --ignore-platform-reqs
 
-# Install node deps + build FE
+# Build frontend (vite/laravel mix)
 RUN npm install
 RUN npm run build
 
@@ -44,4 +48,5 @@ RUN chmod -R 775 storage bootstrap/cache || true
 
 EXPOSE 8080
 
+# 🔥 Railway wajib pakai PORT dynamic
 CMD php artisan serve --host=0.0.0.0 --port=${PORT}
