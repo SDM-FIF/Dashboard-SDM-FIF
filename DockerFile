@@ -1,50 +1,79 @@
-FROM php:8.2-cli
+# Build stage for frontend assets
+FROM node:20-alpine AS node-builder
 
-# Install system dependencies + GD dependency
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci
+
+COPY . .
+RUN npm run build
+
+# PHP base stage
+FROM php:8.2-fpm AS base
+
+# Install system dependencies
 RUN apt-get update && apt-get install -y \
     git \
     curl \
-    unzip \
-    zip \
-    nodejs \
-    npm \
     libpng-dev \
     libjpeg62-turbo-dev \
     libfreetype6-dev \
     libonig-dev \
     libxml2-dev \
-    libzip-dev
+    libzip-dev \
+    zip \
+    unzip \
+    && rm -rf /var/lib/apt/lists/*
 
-# 🔥 INSTALL GD DENGAN BENAR
-RUN docker-php-ext-configure gd \
-    --with-freetype \
-    --with-jpeg \
-    && docker-php-ext-install gd
+# Install PHP extensions
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) \
+    gd \
+    pdo_mysql \
+    mbstring \
+    exif \
+    pcntl \
+    bcmath \
+    zip
 
-# install extension lain
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath zip
+# Install Redis extension
+RUN pecl install redis \
+    && docker-php-ext-enable redis
 
-# install composer
+# Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-WORKDIR /var/www
+# Set working directory
+WORKDIR /var/www/html
 
-# copy project
+# Copy composer files
+COPY composer.json composer.lock ./
+
+# Install PHP dependencies
+RUN composer install --no-dev --no-scripts --no-autoloader --optimize-autoloader
+
+# Copy application files
 COPY . .
 
-# 🔥 CHECK GD TERINSTALL (debug penting)
-RUN php -m | grep gd
+# Copy built frontend assets from node-builder stage
+COPY --from=node-builder /app/public/build ./public/build
 
-# composer install (normal, no ignore)
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+# Generate optimized autoloader
+RUN composer dump-autoload --optimize
 
-# build FE
-RUN npm install
-RUN npm run build
+# Set permissions
+RUN chown -R www-data:www-data /var/www/html \
+    && chmod -R 755 /var/www/html/storage \
+    && chmod -R 755 /var/www/html/bootstrap/cache
 
-# permission
-RUN chmod -R 775 storage bootstrap/cache || true
+# Production stage
+FROM base AS production
 
-EXPOSE 8080
+# Copy PHP-FPM configuration
+COPY docker/php/php.ini /usr/local/etc/php/conf.d/custom.ini
+COPY docker/php/www.conf /usr/local/etc/php-fpm.d/www.conf
 
-CMD php artisan serve --host=0.0.0.0 --port=${PORT}
+EXPOSE 9000
+
+CMD ["php-fpm"]
