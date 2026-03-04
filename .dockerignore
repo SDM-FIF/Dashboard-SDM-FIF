@@ -1,0 +1,49 @@
+# Version Control
+.git
+.gitignore
+.gitattributes
+
+# Docker (keep config files but ignore compose override)
+docker-compose.override.yml
+
+# Documentation
+README.md
+*.md
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+.DS_Store
+
+# Testing
+tests/
+phpunit.xml
+.phpunit.result.cache
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Laravel
+storage/logs/
+storage/framework/cache/*
+storage/framework/sessions/*
+storage/framework/views/*
+bootstrap/cache/*
+
+# Build artifacts
+public/hot
+public/storage
+vendor/
+
+# Other
+*.log

@@ -82,7 +82,6 @@ class UserSeeder extends Seeder
             'jabatan' => 'Lektor',
             'nip' => '198501012010121001',
             'kode_dosen' => 'DSN001',
-            'lokasi_kerja' => 'Informatika',
             'status_pegawai' => 'Tetap',
             'pendidikan_terakhir' => 'S3',
         ]);
@@ -109,7 +108,6 @@ class UserSeeder extends Seeder
             'jabatan' => 'Guru Besar',
             'nip' => '197803152005011002',
             'kode_dosen' => 'DSN002',
-            'lokasi_kerja' => 'Rekayasa Perangkat Lunak',
             'status_pegawai' => 'Tetap',
             'pendidikan_terakhir' => 'S3',
         ]);
@@ -136,7 +134,6 @@ class UserSeeder extends Seeder
             'jabatan' => 'Lektor Kepala',
             'nip' => '198209252008122003',
             'kode_dosen' => 'DSN003',
-            'lokasi_kerja' => 'Data Sains',
             'status_pegawai' => 'Tetap',
             'pendidikan_terakhir' => 'S3',
         ]);
