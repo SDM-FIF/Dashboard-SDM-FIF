@@ -308,7 +308,7 @@
                                                 method="POST"
                                                 class="inline-block delete-form">
                                                 @csrf
-                                                @method('DELETE')
+                                                @method('DELETE')1
                                                 <button type="button"
                                                     class="text-red-600 hover:text-red-800 transition-colors duration-200 delete-btn"
                                                     data-nama="{{ $dosenItem->nama_lengkap }}"

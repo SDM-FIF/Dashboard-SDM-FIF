@@ -6,16 +6,129 @@ use App\Models\Mahasiswa;
 use App\Models\Prodi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log; // Added for logging
-use Maatwebsite\Excel\Facades\Excel;
+use Maatwebsite\Excel\Facades\Excel; // Pastikan ini ada
+use Barryvdh\DomPDF\Facade\Pdf;      // Pastikan library dompdf terinstall
+
 class MahasiswaController extends Controller
 {
     /**
      * Display a listing of Mahasiswa.
      */
+
+    /**
+     * Export Excel & CSV (Tanpa class tambahan)
+     */
+    public function exportExcel(Request $request)
+    {
+        $this->authorize('kelola-data-mahasiswa.view');
+
+        $format = $request->get('format', 'xlsx'); // default xlsx
+        $fileName = 'data-mahasiswa-' . date('Y-m-d') . '.' . $format;
+
+        // Ambil data dengan filter yang sama seperti index
+        $query = Mahasiswa::with('prodi');
+        if ($request->filled('prodi_id'))
+            $query->where('prodi_id', $request->prodi_id);
+        if ($request->filled('status'))
+            $query->where('status', $request->status);
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('nama_lengkap', 'like', '%' . $request->search . '%')
+                    ->orWhere('nim', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        $data = $query->get()->map(function ($m) {
+            return [
+                'NIM' => $m->nim,
+                'Nama Lengkap' => $m->nama_lengkap,
+                'Program Studi' => $m->prodi->nama_prodi ?? '-',
+                'Status' => ucfirst($m->status),
+            ];
+        });
+
+        // Membuat file excel langsung dari collection
+        return Excel::download(
+            new class ($data) implements \Maatwebsite\Excel\Concerns\FromCollection, \Maatwebsite\Excel\Concerns\WithHeadings {
+            private $data;
+            public function __construct($data)
+            {
+                $this->data = $data; }
+            public function collection()
+            {
+                return $this->data; }
+            public function headings(): array
+            {
+                return ['NIM', 'Nama Lengkap', 'Program Studi', 'Status'];
+            }
+            },
+            $fileName
+        );
+    }
+
+    /**
+     * Export PDF
+     */
+public function exportPdf(Request $request)
+{
+    $this->authorize('kelola-data-mahasiswa.view');
+
+    $query = Mahasiswa::with('prodi');
+
+    // Apply filters
+    if ($request->filled('prodi_id'))
+        $query->where('prodi_id', $request->prodi_id);
+    if ($request->filled('status'))
+        $query->where('status', $request->status);
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $query->where(function ($q) use ($search) {
+            $q->where('nama_lengkap', 'like', '%' . $search . '%')
+                ->orWhere('nim', 'like', '%' . $search . '%');
+        });
+    }
+
+    $mahasiswa = $query->orderBy('nama_lengkap', 'asc')->get();
+
+    // Susun HTML langsung di variabel
+    $html = '
+    <h2 style="text-align: center;">DATA MAHASISWA</h2>
+    <p style="text-align: center;">Tanggal: ' . date('d-m-Y') . '</p>
+    <table border="1" cellspacing="0" cellpadding="5" style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 12px;">
+        <thead>
+            <tr style="background-color: #f2f2f2;">
+                <th width="5%">No</th>
+                <th>NIM</th>
+                <th>Nama Lengkap</th>
+                <th>Program Studi</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>';
+
+    foreach ($mahasiswa as $index => $m) {
+        $html .= '
+            <tr>
+                <td style="text-align: center;">' . ($index + 1) . '</td>
+                <td>' . $m->nim . '</td>
+                <td>' . $m->nama_lengkap . '</td>
+                <td>' . ($m->prodi->nama_prodi ?? '-') . '</td>
+                <td>' . ucfirst($m->status) . '</td>
+            </tr>';
+    }
+
+    $html .= '</tbody></table>';
+
+    // Load dari string HTML, bukan loadView
+    $pdf = Pdf::loadHTML($html);
+    $pdf->setPaper('a4', 'portrait');
+
+    return $pdf->download('data-mahasiswa-' . date('Y-m-d-His') . '.pdf');
+}
     public function index(Request $request)
     {
         $this->authorize('kelola-data-mahasiswa.view');
-        
+
         // Eager load relasi prodi untuk efisiensi query
         $query = Mahasiswa::with('prodi');
 
@@ -86,7 +199,7 @@ class MahasiswaController extends Controller
     public function importView(Request $request)
     {
         $this->authorize('import-data-mahasiswa.view');
-        
+
         $step = $request->get('step');
         $reset = $request->get('reset');
 
@@ -252,7 +365,7 @@ class MahasiswaController extends Controller
     public function saveImport(Request $request)
     {
         $this->authorize('import-data-mahasiswa.view');
-        
+
         $importData = session('import_data', []);
 
         if (empty($importData)) {
@@ -302,7 +415,7 @@ class MahasiswaController extends Controller
     public function importResult()
     {
         $this->authorize('import-data-mahasiswa.view');
-        
+
         $result = session('import_result', []);
         return view('mahasiswa.import-result', compact('result'));
     }
@@ -313,7 +426,7 @@ class MahasiswaController extends Controller
     public function downloadTemplate()
     {
         $this->authorize('import-data-mahasiswa.view');
-        
+
         $filename = 'template-mahasiswa.xls';
 
         $headers = [
@@ -369,8 +482,9 @@ class MahasiswaController extends Controller
      * Download Hasil Import (Log Sukses)
      */
     public function downloadImportResult()
-    {        $this->authorize('import-data-mahasiswa.view');
-                $result = session('import_result', []);
+    {
+        $this->authorize('import-data-mahasiswa.view');
+        $result = session('import_result', []);
 
         if (empty($result['data'])) {
             return redirect()->back()->with('error', 'Tidak ada data untuk didownload.');
@@ -448,7 +562,7 @@ class MahasiswaController extends Controller
     public function create()
     {
         $this->authorize('kelola-data-mahasiswa.create');
-        
+
         $prodi = Prodi::all();
         return view('mahasiswa.tambah-data', compact('prodi'));
     }
@@ -456,7 +570,7 @@ class MahasiswaController extends Controller
     public function store(Request $request)
     {
         $this->authorize('kelola-data-mahasiswa.create');
-        
+
         $validated = $request->validate([
             'nama_lengkap' => 'required|string|max:255',
             'nim' => 'required|numeric|unique:mahasiswa,nim',
@@ -474,7 +588,7 @@ class MahasiswaController extends Controller
     public function show(Request $request, Mahasiswa $mahasiswa)
     {
         $this->authorize('kelola-data-mahasiswa.detail');
-        
+
         // 1. Ambil detail mahasiswa yang dipilih (Eager load relasi)
         $mahasiswa->load(['prodi']);
 
@@ -495,7 +609,7 @@ class MahasiswaController extends Controller
     public function edit(Mahasiswa $mahasiswa)
     {
         $this->authorize('kelola-data-mahasiswa.edit');
-        
+
         $prodi = Prodi::all();
         return view('mahasiswa.edit-data', compact('mahasiswa', 'prodi'));
     }
@@ -503,7 +617,7 @@ class MahasiswaController extends Controller
     public function update(Request $request, Mahasiswa $mahasiswa)
     {
         $this->authorize('kelola-data-mahasiswa.edit');
-        
+
         $validated = $request->validate([
             'nama_lengkap' => 'required|string|max:255',
             'nim' => 'required|numeric|unique:mahasiswa,nim,' . $mahasiswa->id,
@@ -522,7 +636,7 @@ class MahasiswaController extends Controller
     public function destroy(Mahasiswa $mahasiswa)
     {
         $this->authorize('kelola-data-mahasiswa.delete');
-        
+
         try {
             $mahasiswa->delete();
             return redirect()->route('mahasiswa.kelola-data')->with('success', 'Data Mahasiswa berhasil dihapus!');

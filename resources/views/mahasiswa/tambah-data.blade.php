@@ -89,8 +89,7 @@
                         @enderror
                     </div>
 
-
-                    {{-- Status --}}
+                    
                     {{-- Status --}}
                     <div class="space-y-2">
                         <label class="block text-sm font-semibold text-gray-700">

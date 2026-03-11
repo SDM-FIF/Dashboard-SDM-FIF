@@ -26,7 +26,7 @@
                 <p class="text-4xl font-bold">125</p>
             </div>
             <div class="bg-white p-6 rounded-lg shadow text-center">
-                <h2 class="text-red-600 font-semibold">Total Kompetisi</h2>
+                <h2 class="text-red-600 font-semibold">Total Mahasiswa</h2>
                 <p class="text-4xl font-bold">200</p>
             </div>
         </div>
@@ -44,7 +44,7 @@
         </div>
 
         <div class="bg-white px-4 md:px-60 pb-6 pt-6 rounded-lg shadow ">
-            <h3 class="font-semibold mb-4 text-center text-2xl">Distribusi Kompetisi</h3>
+            <h3 class="font-semibold mb-4 text-center text-2xl">Distribusi Mahasiswa</h3>
             <canvas id="chartKompetisi"></canvas>
         </div>
     </main>

@@ -15,16 +15,24 @@
 </head>
 
 <body class="h-full bg-gray-100 font-nunito">
-    
+
     <div class="min-h-full flex">
         <!-- Left side - Welcome section -->
-        <div class="flex-1/4 bg-white hidden items-center justify-center px-4 sm:flex">
-            <div class="mx-auto w-full max-w-sm">
-                <h1 class="text-4xl lg:text-5xl font-bold text-gray-900 text-center">
-                    Selamat Datang
+
+        <div class="w-1/2 bg-white hidden items-center justify-center px-4 sm:flex ">
+            <div class="mx-auto w-full max-w-sm text-center">
+
+                <img src="images/LogoFIF.png" alt="Ilustrasi Selamat Datang SDM Informatika"
+                    class="w-full h-auto mb-6 mx-auto rounded-xl" width="499"
+                    height="499">
+
+                <h1 class="text-2xl lg:text-3xl font-bold text-gray-900">
+                    Selamat Datang di Aplikasi SDM Fakultas Informatika
                 </h1>
             </div>
         </div>
+
+
 
         <!-- Right side - Login form -->
         <div class="flex-1 bg-redmain flex items-center justify-center px-4 ">
@@ -52,8 +60,7 @@
                         <label for="username" class="block text-sm font-medium text-white mb-2">
                             Username
                         </label>
-                        <input id="username" name="username" type="text" required
-                            value="{{ old('username') }}"
+                        <input id="username" name="username" type="text" required value="{{ old('username') }}"
                             class="w-full px-3 py-2 border bg-white border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500"
                             placeholder="Masukkan username">
                     </div>
