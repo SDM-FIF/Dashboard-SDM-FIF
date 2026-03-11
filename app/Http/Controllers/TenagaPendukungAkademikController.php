@@ -200,7 +200,7 @@ class TenagaPendukungAkademikController extends Controller
    <Column ss:Width="180"/> <Column ss:Width="120"/> <Column ss:Width="130"/> <Column ss:Width="120"/> <Column ss:Width="150"/> <Column ss:Width="140"/> <Column ss:Width="120"/> <Row ss:Height="25">
     <Cell ss:StyleID="Header"><Data ss:Type="String">NAMA LENGKAP</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">NIP</Data></Cell>
-    <Cell ss:StyleID="Header"><Data ss:Type="String">PANGKAT GOLONGAN</Data></Cell>
+    <Cell ss:StyleID="Header"><Data ss:Type="String">JABATAN</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">STATUS PEGAWAI</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">LOKASI KERJA</Data></Cell>
     <Cell ss:StyleID="Header"><Data ss:Type="String">PENDIDIKAN TERAKHIR</Data></Cell>
@@ -248,7 +248,7 @@ class TenagaPendukungAkademikController extends Controller
                 $importData[] = [
                     'nama_lengkap' => $row[0] ?? '', // Kolom A
                     'nip' => $row[1] ?? '', // Kolom B
-                    'pangkat_golongan' => $row[2] ?? '', // Kolom C
+                    'jabatan' => $row[2] ?? '', // Kolom C
                     'status_pegawai' => $row[3] ?? '', // Kolom D
                     'lokasi_kerja' => $row[4] ?? '', // Kolom E
                     'pendidikan_terakhir' => $row[5] ?? '', // Kolom F
@@ -306,7 +306,7 @@ class TenagaPendukungAkademikController extends Controller
                         'user_id' => $user->id,
                         'nama_lengkap' => $item['nama_lengkap'],
                         'nip' => $item['nip'],
-                        'pangkat_golongan' => $item['pangkat_golongan'],
+                        'jabatan' => $item['jabatan'],
                         'status_pegawai' => $item['status_pegawai'],
                         'lokasi_kerja' => $item['lokasi_kerja'],
                         'pendidikan_terakhir' => $item['pendidikan_terakhir'],
@@ -367,7 +367,7 @@ class TenagaPendukungAkademikController extends Controller
         $validated = $request->validate([
             'nama_lengkap' => 'required|string|max:255',
             'nip' => 'required|string|max:50|unique:tenaga_pendukung_akademik,nip',
-            'pangkat_golongan' => 'nullable|string|max:50',
+            'jabatan' => 'nullable|string|max:100',
             'status_pegawai' => 'required|string|max:100',
             'lokasi_kerja' => 'required|string|max:100',
             'pendidikan_terakhir' => 'required|string|max:50',
@@ -389,7 +389,7 @@ class TenagaPendukungAkademikController extends Controller
                 'user_id' => $user->id,
                 'nama_lengkap' => $validated['nama_lengkap'],
                 'nip' => $validated['nip'],
-                'pangkat_golongan' => $validated['pangkat_golongan'],
+                'jabatan' => $validated['jabatan'] ?? null,
                 'status_pegawai' => $validated['status_pegawai'],
                 'lokasi_kerja' => $validated['lokasi_kerja'],
                 'pendidikan_terakhir' => $validated['pendidikan_terakhir'],
@@ -471,7 +471,7 @@ class TenagaPendukungAkademikController extends Controller
         $validated = $request->validate([
             'nama_lengkap' => 'required|string|max:255',
             'nip' => 'required|string|max:50|unique:tenaga_pendukung_akademik,nip,' . $tpa->id,
-            'pangkat_golongan' => 'nullable|string|max:50',
+            'jabatan' => 'nullable|string|max:100',
             'status_pegawai' => 'required|string|max:100',
             'lokasi_kerja' => 'required|string|max:100',
             'pendidikan_terakhir' => 'required|string|max:50',
@@ -496,7 +496,7 @@ class TenagaPendukungAkademikController extends Controller
             $tpa->update([
                 'nama_lengkap' => $validated['nama_lengkap'],
                 'nip' => $validated['nip'],
-                'pangkat_golongan' => $validated['pangkat_golongan'],
+                'jabatan' => $validated['jabatan'] ?? null,
                 'status_pegawai' => $validated['status_pegawai'],
                 'lokasi_kerja' => $validated['lokasi_kerja'],
                 'pendidikan_terakhir' => $validated['pendidikan_terakhir'],
@@ -537,5 +537,4 @@ class TenagaPendukungAkademikController extends Controller
     /**
      * Halaman laporan TPA
      */
-
 }

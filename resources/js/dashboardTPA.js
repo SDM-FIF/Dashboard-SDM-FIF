@@ -1,87 +1,105 @@
-import './bootstrap';
-import Chart from 'chart.js/auto';
+import "./bootstrap";
+import Chart from "chart.js/auto";
 
-//MASIH DUMMY DISESUAIKAN SETELAH ADA CONTROLLER
+// Palet warna yang kamu pilih
+const colors = [
+    "#3b82f6", // Blue
+    "#10b981", // Emerald
+    "#f59e0b", // Amber
+    "#4f46e5", // Indigo
+    "#06b6d4", // Cyan
+    "#8b5cf6", // Violet
+    "#ec4899", // Pink
+    "#f97316", // Orange
+    "#64748b", // Slate
+    "#22c55e", // Green
+];
 
-new Chart(document.getElementById('jumlahJuara'), {
-    type: 'doughnut',
+// 1. Chart Jumlah Juara (Soft & Minimalist)
+new Chart(document.getElementById("jumlahJuara"), {
+    type: "doughnut",
     data: {
-        labels: ['Juara 1', 'Juara 2', 'Juara 3'],
-        datasets: [{
-            data: [110, 30, 10],
-            backgroundColor: ['#b91c1c', '#ef4444', '#f87171']
-        }]
-    }
+        labels: ["Juara 1", "Juara 2", "Juara 3"],
+        datasets: [
+            {
+                data: [110, 30, 10],
+                backgroundColor: [colors[2], colors[0], colors[1]], // Yellow, Sky Blue, Soft Red
+            },
+        ],
+    },
 });
 
-new Chart(document.getElementById('jumlahMahasiswa'), {
-    type: 'doughnut',
+// 2. Chart Jumlah Mahasiswa
+new Chart(document.getElementById("jumlahMahasiswa"), {
+    type: "doughnut",
     data: {
-        labels: ['AKADEMIK', 'NON-AKADEMIK'],
-        datasets: [{
-            data: [110, 30],
-            backgroundColor: ['#b91c1c', '#ef4444']
-        }]
-    }
+        labels: ["AKADEMIK", "NON-AKADEMIK"],
+        datasets: [
+            {
+                data: [110, 30],
+                backgroundColor: [colors[0], colors[3]], // Sky Blue & Leaf Green
+            },
+        ],
+    },
 });
 
-new Chart(document.getElementById('statusMahasiswa'), {
-    type: 'doughnut',
+// 3. Chart Status Mahasiswa
+new Chart(document.getElementById("statusMahasiswa"), {
+    type: "doughnut",
     data: {
-        labels: ['AKTIF', 'CUTI','TIDAK AKTIF'],
-        datasets: [{
-            data: [110, 30, 10],
-            backgroundColor: ['#991b1b','#b91c1c', '#ef4444', '#f87171']
-        }]
-    }
+        labels: ["AKTIF", "CUTI", "TIDAK AKTIF"],
+        datasets: [
+            {
+                data: [110, 30, 10],
+                backgroundColor: [colors[3], colors[2], colors[1]], // Green, Yellow, Red
+            },
+        ],
+    },
 });
 
-new Chart(document.getElementById('jumlahKompetisi'), {
-    type: 'bar',
+// 4. Bar Chart JFA Dosen (Vertikal)
+new Chart(document.getElementById("jumlahKompetisi"), {
+    type: "bar",
     data: {
-        labels: ['RPL', 'IT', 'DS', 'IF', 'PJJ'],
-        datasets: [{
-            label: 'Jumlah Dosen',
-            data: [30, 40, 20, 45, 5],
-            backgroundColor: [
-                '#b91c1c',
-                '#ef4444',
-                '#f87171',
-                '#fca5a5',
-                '#fecaca'
-            ]
-        }]
+        labels: ["RPL", "IT", "DS", "IF", "PJJ"],
+        datasets: [
+            {
+                label: "Jumlah Dosen",
+                data: [30, 40, 20, 45, 5],
+                backgroundColor: colors, // Otomatis menggunakan 5 warna palet
+            },
+        ],
     },
     options: {
         responsive: true,
         plugins: {
-            title: {
-                display: true,
-                text: 'JFA Dosen'
-            },
-            legend: {
-                display: false
-            }
+            title: { display: true, text: "JFA Dosen" },
+            legend: { display: false },
         },
-        scales: {
-            y: {
-                beginAtZero: true
-            }
-        }
-    }
+        scales: { y: { beginAtZero: true } },
+    },
 });
 
-new Chart(document.getElementById('jumlahKompetisi2'), {
-    type: 'bar',
+// 5. Bar Chart Kompetisi 2 (Horizontal)
+new Chart(document.getElementById("jumlahKompetisi2"), {
+    type: "bar",
     data: {
-        labels: ['PEGAWAI TETAP','PROFESIONAL FULL TIME','PROFESIONAL PART TIME','PERBANTUAN LLDIKTI'],
-        datasets: [{
-            label: 'Jumlah',
-            data: [40,20,60,80],
-            backgroundColor: '#b91c1c'
-        }]
+        labels: [
+            "PEGAWAI TETAP",
+            "PROFESIONAL FULL TIME",
+            "PROFESIONAL PART TIME",
+            "PERBANTUAN LLDIKTI",
+        ],
+        datasets: [
+            {
+                label: "Jumlah",
+                data: [40, 20, 60, 80],
+                backgroundColor: colors, // Mengambil 4 warna pertama dari palet
+            },
+        ],
     },
     options: {
-        indexAxis: 'y'
-    }
+        indexAxis: "y",
+        plugins: { legend: { display: false } },
+    },
 });

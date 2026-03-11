@@ -86,7 +86,7 @@
                         {{-- Pangkat/Golongan --}}
                         <div>
                             <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                Pangkat / Golongan <span class="text-gray-400">(Opsional)</span>
+                                Jabatan <span class="text-gray-400">(Opsional)</span>
                             </label>
                             <input type="text"
                                    name="jabatan"
