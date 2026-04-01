@@ -23,12 +23,12 @@ class DatabaseSeeder extends Seeder
             // 2. USERS & RELATED DATA
             // ============================================
             UserSeeder::class,
-            DosenSeeder::class,
+            // DosenSeeder::class,               // ❌ DISABLED - Data dummy
             TenagaPendukungAkademikSeeder::class,
-            CalonDosenSeeder::class,
-            RiwayatPendidikanCalonDosenSeeder::class,
+            // CalonDosenSeeder::class,          // ❌ DISABLED - Data dummy
+            // RiwayatPendidikanCalonDosenSeeder::class,  // ❌ DISABLED - Data dummy
             MahasiswaSeeder::class,
-            JadwalPengujianSeeder::class,
+            // JadwalPengujianSeeder::class,     // ❌ DISABLED - Data dummy
 
             // ============================================
             // 3. PERMISSIONS (Menu Access Control)

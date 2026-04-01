@@ -476,6 +476,15 @@ class RekrutasiDosenController extends Controller
         
         $query = \App\Models\JadwalPengujian::with(['calonDosen', 'dosenPenguji', 'tahunAjar']);
 
+        // Filter untuk Dosen Penguji: hanya tampilkan jadwal dimana mereka berperan sebagai penguji
+        $currentDosen = \App\Models\Dosen::where('user_id', Auth::id())->first();
+        
+        if ($currentDosen && Auth::user()->hasAnyRole(['Dosen Penguji 1', 'Dosen Penguji 2', 'Dosen Penguji 3'])) {
+            $query->whereHas('dosenPenguji', function($q) use ($currentDosen) {
+                $q->where('dosen.id', $currentDosen->id);
+            });
+        }
+
         // Apply filters
         if ($request->filled('metode')) {
             $query->where('metode_pelaksanaan', $request->metode);
@@ -1150,11 +1159,23 @@ class RekrutasiDosenController extends Controller
 
     public function hasilPengujian()
     {
-        // Get all calon dosen with their jadwal pengujian and penilaian
-        $calonDosenList = \App\Models\CalonDosen::with([
+        // Get current user's dosen record
+        $currentDosen = \App\Models\Dosen::where('user_id', Auth::id())->first();
+        
+        // Build query for calon dosen
+        $query = \App\Models\CalonDosen::with([
             'jadwalPengujian.dosenPenguji',
             'jadwalPengujian.penilaianDetails.user.dosen'
-        ])->get();
+        ]);
+        
+        // Filter untuk Dosen Penguji: hanya tampilkan calon dosen yang mereka uji
+        if ($currentDosen && Auth::user()->hasAnyRole(['Dosen Penguji 1', 'Dosen Penguji 2', 'Dosen Penguji 3'])) {
+            $query->whereHas('jadwalPengujian.dosenPenguji', function($q) use ($currentDosen) {
+                $q->where('dosen.id', $currentDosen->id);
+            });
+        }
+        
+        $calonDosenList = $query->get();
 
         return view('rekrutasi-dosen.hasil-pengujian', compact('calonDosenList'));
     }

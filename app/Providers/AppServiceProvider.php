@@ -22,6 +22,10 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Paginator::useTailwind();
-        URL::forceScheme('https');
+        
+        // Force HTTPS only in production
+        if ($this->app->environment('production')) {
+            URL::forceScheme('https');
+        }
     }
 }
