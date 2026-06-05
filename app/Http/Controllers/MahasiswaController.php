@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Mahasiswa;
 use App\Models\Prodi;
+use App\Models\MahasiswaKompetisi;
+use App\Models\Kompetisi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log; // Added for logging
 use Maatwebsite\Excel\Facades\Excel; // Pastikan ini ada
@@ -656,5 +658,93 @@ public function exportPdf(Request $request)
                 ->pluck('total', 'nama_prodi'),
         ];
         return view('mahasiswa.laporan', compact('statistik'));
+    }
+
+    public function kompetisiIndex(Request $request)
+    {
+        $this->authorize('kelola-data-mahasiswa.view');
+
+        $query = MahasiswaKompetisi::with(['mahasiswa.prodi', 'kompetisi']);
+
+        if ($request->filled('prodi_id')) {
+            $query->whereHas('mahasiswa', function ($q) use ($request) {
+                $q->where('prodi_id', $request->prodi_id);
+            });
+        }
+
+        if ($request->filled('jenis')) {
+            $query->whereHas('kompetisi', function ($q) use ($request) {
+                $q->where('jenis', $request->jenis);
+            });
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('mahasiswa', function ($sq) use ($search) {
+                    $sq->where('nama_lengkap', 'like', '%' . $search . '%')
+                       ->orWhere('nim', 'like', '%' . $search . '%');
+                })->orWhereHas('kompetisi', function ($cq) use ($search) {
+                    $cq->where('nama_kompetisi', 'like', '%' . $search . '%')
+                       ->orWhere('nama_penyelenggara', 'like', '%' . $search . '%');
+                });
+            });
+        }
+
+        $mahasiswaKompetisi = $query->paginate(15)->withQueryString();
+        $prodi = Prodi::all();
+        $jenisOptions = Kompetisi::getJenisOptions();
+
+        return view('mahasiswa.kompetisi-index', compact('mahasiswaKompetisi', 'prodi', 'jenisOptions'));
+    }
+
+    public function kompetisiCreate()
+    {
+        $this->authorize('kelola-data-mahasiswa.create');
+
+        $mahasiswa = Mahasiswa::orderBy('nama_lengkap', 'asc')->get();
+        $kompetisi = Kompetisi::orderBy('nama_kompetisi', 'asc')->get();
+
+        return view('mahasiswa.kompetisi-create', compact('mahasiswa', 'kompetisi'));
+    }
+
+    public function kompetisiStore(Request $request)
+    {
+        $this->authorize('kelola-data-mahasiswa.create');
+
+        $validated = $request->validate([
+            'mahasiswa_id' => 'required|exists:mahasiswa,id',
+            'kompetisi_id' => 'required|exists:kompetisi,id',
+            'juara' => 'nullable|string|max:255',
+        ]);
+
+        // Cek apakah sudah terdaftar
+        $exists = MahasiswaKompetisi::where('mahasiswa_id', $request->mahasiswa_id)
+            ->where('kompetisi_id', $request->kompetisi_id)
+            ->exists();
+
+        if ($exists) {
+            return back()->withErrors(['error' => 'Hubungan Mahasiswa dan Kompetisi ini sudah terdaftar!'])->withInput();
+        }
+
+        try {
+            MahasiswaKompetisi::create($validated);
+            return redirect()->route('mahasiswa.kompetisi.index')->with('success', 'Mahasiswa Kompetisi berhasil ditambahkan!');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Error: ' . $e->getMessage()])->withInput();
+        }
+    }
+
+    public function kompetisiDestroy($id)
+    {
+        $this->authorize('kelola-data-mahasiswa.delete');
+
+        try {
+            $mahasiswaKompetisi = MahasiswaKompetisi::findOrFail($id);
+            $mahasiswaKompetisi->delete();
+            return redirect()->route('mahasiswa.kompetisi.index')->with('success', 'Hubungan Mahasiswa Kompetisi berhasil dihapus!');
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Error: ' . $e->getMessage()]);
+        }
     }
 }

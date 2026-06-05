@@ -369,6 +369,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/create', [MahasiswaController::class, 'create'])->name('create')->middleware('can:kelola-data-mahasiswa.create');
         Route::post('/store', [MahasiswaController::class, 'store'])->name('store')->middleware('can:kelola-data-mahasiswa.create');
 
+        // --- MAHASISWA KOMPETISI ---
+        Route::get('/kompetisi-mahasiswa', [MahasiswaController::class, 'kompetisiIndex'])->name('kompetisi.index');
+        Route::get('/kompetisi-mahasiswa/create', [MahasiswaController::class, 'kompetisiCreate'])->name('kompetisi.create')->middleware('can:kelola-data-mahasiswa.create');
+        Route::post('/kompetisi-mahasiswa', [MahasiswaController::class, 'kompetisiStore'])->name('kompetisi.store')->middleware('can:kelola-data-mahasiswa.create');
+        Route::delete('/kompetisi-mahasiswa/{id}', [MahasiswaController::class, 'kompetisiDestroy'])->name('kompetisi.destroy')->middleware('can:kelola-data-mahasiswa.delete');
+
         // Route dengan Parameter diletakkan di bawah agar tidak "memakan" route statis di atas
         Route::get('/{mahasiswa}', [MahasiswaController::class, 'show'])->name('show')->middleware('can:kelola-data-mahasiswa.detail');
         Route::get('/{mahasiswa}/edit', [MahasiswaController::class, 'edit'])->name('edit')->middleware('can:kelola-data-mahasiswa.edit');

@@ -272,6 +272,15 @@
                                     </a>
                                 </li>
                             @endcan
+                            @can('kelola-data-mahasiswa.view')
+                                <li>
+                                    {{-- Link Mahasiswa Kompetisi --}}
+                                    <a href="{{ route('mahasiswa.kompetisi.index') }}"
+                                        class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100 {{ request()->routeIs('mahasiswa.kompetisi.*') ? 'bg-red-600/60' : '' }}">
+                                        Mahasiswa Kompetisi
+                                    </a>
+                                </li>
+                            @endcan
 
                         </ul>
                     </div>
@@ -477,7 +486,7 @@
             'dosenDropdown': ['manajemen-dosen', 'kelola-data'],
             'tpaDropdown': ['manajemen-tpa'],
             'rekrutasiDropdown': ['rekrutasi-dosen'],
-            'mahasiswaDropdown': ['manajemen-mahasiswa'],
+            'mahasiswaDropdown': ['manajemen-mahasiswa', 'mahasiswa'],
             'masterDataDropdown': ['master-data'],
             'pengaturanDropdown': ['pengaturan']
         };
