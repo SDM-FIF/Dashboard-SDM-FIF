@@ -7,30 +7,46 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <title>Edit Jadwal Pengujian - Dashboard SDM FIF</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+        }
+    </style>
 </head>
-<body class="flex flex-col md:flex-row bg-gray-50 font-nunito">
-    {{-- Sidebar --}}
+<body class="flex flex-col md:flex-row bg-[#F8FAFC] min-h-screen text-[#1E293B]">
+    {{-- Sidebar Navigation --}}
     <x-navbar />
-    
-    {{-- Main Content --}}
-    <main class="flex-1 p-4 md:p-6 min-h-screen">
 
-        {{-- Page Title --}}
-        <div class="mb-6">
-            <h1 class="text-3xl md:text-4xl font-bold text-[#C41E3A]">Edit Jadwal Pengujian</h1>
+    {{-- Main Content --}}
+    <main class="flex-1 p-6 md:p-8 overflow-y-auto">
+        {{-- Topbar --}}
+        <x-topbar />
+
+        {{-- Header Section --}}
+        <div class="mb-8 mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-3xl md:text-4xl font-extrabold text-[#C41E3A] tracking-tight">Edit Jadwal Pengujian</h1>
+                <p class="text-sm text-gray-500 mt-1 font-medium">Ubah detail jadwal, gedung, ruangan, dan pembagian dosen penguji.</p>
+            </div>
+            <a href="{{ route('rekrutasi-dosen.jadwal-pengujian') }}" 
+               class="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-200 text-gray-600 hover:text-black font-semibold rounded-xl transition-all duration-200 text-sm shadow-sm">
+                <i class="fas fa-arrow-left"></i>
+                <span>Kembali</span>
+            </a>
         </div>
 
-        {{-- Form Section --}}
-        <div class="bg-white rounded-lg shadow-md border border-gray-200 p-8">
-            <form action="{{ route('rekrutasi-dosen.jadwal-pengujian.update', $jadwal->id) }}" method="POST">
+        {{-- Form Card --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 hover:shadow-md transition-shadow duration-300">
+            <form action="{{ route('rekrutasi-dosen.jadwal-pengujian.update', $jadwal->id) }}" method="POST" class="space-y-6">
                 @csrf
                 @method('PUT')
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {{-- Tahun Ajar --}}
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Tahun Ajar <span class="text-red-500">*</span></label>
-                        <select name="tahun_ajar_id" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C41E3A] focus:border-transparent">
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Tahun Ajar <span class="text-red-500">*</span></label>
+                        <select name="tahun_ajar_id" required class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
                             @foreach($tahunAjarList as $ta)
                                 <option value="{{ $ta->id }}" {{ $jadwal->tahun_ajar_id == $ta->id ? 'selected' : '' }}>{{ $ta->label }}</option>
                             @endforeach
@@ -38,9 +54,9 @@
                     </div>
 
                     {{-- Calon Dosen --}}
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Calon Dosen <span class="text-red-500">*</span></label>
-                        <select name="calon_dosen_id" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C41E3A] focus:border-transparent">
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Calon Dosen <span class="text-red-500">*</span></label>
+                        <select name="calon_dosen_id" required class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
                             @foreach($calonDosenList as $calon)
                                 <option value="{{ $calon->id }}" {{ $jadwal->calon_dosen_id == $calon->id ? 'selected' : '' }}>{{ $calon->nama_lengkap ?? $calon->nama }}</option>
                             @endforeach
@@ -48,28 +64,28 @@
                     </div>
 
                     {{-- Dosen Penguji --}}
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Dosen Penguji <span class="text-red-500">*</span></label>
-                        <select name="dosen_penguji_id" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C41E3A] focus:border-transparent">
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Dosen Penguji <span class="text-red-500">*</span></label>
+                        <select name="dosen_penguji_id" required class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
                             @foreach($dosenList as $dosen)
                                 <option value="{{ $dosen->id }}" {{ $jadwal->dosen_penguji_id == $dosen->id ? 'selected' : '' }}>
-                                    {{ $dosen->front_title }} {{ $dosen->nama_lengkap }}, {{ $dosen->back_title }}
+                                    {{ $dosen->front_title }} {{ $dosen->nama_lengkap }}{{ $dosen->back_title ? ', ' . $dosen->back_title : '' }}
                                 </option>
                             @endforeach
                         </select>
                     </div>
 
                     {{-- Tanggal Ujian --}}
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Ujian <span class="text-red-500">*</span></label>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Tanggal Ujian <span class="text-red-500">*</span></label>
                         <input type="date" name="jadwal_ujian" value="{{ \Carbon\Carbon::parse($jadwal->jadwal_ujian)->format('Y-m-d') }}" required 
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C41E3A] focus:border-transparent">
+                               class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
                     </div>
 
                     {{-- Gedung --}}
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Gedung <span class="text-red-500">*</span></label>
-                        <select name="gedung" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C41E3A] focus:border-transparent">
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Gedung <span class="text-red-500">*</span></label>
+                        <select name="gedung" required class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
                             <option value="Gedung A" {{ $jadwal->gedung == 'Gedung A' ? 'selected' : '' }}>Gedung A</option>
                             <option value="Gedung B" {{ $jadwal->gedung == 'Gedung B' ? 'selected' : '' }}>Gedung B</option>
                             <option value="Gedung C" {{ $jadwal->gedung == 'Gedung C' ? 'selected' : '' }}>Gedung C</option>
@@ -79,9 +95,9 @@
                     </div>
 
                     {{-- Ruangan --}}
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Ruangan <span class="text-red-500">*</span></label>
-                        <select name="ruangan" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C41E3A] focus:border-transparent">
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Ruangan <span class="text-red-500">*</span></label>
+                        <select name="ruangan" required class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
                             <option value="Aula" {{ $jadwal->ruangan == 'Aula' ? 'selected' : '' }}>Aula</option>
                             <option value="R.201" {{ $jadwal->ruangan == 'R.201' ? 'selected' : '' }}>R.201</option>
                             <option value="R.301" {{ $jadwal->ruangan == 'R.301' ? 'selected' : '' }}>R.301</option>
@@ -92,24 +108,23 @@
                     </div>
 
                     {{-- Waktu --}}
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Waktu <span class="text-red-500">*</span></label>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Waktu <span class="text-red-500">*</span></label>
                         <input type="time" name="waktu" value="{{ \Carbon\Carbon::parse($jadwal->waktu)->format('H:i') }}" required 
-                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#C41E3A] focus:border-transparent">
+                               class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
                     </div>
                 </div>
 
                 {{-- Action Buttons --}}
-                <div class="flex items-center justify-end space-x-4 mt-8">
+                <div class="flex items-center justify-end gap-3 pt-6 border-t border-gray-100">
                     <a href="{{ route('rekrutasi-dosen.jadwal-pengujian') }}" 
-                       class="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-md">
-                        <i class="fas fa-times mr-2"></i>
+                       class="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl text-sm transition-all duration-200">
                         Batal
                     </a>
                     <button type="submit" 
-                            class="px-6 py-3 bg-[#C41E3A] hover:bg-red-700 text-white font-semibold rounded-lg transition-all duration-200 shadow-md">
-                        <i class="fas fa-save mr-2"></i>
-                        Simpan Perubahan
+                            class="px-6 py-3 bg-[#C41E3A] hover:bg-[#A31830] text-white font-bold rounded-xl text-sm transition-all duration-300 shadow-md flex items-center gap-2">
+                        <i class="fas fa-save"></i>
+                        <span>Simpan Perubahan</span>
                     </button>
                 </div>
             </form>

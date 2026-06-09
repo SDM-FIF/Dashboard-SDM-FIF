@@ -7,91 +7,111 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <title>Plotting Permission - Dashboard SDM FIF</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+        }
+        .swal2-popup {
+            font-family: 'Outfit', sans-serif !important;
+            border-radius: 1.25rem !important;
+        }
+        .swal2-confirm {
+            border-radius: 0.75rem !important;
+            font-weight: 600 !important;
+            padding: 10px 24px !important;
+        }
+        .swal2-cancel {
+            border-radius: 0.75rem !important;
+            font-weight: 600 !important;
+            padding: 10px 24px !important;
+        }
+    </style>
 </head>
-<body class="flex flex-col md:flex-row bg-gray-50 font-nunito">
-    {{-- Sidebar --}}
+<body class="flex flex-col md:flex-row bg-[#F8FAFC] min-h-screen text-[#1E293B]">
+    {{-- Sidebar Navigation --}}
     <x-navbar />
     
     {{-- Main Content --}}
-    <main class="flex-1 p-4 md:p-6 min-h-screen">
+    <main class="flex-1 p-6 md:p-8 overflow-y-auto">
+        {{-- Topbar --}}
+        <x-topbar />
 
-        {{-- Page Title --}}
-        <div class="mb-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-3xl md:text-4xl font-bold text-[#C41E3A]">Plotting Permission</h1>
-                    <p class="text-gray-600 mt-2">Role: <span class="font-semibold text-[#C41E3A]">{{ $role->name }}</span></p>
-                </div>
-                <a href="{{ route('pengaturan') }}" 
-                   class="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-all duration-200 flex items-center space-x-2">
-                    <i class="fas fa-arrow-left"></i>
-                    <span>Kembali</span>
-                </a>
+        {{-- Header Section --}}
+        <div class="mb-8 mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-3xl md:text-4xl font-extrabold text-[#C41E3A] tracking-tight">Plotting Permission</h1>
+                <p class="text-sm text-gray-500 mt-1 font-medium">Pengaturan izin akses khusus untuk peran pimpinan: <span class="font-bold text-[#C41E3A]">{{ $role->name }}</span></p>
             </div>
+            <a href="{{ route('pengaturan') }}" 
+               class="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-200 text-gray-600 hover:text-black font-semibold rounded-xl transition-all duration-200 text-sm shadow-sm">
+                <i class="fas fa-arrow-left"></i>
+                <span>Kembali</span>
+            </a>
         </div>
 
-        {{-- Data Table Section --}}
-        <div class="bg-white rounded-lg shadow-md border border-gray-200">
-            {{-- Table Header Section --}}
-            <div class="p-6 border-b border-gray-200">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-xl font-bold text-[#C41E3A]">Manajemen Permission Hak Akses</h2>
-                </div>
+        {{-- Data Table Section Card --}}
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300">
+            {{-- Card Header & Actions --}}
+            <div class="p-6 border-b border-gray-100">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-[#C41E3A]">Manajemen Permission Hak Akses</h2>
+                        <p class="text-xs text-gray-500 mt-0.5">Pemetaan hak akses per modul</p>
+                    </div>
 
-                {{-- Action Buttons Row --}}
-                <div class="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0">
-                    {{-- Save Button --}}
-                    <button onclick="savePermissions()"
-                        class="bg-[#FBB03B] hover:bg-orange-600 text-[#B91432] font-semibold px-6 py-2.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
-                        <i class="fas fa-save mr-2"></i>Simpan Perubahan
-                    </button>
-
-                    {{-- Right Side Controls --}}
+                    {{-- Actions Row --}}
                     <div class="flex flex-wrap items-center gap-3">
+                        {{-- Save Changes Button --}}
+                        <button onclick="savePermissions()"
+                            class="bg-[#FBB03B] hover:bg-[#E09A2A] text-black font-semibold px-5 py-2.5 rounded-xl transition-all duration-300 shadow-sm hover:shadow flex items-center gap-2 text-sm">
+                            <i class="fas fa-save"></i>
+                            <span>Simpan Perubahan</span>
+                        </button>
+
                         {{-- Search Bar --}}
-                        <div class="flex items-center relative">
-                            <div class="relative">
+                        <div class="flex items-center">
+                            <div class="relative flex items-center">
                                 <input type="text" 
                                        id="searchInput"
                                        placeholder="Cari Modul atau Sub Modul..."
-                                       class="px-4 py-2 pr-10 border border-gray-300 rounded-l-lg bg-white text-gray-700 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500 w-64"
+                                       class="h-[42px] px-4 pr-10 border border-gray-200 rounded-l-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none w-48 sm:w-64"
                                        onkeypress="if(event.key === 'Enter') { event.preventDefault(); searchTable(); }">
                                 <button type="button" 
                                         id="clearSearch"
                                         onclick="clearSearchInput()"
-                                        class="hidden absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 cursor-pointer"
+                                        class="hidden absolute right-3 text-gray-400 hover:text-gray-600 cursor-pointer text-sm"
                                         title="Clear search">
                                     <i class="fas fa-times"></i>
                                 </button>
                             </div>
-                            <button type="button" onclick="searchTable()" class="px-4 py-2 bg-[#C41E3A] hover:bg-red-700 text-white rounded-r-lg transition-all duration-200 cursor-pointer">
+                            <button type="button" onclick="searchTable()" class="h-[42px] px-4 bg-[#C41E3A] hover:bg-[#A31830] text-white rounded-r-xl transition-all duration-200 text-sm flex items-center justify-center cursor-pointer">
                                 <i class="fas fa-search"></i>
                             </button>
                         </div>
 
-                        {{-- Export Button (Placeholder) --}}
+                        {{-- Export Dropdown --}}
                         <div class="relative">
-                            <button id="exportBtn" class="px-4 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all duration-200 flex items-center space-x-2">
+                            <button id="exportBtn" class="px-4 py-2.5 text-sm font-semibold text-gray-600 bg-white border border-gray-200 rounded-xl hover:text-black hover:border-gray-300 transition-all duration-200 flex items-center space-x-2 shadow-sm">
                                 <i class="fas fa-download"></i>
                                 <span>Export</span>
                                 <i class="fas fa-chevron-down text-xs ml-1"></i>
                             </button>
 
-                            <!-- Dropdown Export -->
-                            <div id="exportDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-[9999]">
-                                <a href="#" onclick="exportData('excel')" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-t-lg">
-                                    <i class="fas fa-file-excel text-green-600 mr-2"></i>
-                                    Export Excel
+                            <!-- Dropdown Export Menu -->
+                            <div id="exportDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 z-[999] overflow-hidden">
+                                <a href="#" onclick="exportData('excel')" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center transition-colors">
+                                    <i class="fas fa-file-excel text-green-600 mr-2.5"></i>
+                                    <span>Export Excel</span>
                                 </a>
-                                <a href="#" onclick="exportData('csv')" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                    <i class="fas fa-file-csv text-blue-600 mr-2"></i>
-                                    Export CSV
+                                <a href="#" onclick="exportData('csv')" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center transition-colors">
+                                    <i class="fas fa-file-csv text-blue-600 mr-2.5"></i>
+                                    <span>Export CSV</span>
                                 </a>
-                                <a href="#" onclick="exportData('pdf')" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-b-lg">
-                                    <i class="fas fa-file-pdf text-red-600 mr-2"></i>
-                                    Export PDF
+                                <a href="#" onclick="exportData('pdf')" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center transition-colors">
+                                    <i class="fas fa-file-pdf text-red-600 mr-2.5"></i>
+                                    <span>Export PDF</span>
                                 </a>
                             </div>
                         </div>
@@ -105,34 +125,34 @@
                 @method('PUT')
                 
                 <div class="overflow-x-auto">
-                    <table class="min-w-full w-full" id="permissionTable">
+                    <table class="min-w-full w-full border-collapse" id="permissionTable">
                         <thead>
                             <tr class="bg-[#C41E3A] text-white">
-                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider w-48">Modul Parent</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Nama Sub Modul</th>
-                                <th class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider">Permissions</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider w-56">Modul Parent</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider w-64">Nama Sub Modul</th>
+                                <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Permissions</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
+                        <tbody class="divide-y divide-gray-100 bg-white">
                             @forelse($permissionData as $data)
-                            <tr class="hover:bg-gray-50 transition-colors duration-150">
-                                <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
+                            <tr class="hover:bg-[#F8FAFC] transition-colors duration-150">
+                                <td class="px-6 py-4 text-sm font-semibold text-gray-500">
                                     {{ $data['parent_module'] }}
                                 </td>
-                                <td class="px-4 py-4 text-sm text-gray-900">
-                                    <strong>{{ $data['sub_module'] }}</strong>
+                                <td class="px-6 py-4 text-sm font-bold text-gray-900">
+                                    {{ $data['sub_module'] }}
                                 </td>
-                                <td class="px-4 py-4 text-sm">
-                                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" data-row-key="{{ $data['sub_module_key'] }}">
+                                <td class="px-6 py-4 text-sm">
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5" data-row-key="{{ $data['sub_module_key'] }}">
                                         @foreach($data['permissions'] as $permType => $perm)
                                             @if($perm['id'])
-                                            <label class="flex items-center space-x-2 {{ $perm['is_disabled'] ?? false ? 'cursor-not-allowed opacity-75' : 'cursor-pointer hover:bg-gray-100' }} px-3 py-2 rounded-lg transition-colors min-w-0">
+                                            <label class="flex items-center space-x-2 {{ $perm['is_disabled'] ?? false ? 'cursor-not-allowed opacity-60 bg-gray-50' : 'cursor-pointer hover:bg-red-50 hover:text-[#C41E3A] border border-gray-100 hover:border-red-100' }} px-3 py-2 rounded-xl transition-all">
                                                 <input type="checkbox" 
                                                        name="permissions[]" 
                                                        value="{{ $perm['id'] }}"
                                                        {{ $perm['has_permission'] ? 'checked' : '' }}
                                                        {{ ($perm['is_disabled'] ?? false) ? 'disabled' : '' }}
-                                                       class="permission-checkbox w-4 h-4 text-[#C41E3A] border-gray-300 rounded focus:ring-[#C41E3A] flex-shrink-0 {{ ($perm['is_disabled'] ?? false) ? 'cursor-not-allowed' : '' }}"
+                                                       class="permission-checkbox w-4 h-4 text-[#C41E3A] border-gray-300 rounded focus:ring-red-200 focus:ring-2 flex-shrink-0 {{ ($perm['is_disabled'] ?? false) ? 'cursor-not-allowed' : '' }}"
                                                        data-row="{{ $data['sub_module_key'] }}"
                                                        data-type="{{ $permType }}"
                                                        onchange="handlePermissionChange(this)">
@@ -140,10 +160,10 @@
                                                 @if(($perm['is_disabled'] ?? false) && $perm['has_permission'])
                                                     <input type="hidden" name="permissions[]" value="{{ $perm['id'] }}">
                                                 @endif
-                                                <span class="text-gray-700 text-sm whitespace-nowrap overflow-hidden text-ellipsis {{ ($perm['is_disabled'] ?? false) ? 'text-gray-500' : '' }}">
+                                                <span class="text-gray-700 text-xs font-semibold whitespace-nowrap overflow-hidden text-ellipsis {{ ($perm['is_disabled'] ?? false) ? 'text-gray-500' : '' }} group-hover:text-[#C41E3A] transition-colors">
                                                     {{ $perm['label'] }}
                                                     @if($perm['is_disabled'] ?? false)
-                                                        <i class="fas fa-lock text-xs ml-1" title="Permission ini tidak dapat diubah untuk role ini"></i>
+                                                        <i class="fas fa-lock text-[10px] ml-1 text-gray-400" title="Permission ini tidak dapat diubah untuk role ini"></i>
                                                     @endif
                                                 </span>
                                             </label>
@@ -153,15 +173,13 @@
                                 </td>
                             </tr>
                             @empty
-                            {{-- Empty State --}}
                             <tr>
-                                <td colspan="3" class="px-6 py-12 text-center text-gray-500">
-                                    <div class="flex flex-col items-center space-y-4">
-                                        <i class="fas fa-shield-alt text-4xl text-gray-300"></i>
-                                        <div>
-                                            <h3 class="text-lg font-medium text-gray-900 mb-1">Tidak ada permission</h3>
-                                            <p class="text-sm text-gray-500">Belum ada permission yang tersedia untuk module ini.</p>
+                                <td colspan="3" class="px-6 py-16 text-center text-gray-400">
+                                    <div class="flex flex-col items-center gap-3">
+                                        <div class="p-4 bg-gray-50 text-gray-300 rounded-full">
+                                            <i class="fas fa-shield-alt text-4xl"></i>
                                         </div>
+                                        <p class="font-medium text-gray-500">Tidak ada permission ditemukan</p>
                                     </div>
                                 </td>
                             </tr>
@@ -196,27 +214,21 @@
             const type = checkbox.dataset.type;
             const isChecked = checkbox.checked;
             
-            // Get all checkboxes in the same row
             const rowCheckboxes = document.querySelectorAll(`input[data-row="${row}"]`);
             
-            // If "All" checkbox is clicked
             if (type === 'all') {
-                // When All is checked, check all other checkboxes
-                // When All is unchecked, uncheck all other checkboxes
                 rowCheckboxes.forEach(cb => {
                     if (cb !== checkbox) {
                         cb.checked = isChecked;
                     }
                 });
             } else {
-                // If any other checkbox is unchecked, uncheck the "All" checkbox
                 if (!isChecked) {
                     const allCheckbox = Array.from(rowCheckboxes).find(cb => cb.dataset.type === 'all');
                     if (allCheckbox) {
                         allCheckbox.checked = false;
                     }
                 } else {
-                    // If all other checkboxes (except All) are checked, check the All checkbox
                     const allCheckbox = Array.from(rowCheckboxes).find(cb => cb.dataset.type === 'all');
                     const otherCheckboxes = Array.from(rowCheckboxes).filter(cb => cb.dataset.type !== 'all');
                     const allOthersChecked = otherCheckboxes.every(cb => cb.checked);
@@ -235,7 +247,7 @@
             
             input.value = '';
             clearBtn.classList.add('hidden');
-            searchTable(); // Trigger search to show all rows
+            searchTable();
         }
 
         // Search function - search by Module or Sub Module
@@ -246,14 +258,13 @@
             const table = document.getElementById('permissionTable');
             const tr = table.getElementsByTagName('tr');
 
-            // Show/hide clear button
             if (input.value.length > 0) {
                 clearBtn.classList.remove('hidden');
             } else {
                 clearBtn.classList.add('hidden');
             }
 
-            for (let i = 1; i < tr.length; i++) { // Start from 1 to skip header
+            for (let i = 1; i < tr.length; i++) {
                 const tdModule = tr[i].getElementsByTagName('td')[0];
                 const tdSubModule = tr[i].getElementsByTagName('td')[1];
                 
@@ -273,16 +284,27 @@
 
         // Save permissions function
         function savePermissions() {
-            // Check if user is editing their own role
             const currentUserRoles = @json(auth()->user()->roles->pluck('id'));
             const editingRoleId = {{ $role->id }};
             const isEditingOwnRole = currentUserRoles.includes(editingRoleId);
             
-            let htmlContent = `<p>Apakah Anda yakin ingin menyimpan perubahan permission untuk role <strong>{{ $role->name }}</strong>?</p>`;
+            let htmlContent = `
+            <div class="text-left space-y-2">
+                <p class="text-gray-600">Apakah Anda yakin ingin menyimpan perubahan permission untuk role:</p>
+                <div class="bg-red-50 border border-red-200 rounded-xl p-4 mt-3">
+                    <p class="font-bold text-red-800 text-base">{{ $role->name }}</p>
+                </div>
+            `;
             
             if (isEditingOwnRole) {
-                htmlContent += `<p class="text-sm text-amber-600 mt-2"><i class="fas fa-exclamation-triangle mr-1"></i>Anda perlu logout dan login kembali untuk melihat perubahan.</p>`;
+                htmlContent += `
+                <p class="text-xs text-amber-600 mt-3 font-semibold">
+                    <i class="fas fa-exclamation-triangle mr-1"></i>
+                    Anda perlu logout dan login kembali untuk melihat perubahan.
+                </p>
+                `;
             }
+            htmlContent += `</div>`;
             
             Swal.fire({
                 title: 'Simpan Perubahan?',
@@ -290,9 +312,15 @@
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#C41E3A',
-                cancelButtonColor: '#6c757d',
+                cancelButtonColor: '#6B7280',
                 confirmButtonText: 'Ya, Simpan!',
-                cancelButtonText: 'Batal'
+                cancelButtonText: 'Batal',
+                reverseButtons: true,
+                customClass: {
+                    popup: 'rounded-2xl',
+                    confirmButton: 'px-5 py-2.5 rounded-xl font-semibold text-sm',
+                    cancelButton: 'px-5 py-2.5 rounded-xl font-semibold text-sm'
+                }
             }).then((result) => {
                 if (result.isConfirmed) {
                     document.getElementById('permissionForm').submit();
@@ -302,7 +330,6 @@
 
         // Export Data
         function exportData(format) {
-            const roleId = {{ $role->id }};
             let url;
             
             switch(format) {
@@ -319,43 +346,44 @@
                     return;
             }
             
-            // Show loading message
             Swal.fire({
                 title: 'Mengunduh...',
                 html: `Sedang menyiapkan file ${format.toUpperCase()}`,
                 allowOutsideClick: false,
                 showConfirmButton: false,
+                customClass: {
+                    popup: 'rounded-2xl'
+                },
                 willOpen: () => {
                     Swal.showLoading();
                 }
             });
             
-            // Download file
             window.location.href = url;
             
-            // Close loading after a short delay
             setTimeout(() => {
                 Swal.close();
             }, 1500);
         }
 
-        // Show success/error messages with SweetAlert
+        // Notification Toasts
         @if(session('success'))
         Swal.fire({
-            position: 'top-end',
             icon: 'success',
-            title: '{{ session('success') }}',
+            title: 'Berhasil!',
+            text: '{{ session('success') }}',
             showConfirmButton: false,
             timer: 3000,
             timerProgressBar: true,
-            toast: true
+            toast: true,
+            position: 'top-end'
         });
         @endif
 
         @if(session('error'))
         Swal.fire({
             icon: 'error',
-            title: 'Error!',
+            title: 'Gagal!',
             text: '{{ session('error') }}',
             confirmButtonColor: '#C41E3A'
         });

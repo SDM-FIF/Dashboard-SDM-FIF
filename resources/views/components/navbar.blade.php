@@ -1,12 +1,12 @@
 {{-- resources/views/components/navbar.blade.php --}}
-<nav class="bg-[#C41E3A] text-white min-h-screen w-64 hidden md:flex flex-col font-nunito shadow-lg">
+<nav class="bg-[#C41E3A] text-white h-screen w-64 hidden md:flex flex-col font-nunito shadow-lg sticky top-0 flex-shrink-0">
     {{-- Header/Logo Section --}}
-    <div class="p-6 border-b border-red-500/30">
+    <div class="p-6 border-b border-red-500/30 flex-shrink-0">
         <h2 class="text-xl font-bold text-center">Dashboard SDM FIF</h2>
     </div>
 
     {{-- Navigation Menu --}}
-    <div class="flex-1 py-4">
+    <div class="flex-1 overflow-y-auto py-4 sidebar-scroll">
         <ul class="space-y-1">
             {{-- Dashboard Section --}}
             <li class="relative">
@@ -381,9 +381,8 @@
     </div>
 
     {{-- User Profile Section (Bottom) --}}
-    {{-- User Profile Section (Bottom) --}}
     @auth
-        <div class="p-6 border-t border-red-500/30 mt-auto">
+        <div class="p-6 border-t border-red-500/30 mt-auto flex-shrink-0">
             <div class="flex items-center space-x-3 mb-4">
                 <div
                     class="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-md">
@@ -426,7 +425,7 @@
         </div>
     @else
         {{-- Tampilkan tombol Login jika user belum login (opsional) --}}
-        <div class="p-6 border-t border-red-500/30 mt-auto">
+        <div class="p-6 border-t border-red-500/30 mt-auto flex-shrink-0">
             <a href="{{ route('login') }}"
                 class="block w-full text-center px-4 py-2 bg-white text-red-600 rounded-md text-sm font-bold">
                 Login

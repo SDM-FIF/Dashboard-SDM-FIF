@@ -1,52 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<style>
-    /* Custom styling untuk SweetAlert2 form */
-    .swal2-input,
-    .swal2-textarea,
-    .swal2-select {
-        margin: 0 !important;
-        box-sizing: border-box !important;
-    }
-    
-    .swal2-html-container {
-        overflow-y: auto !important;
-        max-height: 70vh !important;
-    }
-
-    /* Select2 styling inside SweetAlert2 */
-    .select2-container {
-        z-index: 9999 !important;
-    }
-    
-    .select2-container .select2-selection--single {
-        height: 38px !important;
-        border: 1px solid #d1d5db !important;
-        border-radius: 0.375rem !important;
-    }
-    
-    .select2-container .select2-selection--single .select2-selection__rendered {
-        line-height: 36px !important;
-        padding-left: 12px !important;
-    }
-    
-    .select2-container .select2-selection--single .select2-selection__arrow {
-        height: 36px !important;
-    }
-    
-    .select2-dropdown {
-        border: 1px solid #d1d5db !important;
-        border-radius: 0.375rem !important;
-    }
-    
-    .select2-search__field {
-        border: 1px solid #d1d5db !important;
-        border-radius: 0.375rem !important;
-        padding: 4px 8px !important;
-    }
-</style>
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -54,31 +7,121 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <title>Jadwal Pengujian - Dashboard SDM FIF</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+        }
+        /* Custom styling untuk SweetAlert2 form */
+        .swal2-input,
+        .swal2-textarea,
+        .swal2-select {
+            margin: 0 !important;
+            box-sizing: border-box !important;
+            border-radius: 12px !important;
+            border: 1px solid #E2E8F0 !important;
+            font-family: 'Outfit', sans-serif !important;
+            font-size: 14px !important;
+            padding: 10px 14px !important;
+            background-color: #F8FAFC !important;
+            outline: none !important;
+            height: auto !important;
+        }
+        .swal2-input:focus,
+        .swal2-textarea:focus,
+        .swal2-select:focus {
+            background-color: #FFFFFF !important;
+            border-color: #C41E3A !important;
+            box-shadow: 0 0 0 3px rgba(196, 30, 58, 0.15) !important;
+        }
+        .swal2-html-container {
+            overflow-y: auto !important;
+            max-height: 75vh !important;
+            padding: 1rem 1.5rem !important;
+        }
+        .swal2-popup {
+            border-radius: 20px !important;
+        }
+        /* Select2 styling inside SweetAlert2 */
+        .select2-container {
+            z-index: 9999 !important;
+        }
+        .select2-container .select2-selection--single {
+            height: 44px !important;
+            border: 1px solid #E2E8F0 !important;
+            border-radius: 12px !important;
+            background-color: #F8FAFC !important;
+        }
+        .select2-container .select2-selection--single .select2-selection__rendered {
+            line-height: 42px !important;
+            padding-left: 14px !important;
+            color: #475569 !important;
+            font-size: 14px !important;
+            font-family: 'Outfit', sans-serif !important;
+        }
+        .select2-container .select2-selection--single .select2-selection__arrow {
+            height: 42px !important;
+        }
+        .select2-dropdown {
+            border: 1px solid #E2E8F0 !important;
+            border-radius: 12px !important;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+        }
+        .select2-search__field {
+            border: 1px solid #E2E8F0 !important;
+            border-radius: 8px !important;
+            padding: 6px 10px !important;
+            outline: none !important;
+        }
+        /* Select2 Multiple styling inside SweetAlert2 */
+        .select2-container--default .select2-selection--multiple {
+            border: 1px solid #E2E8F0 !important;
+            border-radius: 12px !important;
+            background-color: #F8FAFC !important;
+            padding: 4px 8px !important;
+        }
+        .select2-container--default.select2-container--focus .select2-selection--multiple {
+            border-color: #C41E3A !important;
+            background-color: #FFFFFF !important;
+        }
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: #F1F5F9 !important;
+            border: 1px solid #E2E8F0 !important;
+            border-radius: 8px !important;
+            padding: 2px 8px !important;
+            font-family: 'Outfit', sans-serif !important;
+            font-size: 13px !important;
+            color: #1E293B !important;
+        }
+    </style>
 </head>
-<body class="flex flex-col md:flex-row bg-gray-50 font-nunito">
-    {{-- Sidebar --}}
+<body class="flex flex-col md:flex-row bg-[#F8FAFC] min-h-screen text-[#1E293B]">
+    {{-- Sidebar Navigation --}}
     <x-navbar />
-    
-    {{-- Main Content --}}
-    <main class="flex-1 p-4 md:p-6 min-h-screen">
 
-        {{-- Page Title --}}
-        <div class="mb-6">
-            <h1 class="text-3xl md:text-4xl font-bold text-[#C41E3A]">Jadwal Pengujian</h1>
+    {{-- Main Content --}}
+    <main class="flex-1 p-6 md:p-8 overflow-y-auto">
+        {{-- Topbar --}}
+        <x-topbar />
+
+        {{-- Header Section --}}
+        <div class="mb-8 mt-4">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-[#C41E3A] tracking-tight">Jadwal Pengujian</h1>
+            <p class="text-sm text-gray-500 mt-1 font-medium font-medium">Kelola agenda, waktu pelaksanaan, gedung, ruangan, dan pembagian dosen penguji calon dosen.</p>
         </div>
 
         {{-- Filter Section --}}
-        <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6 mb-6">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8 hover:shadow-md transition-shadow duration-300">
             <form method="GET" action="{{ route('rekrutasi-dosen.jadwal-pengujian') }}" id="filterForm">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {{-- Metode Pelaksanaan Filter --}}
-                    <div>
-                        <label class="block text-base font-semibold text-[#C41E3A] mb-2">Metode Pelaksanaan</label>
-                        <select name="metode" id="filterMetode" class="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-700 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Metode Pelaksanaan</label>
+                        <select name="metode" id="filterMetode" class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
                             <option value="">Semua Metode</option>
                             @foreach($metodeList as $metode)
                                 <option value="{{ $metode }}" {{ request('metode') == $metode ? 'selected' : '' }}>{{ $metode }}</option>
@@ -87,23 +130,23 @@
                     </div>
 
                     {{-- Search Input --}}
-                    <div>
-                        <label class="block text-base font-semibold text-[#C41E3A] mb-2">Cari</label>
-                        <input type="text" name="search" id="searchInput" value="{{ request('search') }}" placeholder="Cari nama calon dosen atau penguji..." 
-                               class="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-700 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Cari Kata Kunci</label>
+                        <input type="text" name="search" id="searchInput" value="{{ request('search') }}" placeholder="Nama calon dosen atau penguji..." 
+                               class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
                     </div>
 
                     {{-- Filter & Reset Buttons --}}
-                    <div class="flex items-end gap-2">
+                    <div class="flex items-end gap-3">
                         <button type="submit" id="applyFilterBtn"
-                            class="flex-1 bg-[#FBB03B] hover:bg-orange-600 text-black font-semibold px-4 py-2.5 rounded-lg flex items-center justify-center space-x-2 transition-all duration-200 shadow-sm hover:shadow-md">
-                            <i class="fas fa-sliders-h text-black"></i>
+                            class="flex-1 px-6 py-3 bg-[#FBB03B] hover:bg-[#E09A2A] text-black font-bold rounded-xl transition-all duration-300 shadow-sm hover:shadow text-sm flex items-center justify-center gap-2">
+                            <i class="fas fa-sliders-h"></i>
                             <span>Filter</span>
                         </button>
 
                         @if(request('metode') || request('search'))
                         <a href="{{ route('rekrutasi-dosen.jadwal-pengujian') }}" id="resetBtn"
-                            class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold px-4 py-2.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex items-center justify-center space-x-2">
+                            class="flex-1 px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl transition-all duration-200 text-sm flex items-center justify-center gap-2">
                             <i class="fas fa-redo"></i>
                             <span>Reset</span>
                         </a>
@@ -114,48 +157,48 @@
         </div>
 
         {{-- Data Table Section --}}
-        <div class="bg-white rounded-lg shadow-md border border-gray-200">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
             {{-- Table Header Section --}}
-            <div class="p-6 border-b border-gray-200">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-xl font-bold text-[#C41E3A]">Data Jadwal Pengujian</h2>
-                </div>
-
-                {{-- Action Buttons Row --}}
-                <div class="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0">
-                    {{-- Tambah Data Button --}}
-                    @can('jadwal-pengujian.create')
-                    <button type="button" id="btnTambahData"
-                        class="bg-[#FBB03B] hover:bg-orange-600 text-[#B91432] font-semibold px-6 py-2.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
-                        <i class="fas fa-plus mr-2"></i>Tambah Data
-                    </button>
-                    @endcan
-
-                    {{-- Export Dropdown --}}
-                    <div class="relative">
-                        <button type="button" id="exportBtn" class="px-4 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all duration-200 flex items-center space-x-2">
-                            <i class="fas fa-download"></i>
-                            <span>Export</span>
-                            <i class="fas fa-chevron-down text-xs ml-1"></i>
+            <div class="p-6 border-b border-gray-100">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <h2 class="text-lg font-bold text-gray-800">Daftar Agenda Pengujian</h2>
+                    
+                    <div class="flex flex-wrap items-center gap-3">
+                        {{-- Tambah Data Button --}}
+                        @can('jadwal-pengujian.create')
+                        <button type="button" id="btnTambahData"
+                            class="px-5 py-2.5 bg-[#FBB03B] hover:bg-[#E09A2A] text-black font-bold rounded-xl transition-all duration-300 shadow-sm hover:shadow text-sm flex items-center gap-2">
+                            <i class="fas fa-plus"></i>
+                            <span>Tambah Jadwal</span>
                         </button>
+                        @endcan
 
-                        {{-- Dropdown Menu --}}
-                        <div id="exportDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 z-[9999]">
-                            <a href="{{ route('rekrutasi-dosen.jadwal-pengujian.export-excel') }}"
-                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-t-lg">
-                                <i class="fas fa-file-excel text-green-600 mr-2"></i>
-                                Export Excel
-                            </a>
-                            <a href="{{ route('rekrutasi-dosen.jadwal-pengujian.export-csv') }}"
-                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                <i class="fas fa-file-csv text-blue-600 mr-2"></i>
-                                Export CSV
-                            </a>
-                            <a href="{{ route('rekrutasi-dosen.jadwal-pengujian.export-pdf') }}"
-                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-b-lg">
-                                <i class="fas fa-file-pdf text-red-600 mr-2"></i>
-                                Export PDF
-                            </a>
+                        {{-- Export Dropdown --}}
+                        <div class="relative">
+                            <button type="button" id="exportBtn" class="px-4 py-2.5 text-sm font-semibold text-gray-600 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-all flex items-center gap-2">
+                                <i class="fas fa-download"></i>
+                                <span>Ekspor</span>
+                                <i class="fas fa-chevron-down text-[10px] ml-1"></i>
+                            </button>
+
+                            {{-- Dropdown Menu --}}
+                            <div id="exportDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 z-50 py-1 overflow-hidden">
+                                <a href="{{ route('rekrutasi-dosen.jadwal-pengujian.export-excel') }}"
+                                    class="flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50">
+                                    <i class="fas fa-file-excel text-emerald-600 w-4"></i>
+                                    <span>Ekspor Excel</span>
+                                </a>
+                                <a href="{{ route('rekrutasi-dosen.jadwal-pengujian.export-csv') }}"
+                                    class="flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50">
+                                    <i class="fas fa-file-csv text-blue-600 w-4"></i>
+                                    <span>Ekspor CSV</span>
+                                </a>
+                                <a href="{{ route('rekrutasi-dosen.jadwal-pengujian.export-pdf') }}"
+                                    class="flex items-center gap-2 px-4 py-2.5 text-xs font-bold text-gray-700 hover:bg-gray-50">
+                                    <i class="fas fa-file-pdf text-red-600 w-4"></i>
+                                    <span>Ekspor PDF</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -163,64 +206,77 @@
 
             {{-- Table --}}
             <div class="overflow-x-auto">
-                <table class="min-w-full w-full">
+                <table class="w-full text-left text-sm divide-y divide-gray-100">
                     <thead>
                         <tr class="bg-[#C41E3A] text-white">
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider w-16">No</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Nama Calon Dosen</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Dosen Penguji</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider w-32">Metode</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Gedung</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Ruangan</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider w-40">Waktu</th>
-                            <th class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider w-32">Aksi</th>
+                            <th class="px-6 py-4 font-bold uppercase tracking-wider text-center w-16">No</th>
+                            <th class="px-6 py-4 font-bold uppercase tracking-wider">Nama Calon Dosen</th>
+                            <th class="px-6 py-4 font-bold uppercase tracking-wider">Dosen Penguji</th>
+                            <th class="px-6 py-4 font-bold uppercase tracking-wider w-32">Metode</th>
+                            <th class="px-6 py-4 font-bold uppercase tracking-wider">Gedung</th>
+                            <th class="px-6 py-4 font-bold uppercase tracking-wider">Ruangan</th>
+                            <th class="px-6 py-4 font-bold uppercase tracking-wider w-40">Waktu</th>
+                            <th class="px-6 py-4 font-bold uppercase tracking-wider text-center w-36">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody id="jadwalTableBody" class="bg-white divide-y divide-gray-200">
+                    <tbody id="jadwalTableBody" class="divide-y divide-gray-100 bg-white">
                         @forelse($jadwalList as $index => $jadwal)
-                        <tr class="hover:bg-gray-50 transition-colors duration-150">
-                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{{ $jadwalList->firstItem() + $index }}</td>
-                            <td class="px-4 py-4 text-sm text-gray-900">{{ $jadwal->calonDosen->nama_lengkap ?? $jadwal->calonDosen->nama ?? '-' }}</td>
-                            <td class="px-4 py-4 text-sm text-gray-900">
+                        <tr class="hover:bg-gray-50/80 transition-colors duration-150">
+                            <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-400 font-bold text-center">
+                                {{ $jadwalList->firstItem() + $index }}
+                            </td>
+                            <td class="px-6 py-4 font-bold text-gray-800">
+                                {{ $jadwal->calonDosen->nama_lengkap ?? $jadwal->calonDosen->nama ?? '-' }}
+                            </td>
+                            <td class="px-6 py-4 text-xs text-gray-600 space-y-0.5">
                                 @foreach($jadwal->dosenPenguji as $dosen)
-                                    <div class="mb-1">{{ $loop->iteration }}. {{ $dosen->front_title }} {{ $dosen->nama_lengkap }}, {{ $dosen->back_title }}</div>
+                                    <div class="font-semibold">{{ $loop->iteration }}. {{ $dosen->front_title }} {{ $dosen->nama_lengkap }}{{ $dosen->back_title ? ', ' . $dosen->back_title : '' }}</div>
                                 @endforeach
                             </td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $jadwal->metode_pelaksanaan == 'Online' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800' }}">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                @php
+                                    $metodeClass = $jadwal->metode_pelaksanaan == 'Online' 
+                                        ? 'bg-blue-50 text-blue-700 border-blue-100' 
+                                        : 'bg-emerald-50 text-emerald-700 border-emerald-100';
+                                @endphp
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg text-xs font-bold border {{ $metodeClass }}">
                                     {{ $jadwal->metode_pelaksanaan }}
                                 </span>
                             </td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{{ $jadwal->gedung ?? '-' }}</td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{{ $jadwal->ruangan ?? '-' }}</td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {{ \Carbon\Carbon::parse($jadwal->jadwal_ujian)->format('d/m/Y') }} - {{ \Carbon\Carbon::parse($jadwal->waktu)->format('H:i') }}
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-600 font-medium">{{ $jadwal->gedung ?? '-' }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-600 font-medium">{{ $jadwal->ruangan ?? '-' }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-xs font-bold text-gray-700">
+                                <i class="far fa-calendar-alt text-[#C41E3A] mr-1"></i>
+                                {{ \Carbon\Carbon::parse($jadwal->jadwal_ujian)->format('d/m/Y') }}
+                                <div class="text-[10px] text-gray-400 font-semibold mt-0.5 ml-4">Pukul {{ \Carbon\Carbon::parse($jadwal->waktu)->format('H:i') }} WIB</div>
                             </td>
-                            <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                                <div class="flex items-center justify-center space-x-2">
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <div class="flex items-center justify-center gap-2">
                                     @can('jadwal-pengujian.detail')
-                                    <button type="button" class="btn-detail text-blue-600 hover:text-blue-800 transition-colors duration-200" 
+                                    <button type="button" class="btn-detail w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 text-gray-600 hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50 transition-colors flex items-center justify-center" 
                                             data-id="{{ $jadwal->id }}" title="Detail">
-                                        <i class="fas fa-eye"></i>
+                                        <i class="fas fa-eye text-xs"></i>
                                     </button>
                                     @endcan
+                                    
                                     @can('jadwal-pengujian.edit')
-                                    <button type="button" class="btn-edit text-green-600 hover:text-green-800 transition-colors duration-200" 
+                                    <button type="button" class="btn-edit w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 text-gray-600 hover:text-emerald-600 hover:border-emerald-200 hover:bg-emerald-50 transition-colors flex items-center justify-center" 
                                             data-id="{{ $jadwal->id }}" title="Edit">
-                                        <i class="fas fa-edit"></i>
+                                        <i class="fas fa-edit text-xs"></i>
                                     </button>
                                     @endcan
+
                                     @can('penilaian-dosen.access')
                                         @if(Auth::user()->hasRole('Super Admin') || in_array($jadwal->id, $jadwalWithPenilaianAccess))
-                                        <button type="button" class="btn-penilaian text-purple-600 hover:text-purple-800 transition-colors duration-200" 
+                                        <button type="button" class="btn-penilaian w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 text-gray-600 hover:text-purple-600 hover:border-purple-200 hover:bg-purple-50 transition-colors flex items-center justify-center" 
                                                 data-id="{{ $jadwal->id }}" title="Penilaian Calon Dosen">
-                                            <i class="fas fa-clipboard-check"></i>
+                                            <i class="fas fa-clipboard-check text-xs"></i>
                                         </button>
                                         @endif
                                     @endcan
+
                                     @can('berita-acara.access')
                                         @php
-                                            // Check if current user is dosen penguji 1 for this jadwal
                                             $currentUserId = Auth::id();
                                             $isDosenPenguji1 = false;
                                             
@@ -233,8 +289,6 @@
                                                 }
                                             }
                                             
-                                            // Check if berita acara is ACTUALLY submitted (not just penilaian complete)
-                                            // Berita acara is considered submitted when rata_akhir is filled by Dosen Penguji 1
                                             $beritaAcaraSubmitted = false;
                                             $dosenPenguji1 = $jadwal->dosenPenguji->firstWhere('pivot.urutan', 1);
                                             if ($dosenPenguji1) {
@@ -244,31 +298,29 @@
                                                 }
                                             }
                                             
-                                            // Also check if all penilaian submitted (for access permission)
                                             $jumlahDosenPenguji = $jadwal->dosenPenguji->count();
                                             $jumlahPenilaian = $jadwal->penilaianDetails->count();
                                             $allPenilaianSubmitted = $jumlahPenilaian >= $jumlahDosenPenguji && $jumlahDosenPenguji > 0;
                                         @endphp
                                         @if($beritaAcaraSubmitted)
-                                            {{-- Show active icon if berita acara already submitted --}}
                                             @if(Auth::user()->hasRole('Super Admin') || $isDosenPenguji1)
-                                            <button type="button" class="btn-berita-acara text-orange-600 hover:text-orange-800 transition-colors duration-200" 
+                                            <button type="button" class="btn-berita-acara w-8 h-8 rounded-lg bg-orange-50 border border-orange-100 text-orange-600 hover:bg-orange-100 transition-colors flex items-center justify-center" 
                                                     data-id="{{ $jadwal->id }}" title="Lihat Berita Acara">
-                                                <i class="fas fa-file-signature"></i>
+                                                <i class="fas fa-file-signature text-xs"></i>
                                             </button>
                                             @endif
                                         @elseif($allPenilaianSubmitted && (Auth::user()->hasRole('Super Admin') || $isDosenPenguji1))
-                                            {{-- Show clickable icon if all penilaian submitted but berita acara not yet --}}
-                                            <button type="button" class="btn-berita-acara text-yellow-600 hover:text-orange-800 transition-colors duration-200" 
+                                            <button type="button" class="btn-berita-acara w-8 h-8 rounded-lg bg-yellow-50 border border-yellow-100 text-yellow-600 hover:bg-yellow-100 transition-colors flex items-center justify-center" 
                                                     data-id="{{ $jadwal->id }}" title="Buat Berita Acara (Belum Submit)">
-                                                <i class="fas fa-file-signature"></i>
+                                                <i class="fas fa-file-signature text-xs"></i>
                                             </button>
                                         @endif
                                     @endcan
+
                                     @can('jadwal-pengujian.delete')
-                                    <button type="button" class="btn-delete text-red-600 hover:text-red-800 transition-colors duration-200" 
+                                    <button type="button" class="btn-delete w-8 h-8 rounded-lg bg-gray-50 border border-gray-200 text-gray-600 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 transition-colors flex items-center justify-center" 
                                             data-id="{{ $jadwal->id }}" title="Hapus">
-                                        <i class="fas fa-trash"></i>
+                                        <i class="fas fa-trash text-xs"></i>
                                     </button>
                                     @endcan
                                 </div>
@@ -276,9 +328,11 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="8" class="px-6 py-12 text-center text-gray-500">
-                                <i class="fas fa-calendar-times text-4xl mb-2"></i>
-                                <p>Tidak ada data jadwal pengujian</p>
+                            <td colspan="8" class="px-6 py-16 text-center text-gray-400">
+                                <div class="flex flex-col items-center justify-center gap-2">
+                                    <i class="far fa-calendar-times text-4xl text-gray-300"></i>
+                                    <span class="text-sm font-semibold">Tidak ada agenda jadwal pengujian yang ditemukan.</span>
+                                </div>
                             </td>
                         </tr>
                         @endforelse
@@ -288,12 +342,8 @@
 
             {{-- Pagination Info --}}
             @if($jadwalList->hasPages())
-            <div class="px-6 py-4 border-t border-gray-200">
-                <div class="flex items-center justify-end">
-                    <div class="flex items-center space-x-2">
-                        {{ $jadwalList->links() }}
-                    </div>
-                </div>
+            <div class="px-6 py-4 border-t border-gray-100">
+                {{ $jadwalList->links() }}
             </div>
             @endif
         </div>
@@ -310,7 +360,7 @@
         document.addEventListener('click', function(e) {
             const dropdown = document.getElementById('exportDropdown');
             const button = document.getElementById('exportBtn');
-            if (!button.contains(e.target) && !dropdown.contains(e.target)) {
+            if (button && dropdown && !button.contains(e.target) && !dropdown.contains(e.target)) {
                 dropdown.classList.add('hidden');
             }
         });
@@ -328,60 +378,60 @@
                 .then(response => response.json())
                 .then(data => {
                     Swal.fire({
-                        title: '<strong class="text-[#C41E3A]">Detail Jadwal Pengujian</strong>',
+                        title: '<h3 class="text-lg font-extrabold text-[#C41E3A] border-b pb-2">Detail Jadwal Pengujian</h3>',
                         html: `
-                            <div class="text-left space-y-3">
-                                <div class="border-b pb-2">
-                                    <p class="text-sm text-gray-600">Calon Dosen</p>
-                                    <p class="text-base font-semibold">${data.calon_dosen_nama}</p>
+                            <div class="text-left space-y-4 pt-2 font-medium">
+                                <div>
+                                    <span class="text-[10px] text-gray-400 font-bold uppercase block mb-0.5">Calon Dosen</span>
+                                    <span class="text-sm font-bold text-gray-800">${data.calon_dosen_nama}</span>
                                 </div>
-                                <div class="border-b pb-2">
-                                    <p class="text-sm text-gray-600">Dosen Penguji</p>
-                                    <div class="text-base font-semibold">
+                                <div>
+                                    <span class="text-[10px] text-gray-400 font-bold uppercase block mb-0.5">Dosen Penguji</span>
+                                    <div class="text-sm font-semibold text-gray-700 space-y-0.5">
                                         ${data.dosen_penguji_list.map((dosen, index) => 
-                                            `<div class="mb-1">${dosen.urutan}. ${dosen.nama}</div>`
+                                            `<div>${dosen.urutan}. ${dosen.nama}</div>`
                                         ).join('')}
                                     </div>
                                 </div>
-                                <div class="border-b pb-2">
-                                    <p class="text-sm text-gray-600">Tahun Ajar</p>
-                                    <p class="text-base font-semibold">${data.tahun_ajar}</p>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <span class="text-[10px] text-gray-400 font-bold uppercase block mb-0.5">Tahun Ajar</span>
+                                        <span class="text-sm font-semibold text-gray-800">${data.tahun_ajar}</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-[10px] text-gray-400 font-bold uppercase block mb-0.5">Tanggal Ujian</span>
+                                        <span class="text-sm font-bold text-gray-800">${data.jadwal_ujian}</span>
+                                    </div>
                                 </div>
-                                <div class="border-b pb-2">
-                                    <p class="text-sm text-gray-600">Tanggal Ujian</p>
-                                    <p class="text-base font-semibold">${data.jadwal_ujian}</p>
-                                </div>
-                                <div class="border-b pb-2">
-                                    <p class="text-sm text-gray-600">Metode Pelaksanaan</p>
-                                    <p class="text-base font-semibold">
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${data.metode_pelaksanaan === 'Online' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'}">
-                                            ${data.metode_pelaksanaan}
-                                        </span>
-                                    </p>
-                                </div>
-                                <div class="border-b pb-2">
-                                    <p class="text-sm text-gray-600">Gedung</p>
-                                    <p class="text-base font-semibold">${data.gedung || '-'}</p>
-                                </div>
-                                <div class="border-b pb-2">
-                                    <p class="text-sm text-gray-600">Ruangan</p>
-                                    <p class="text-base font-semibold">${data.ruangan || '-'}</p>
+                                <div class="grid grid-cols-3 gap-2">
+                                    <div>
+                                        <span class="text-[10px] text-gray-400 font-bold uppercase block mb-0.5">Metode</span>
+                                        <span class="inline-flex px-2 py-0.5 text-xs font-bold rounded bg-blue-50 text-blue-700 border border-blue-100 mt-1">${data.metode_pelaksanaan}</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-[10px] text-gray-400 font-bold uppercase block mb-0.5">Gedung</span>
+                                        <span class="text-sm font-semibold text-gray-800">${data.gedung || '-'}</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-[10px] text-gray-400 font-bold uppercase block mb-0.5">Ruangan</span>
+                                        <span class="text-sm font-semibold text-gray-800">${data.ruangan || '-'}</span>
+                                    </div>
                                 </div>
                                 <div>
-                                    <p class="text-sm text-gray-600">Waktu</p>
-                                    <p class="text-base font-semibold">${data.waktu}</p>
+                                    <span class="text-[10px] text-gray-400 font-bold uppercase block mb-0.5">Waktu Pelaksanaan</span>
+                                    <span class="text-sm font-bold text-gray-800">${data.waktu} WIB</span>
                                 </div>
                             </div>
                         `,
                         confirmButtonText: 'Tutup',
                         confirmButtonColor: '#C41E3A',
-                        width: '500px'
+                        width: '450px'
                     });
                 })
                 .catch(error => {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Error!',
+                        title: 'Gagal!',
                         text: 'Gagal memuat detail jadwal pengujian.',
                         confirmButtonColor: '#C41E3A'
                     });
@@ -398,59 +448,62 @@
 
         function openCreateModal() {
             Swal.fire({
-                title: '<strong class="text-[#C41E3A]">Tambah Jadwal Pengujian</strong>',
+                title: '<h3 class="text-lg font-extrabold text-[#C41E3A] border-b pb-2">Tambah Jadwal Pengujian</h3>',
                 html: `
-                    <form id="createForm" class="text-left space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Tahun Ajar <span class="text-red-500">*</span></label>
-                            <select name="tahun_ajar_id" required class="swal2-input w-full">
+                    <form id="createForm" class="text-left space-y-4 pt-2 font-medium">
+                        <div class="flex flex-col gap-1">
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Tahun Ajar <span class="text-red-500">*</span></label>
+                            <select name="tahun_ajar_id" required class="swal2-select w-full">
                                 @foreach($tahunAjarList as $ta)
                                 <option value="{{ $ta->id }}">{{ $ta->label }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Calon Dosen <span class="text-red-500">*</span></label>
-                            <select id="calonDosenSelect" name="calon_dosen_id" required class="swal2-input w-full" style="width: 100%;">
+                        <div class="flex flex-col gap-1">
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Calon Dosen <span class="text-red-500">*</span></label>
+                            <select id="calonDosenSelect" name="calon_dosen_id" required class="w-full" style="width: 100%;">
                                 <option value="">Pilih Calon Dosen</option>
                                 @foreach($calonDosenList as $calon)
                                 <option value="{{ $calon->id }}">{{ $calon->nama_lengkap ?? $calon->nama }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Dosen Penguji (Pilih 2-3) <span class="text-red-500">*</span></label>
-                            <select id="dosenPengujiSelect" name="dosen_penguji_id[]" required multiple class="swal2-input w-full" style="width: 100%;">
-                                <option value="">Pilih Dosen Penguji</option>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Dosen Penguji (Pilih 2-3) <span class="text-red-500">*</span></label>
+                            <select id="dosenPengujiSelect" name="dosen_penguji_id[]" required multiple class="w-full" style="width: 100%;">
                                 @foreach($dosenList as $dosen)
-                                <option value="{{ $dosen->id }}">{{ $dosen->front_title }} {{ $dosen->nama_lengkap }}, {{ $dosen->back_title }}</option>
+                                <option value="{{ $dosen->id }}">{{ $dosen->front_title }} {{ $dosen->nama_lengkap }}{{ $dosen->back_title ? ', ' . $dosen->back_title : '' }}</option>
                                 @endforeach
                             </select>
-                            <small class="text-gray-500">Minimal 2, maksimal 3 dosen penguji</small>
+                            <span class="text-[10px] text-gray-400 font-semibold">Minimal 2, maksimal 3 dosen penguji</span>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Ujian <span class="text-red-500">*</span></label>
-                            <input type="date" name="jadwal_ujian" required class="swal2-input w-full">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="flex flex-col gap-1">
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Tanggal Ujian <span class="text-red-500">*</span></label>
+                                <input type="date" name="jadwal_ujian" required class="swal2-input w-full">
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Waktu <span class="text-red-500">*</span></label>
+                                <input type="time" name="waktu" required class="swal2-input w-full">
+                            </div>
                         </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Metode Pelaksanaan <span class="text-red-500">*</span></label>
-                            <select id="metodeSelect" name="metode_pelaksanaan" required class="swal2-input w-full">
+                        <div class="flex flex-col gap-1">
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Metode Pelaksanaan <span class="text-red-500">*</span></label>
+                            <select id="metodeSelect" name="metode_pelaksanaan" required class="swal2-select w-full">
                                 @foreach($metodeList as $metode)
                                 <option value="{{ $metode }}">{{ $metode }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <div id="gedungField">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Gedung <span id="gedungRequired" class="text-red-500">*</span></label>
-                            <input type="text" id="gedungInput" name="gedung" class="swal2-input w-full" placeholder="Contoh: Gedung A">
-                        </div>
-                        <div id="ruanganField">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Ruangan <span id="ruanganRequired" class="text-red-500">*</span></label>
-                            <input type="text" id="ruanganInput" name="ruangan" class="swal2-input w-full" placeholder="Contoh: R.201">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Waktu <span class="text-red-500">*</span></label>
-                            <input type="time" name="waktu" required class="swal2-input w-full">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div id="gedungField" class="flex flex-col gap-1">
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Gedung <span id="gedungRequired" class="text-red-500">*</span></label>
+                                <input type="text" id="gedungInput" name="gedung" class="swal2-input w-full" placeholder="Contoh: Gedung A">
+                            </div>
+                            <div id="ruanganField" class="flex flex-col gap-1">
+                                <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Ruangan <span id="ruanganRequired" class="text-red-500">*</span></label>
+                                <input type="text" id="ruanganInput" name="ruangan" class="swal2-input w-full" placeholder="Contoh: R.201">
+                            </div>
                         </div>
                     </form>
                 `,
@@ -459,16 +512,14 @@
                 cancelButtonText: 'Batal',
                 confirmButtonColor: '#C41E3A',
                 cancelButtonColor: '#6B7280',
-                width: '600px',
+                width: '550px',
                 didOpen: () => {
-                    // Initialize Select2 for Calon Dosen (single select)
                     $('#calonDosenSelect').select2({
                         placeholder: 'Cari dan pilih calon dosen...',
                         allowClear: true,
                         dropdownParent: $('.swal2-container')
                     });
 
-                    // Initialize Select2 for Dosen Penguji (multiple select with min 2, max 3)
                     $('#dosenPengujiSelect').select2({
                         placeholder: 'Cari dan pilih 2-3 dosen penguji...',
                         allowClear: true,
@@ -478,15 +529,6 @@
                         minimumResultsForSearch: 0
                     });
 
-                    // Validate minimum 2 dosen penguji
-                    $('#dosenPengujiSelect').on('change', function() {
-                        const selected = $(this).val();
-                        if (selected && selected.length < 2) {
-                            // Will be validated on submit
-                        }
-                    });
-
-                    // Handle metode pelaksanaan change
                     const metodeSelect = document.getElementById('metodeSelect');
                     const gedungInput = document.getElementById('gedungInput');
                     const ruanganInput = document.getElementById('ruanganInput');
@@ -499,8 +541,8 @@
                             ruanganInput.disabled = true;
                             gedungInput.value = '';
                             ruanganInput.value = '';
-                            gedungInput.style.backgroundColor = '#e5e7eb';
-                            ruanganInput.style.backgroundColor = '#e5e7eb';
+                            gedungInput.style.backgroundColor = '#f1f5f9';
+                            ruanganInput.style.backgroundColor = '#f1f5f9';
                             gedungRequired.style.display = 'none';
                             ruanganRequired.style.display = 'none';
                         } else {
@@ -514,19 +556,16 @@
                     }
 
                     metodeSelect.addEventListener('change', toggleGedungRuangan);
-                    toggleGedungRuangan(); // Initialize on load
+                    toggleGedungRuangan();
                 },
                 preConfirm: () => {
                     const form = document.getElementById('createForm');
                     const dosenPenguji = $('#dosenPengujiSelect').val();
                     
-                    // Validate minimum 2 dosen penguji
                     if (!dosenPenguji || dosenPenguji.length < 2) {
                         Swal.showValidationMessage('Pilih minimal 2 dosen penguji');
                         return false;
                     }
-                    
-                    // Validate maximum 3 dosen penguji
                     if (dosenPenguji.length > 3) {
                         Swal.showValidationMessage('Maksimal 3 dosen penguji');
                         return false;
@@ -581,58 +620,62 @@
                 .then(response => response.json())
                 .then(data => {
                     Swal.fire({
-                        title: '<strong class="text-[#C41E3A]">Edit Jadwal Pengujian</strong>',
+                        title: '<h3 class="text-lg font-extrabold text-[#C41E3A] border-b pb-2">Edit Jadwal Pengujian</h3>',
                         html: `
-                            <form id="editForm" class="text-left space-y-4">
+                            <form id="editForm" class="text-left space-y-4 pt-2 font-medium">
                                 <input type="hidden" name="_method" value="PUT">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Tahun Ajar <span class="text-red-500">*</span></label>
-                                    <select name="tahun_ajar_id" required class="swal2-input w-full">
+                                <div class="flex flex-col gap-1">
+                                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Tahun Ajar <span class="text-red-500">*</span></label>
+                                    <select name="tahun_ajar_id" required class="swal2-select w-full">
                                         @foreach($tahunAjarList as $ta)
                                         <option value="{{ $ta->id }}" ${data.tahun_ajar_id == {{ $ta->id }} ? 'selected' : ''}>{{ $ta->label }}</option>
                                         @endforeach
                                     </select>
                                 </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Calon Dosen <span class="text-red-500">*</span></label>
-                                    <select id="editCalonDosenSelect" name="calon_dosen_id" required class="swal2-input w-full" style="width: 100%;">
+                                <div class="flex flex-col gap-1">
+                                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Calon Dosen <span class="text-red-500">*</span></label>
+                                    <select id="editCalonDosenSelect" name="calon_dosen_id" required class="w-full" style="width: 100%;">
                                         @foreach($calonDosenList as $calon)
                                         <option value="{{ $calon->id }}" ${data.calon_dosen_id == {{ $calon->id }} ? 'selected' : ''}>{{ $calon->nama_lengkap ?? $calon->nama }}</option>
                                         @endforeach
                                     </select>
                                 </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Dosen Penguji (Pilih 2-3) <span class="text-red-500">*</span></label>
-                                    <select id="editDosenPengujiSelect" name="dosen_penguji_id[]" required multiple class="swal2-input w-full" style="width: 100%;">
+                                <div class="flex flex-col gap-1">
+                                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Dosen Penguji (Pilih 2-3) <span class="text-red-500">*</span></label>
+                                    <select id="editDosenPengujiSelect" name="dosen_penguji_id[]" required multiple class="w-full" style="width: 100%;">
                                         @foreach($dosenList as $dosen)
-                                        <option value="{{ $dosen->id }}">{{ $dosen->front_title }} {{ $dosen->nama_lengkap }}, {{ $dosen->back_title }}</option>
+                                        <option value="{{ $dosen->id }}">{{ $dosen->front_title }} {{ $dosen->nama_lengkap }}{{ $dosen->back_title ? ', ' . $dosen->back_title : '' }}</option>
                                         @endforeach
                                     </select>
-                                    <small class="text-gray-500">Minimal 2, maksimal 3 dosen penguji</small>
+                                    <span class="text-[10px] text-gray-400 font-semibold">Minimal 2, maksimal 3 dosen penguji</span>
                                 </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Ujian <span class="text-red-500">*</span></label>
-                                    <input type="date" name="jadwal_ujian" value="${data.jadwal_ujian_raw}" required class="swal2-input w-full">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="flex flex-col gap-1">
+                                        <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Tanggal Ujian <span class="text-red-500">*</span></label>
+                                        <input type="date" name="jadwal_ujian" value="${data.jadwal_ujian_raw}" required class="swal2-input w-full">
+                                    </div>
+                                    <div class="flex flex-col gap-1">
+                                        <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Waktu <span class="text-red-500">*</span></label>
+                                        <input type="time" name="waktu" value="${data.waktu_raw}" required class="swal2-input w-full">
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Metode Pelaksanaan <span class="text-red-500">*</span></label>
-                                    <select id="editMetodeSelect" name="metode_pelaksanaan" required class="swal2-input w-full">
+                                <div class="flex flex-col gap-1">
+                                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Metode Pelaksanaan <span class="text-red-500">*</span></label>
+                                    <select id="editMetodeSelect" name="metode_pelaksanaan" required class="swal2-select w-full">
                                         @foreach($metodeList as $metode)
                                         <option value="{{ $metode }}" ${data.metode_pelaksanaan == '{{ $metode }}' ? 'selected' : ''}>{{ $metode }}</option>
                                         @endforeach
                                     </select>
                                 </div>
-                                <div id="editGedungField">
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Gedung <span id="editGedungRequired" class="text-red-500">*</span></label>
-                                    <input type="text" id="editGedungInput" name="gedung" value="${data.gedung || ''}" class="swal2-input w-full" placeholder="Contoh: Gedung A">
-                                </div>
-                                <div id="editRuanganField">
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Ruangan <span id="editRuanganRequired" class="text-red-500">*</span></label>
-                                    <input type="text" id="editRuanganInput" name="ruangan" value="${data.ruangan || ''}" class="swal2-input w-full" placeholder="Contoh: R.201">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-1">Waktu <span class="text-red-500">*</span></label>
-                                    <input type="time" name="waktu" value="${data.waktu_raw}" required class="swal2-input w-full">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div id="editGedungField" class="flex flex-col gap-1">
+                                        <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Gedung <span id="editGedungRequired" class="text-red-500">*</span></label>
+                                        <input type="text" id="editGedungInput" name="gedung" value="${data.gedung || ''}" class="swal2-input w-full" placeholder="Contoh: Gedung A">
+                                    </div>
+                                    <div id="editRuanganField" class="flex flex-col gap-1">
+                                        <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Ruangan <span id="editRuanganRequired" class="text-red-500">*</span></label>
+                                        <input type="text" id="editRuanganInput" name="ruangan" value="${data.ruangan || ''}" class="swal2-input w-full" placeholder="Contoh: R.201">
+                                    </div>
                                 </div>
                             </form>
                         `,
@@ -641,16 +684,14 @@
                         cancelButtonText: 'Batal',
                         confirmButtonColor: '#C41E3A',
                         cancelButtonColor: '#6B7280',
-                        width: '600px',
+                        width: '550px',
                         didOpen: () => {
-                            // Initialize Select2 for Calon Dosen (single select)
                             $('#editCalonDosenSelect').select2({
                                 placeholder: 'Cari dan pilih calon dosen...',
                                 allowClear: true,
                                 dropdownParent: $('.swal2-container')
                             });
 
-                            // Initialize Select2 for Dosen Penguji (multiple select with min 2, max 3)
                             $('#editDosenPengujiSelect').select2({
                                 placeholder: 'Cari dan pilih 2-3 dosen penguji...',
                                 allowClear: true,
@@ -660,12 +701,10 @@
                                 minimumResultsForSearch: 0
                             });
 
-                            // Pre-select multiple dosen penguji
                             if (data.dosen_penguji_ids && data.dosen_penguji_ids.length > 0) {
                                 $('#editDosenPengujiSelect').val(data.dosen_penguji_ids).trigger('change');
                             }
 
-                            // Handle metode pelaksanaan change
                             const metodeSelect = document.getElementById('editMetodeSelect');
                             const gedungInput = document.getElementById('editGedungInput');
                             const ruanganInput = document.getElementById('editRuanganInput');
@@ -678,8 +717,8 @@
                                     ruanganInput.disabled = true;
                                     gedungInput.value = '';
                                     ruanganInput.value = '';
-                                    gedungInput.style.backgroundColor = '#e5e7eb';
-                                    ruanganInput.style.backgroundColor = '#e5e7eb';
+                                    gedungInput.style.backgroundColor = '#f1f5f9';
+                                    ruanganInput.style.backgroundColor = '#f1f5f9';
                                     gedungRequired.style.display = 'none';
                                     ruanganRequired.style.display = 'none';
                                 } else {
@@ -693,19 +732,16 @@
                             }
 
                             metodeSelect.addEventListener('change', toggleGedungRuangan);
-                            toggleGedungRuangan(); // Initialize on load
+                            toggleGedungRuangan();
                         },
                         preConfirm: () => {
                             const form = document.getElementById('editForm');
                             const dosenPenguji = $('#editDosenPengujiSelect').val();
                             
-                            // Validate minimum 2 dosen penguji
                             if (!dosenPenguji || dosenPenguji.length < 2) {
                                 Swal.showValidationMessage('Pilih minimal 2 dosen penguji');
                                 return false;
                             }
-                            
-                            // Validate maximum 3 dosen penguji
                             if (dosenPenguji.length > 3) {
                                 Swal.showValidationMessage('Maksimal 3 dosen penguji');
                                 return false;
@@ -749,7 +785,7 @@
                 .catch(error => {
                     Swal.fire({
                         icon: 'error',
-                        title: 'Error!',
+                        title: 'Gagal!',
                         text: 'Gagal memuat data jadwal pengujian.',
                         confirmButtonColor: '#C41E3A'
                     });
@@ -808,7 +844,7 @@
                         console.error('Delete error:', error);
                         Swal.fire({
                             icon: 'error',
-                            title: 'Error!',
+                            title: 'Gagal!',
                             text: error.message || 'Gagal menghapus jadwal pengujian.',
                             confirmButtonColor: '#C41E3A'
                         });

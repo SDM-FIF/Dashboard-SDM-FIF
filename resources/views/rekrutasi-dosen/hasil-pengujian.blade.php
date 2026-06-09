@@ -7,184 +7,217 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <title>Hasil Pengujian - Dashboard SDM FIF</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+        }
+    </style>
 </head>
-<body class="flex flex-col md:flex-row bg-gray-50 font-nunito">
-    {{-- Sidebar --}}
+<body class="flex flex-col md:flex-row bg-[#F8FAFC] min-h-screen text-[#1E293B]">
+    {{-- Sidebar Navigation --}}
     <x-navbar />
-    
-    {{-- Main Content --}}
-    <main class="flex-1 p-4 md:p-6 min-h-screen">
 
-        {{-- Page Title --}}
-        <div class="mb-6">
-            <h1 class="text-3xl md:text-4xl font-bold text-[#C41E3A]">Hasil Pengujian Calon Dosen</h1>
+    {{-- Main Content --}}
+    <main class="flex-1 p-6 md:p-8 overflow-y-auto">
+        {{-- Topbar --}}
+        <x-topbar />
+
+        {{-- Header Section --}}
+        <div class="mb-8 mt-4">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-[#C41E3A] tracking-tight">Hasil Pengujian Calon Dosen</h1>
+            <p class="text-sm text-gray-500 mt-1 font-medium">Lihat dan unduh rekapitulasi nilai pengujian beserta berkas berita acara dari masing-masing dosen penguji.</p>
         </div>
 
         {{-- Alert Messages --}}
         @if(session('success'))
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
-            <span class="block sm:inline">{{ session('success') }}</span>
-        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: '{{ session("success") }}',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    toast: true,
+                    position: 'top-end'
+                });
+            });
+        </script>
         @endif
 
         @if(session('error'))
-        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
-            <span class="block sm:inline">{{ session('error') }}</span>
-        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: '{{ session("error") }}',
+                    confirmButtonColor: '#C41E3A'
+                });
+            });
+        </script>
         @endif
 
-        {{-- Data Table Section --}}
-        <div class="bg-white rounded-lg shadow-md border border-gray-200">
+        {{-- Data Table Card --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
             {{-- Table Header Section --}}
-            <div class="p-6 border-b border-gray-200">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-xl font-bold text-[#C41E3A]">Data Hasil Pengujian</h2>
-                </div>
+            <div class="p-6 border-b border-gray-100">
+                <h2 class="text-lg font-bold text-gray-800">Daftar Hasil Nilai Pengujian</h2>
             </div>
 
-            {{-- Table --}}
+            {{-- Table Content --}}
             <div class="overflow-x-auto">
-                <table class="min-w-full w-full">
+                <table class="w-full text-left text-sm divide-y divide-gray-100">
                     <thead>
                         <tr class="bg-[#C41E3A] text-white">
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider w-16">No.</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Nama Calon Dosen</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Dosen Penguji</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Hasil Penilaian</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">Kategori</th>
-                            <th class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider w-32">Aksi</th>
+                            <th class="px-6 py-4 font-bold uppercase tracking-wider text-center w-16">No</th>
+                            <th class="px-6 py-4 font-bold uppercase tracking-wider">Nama Calon Dosen</th>
+                            <th class="px-6 py-4 font-bold uppercase tracking-wider">Dosen Penguji</th>
+                            <th class="px-6 py-4 font-bold uppercase tracking-wider text-center w-40">Hasil Penilaian</th>
+                            <th class="px-6 py-4 font-bold uppercase tracking-wider w-40">Kategori Kelayakan</th>
+                            <th class="px-6 py-4 font-bold uppercase tracking-wider text-center w-28">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                                @forelse($calonDosenList as $index => $calon)
-                                @php
-                                    $jadwal = $calon->jadwalPengujian->first();
-                                    $dosenPengujiList = [];
-                                    $penilaianList = [];
+                    <tbody class="divide-y divide-gray-100 bg-white">
+                        @forelse($calonDosenList as $index => $calon)
+                        @php
+                            $jadwal = $calon->jadwalPengujian->first();
+                            $dosenPengujiList = [];
+                            $penilaianList = [];
+                            
+                            if ($jadwal) {
+                                $allDosenPenguji = $jadwal->dosenPenguji;
+                                
+                                for ($i = 1; $i <= 3; $i++) {
+                                    $dosen = $allDosenPenguji->firstWhere('pivot.urutan', $i);
+                                    $dosenPengujiList[] = $dosen;
                                     
-                                    if ($jadwal) {
-                                        // Get all dosen penguji sorted by urutan
-                                        $allDosenPenguji = $jadwal->dosenPenguji;
-                                        
-                                        // Ensure we have exactly 3 slots
-                                        for ($i = 1; $i <= 3; $i++) {
-                                            $dosen = $allDosenPenguji->firstWhere('pivot.urutan', $i);
-                                            $dosenPengujiList[] = $dosen;
-                                            
-                                            // Get penilaian for this dosen
-                                            if ($dosen) {
-                                                $penilaian = $jadwal->penilaianDetails->firstWhere('user_id', $dosen->user_id);
-                                                $penilaianList[] = $penilaian;
-                                            } else {
-                                                $penilaianList[] = null;
-                                            }
-                                        }
+                                    if ($dosen) {
+                                        $penilaian = $jadwal->penilaianDetails->firstWhere('user_id', $dosen->user_id);
+                                        $penilaianList[] = $penilaian;
+                                    } else {
+                                        $penilaianList[] = null;
                                     }
-                                @endphp
-                                <tr class="hover:bg-gray-50 transition-colors duration-150">
-                                    <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{{ $index + 1 }}</td>
-                                    <td class="px-4 py-4 text-sm text-gray-900"><strong>{{ $calon->nama_lengkap ?? $calon->nama }}</strong></td>
-                                    <td class="px-4 py-4 text-sm text-gray-900">
-                                        @if(!empty($dosenPengujiList))
-                                            @foreach($dosenPengujiList as $key => $dosen)
-                                                @if($dosen)
-                                                    <div class="mb-1">{{ $key + 1 }}. {{ $dosen->front_title }} {{ $dosen->nama_lengkap }}, {{ $dosen->back_title }}</div>
-                                                @else
-                                                    <div class="mb-1 text-gray-400">{{ $key + 1 }}. -</div>
-                                                @endif
-                                            @endforeach
+                                }
+                            }
+                        @endphp
+                        <tr class="hover:bg-gray-50/80 transition-colors duration-150">
+                            <td class="px-6 py-4 whitespace-nowrap text-xs text-gray-400 font-bold text-center">
+                                {{ $index + 1 }}
+                            </td>
+                            <td class="px-6 py-4 font-bold text-gray-800">
+                                {{ $calon->nama_lengkap ?? $calon->nama }}
+                            </td>
+                            <td class="px-6 py-4 text-xs text-gray-600 space-y-1">
+                                @if(!empty($dosenPengujiList))
+                                    @foreach($dosenPengujiList as $key => $dosen)
+                                        @if($dosen)
+                                            <div class="font-semibold">{{ $key + 1 }}. {{ $dosen->front_title }} {{ $dosen->nama_lengkap }}{{ $dosen->back_title ? ', ' . $dosen->back_title : '' }}</div>
                                         @else
-                                            <span class="text-gray-400">Belum ada jadwal</span>
+                                            <div class="text-gray-400 font-medium">{{ $key + 1 }}. -</div>
                                         @endif
-                                    </td>
-                                    <td class="px-4 py-4 text-sm text-gray-900">
-                                        @if(!empty($penilaianList))
-                                            @foreach($penilaianList as $key => $penilaian)
-                                                <div class="mb-1">
-                                                    {{ $key + 1 }}. 
-                                                    @if($penilaian)
-                                                        <strong>{{ number_format($penilaian->rata_nilai, 2) }}</strong>
-                                                    @else
-                                                        <span class="text-gray-400">-</span>
-                                                    @endif
-                                                </div>
-                                            @endforeach
-                                        @else
-                                            <span class="text-gray-400">-</span>
-                                        @endif
-                                    </td>
-                                    <td class="px-4 py-4 text-sm text-gray-900">
-                                        @if(!empty($penilaianList))
-                                            @foreach($penilaianList as $key => $penilaian)
-                                                <div class="mb-1">
-                                                    {{ $key + 1 }}. 
-                                                    @if($penilaian)
-                                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
-                                                            @if($penilaian->keterangan_berbobot == 'Sangat Baik') bg-green-100 text-green-800
-                                                            @elseif($penilaian->keterangan_berbobot == 'Baik') bg-blue-100 text-blue-800
-                                                            @elseif($penilaian->keterangan_berbobot == 'Cukup') bg-yellow-100 text-yellow-800
-                                                            @else bg-red-100 text-red-800
-                                                            @endif">
-                                                            {{ $penilaian->keterangan_berbobot }}
-                                                        </span>
-                                                    @else
-                                                        <span class="text-gray-400">-</span>
-                                                    @endif
-                                                </div>
-                                            @endforeach
-                                        @else
-                                            <span class="text-gray-400">-</span>
-                                        @endif
-                                    </td>
-                                    <td class="px-4 py-4 whitespace-nowrap text-center text-sm">
-                                        @php
-                                            $hasPenilaian = collect($penilaianList)->filter()->isNotEmpty();
-                                            // Check if berita acara is submitted (rata_akhir exists in dosen penguji 1's penilaian)
-                                            $hasBeritaAcara = false;
-                                            if ($jadwal && $penilaianList[0] && $penilaianList[0]->rata_akhir !== null) {
-                                                $hasBeritaAcara = true;
-                                            }
-                                        @endphp
-                                        <div class="flex items-center justify-center space-x-3">
-                                            @if($hasPenilaian)
-                                                <a href="{{ route('rekrutasi-dosen.hasil-pengujian.combined-pdf', $calon->id) }}" 
-                                                   target="_blank"
-                                                   class="text-purple-600 hover:text-purple-800 transition-colors duration-200" 
-                                                   title="Lihat Hasil Pengujian">
-                                                    <i class="fas fa-clipboard-check text-xl"></i>
-                                                </a>
+                                    @endforeach
+                                @else
+                                    <span class="text-gray-400 font-medium">Belum dijadwalkan</span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 text-center text-xs font-bold text-gray-800 space-y-1">
+                                @if(!empty($penilaianList))
+                                    @foreach($penilaianList as $key => $penilaian)
+                                        <div>
+                                            {{ $key + 1 }}. 
+                                            @if($penilaian)
+                                                <span class="text-sm font-extrabold text-[#C41E3A]">{{ number_format($penilaian->rata_nilai, 2) }}</span>
                                             @else
-                                                <span class="text-gray-400">
-                                                    <i class="fas fa-clipboard-check text-xl"></i>
-                                                </span>
-                                            @endif
-                                            
-                                            @if($hasBeritaAcara)
-                                                <a href="{{ route('rekrutasi-dosen.hasil-pengujian.berita-acara', $jadwal->id) }}" 
-                                                   target="_blank"
-                                                   class="text-orange-600 hover:text-orange-800 transition-colors duration-200" 
-                                                   title="Lihat Berita Acara">
-                                                    <i class="fas fa-file-signature text-xl"></i>
-                                                </a>
-                                            @else
-                                                <span class="text-gray-400">
-                                                    <i class="fas fa-file-signature text-xl"></i>
-                                                </span>
+                                                <span class="text-gray-400 font-semibold">-</span>
                                             @endif
                                         </div>
-                                    </td>
-                                </tr>
-                                @empty
-                                <tr>
-                                    <td colspan="6" class="px-4 py-8 text-center text-sm text-gray-500">Tidak ada data calon dosen</td>
-                                </tr>
-                                @endforelse
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                                    @endforeach
+                                @else
+                                    <span class="text-gray-400 font-medium">-</span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 text-xs space-y-1">
+                                @if(!empty($penilaianList))
+                                    @foreach($penilaianList as $key => $penilaian)
+                                        <div>
+                                            @if($penilaian)
+                                                @php
+                                                    $badgeClass = match($penilaian->keterangan_berbobot) {
+                                                        'Sangat Baik' => 'bg-emerald-50 text-emerald-700 border-emerald-100',
+                                                        'Baik' => 'bg-blue-50 text-blue-700 border-blue-100',
+                                                        'Cukup' => 'bg-amber-50 text-amber-700 border-amber-100',
+                                                        default => 'bg-rose-50 text-rose-700 border-rose-100'
+                                                    };
+                                                @endphp
+                                                <span class="inline-flex items-center px-2 py-0.5 rounded-lg font-bold border {{ $badgeClass }}">
+                                                    {{ $penilaian->keterangan_berbobot }}
+                                                </span>
+                                            @else
+                                                <span class="text-gray-400 font-semibold">-</span>
+                                            @endif
+                                        </div>
+                                    @endforeach
+                                @else
+                                    <span class="text-gray-400 font-medium">-</span>
+                                @endif
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                @php
+                                    $hasPenilaian = collect($penilaianList)->filter()->isNotEmpty();
+                                    $hasBeritaAcara = false;
+                                    if ($jadwal && $penilaianList[0] && $penilaianList[0]->rata_akhir !== null) {
+                                        $hasBeritaAcara = true;
+                                    }
+                                @endphp
+                                <div class="flex items-center justify-center gap-2">
+                                    @if($hasPenilaian)
+                                        <a href="{{ route('rekrutasi-dosen.hasil-pengujian.combined-pdf', $calon->id) }}" 
+                                           target="_blank"
+                                           class="w-8 h-8 rounded-lg bg-purple-50 border border-purple-100 text-purple-600 hover:bg-purple-100 transition-colors flex items-center justify-center" 
+                                           title="Unduh Rekap Nilai (PDF)">
+                                            <i class="fas fa-clipboard-check text-xs"></i>
+                                        </a>
+                                    @else
+                                        <button disabled
+                                                class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 text-gray-300 flex items-center justify-center cursor-not-allowed">
+                                            <i class="fas fa-clipboard-check text-xs"></i>
+                                        </button>
+                                    @endif
+                                    
+                                    @if($hasBeritaAcara)
+                                        <a href="{{ route('rekrutasi-dosen.hasil-pengujian.berita-acara', $jadwal->id) }}" 
+                                           target="_blank"
+                                           class="w-8 h-8 rounded-lg bg-orange-50 border border-orange-100 text-orange-600 hover:bg-orange-100 transition-colors flex items-center justify-center" 
+                                           title="Unduh Berita Acara (PDF)">
+                                            <i class="fas fa-file-signature text-xs"></i>
+                                        </a>
+                                    @else
+                                        <button disabled
+                                                class="w-8 h-8 rounded-lg bg-gray-50 border border-gray-100 text-gray-300 flex items-center justify-center cursor-not-allowed">
+                                            <i class="fas fa-file-signature text-xs"></i>
+                                        </button>
+                                    @endif
+                                </div>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="6" class="px-6 py-16 text-center text-gray-400">
+                                <div class="flex flex-col items-center justify-center gap-2">
+                                    <i class="fas fa-inbox text-4xl text-gray-300"></i>
+                                    <span class="text-sm font-semibold">Tidak ada data hasil pengujian calon dosen.</span>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
-        </main>
+        </div>
+    </main>
 </body>
 </html>
