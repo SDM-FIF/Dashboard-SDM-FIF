@@ -27,7 +27,11 @@ class Dosen extends Model
         'sertifikasi_dosen',      // ✅ Tambahan baru
         'tanggal_serdos',         // ✅ Tambahan baru
         'foto_profil',           // ✅ Tambahan baru
-        'status_dosen',           // ✅ Tambahan baru
+        'status_dosen',  
+        'status_studi_lanjut',
+        'lokasi_kampus_studi',
+        'tahun_mulai_studi',
+        'batas_studi',         // ✅ Tambahan baru
     ];
 
     protected $casts = [
@@ -35,7 +39,7 @@ class Dosen extends Model
         'tanggal_serdos' => 'date',
     ];
 
-    // Konstanta untuk Status Dosen
+
     const STATUS_AKTIF = 'Aktif';
     const STATUS_TUGAS_BELAJAR = 'Tugas Belajar';
     const STATUS_IZIN_BELAJAR = 'Izin Belajar';

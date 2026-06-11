@@ -36,7 +36,74 @@ Route::get('/dashboard', function () {
 })->name('dashboard');
 
 Route::get('/dashboard-dosen', function () {
-    return view('dashboard-dosen');
+    $studiLanjut = \App\Models\Dosen::with('prodi')
+        ->whereNotNull('status_studi_lanjut')
+        ->get(['id', 'nama_lengkap', 'prodi_id', 'jabatan', 'status_studi_lanjut', 'lokasi_kampus_studi', 'tahun_mulai_studi', 'batas_studi']);
+
+    $nisbah = \App\Models\Prodi::withCount(['dosen', 'mahasiswa'])
+        ->get()
+        ->map(function ($prodi) {
+            $rasio = $prodi->dosen_count > 0
+                ? round($prodi->mahasiswa_count / $prodi->dosen_count, 1)
+                : 0;
+            return [
+                'nama_prodi' => $prodi->nama_prodi,
+                'dosen' => $prodi->dosen_count,
+                'mahasiswa' => $prodi->mahasiswa_count,
+                'rasio' => $rasio,
+                'over_limit' => $rasio > 27,
+            ];
+        });
+
+    $totalDosen = \App\Models\Dosen::count();
+
+    $totalStudiLanjut = \App\Models\Dosen::whereNotNull('status_studi_lanjut')
+        ->count();
+
+    $s1 = \App\Models\Dosen::where('pendidikan_terakhir', 'S1')
+        ->count();
+
+    $s2 = \App\Models\Dosen::where('pendidikan_terakhir', 'S2')
+        ->count();
+
+    $s3 = \App\Models\Dosen::where('pendidikan_terakhir', 'S3')
+        ->count();
+
+    $prodiOverNisbah = collect($nisbah)
+        ->where('over_limit', true)
+        ->count();
+
+    $pendidikanPerProdi = collect([
+        'Informatika',
+        'Rekayasa Perangkat Lunak',
+        'Data Sains',
+        'Teknologi Informasi'
+    ])->map(function ($namaProdi) {
+
+        $dosen = \App\Models\Dosen::whereHas('prodi', function ($q) use ($namaProdi) {
+            $q->where('nama_prodi', 'like', '%' . $namaProdi . '%');
+        })->get();
+
+        return [
+            'nama_prodi' => $namaProdi,
+            's1' => $dosen->where('pendidikan_terakhir', 'S1')->count(),
+            's2' => $dosen->where('pendidikan_terakhir', 'S2')->count(),
+            's3' => $dosen->where('pendidikan_terakhir', 'S3')->count(),
+            'total' => $dosen->count(),
+        ];
+    });
+
+    return view('dashboard-dosen', compact(
+        'studiLanjut',
+        'nisbah',
+        'totalDosen',
+        'totalStudiLanjut',
+        's1',
+        's2',
+        's3',
+        'prodiOverNisbah',
+        'pendidikanPerProdi'
+    ));
 })->name('dashboard-dosen');
 
 Route::get('/dashboard-tpa', function () {
@@ -67,7 +134,7 @@ Route::get('/guest-kompetisi', function () {
 
 
 Route::get('/', function () {
-     return view('landingpage');
+    return view('landingpage');
 });
 // ============================
 // 🧪 DEBUG ROUTES FOR FRONTEND (DEVELOPMENT ONLY)
@@ -212,9 +279,6 @@ Route::middleware('auth')->group(function () {
 
 
     // Dashboard Dosen
-    Route::get('/dashboard-dosen', function () {
-        return view('dashboard-dosen');
-    })->name('dashboard-dosen');
 
     // ============================
     // 🆕 MASTER DATA ROUTES (Fakultas, Prodi, Kompetisi)
