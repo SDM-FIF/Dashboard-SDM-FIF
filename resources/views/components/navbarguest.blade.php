@@ -1,11 +1,11 @@
-    <nav class="bg-redmain text-white min-h-screen w-64 hidden md:flex flex-col font-nunito ">
+    <nav class="bg-redmain text-white h-screen w-64 hidden md:flex flex-col font-nunito sticky top-0 flex-shrink-0">
         {{-- Header/Logo Section --}}
-        <div class="p-4 border-b border-red-500">
+        <div class="p-4 border-b border-red-500 flex-shrink-0">
             <h2 class="text-lg font-semibold">Dashboard SDM FIF</h2>
         </div>
 
         {{-- Navigation Menu --}}
-        <div class="flex-1 py-4">
+        <div class="flex-1 py-4 overflow-y-auto sidebar-scroll">
             <ul class="space-y-2.5">
                 {{-- Dashboard with Dropdown --}}
                 <li class="relative">
@@ -58,10 +58,10 @@
                         </ul>
                     </div>
                 </li>
+            </ul>
+        </div>
 
-
-
-        <div class="p-6 border-t border-red-500/30 mt-auto">
+        <div class="p-6 border-t border-red-500/30 mt-auto flex-shrink-0">
             <a href="{{ route('login') }}"
                 class="block w-full text-center px-4 py-2 bg-white text-red-600 rounded-md text-sm font-bold">
                 Login

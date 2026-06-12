@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,427 +7,421 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <title>Penilaian Calon Dosen - Dashboard SDM FIF</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    
     <style>
-        /* Import Bootstrap only for form content, not global */
-        .form-content * {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        body {
+            font-family: 'Outfit', sans-serif;
         }
-        
-        /* Bootstrap classes scoped to form content */
-        .form-content .container-fluid { width: 100%; padding-right: 15px; padding-left: 15px; margin-right: auto; margin-left: auto; }
-        .form-content .d-flex { display: flex !important; }
-        .form-content .justify-content-between { justify-content: space-between !important; }
-        .form-content .justify-content-end { justify-content: flex-end !important; }
-        .form-content .align-items-center { align-items: center !important; }
-        .form-content .mb-1 { margin-bottom: 0.25rem !important; }
-        .form-content .mb-2 { margin-bottom: 0.5rem !important; }
-        .form-content .mb-3 { margin-bottom: 1rem !important; }
-        .form-content .mb-4 { margin-bottom: 1.5rem !important; }
-        .form-content .mb-0 { margin-bottom: 0 !important; }
-        .form-content .mt-2 { margin-top: 0.5rem !important; }
-        .form-content .mt-3 { margin-top: 1rem !important; }
-        .form-content .me-2 { margin-right: 0.5rem !important; }
-        .form-content .gap-2 { gap: 0.5rem !important; }
-        .form-content .text-muted { color: #6c757d !important; }
-        .form-content .text-center { text-align: center !important; }
-        .form-content .fw-bold { font-weight: 700 !important; }
-        .form-content .card { position: relative; display: flex; flex-direction: column; min-width: 0; word-wrap: break-word; background-color: #fff; background-clip: border-box; border: 1px solid rgba(0,0,0,.125); border-radius: 0.25rem; }
-        .form-content .card-header { padding: 0.75rem 1.25rem; margin-bottom: 0; background-color: rgba(0,0,0,.03); border-bottom: 1px solid rgba(0,0,0,.125); }
-        .form-content .card-body { flex: 1 1 auto; padding: 1.25rem; }
-        .form-content .shadow-sm { box-shadow: 0 .125rem .25rem rgba(0,0,0,.075) !important; }
-        .form-content .bg-primary { background-color: #0d6efd !important; }
-        .form-content .text-white { color: #fff !important; }
-        .form-content .row { display: flex; flex-wrap: wrap; margin-right: -15px; margin-left: -15px; }
-        .form-content .col-md-3 { position: relative; width: 100%; padding-right: 15px; padding-left: 15px; }
-        .form-content .col-md-9 { position: relative; width: 100%; padding-right: 15px; padding-left: 15px; }
-        @media (min-width: 768px) {
-            .form-content .col-md-3 { flex: 0 0 25%; max-width: 25%; }
-            .form-content .col-md-9 { flex: 0 0 75%; max-width: 75%; }
-        }
-        .form-content .table-responsive { display: block; width: 100%; overflow-x: auto; }
-        .form-content .table { width: 100%; margin-bottom: 1rem; color: #212529; border-collapse: collapse; }
-        .form-content .table-bordered { border: 1px solid #dee2e6; }
-        .form-content .table-bordered th, .form-content .table-bordered td { border: 1px solid #dee2e6; padding: 0.75rem; vertical-align: top; }
-        .form-content .table thead th { vertical-align: bottom; border-bottom: 2px solid #dee2e6; }
-        .form-content .table-light { background-color: #f8f9fa; }
-        .form-content .table-primary { background-color: #cfe2ff; }
-        .form-content .table-success { background-color: #d1e7dd; }
-        .form-content .table-warning { background-color: #fff3cd; }
-        .form-content .table-info { background-color: #cff4fc; }
-        .form-content .form-control { display: block; width: 100%; padding: 0.375rem 0.75rem; font-size: 1rem; font-weight: 400; line-height: 1.5; color: #212529; background-color: #fff; background-clip: padding-box; border: 1px solid #ced4da; border-radius: 0.25rem; }
-        .form-content .form-control:focus { color: #212529; background-color: #fff; border-color: #86b7fe; outline: 0; box-shadow: 0 0 0 0.25rem rgba(13,110,253,.25); }
-        .form-content .form-label { margin-bottom: 0.5rem; display: inline-block; }
-        .form-content .btn { display: inline-block; font-weight: 400; line-height: 1.5; color: #212529; text-align: center; text-decoration: none; vertical-align: middle; cursor: pointer; user-select: none; background-color: transparent; border: 1px solid transparent; padding: 0.375rem 0.75rem; font-size: 1rem; border-radius: 0.25rem; }
-        .form-content .btn-outline-secondary { color: #6c757d; border-color: #6c757d; }
-        .form-content .btn-outline-secondary:hover { color: #fff; background-color: #6c757d; border-color: #6c757d; }
-        .form-content .btn-secondary { color: #fff; background-color: #6c757d; border-color: #6c757d; }
-        .form-content .btn-primary { color: #fff; background-color: #0d6efd; border-color: #0d6efd; }
-        .form-content .btn-primary:hover { background-color: #0b5ed7; border-color: #0a58ca; }
-        .form-content .alert { position: relative; padding: 1rem 1rem; margin-bottom: 1rem; border: 1px solid transparent; border-radius: 0.25rem; }
-        .form-content .alert-info { color: #055160; background-color: #cff4fc; border-color: #b6effb; }
-        .form-content h4, .form-content h5 { margin-top: 0; margin-bottom: 0.5rem; font-weight: 500; line-height: 1.2; }
-        .form-content h4 { font-size: 1.5rem; }
-        .form-content h5 { font-size: 1.25rem; }
-        .form-content ul { padding-left: 2rem; margin-top: 0; margin-bottom: 1rem; }
-        .form-content strong { font-weight: bolder; }
     </style>
 </head>
-
-<body class="flex flex-col md:flex-row bg-gray-50 font-nunito">
-    {{-- Sidebar --}}
+<body class="flex flex-col md:flex-row bg-[#F8FAFC] min-h-screen text-[#1E293B]">
+    {{-- Sidebar Navigation --}}
     <x-navbar />
-    
-    {{-- Main Content --}}
-    <main class="flex-1 p-4 md:p-6 min-h-screen">
-        <div class="form-content">
-            <div class="container-fluid">
-                <!-- Header -->
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <div>
-                        <h4 class="mb-1">Form Penilaian Microteaching & Interview</h4>
-                        <p class="text-muted mb-0">Calon Dosen Profesional Full / Part Time Universitas Telkom</p>
-                    </div>
-                    <a href="{{ route('rekrutasi-dosen.jadwal-pengujian') }}" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-left me-2"></i>Kembali
-                    </a>
-                </div>
 
-        <!-- Form Penilaian Microteaching Header -->
-        <div class="card shadow-sm mb-4">
-            <div class="card-header bg-primary text-white">
-                <h5 class="mb-0">FORM PENILAIAN MICROTEACHING</h5>
+    {{-- Main Content --}}
+    <main class="flex-1 p-6 md:p-8 overflow-y-auto">
+        {{-- Topbar --}}
+        <x-topbar />
+
+        {{-- Header Section --}}
+        <div class="mb-8 mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-3xl md:text-4xl font-extrabold text-[#C41E3A] tracking-tight">Form Penilaian</h1>
+                <p class="text-sm text-gray-500 mt-1 font-medium">Calon Dosen Profesional Full / Part Time Universitas Telkom</p>
             </div>
-            <div class="card-body">
-                <div class="row mb-3">
-                    <div class="col-md-3">
-                        <strong>Nama Kandidat</strong>
-                    </div>
-                    <div class="col-md-9">
-                        : {{ $calonDosen->nama }}
-                    </div>
+            <a href="{{ route('rekrutasi-dosen.jadwal-pengujian') }}" 
+               class="inline-flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-200 text-gray-600 hover:text-black font-semibold rounded-xl transition-all duration-200 text-sm shadow-sm">
+                <i class="fas fa-arrow-left"></i>
+                <span>Kembali</span>
+            </a>
+        </div>
+
+        {{-- Candidate Profile Summary Card --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8 hover:shadow-md transition-shadow duration-300">
+            <div class="flex items-center gap-4 mb-6 pb-4 border-b border-gray-100">
+                <div class="w-12 h-12 bg-red-50 text-[#C41E3A] rounded-xl flex items-center justify-center text-xl font-bold">
+                    <i class="fas fa-user-tie"></i>
                 </div>
-                <div class="row mb-3">
-                    <div class="col-md-3">
-                        <strong>Prodi</strong>
-                    </div>
-                    <div class="col-md-9">
-                        : {{ $calonDosen->prodi->nama_prodi ?? '-' }}
-                    </div>
+                <div>
+                    <h3 class="text-lg font-bold text-gray-800">Profil Calon Dosen</h3>
+                    <p class="text-xs text-gray-400 font-semibold mt-0.5">Informasi kandidat untuk membantu penilaian kualifikasi.</p>
                 </div>
-                <div class="row mb-3">
-                    <div class="col-md-3">
-                        <strong>Jalur Lamaran</strong>
-                    </div>
-                    <div class="col-md-9">
-                        : {{ $calonDosen->jalur_lamaran ?? '-' }}
-                    </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+                <div class="flex flex-col gap-1">
+                    <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Nama Kandidat</span>
+                    <span class="text-sm font-bold text-gray-800">{{ $calonDosen->nama }}</span>
                 </div>
-                <div class="row mb-3">
-                    <div class="col-md-3">
-                        <strong>JFA</strong>
-                    </div>
-                    <div class="col-md-9">
-                        : {{ $calonDosen->jabatan_fungsional_akademik ?? '-' }}
-                    </div>
+                <div class="flex flex-col gap-1">
+                    <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Program Studi</span>
+                    <span class="text-sm font-semibold text-gray-800">{{ $calonDosen->prodi->nama_prodi ?? '-' }}</span>
                 </div>
-                <div class="row">
-                    <div class="col-md-3">
-                        <strong>H-index</strong>
-                    </div>
-                    <div class="col-md-9">
-                        : {{ $calonDosen->h_index ?? '-' }}
-                    </div>
+                <div class="flex flex-col gap-1">
+                    <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Jalur Lamaran</span>
+                    <span class="text-sm font-semibold text-gray-800">{{ $calonDosen->jalur_lamaran ?? '-' }}</span>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">JFA Terakhir</span>
+                    <span class="text-sm font-semibold text-gray-800">{{ $calonDosen->jabatan_fungsional_akademik ?? '-' }}</span>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">H-Index</span>
+                    <span class="text-sm font-semibold text-gray-800">{{ $calonDosen->h_index ?? '-' }}</span>
                 </div>
             </div>
         </div>
 
-        <!-- Form Penilaian Table -->
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <form id="formPenilaian" action="#" method="POST">
-                    @csrf
-                    <div class="table-responsive">
-                        <table class="table table-bordered">
-                            <thead class="table-light">
-                                <tr>
-                                    <th width="10%">No</th>
-                                    <th width="50%">Kriteria Penilaian</th>
-                                    <th width="15%">Nilai</th>
-                                    <th width="25%">Keterangan</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Section A: Kualifikasi (40%) -->
-                                <tr class="table-primary">
-                                    <td colspan="4"><strong>A. KUALIFIKASI (40%)</strong></td>
-                                </tr>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Jalur Lamaran / Pendidikan = {{ $calonDosen->jalur_lamaran ?? '-' }}</td>
-                                    <td>
-                                        <input type="number" class="form-control" name="nilai_jalur_lamaran" id="nilai_jalur_lamaran" 
-                                               value="{{ 
-                                                   $calonDosen->jalur_lamaran == 'S3 Prof Full time' ? 5 :
-                                                   ($calonDosen->jalur_lamaran == 'S3 Praktisi Part time' ? 4 :
-                                                   ($calonDosen->jalur_lamaran == 'S3 OnGoing' ? 3 :
-                                                   ($calonDosen->jalur_lamaran == 'S2 Praktisi Part time' ? 2 :
-                                                   ($calonDosen->jalur_lamaran == 'S2 Prof Full time' ? 1 : 0))))
-                                               }}" readonly style="background-color: #e9ecef;">
-                                    </td>
-                                    <td rowspan="3" style="vertical-align: middle;">
-                                        <span id="rata_a_text" class="fw-bold">Rata-rata A = <span id="rata_a_value">0.00</span></span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>Jabatan Fungsional Akademik (JFA) = {{ $calonDosen->jabatan_fungsional_akademik ?? 'NJFA' }}</td>
-                                    <td>
-                                        <input type="number" class="form-control" name="nilai_jfa" id="nilai_jfa" 
-                                               value="{{ 
-                                                   $calonDosen->jabatan_fungsional_akademik == 'Guru Besar' ? 5 :
-                                                   ($calonDosen->jabatan_fungsional_akademik == 'Lektor Kepala' ? 4 :
-                                                   ($calonDosen->jabatan_fungsional_akademik == 'Lektor' ? 3 :
-                                                   ($calonDosen->jabatan_fungsional_akademik == 'Asisten Ahli' ? 2 : 1)))
-                                               }}" readonly style="background-color: #e9ecef;">
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>H-Index = {{ $calonDosen->h_index ?? '0.00' }}</td>
-                                    <td>
-                                        <input type="number" class="form-control" name="nilai_h_index" id="nilai_h_index" 
-                                               value="{{ 
-                                                   ($calonDosen->h_index ?? 0) > 10 ? 5 :
-                                                   (($calonDosen->h_index ?? 0) >= 5 ? 4 :
-                                                   (($calonDosen->h_index ?? 0) >= 2 ? 3 :
-                                                   (($calonDosen->h_index ?? 0) >= 1 ? 2 : 1)))
-                                               }}" readonly style="background-color: #e9ecef;">
-                                    </td>
-                                </tr>
+        {{-- Form Penilaian --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow duration-300">
+            <form id="formPenilaian" action="#" method="POST" class="space-y-8">
+                @csrf
+                <div class="overflow-x-auto rounded-xl border border-gray-100">
+                    <table class="w-full text-left text-sm divide-y divide-gray-100">
+                        <thead>
+                            <tr class="bg-[#C41E3A] text-white">
+                                <th class="px-6 py-4 font-bold uppercase tracking-wider w-16 text-center">No</th>
+                                <th class="px-6 py-4 font-bold uppercase tracking-wider">Kriteria Penilaian</th>
+                                <th class="px-6 py-4 font-bold uppercase tracking-wider w-36 text-center">Nilai (1-5)</th>
+                                <th class="px-6 py-4 font-bold uppercase tracking-wider w-64 text-center">Rata-Rata / Keterangan</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100 bg-white">
+                            {{-- SECTION A: Kualifikasi --}}
+                            <tr class="bg-red-50/50">
+                                <td colspan="4" class="px-6 py-3.5 font-bold text-[#C41E3A] text-xs uppercase tracking-wider">
+                                    A. Kualifikasi Akademik (Bobot 40%)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-center text-xs text-gray-400 font-bold">1</td>
+                                <td class="px-6 py-4">
+                                    <div class="font-semibold text-gray-800">Jalur Lamaran / Pendidikan Terakhir</div>
+                                    <div class="text-xs text-gray-400 mt-0.5">Kandidat terdaftar sebagai: <strong class="text-gray-600">{{ $calonDosen->jalur_lamaran ?? '-' }}</strong></div>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <input type="number" class="w-24 px-3 py-2 text-center border border-gray-200 rounded-lg bg-gray-50 text-gray-500 font-bold outline-none" 
+                                           name="nilai_jalur_lamaran" id="nilai_jalur_lamaran" 
+                                           value="{{ 
+                                               $calonDosen->jalur_lamaran == 'S3 Prof Full time' ? 5 :
+                                               ($calonDosen->jalur_lamaran == 'S3 Praktisi Part time' ? 4 :
+                                               ($calonDosen->jalur_lamaran == 'S3 OnGoing' ? 3 :
+                                               ($calonDosen->jalur_lamaran == 'S2 Praktisi Part time' ? 2 :
+                                               ($calonDosen->jalur_lamaran == 'S2 Prof Full time' ? 1 : 0))))
+                                           }}" readonly>
+                                </td>
+                                <td rowspan="3" class="px-6 py-4 text-center border-l border-gray-100 bg-gray-50/20" style="vertical-align: middle;">
+                                    <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Rata-Rata A</div>
+                                    <div id="rata_a_text" class="text-2xl font-extrabold text-gray-800">
+                                        <span id="rata_a_value">0.00</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-center text-xs text-gray-400 font-bold">2</td>
+                                <td class="px-6 py-4">
+                                    <div class="font-semibold text-gray-800">Jabatan Fungsional Akademik (JFA)</div>
+                                    <div class="text-xs text-gray-400 mt-0.5">Kandidat memiliki JFA: <strong class="text-gray-600">{{ $calonDosen->jabatan_fungsional_akademik ?? 'NJFA' }}</strong></div>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <input type="number" class="w-24 px-3 py-2 text-center border border-gray-200 rounded-lg bg-gray-50 text-gray-500 font-bold outline-none" 
+                                           name="nilai_jfa" id="nilai_jfa" 
+                                           value="{{ 
+                                               $calonDosen->jabatan_fungsional_akademik == 'Guru Besar' ? 5 :
+                                               ($calonDosen->jabatan_fungsional_akademik == 'Lektor Kepala' ? 4 :
+                                               ($calonDosen->jabatan_fungsional_akademik == 'Lektor' ? 3 :
+                                               ($calonDosen->jabatan_fungsional_akademik == 'Asisten Ahli' ? 2 : 1)))
+                                           }}" readonly>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-center text-xs text-gray-400 font-bold">3</td>
+                                <td class="px-6 py-4">
+                                    <div class="font-semibold text-gray-800">H-Index</div>
+                                    <div class="text-xs text-gray-400 mt-0.5">Kandidat memiliki H-Index: <strong class="text-gray-600">{{ $calonDosen->h_index ?? '0.00' }}</strong></div>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <input type="number" class="w-24 px-3 py-2 text-center border border-gray-200 rounded-lg bg-gray-50 text-gray-500 font-bold outline-none" 
+                                           name="nilai_h_index" id="nilai_h_index" 
+                                           value="{{ 
+                                               ($calonDosen->h_index ?? 0) > 10 ? 5 :
+                                               (($calonDosen->h_index ?? 0) >= 5 ? 4 :
+                                               (($calonDosen->h_index ?? 0) >= 2 ? 3 :
+                                               (($calonDosen->h_index ?? 0) >= 1 ? 2 : 1)))
+                                           }}" readonly>
+                                </td>
+                            </tr>
 
-                                <!-- Section B: Micro Teaching (20%) -->
-                                <tr class="table-success">
-                                    <td colspan="4"><strong>B. MICRO TEACHING (20%)</strong></td>
-                                </tr>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Penguasaan materi & audiens</td>
-                                    <td>
-                                        <input type="number" class="form-control nilai-input" name="nilai_b1" id="nilai_b1" 
-                                               min="1" max="5" step="0.1" placeholder="1-5" 
-                                               value="{{ $existingPenilaian->nilai_pma ?? '' }}" required>
-                                    </td>
-                                    <td rowspan="3" style="vertical-align: middle;">
-                                        <span id="rata_b_text" class="fw-bold">Rata-rata B = <span id="rata_b_value">{{ $existingPenilaian ? number_format($existingPenilaian->rata_b, 2) : '0.00' }}</span></span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>Sistematika (kemudahan dipahami)</td>
-                                    <td>
-                                        <input type="number" class="form-control nilai-input" name="nilai_b2" id="nilai_b2" 
-                                               min="1" max="5" step="0.1" placeholder="1-5" 
-                                               value="{{ $existingPenilaian->nilai_sistematika ?? '' }}" required>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>Kejelasan suara & tulisan</td>
-                                    <td>
-                                        <input type="number" class="form-control nilai-input" name="nilai_b3" id="nilai_b3" 
-                                               min="1" max="5" step="0.1" placeholder="1-5" 
-                                               value="{{ $existingPenilaian->nilai_kst ?? '' }}" required>
-                                    </td>
-                                </tr>
+                            {{-- SECTION B: Micro Teaching --}}
+                            <tr class="bg-emerald-50/50">
+                                <td colspan="4" class="px-6 py-3.5 font-bold text-emerald-700 text-xs uppercase tracking-wider">
+                                    B. Micro Teaching (Bobot 20%)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-center text-xs text-gray-400 font-bold">1</td>
+                                <td class="px-6 py-4">
+                                    <div class="font-semibold text-gray-800">Penguasaan Materi & Audiens</div>
+                                    <div class="text-xs text-gray-400 mt-0.5">Kombinasi kedalaman materi pengajaran dan engagement audiens.</div>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <input type="number" class="w-24 px-3 py-2 text-center border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 font-bold focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none nilai-input" 
+                                           name="nilai_b1" id="nilai_b1" min="1" max="5" step="0.1" placeholder="1-5" 
+                                           value="{{ $existingPenilaian->nilai_pma ?? '' }}" required>
+                                </td>
+                                <td rowspan="3" class="px-6 py-4 text-center border-l border-gray-100 bg-gray-50/20" style="vertical-align: middle;">
+                                    <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Rata-Rata B</div>
+                                    <div id="rata_b_text" class="text-2xl font-extrabold text-gray-800">
+                                        <span id="rata_b_value">{{ $existingPenilaian ? number_format($existingPenilaian->rata_b, 2) : '0.00' }}</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-center text-xs text-gray-400 font-bold">2</td>
+                                <td class="px-6 py-4">
+                                    <div class="font-semibold text-gray-800">Sistematika Pengajaran</div>
+                                    <div class="text-xs text-gray-400 mt-0.5">Kemudahan penyampaian materi agar mudah dipahami terstruktur.</div>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <input type="number" class="w-24 px-3 py-2 text-center border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 font-bold focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none nilai-input" 
+                                           name="nilai_b2" id="nilai_b2" min="1" max="5" step="0.1" placeholder="1-5" 
+                                           value="{{ $existingPenilaian->nilai_sistematika ?? '' }}" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-center text-xs text-gray-400 font-bold">3</td>
+                                <td class="px-6 py-4">
+                                    <div class="font-semibold text-gray-800">Kejelasan Suara & Media Pembelajaran</div>
+                                    <div class="text-xs text-gray-400 mt-0.5">Kualitas suara pengajaran serta media bantu visual/tulisan.</div>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <input type="number" class="w-24 px-3 py-2 text-center border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 font-bold focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none nilai-input" 
+                                           name="nilai_b3" id="nilai_b3" min="1" max="5" step="0.1" placeholder="1-5" 
+                                           value="{{ $existingPenilaian->nilai_kst ?? '' }}" required>
+                                </td>
+                            </tr>
 
-                                <!-- Section C: Wawancara (40%) -->
-                                <tr class="table-warning">
-                                    <td colspan="4"><strong>C. WAWANCARA (40%)</strong></td>
-                                </tr>
-                                <tr>
-                                    <td>1</td>
-                                    <td>Motivasi</td>
-                                    <td>
-                                        <input type="number" class="form-control nilai-input" name="nilai_c1" id="nilai_c1" 
-                                               min="1" max="5" step="0.1" placeholder="1-5" 
-                                               value="{{ $existingPenilaian->nilai_motivasi ?? '' }}" required>
-                                    </td>
-                                    <td rowspan="8" style="vertical-align: middle;">
-                                        <span id="rata_c_text" class="fw-bold">Rata-rata C = <span id="rata_c_value">{{ $existingPenilaian ? number_format($existingPenilaian->rata_c, 2) : '0.00' }}</span></span>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2</td>
-                                    <td>Kemampuan mengajar</td>
-                                    <td>
-                                        <input type="number" class="form-control nilai-input" name="nilai_c2" id="nilai_c2" 
-                                               min="1" max="5" step="0.1" placeholder="1-5" 
-                                               value="{{ $existingPenilaian->nilai_kmp_mengajar ?? '' }}" required>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>3</td>
-                                    <td>Kemampuan mengembangkan kurikulum Pengajaran</td>
-                                    <td>
-                                        <input type="number" class="form-control nilai-input" name="nilai_c3" id="nilai_c3" 
-                                               min="1" max="5" step="0.1" placeholder="1-5" 
-                                               value="{{ $existingPenilaian->nilai_kmp_mkp ?? '' }}" required>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>4</td>
-                                    <td>Kemampuan penelitian & publikasi</td>
-                                    <td>
-                                        <input type="number" class="form-control nilai-input" name="nilai_c4" id="nilai_c4" 
-                                               min="1" max="5" step="0.1" placeholder="1-5" 
-                                               value="{{ $existingPenilaian->nilai_kmp_pp ?? '' }}" required>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>5</td>
-                                    <td>Kemampuan Abdimas</td>
-                                    <td>
-                                        <input type="number" class="form-control nilai-input" name="nilai_c5" id="nilai_c5" 
-                                               min="1" max="5" step="0.1" placeholder="1-5" 
-                                               value="{{ $existingPenilaian->nilai_kmp_abdimas ?? '' }}" required>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>6</td>
-                                    <td>Kemampuan Bekerjasama dengan tim</td>
-                                    <td>
-                                        <input type="number" class="form-control nilai-input" name="nilai_c6" id="nilai_c6" 
-                                               min="1" max="5" step="0.1" placeholder="1-5" 
-                                               value="{{ $existingPenilaian->nilai_kmp_bdt ?? '' }}" required>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>7</td>
-                                    <td>Keahlian lainnya</td>
-                                    <td>
-                                        <input type="number" class="form-control nilai-input" name="nilai_c7" id="nilai_c7" 
-                                               min="1" max="5" step="0.1" placeholder="1-5" 
-                                               value="{{ $existingPenilaian->nilai_keahlian_lainnya ?? '' }}" required>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>8</td>
-                                    <td>Komitmen waktu dan kesediaan melakukan hal diluar tugas pokok</td>
-                                    <td>
-                                        <input type="number" class="form-control nilai-input" name="nilai_c8" id="nilai_c8" 
-                                               min="1" max="5" step="0.1" placeholder="1-5" 
-                                               value="{{ $existingPenilaian->nilai_kmt_wkm ?? '' }}" required>
-                                    </td>
-                                </tr>
+                            {{-- SECTION C: Wawancara --}}
+                            <tr class="bg-amber-50/50">
+                                <td colspan="4" class="px-6 py-3.5 font-bold text-amber-700 text-xs uppercase tracking-wider">
+                                    C. Wawancara (Bobot 40%)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-center text-xs text-gray-400 font-bold">1</td>
+                                <td class="px-6 py-4">
+                                    <div class="font-semibold text-gray-800">Motivasi</div>
+                                    <div class="text-xs text-gray-400 mt-0.5">Dorongan internal, antusiasme, serta determinasi melamar posisi dosen.</div>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <input type="number" class="w-24 px-3 py-2 text-center border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 font-bold focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none nilai-input" 
+                                           name="nilai_c1" id="nilai_c1" min="1" max="5" step="0.1" placeholder="1-5" 
+                                           value="{{ $existingPenilaian->nilai_motivasi ?? '' }}" required>
+                                </td>
+                                <td rowspan="8" class="px-6 py-4 text-center border-l border-gray-100 bg-gray-50/20" style="vertical-align: middle;">
+                                    <div class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Rata-Rata C</div>
+                                    <div id="rata_c_text" class="text-2xl font-extrabold text-gray-800">
+                                        <span id="rata_c_value">{{ $existingPenilaian ? number_format($existingPenilaian->rata_c, 2) : '0.00' }}</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-center text-xs text-gray-400 font-bold">2</td>
+                                <td class="px-6 py-4">
+                                    <div class="font-semibold text-gray-800">Kemampuan Mengajar (Pedagogis)</div>
+                                    <div class="text-xs text-gray-400 mt-0.5">Kemampuan menyusun silabus, metode belajar aktif, evaluasi mahasiswa.</div>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <input type="number" class="w-24 px-3 py-2 text-center border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 font-bold focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none nilai-input" 
+                                           name="nilai_c2" id="nilai_c2" min="1" max="5" step="0.1" placeholder="1-5" 
+                                           value="{{ $existingPenilaian->nilai_kmp_mengajar ?? '' }}" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-center text-xs text-gray-400 font-bold">3</td>
+                                <td class="px-6 py-4">
+                                    <div class="font-semibold text-gray-800">Kemampuan Mengembangkan Kurikulum Pengajaran</div>
+                                    <div class="text-xs text-gray-400 mt-0.5">Perencanaan mata kuliah, pemutakhiran pustaka & Rencana Pembelajaran Semester.</div>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <input type="number" class="w-24 px-3 py-2 text-center border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 font-bold focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none nilai-input" 
+                                           name="nilai_c3" id="nilai_c3" min="1" max="5" step="0.1" placeholder="1-5" 
+                                           value="{{ $existingPenilaian->nilai_kmp_mkp ?? '' }}" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-center text-xs text-gray-400 font-bold">4</td>
+                                <td class="px-6 py-4">
+                                    <div class="font-semibold text-gray-800">Kemampuan Penelitian & Publikasi Jurnal</div>
+                                    <div class="text-xs text-gray-400 mt-0.5">Potensi riset mandiri / kelompok, luaran jurnal nasional/internasional bereputasi.</div>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <input type="number" class="w-24 px-3 py-2 text-center border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 font-bold focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none nilai-input" 
+                                           name="nilai_c4" id="nilai_c4" min="1" max="5" step="0.1" placeholder="1-5" 
+                                           value="{{ $existingPenilaian->nilai_kmp_pp ?? '' }}" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-center text-xs text-gray-400 font-bold">5</td>
+                                <td class="px-6 py-4">
+                                    <div class="font-semibold text-gray-800">Kemampuan Abdimas (Pengabdian Masyarakat)</div>
+                                    <div class="text-xs text-gray-400 mt-0.5">Kesiapan implementasi keilmuan ke masyarakat industri / umum.</div>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <input type="number" class="w-24 px-3 py-2 text-center border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 font-bold focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none nilai-input" 
+                                           name="nilai_c5" id="nilai_c5" min="1" max="5" step="0.1" placeholder="1-5" 
+                                           value="{{ $existingPenilaian->nilai_kmp_abdimas ?? '' }}" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-center text-xs text-gray-400 font-bold">6</td>
+                                <td class="px-6 py-4">
+                                    <div class="font-semibold text-gray-800">Kemampuan Bekerjasama dalam Tim</div>
+                                    <div class="text-xs text-gray-400 mt-0.5">Aspek softskill kolaborasi lintas disiplin prodi / fakultas.</div>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <input type="number" class="w-24 px-3 py-2 text-center border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 font-bold focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none nilai-input" 
+                                           name="nilai_c6" id="nilai_c6" min="1" max="5" step="0.1" placeholder="1-5" 
+                                           value="{{ $existingPenilaian->nilai_kmp_bdt ?? '' }}" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-center text-xs text-gray-400 font-bold">7</td>
+                                <td class="px-6 py-4">
+                                    <div class="font-semibold text-gray-800">Keahlian Lainnya (Sertifikasi Profesional)</div>
+                                    <div class="text-xs text-gray-400 mt-0.5">Nilai tambah berupa kepemilikan sertifikasi industri nasional/global.</div>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <input type="number" class="w-24 px-3 py-2 text-center border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 font-bold focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none nilai-input" 
+                                           name="nilai_c7" id="nilai_c7" min="1" max="5" step="0.1" placeholder="1-5" 
+                                           value="{{ $existingPenilaian->nilai_keahlian_lainnya ?? '' }}" required>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="px-6 py-4 text-center text-xs text-gray-400 font-bold">8</td>
+                                <td class="px-6 py-4">
+                                    <div class="font-semibold text-gray-800">Komitmen Waktu & Tugas Non-Akademik</div>
+                                    <div class="text-xs text-gray-400 mt-0.5">Ketersediaan beban kerja penuh waktu / kepanitiaan universitas.</div>
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <input type="number" class="w-24 px-3 py-2 text-center border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 font-bold focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none nilai-input" 
+                                           name="nilai_c8" id="nilai_c8" min="1" max="5" step="0.1" placeholder="1-5" 
+                                           value="{{ $existingPenilaian->nilai_kmt_wkm ?? '' }}" required>
+                                </td>
+                            </tr>
 
-                                <!-- Total -->
-                                <tr class="table-info">
-                                    <td colspan="2" class="text-center"><strong>TOTAL NILAI (Rata-rata Berbobot)</strong></td>
-                                    <td>
-                                        <input type="text" class="form-control fw-bold" id="total_nilai" 
-                                               value="{{ $existingPenilaian ? number_format($existingPenilaian->rata_nilai, 2) : '' }}" 
-                                               readonly placeholder="0.00" style="background-color: #e9ecef;">
-                                    </td>
-                                    <td>
-                                        <input type="text" class="form-control fw-bold" id="keterangan_berbobot" 
-                                               value="{{ $existingPenilaian->keterangan_berbobot ?? '' }}" 
-                                               readonly placeholder="-" style="background-color: #e9ecef;">
-                                    </td>
-                                </tr>
-                                
-                                <!-- Kesiapan -->
-                                <tr>
-                                    <td colspan="2" class="text-center"><strong>Kesiapan bergabung segera?</strong></td>
-                                    <td colspan="2">
-                                        <div class="d-flex gap-3">
-                                            <label class="form-label mb-0">
-                                                <input type="radio" name="kesiapan" value="YA" 
-                                                       {{ ($existingPenilaian && $existingPenilaian->kesiapan == 1) ? 'checked' : '' }} required> YA
-                                            </label>
-                                            <label class="form-label mb-0">
-                                                <input type="radio" name="kesiapan" value="TIDAK/PIKIR-PIKIR" 
-                                                       {{ ($existingPenilaian && $existingPenilaian->kesiapan == 0) ? 'checked' : '' }} required> TIDAK/PIKIR-PIKIR
-                                            </label>
-                                        </div>
-                                    </td>
-                                </tr>
-                                
-                                <!-- Kesediaan -->
-                                <tr>
-                                    <td colspan="2" class="text-center"><strong>Bersedia dengan standard gaji?</strong></td>
-                                    <td colspan="2">
-                                        <div class="d-flex gap-3">
-                                            <label class="form-label mb-0">
-                                                <input type="radio" name="kesediaan" value="YA" 
-                                                       {{ ($existingPenilaian && $existingPenilaian->kesediaan == 1) ? 'checked' : '' }} required> YA
-                                            </label>
-                                            <label class="form-label mb-0">
-                                                <input type="radio" name="kesediaan" value="TIDAK/PIKIR-PIKIR" 
-                                                       {{ ($existingPenilaian && $existingPenilaian->kesediaan == 0) ? 'checked' : '' }} required> TIDAK/PIKIR-PIKIR
-                                            </label>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                            {{-- TOTAL ACCUMULATOR ROW --}}
+                            <tr class="bg-blue-50/70">
+                                <td colspan="2" class="px-6 py-4 text-center font-bold text-blue-900 text-sm">
+                                    TOTAL NILAI (Rata-Rata Berbobot)
+                                </td>
+                                <td class="px-6 py-4 text-center">
+                                    <input type="text" class="w-24 px-3 py-2 text-center border border-blue-200 rounded-xl bg-white text-blue-800 font-extrabold outline-none" id="total_nilai" 
+                                           value="{{ $existingPenilaian ? number_format($existingPenilaian->rata_nilai, 2) : '' }}" 
+                                           readonly placeholder="0.00">
+                                </td>
+                                <td class="px-6 py-4 text-center font-extrabold text-blue-900 text-sm">
+                                    <input type="text" class="w-full px-3 py-2 text-center border border-blue-200 rounded-xl bg-white text-blue-800 font-extrabold outline-none" id="keterangan_berbobot" 
+                                           value="{{ $existingPenilaian->keterangan_berbobot ?? '' }}" 
+                                           readonly placeholder="-">
+                                </td>
+                            </tr>
+                            
+                            {{-- Kesiapan Join --}}
+                            <tr>
+                                <td colspan="2" class="px-6 py-4 text-center font-bold text-gray-700">
+                                    Kesiapan bergabung segera?
+                                </td>
+                                <td colspan="2" class="px-6 py-4">
+                                    <div class="flex items-center gap-6">
+                                        <label class="flex items-center gap-2 cursor-pointer font-semibold text-gray-700 text-sm">
+                                            <input type="radio" name="kesiapan" value="YA" class="w-4 h-4 text-[#C41E3A] focus:ring-red-200 border-gray-300"
+                                                   {{ ($existingPenilaian && $existingPenilaian->kesiapan == 1) ? 'checked' : '' }} required> 
+                                            <span>YA</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 cursor-pointer font-semibold text-gray-700 text-sm">
+                                            <input type="radio" name="kesiapan" value="TIDAK/PIKIR-PIKIR" class="w-4 h-4 text-[#C41E3A] focus:ring-red-200 border-gray-300"
+                                                   {{ ($existingPenilaian && $existingPenilaian->kesiapan == 0) ? 'checked' : '' }} required> 
+                                            <span>TIDAK/PIKIR-PIKIR</span>
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            {{-- Gaji Agreement --}}
+                            <tr>
+                                <td colspan="2" class="px-6 py-4 text-center font-bold text-gray-700">
+                                    Bersedia dengan standard gaji?
+                                </td>
+                                <td colspan="2" class="px-6 py-4">
+                                    <div class="flex items-center gap-6">
+                                        <label class="flex items-center gap-2 cursor-pointer font-semibold text-gray-700 text-sm">
+                                            <input type="radio" name="kesediaan" value="YA" class="w-4 h-4 text-[#C41E3A] focus:ring-red-200 border-gray-300"
+                                                   {{ ($existingPenilaian && $existingPenilaian->kesediaan == 1) ? 'checked' : '' }} required> 
+                                            <span>YA</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 cursor-pointer font-semibold text-gray-700 text-sm">
+                                            <input type="radio" name="kesediaan" value="TIDAK/PIKIR-PIKIR" class="w-4 h-4 text-[#C41E3A] focus:ring-red-200 border-gray-300"
+                                                   {{ ($existingPenilaian && $existingPenilaian->kesediaan == 0) ? 'checked' : '' }} required> 
+                                            <span>TIDAK/PIKIR-PIKIR</span>
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                {{-- Scale legend notification --}}
+                <div class="p-4 bg-blue-50/50 border border-blue-100 rounded-xl flex items-start gap-3 text-blue-800">
+                    <i class="fas fa-info-circle text-base mt-0.5"></i>
+                    <div>
+                        <div class="text-xs font-bold uppercase tracking-wider mb-1">Skala Penilaian Kriteria</div>
+                        <p class="text-xs font-medium leading-relaxed"><strong>5</strong>: Sangat Baik | <strong>4</strong>: Baik | <strong>3</strong>: Cukup | <strong>2</strong>: Kurang | <strong>1</strong>: Sangat Kurang</p>
                     </div>
+                </div>
 
-                    <!-- Keterangan Nilai -->
-                    <div class="alert alert-info mt-3">
-                        <strong>Keterangan Skala Penilaian:</strong>
-                        <ul class="mb-0 mt-2">
-                            <li><strong>5</strong> = Sangat Baik</li>
-                            <li><strong>4</strong> = Baik</li>
-                            <li><strong>3</strong> = Cukup</li>
-                            <li><strong>2</strong> = Kurang</li>
-                            <li><strong>1</strong> = Sangat Kurang</li>
-                        </ul>
-                    </div>
+                {{-- Catatan / Komentar --}}
+                <div class="flex flex-col gap-1.5">
+                    <label for="catatan" class="text-xs font-bold text-gray-400 uppercase tracking-wider">Catatan/Komentar Penilai</label>
+                    <textarea class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none" 
+                              id="catatan" name="catatan" rows="4" 
+                              placeholder="Tulis saran, ulasan mendalam, atau catatan spesifik kelayakan kandidat... (opsional)">{{ $existingPenilaian->catatan_penilai ?? '' }}</textarea>
+                </div>
 
-                    <!-- Catatan -->
-                    <div class="mb-3">
-                        <label for="catatan" class="form-label"><strong>Catatan/Komentar:</strong></label>
-                        <textarea class="form-control" id="catatan" name="catatan" rows="3" 
-                                  placeholder="Tambahkan catatan atau komentar (opsional)">{{ $existingPenilaian->catatan_penilai ?? '' }}</textarea>
-                    </div>
-
-                    <!-- Buttons -->
-                    <div class="d-flex justify-content-end gap-2">
-                        @if($existingPenilaian)
-                        <a href="{{ route('rekrutasi-dosen.penilaian.export-pdf', $existingPenilaian->id) }}" 
-                           class="btn btn-success" 
-                           style="background-color: #28a745; border-color: #28a745; color: white;">
-                            <i class="bi bi-download me-2"></i>Download
-                        </a>
-                        @endif
-                        
-                        @if($beritaAcaraSubmitted)
-                        {{-- Berita Acara sudah disubmit, penilaian LOCKED --}}
-                        <button type="button" class="btn btn-warning" disabled 
-                                title="Penilaian terkunci karena Berita Acara sudah disubmit">
-                            <i class="bi bi-lock-fill me-2"></i>Penilaian Terkunci
-                        </button>
-                        @else
-                        {{-- Berita Acara belum disubmit, penilaian dapat diedit --}}
+                {{-- Actions --}}
+                <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-50">
+                    @if($existingPenilaian)
+                    <a href="{{ route('rekrutasi-dosen.penilaian.export-pdf', $existingPenilaian->id) }}" 
+                       class="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition-all duration-300 shadow-md hover:shadow-lg text-sm flex items-center gap-2">
+                        <i class="fas fa-download"></i>
+                        <span>Unduh PDF</span>
+                    </a>
+                    @endif
+                    
+                    @if($beritaAcaraSubmitted)
+                    <button type="button" class="px-6 py-3 bg-gray-100 text-gray-400 font-bold rounded-xl text-sm cursor-not-allowed flex items-center gap-2 border border-gray-200" disabled>
+                        <i class="fas fa-lock"></i>
+                        <span>Penilaian Terkunci (Berita Acara Selesai)</span>
+                    </button>
+                    @else
                         @can('penilaian-dosen.submit')
-                        <button type="submit" class="btn btn-primary" id="btnSimpanPenilaian">
-                            <i class="bi bi-check-circle me-2"></i>{{ $existingPenilaian ? 'Update Penilaian' : 'Simpan Penilaian' }}
+                        <button type="submit" class="px-6 py-3 bg-[#C41E3A] hover:bg-[#A31830] text-white font-bold rounded-xl transition-all duration-300 shadow-md hover:shadow-lg text-sm flex items-center gap-2" id="btnSimpanPenilaian">
+                            <i class="fas fa-save"></i>
+                            <span>{{ $existingPenilaian ? 'Simpan Perubahan' : 'Simpan Penilaian' }}</span>
                         </button>
                         @else
-                        <button type="button" class="btn btn-secondary" id="btnSimpanPenilaianDisabled" disabled 
-                                title="Super Admin hanya dapat melihat (read-only monitoring)">
-                            <i class="bi bi-eye me-2"></i>Read-Only Mode
+                        <button type="button" class="px-6 py-3 bg-gray-100 text-gray-400 font-bold rounded-xl text-sm cursor-not-allowed flex items-center gap-2 border border-gray-200" disabled>
+                            <i class="fas fa-eye"></i>
+                            <span>Mode Monitor (Read-Only)</span>
                         </button>
                         @endcan
-                        @endif
-                    </div>
-                </form>
-            </div>
-        </div>        </div>    </div>
+                    @endif
+                </div>
+            </form>
+        </div>
     </main>
 
     <script>
@@ -486,7 +479,7 @@
             @if($beritaAcaraSubmitted)
             $('#formPenilaian input, #formPenilaian select, #formPenilaian textarea').prop('disabled', true);
             $('#formPenilaian').find('.form-control, .form-check-input').css({
-                'background-color': '#f5f5f5',
+                'background-color': '#f8fafc',
                 'cursor': 'not-allowed'
             });
             @endif
@@ -538,7 +531,7 @@
                         icon: 'warning',
                         title: 'Validasi Gagal',
                         text: errorMessage,
-                        confirmButtonText: 'OK'
+                        confirmButtonColor: '#C41E3A'
                     });
                     return;
                 }
@@ -607,25 +600,17 @@
                             icon: 'success',
                             title: 'Berhasil!',
                             text: 'Penilaian berhasil disimpan.',
-                            confirmButtonText: 'OK'
+                            confirmButtonColor: '#C41E3A'
                         }).then(() => {
-                            // Reload halaman agar data ter-load ulang
                             window.location.reload();
                         });
                     },
                     error: function(xhr) {
-                        // Re-enable inputs if error
-                        $('.nilai-input').prop('readonly', false).css('background-color', '#fff');
-                        $('input[name="kesiapan"]').prop('disabled', false);
-                        $('input[name="kesediaan"]').prop('disabled', false);
-                        $('#catatan').prop('readonly', false);
-                        $('#btnSimpanPenilaian').prop('disabled', false);
-                        
                         Swal.fire({
                             icon: 'error',
                             title: 'Gagal!',
                             text: 'Terjadi kesalahan saat menyimpan penilaian: ' + (xhr.responseJSON?.message || 'Unknown error'),
-                            confirmButtonText: 'OK'
+                            confirmButtonColor: '#C41E3A'
                         });
                     }
                 });

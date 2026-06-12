@@ -3,246 +3,251 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <title>Import Rekrutasi Dosen - Dashboard SDM FIF</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+        }
+    </style>
 </head>
-<body class="flex flex-col md:flex-row bg-gray-50 font-nunito">
-    {{-- Sidebar --}}
+<body class="flex flex-col md:flex-row bg-[#F8FAFC] min-h-screen text-[#1E293B]">
+    {{-- Sidebar Navigation --}}
     <x-navbar />
     
     {{-- Main Content --}}
-    <main class="flex-1 p-4 md:p-6 min-h-screen">
-
-        {{-- Page Title --}}
-        <div class="mb-6">
-            <h1 class="text-3xl md:text-4xl font-bold text-[#C41E3A]">Rekrutasi Dosen</h1>
+    <main class="flex-1 p-6 md:p-8 overflow-y-auto">
+        {{-- Header Section --}}
+        <div class="mb-8">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-[#C41E3A] tracking-tight">Import Rekrutasi Dosen</h1>
+            <p class="text-sm text-gray-500 mt-1">Import data calon dosen secara masal menggunakan spreadsheet Excel/CSV.</p>
         </div>
 
-        {{-- Progress Steps - SELALU TAMPIL --}}
-        <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6 mb-6">
-            <div class="flex items-center justify-between relative">
-                @php
-                    // Prioritize step parameter from request
-                    if(request()->has('step')) {
-                        $currentStep = (int) request()->get('step');
-                    } else {
-                        // Auto-determine step based on session
-                        $currentStep = 1; // Default to step 1 (Template)
-                        if(session()->has('import_data')) {
-                            $currentStep = 2; // Import
-                        }
-                        if(session()->has('import_result')) {
-                            $currentStep = 3; // Selesai
-                        }
-                    }
-                    
-                    // Check if file has been uploaded (persists until user clicks upload ulang)
-                    $fileUploaded = session()->has('file_uploaded');
-                @endphp
+        @php
+            if(request()->has('step')) {
+                $currentStep = (int) request()->get('step');
+            } else {
+                $currentStep = 1;
+                if(session()->has('import_data')) {
+                    $currentStep = 2;
+                }
+                if(session()->has('import_result')) {
+                    $currentStep = 3;
+                }
+            }
+            $fileUploaded = session()->has('file_uploaded');
+        @endphp
 
-                {{-- Step 1: Template --}}
-                <a href="{{ route('rekrutasi-dosen.import.view', ['step' => 1]) }}" 
-                   class="flex flex-col items-center flex-1 relative {{ $currentStep == 1 ? 'text-[#FBB03B]' : (($currentStep > 1 || $fileUploaded) ? 'text-green-600' : 'text-gray-400') }} cursor-pointer hover:opacity-80">
-                    <div class="w-16 h-16 rounded-full {{ $currentStep == 1 ? 'bg-[#FBB03B]' : (($currentStep > 1 || $fileUploaded) ? 'bg-green-500' : 'bg-gray-300') }} flex items-center justify-center mb-2 transition-all">
-                        <i class="fas {{ ($currentStep > 1 || $fileUploaded) ? 'fa-check' : 'fa-file-download' }} text-2xl text-white"></i>
-                    </div>
-                    <span class="text-sm font-semibold">Template</span>
-                    <span class="text-xs">Unduh Template</span>
-                </a>
-
-                {{-- Line 1 --}}
-                <div class="flex-1 h-1 {{ ($currentStep >= 2 || $fileUploaded) ? 'bg-[#FBB03B]' : 'bg-gray-300' }} mx-2"></div>
-
-                {{-- Step 2: Import --}}
-                <a href="{{ route('rekrutasi-dosen.import.view', ['step' => 2]) }}" 
-                   class="flex flex-col items-center flex-1 relative {{ $currentStep == 2 ? 'text-[#FBB03B]' : ($currentStep > 2 ? 'text-green-600' : 'text-gray-400') }} cursor-pointer hover:opacity-80">
-                    <div class="w-16 h-16 rounded-full {{ $currentStep == 2 ? 'bg-[#FBB03B]' : ($currentStep > 2 ? 'bg-green-500' : 'bg-gray-300') }} flex items-center justify-center mb-2 transition-all">
-                        <i class="fas {{ $currentStep > 2 ? 'fa-check' : 'fa-cloud-upload-alt' }} text-2xl text-white"></i>
-                    </div>
-                    <span class="text-sm font-semibold">Import</span>
-                    <span class="text-xs">Import File</span>
-                </a>
-
-                {{-- Line 2 --}}
-                <div class="flex-1 h-1 {{ $currentStep >= 3 ? 'bg-green-500' : 'bg-gray-300' }} mx-2"></div>
-
-                {{-- Step 3: Selesai --}}
-                <a href="{{ session()->has('import_result') ? route('rekrutasi-dosen.import.result') : 'javascript:void(0)' }}" 
-                   class="flex flex-col items-center flex-1 relative {{ $currentStep == 3 ? 'text-green-600' : 'text-gray-400' }} {{ session()->has('import_result') ? 'cursor-pointer hover:opacity-80' : 'cursor-not-allowed' }}">
-                    <div class="w-16 h-16 rounded-full {{ $currentStep == 3 ? 'bg-green-500' : 'bg-gray-300' }} flex items-center justify-center mb-2 transition-all">
-                        <i class="fas fa-check-circle text-2xl text-white"></i>
-                    </div>
-                    <span class="text-sm font-semibold">Selesai</span>
-                    <span class="text-xs">Hasil Import</span>
-                </a>
-            </div>
-        </div>
-
-        {{-- STEP 1: Template Download (Tampil jika step=1) --}}
-        @if($currentStep == 1)
-        <div class="bg-white rounded-lg shadow-md border border-gray-200 p-8">
-            <div class="text-center">
-                <div class="mb-6">
-                    <div class="inline-block p-6 bg-red-100 rounded-full">
-                        <i class="fas fa-file-download text-6xl text-[#C41E3A]"></i>
-                    </div>
-                </div>
-                <h2 class="text-2xl font-bold text-[#C41E3A] mb-4">Template Import Rekrutasi Dosen</h2>
-                <p class="text-gray-600 mb-6">Klik tombol di bawah ini</p>
+        {{-- Progress Steps Section --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8 hover:shadow-md transition-shadow">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6 md:gap-0">
                 
-                <a href="{{ route('rekrutasi-dosen.import.template') }}" 
-                   class="inline-flex items-center px-6 py-3 bg-[#FBB03B] hover:bg-orange-600 text-black font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg">
-                    <i class="fas fa-download mr-2"></i>
-                    Unduh Template
+                {{-- Step 1 --}}
+                <a href="{{ route('rekrutasi-dosen.import.view', ['step' => 1]) }}" 
+                   class="flex flex-col items-center text-center md:flex-1 group">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-sm mb-2 transition-all border-2 
+                        {{ $currentStep == 1 ? 'bg-[#C41E3A] text-white border-[#C41E3A]' : (($currentStep > 1 || $fileUploaded) ? 'bg-emerald-500 text-white border-emerald-500' : 'bg-white text-gray-400 border-gray-200') }}">
+                        @if($currentStep > 1 || $fileUploaded)
+                            <i class="fas fa-check"></i>
+                        @else
+                            1
+                        @endif
+                    </div>
+                    <span class="text-sm font-bold {{ $currentStep == 1 ? 'text-[#C41E3A]' : 'text-gray-700' }}">Unduh Template</span>
+                    <span class="text-xs text-gray-400 mt-0.5">Siapkan format berkas</span>
                 </a>
+
+                <div class="hidden md:block flex-1 h-0.5 {{ ($currentStep >= 2 || $fileUploaded) ? 'bg-emerald-500' : 'bg-gray-100' }} mx-4"></div>
+
+                {{-- Step 2 --}}
+                <a href="{{ route('rekrutasi-dosen.import.view', ['step' => 2]) }}" 
+                   class="flex flex-col items-center text-center md:flex-1 group">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-sm mb-2 transition-all border-2 
+                        {{ $currentStep == 2 ? 'bg-[#C41E3A] text-white border-[#C41E3A]' : ($currentStep > 2 ? 'bg-emerald-500 text-white border-emerald-500' : 'bg-white text-gray-400 border-gray-200') }}">
+                        @if($currentStep > 2)
+                            <i class="fas fa-check"></i>
+                        @else
+                            2
+                        @endif
+                    </div>
+                    <span class="text-sm font-bold {{ $currentStep == 2 ? 'text-[#C41E3A]' : 'text-gray-700' }}">Unggah & Validasi</span>
+                    <span class="text-xs text-gray-400 mt-0.5">Unggah spreadsheet Anda</span>
+                </a>
+
+                <div class="hidden md:block flex-1 h-0.5 {{ $currentStep >= 3 ? 'bg-emerald-500' : 'bg-gray-100' }} mx-4"></div>
+
+                {{-- Step 3 --}}
+                <div class="flex flex-col items-center text-center md:flex-1">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-sm mb-2 transition-all border-2 
+                        {{ $currentStep == 3 ? 'bg-emerald-500 text-white border-emerald-500' : 'bg-white text-gray-400 border-gray-200' }}">
+                        3
+                    </div>
+                    <span class="text-sm font-bold {{ $currentStep == 3 ? 'text-emerald-500' : 'text-gray-700' }}">Selesai</span>
+                    <span class="text-xs text-gray-400 mt-0.5">Lihat statistik akhir</span>
+                </div>
+
             </div>
+        </div>
+
+        {{-- STEP 1: Download Template --}}
+        @if($currentStep == 1)
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center max-w-2xl mx-auto hover:shadow-md transition-shadow">
+            <div class="w-20 h-20 bg-red-50 text-[#C41E3A] rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-file-download text-3xl"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Template Import Rekrutasi Dosen</h2>
+            <p class="text-sm text-gray-500 mb-8 max-w-md mx-auto">Untuk menghindari kesalahan pembacaan sistem, harap gunakan berkas template Excel resmi yang telah disediakan di bawah ini.</p>
+            
+            <a href="{{ route('rekrutasi-dosen.import.template') }}" 
+               class="inline-flex items-center gap-2 px-6 py-3 bg-[#FBB03B] hover:bg-[#E09A2A] text-black font-semibold rounded-xl transition-all shadow-sm">
+                <i class="fas fa-download"></i>
+                <span>Unduh Template (.xlsx)</span>
+            </a>
         </div>
         @endif
 
-        {{-- STEP 2: Import Section (Tampil jika step=2) --}}
+        {{-- STEP 2: Import Section --}}
         @if($currentStep == 2)
-        <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6">
-            <h2 class="text-xl font-bold text-[#C41E3A] mb-4 flex items-center">
-                <i class="fas fa-cloud-upload-alt mr-2"></i>
-                Import
-            </h2>
-
-            {{-- Upload Form --}}
-            <form action="{{ route('rekrutasi-dosen.import.upload') }}" method="POST" enctype="multipart/form-data" class="mb-6">
-                @csrf
-                <div class="flex items-center space-x-4">
-                    <input type="file" name="file" id="fileInput" accept=".xlsx,.xls,.csv" 
-                           class="flex-1 px-4 py-2 border border-gray-300 rounded-lg" required>
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 hover:shadow-md transition-shadow">
+            
+            {{-- Upload Section --}}
+            <div class="max-w-2xl mx-auto mb-8 text-center">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Unggah File Spreadsheet</h2>
+                
+                <form action="{{ route('rekrutasi-dosen.import.upload') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                    @csrf
+                    
+                    <div class="border-2 border-dashed border-gray-200 hover:border-[#C41E3A] rounded-2xl p-6 transition-colors bg-[#F8FAFC] relative">
+                        <input type="file" name="file" id="fileInput" accept=".xlsx,.xls,.csv" required
+                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                        
+                        <div class="flex flex-col items-center justify-center py-4">
+                            <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-3" id="uploadIcon"></i>
+                            <p class="text-sm font-semibold text-gray-700" id="fileNamePlaceholder">Pilih atau Seret file Excel Anda di sini</p>
+                            <p class="text-xs text-gray-400 mt-1">Mendukung format file .xlsx, .xls, atau .csv (maksimal 10MB)</p>
+                        </div>
+                    </div>
+                    
                     <button type="submit" 
-                            class="px-6 py-2.5 bg-[#FBB03B] hover:bg-orange-600 text-black font-semibold rounded-lg transition-all duration-200 shadow-md">
-                        <i class="fas fa-upload mr-2"></i>
-                        Upload File
+                            class="w-full sm:w-auto px-6 py-3 bg-[#C41E3A] hover:bg-[#A31830] text-white font-semibold rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 mx-auto">
+                        <i class="fas fa-upload"></i>
+                        <span>Unggah File</span>
                     </button>
-                </div>
-            </form>
+                </form>
+            </div>
 
             {{-- Preview Import Table --}}
-            <div>
-                <h3 class="text-lg font-bold text-[#C41E3A] mb-2">Preview Import Data Rekrutasi Dosen</h3>
-                <p class="text-sm text-gray-600 mb-4">Hanya data valid yang akan diproses</p>
-                
-                <div class="overflow-x-auto">
-                    <table class="w-full border-collapse border border-gray-300 text-xs">
+            <div class="pt-6 border-t border-gray-50">
+                <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800">Preview Data Calon Dosen</h3>
+                        <p class="text-xs text-gray-500 mt-0.5">Sistem memvalidasi format data di bawah ini secara real-time</p>
+                    </div>
+                    @if(session()->has('import_data') && count(session('import_data')) > 0)
+                        @php
+                            $validCount = collect(session('import_data'))->where('is_valid', true)->count();
+                            $invalidCount = collect(session('import_data'))->where('is_valid', false)->count();
+                        @endphp
+                        <div class="flex items-center gap-2">
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-100">
+                                {{ $validCount }} Valid
+                            </span>
+                            @if($invalidCount > 0)
+                            <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-bold bg-rose-50 text-rose-700 border border-rose-100">
+                                {{ $invalidCount }} Gagal
+                            </span>
+                            @endif
+                        </div>
+                    @endif
+                </div>
+
+                <div class="overflow-x-auto rounded-xl border border-gray-100">
+                    <table class="min-w-full text-xs">
                         <thead>
-                            <tr class="bg-[#C41E3A] text-white">
-                                <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">Valid</th>
-                                <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">Gelar Depan</th>
-                                <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">Nama Lengkap</th>
-                                <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">Gelar Belakang</th>
-                                <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">JK</th>
-                                <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">Tahun Ajar</th>
-                                <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">Prodi</th>
-                                <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">Bidang Keahlian</th>
-                                <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">Jalur Lamaran</th>
-                                <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">H-Index</th>
-                                <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300" colspan="3" style="text-align: center;">Pendidikan S1</th>
-                                <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300" colspan="3" style="text-align: center;">Pendidikan S2</th>
-                                <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300" colspan="3" style="text-align: center;">Pendidikan S3</th>
-                                <th class="px-2 py-2 text-left text-xs font-semibold uppercase border border-gray-300">Error</th>
-                            </tr>
-                            <tr class="bg-[#C41E3A] text-white">
-                                <th class="px-2 py-2 border border-gray-300"></th>
-                                <th class="px-2 py-2 border border-gray-300"></th>
-                                <th class="px-2 py-2 border border-gray-300"></th>
-                                <th class="px-2 py-2 border border-gray-300"></th>
-                                <th class="px-2 py-2 border border-gray-300"></th>
-                                <th class="px-2 py-2 border border-gray-300"></th>
-                                <th class="px-2 py-2 border border-gray-300"></th>
-                                <th class="px-2 py-2 border border-gray-300"></th>
-                                <th class="px-2 py-2 border border-gray-300"></th>
-                                <th class="px-2 py-2 border border-gray-300"></th>
-                                <th class="px-2 py-2 text-center text-xs border border-gray-300">Universitas</th>
-                                <th class="px-2 py-2 text-center text-xs border border-gray-300">Prodi</th>
-                                <th class="px-2 py-2 text-center text-xs border border-gray-300">Tgl Lulus</th>
-                                <th class="px-2 py-2 text-center text-xs border border-gray-300">Universitas</th>
-                                <th class="px-2 py-2 text-center text-xs border border-gray-300">Prodi</th>
-                                <th class="px-2 py-2 text-center text-xs border border-gray-300">Tgl Lulus</th>
-                                <th class="px-2 py-2 text-center text-xs border border-gray-300">Universitas</th>
-                                <th class="px-2 py-2 text-center text-xs border border-gray-300">Prodi</th>
-                                <th class="px-2 py-2 text-center text-xs border border-gray-300">Tgl Lulus</th>
-                                <th class="px-2 py-2 border border-gray-300"></th>
+                            <tr class="bg-[#F8FAFC] text-gray-500 border-b border-gray-100">
+                                <th class="px-3 py-3 text-center font-bold uppercase w-14">Valid</th>
+                                <th class="px-3 py-3 text-left font-bold uppercase">Nama Calon Dosen</th>
+                                <th class="px-3 py-3 text-left font-bold uppercase">Jenis Kelamin</th>
+                                <th class="px-3 py-3 text-left font-bold uppercase">Tahun Ajar</th>
+                                <th class="px-3 py-3 text-left font-bold uppercase">Prodi</th>
+                                <th class="px-3 py-3 text-left font-bold uppercase">Jalur Lamaran</th>
+                                <th class="px-3 py-3 text-left font-bold uppercase">Pendidikan S1</th>
+                                <th class="px-3 py-3 text-left font-bold uppercase">Pendidikan S2</th>
+                                <th class="px-3 py-3 text-left font-bold uppercase">Pendidikan S3</th>
+                                <th class="px-3 py-3 text-left font-bold uppercase">Kesalahan / Error</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white">
+                        <tbody class="divide-y divide-gray-100">
                             @if(session()->has('import_data') && count(session('import_data')) > 0)
                                 @foreach(session('import_data') as $row)
-                                <tr class="{{ $row['is_valid'] ? 'hover:bg-gray-50' : 'bg-red-50' }} border-b border-gray-200">
-                                    <td class="px-2 py-2 text-center border border-gray-300">
+                                <tr class="{{ $row['is_valid'] ? 'bg-white hover:bg-gray-50' : 'bg-red-50/40 hover:bg-red-50/60' }} transition-colors">
+                                    <td class="px-3 py-3.5 text-center">
                                         @if($row['is_valid'])
-                                            <i class="fas fa-check-circle text-green-500 text-lg"></i>
+                                            <span class="inline-flex p-1 bg-emerald-100 text-emerald-700 rounded-full">
+                                                <i class="fas fa-check text-[10px]"></i>
+                                            </span>
                                         @else
-                                            <i class="fas fa-times-circle text-red-500 text-lg"></i>
+                                            <span class="inline-flex p-1 bg-red-100 text-red-700 rounded-full">
+                                                <i class="fas fa-times text-[10px]"></i>
+                                            </span>
                                         @endif
                                     </td>
-                                    <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['front_title'] ?? '-' }}</td>
-                                    <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['nama_calon'] }}</td>
-                                    <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['back_title'] ?? '-' }}</td>
-                                    <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['jenis_kelamin'] }}</td>
-                                    <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['tahun_ajar'] }}</td>
-                                    <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['prodi_name'] }}</td>
-                                    <!-- Bidang Keahlian -->
-                                    <td class="px-2 py-2 text-xs border border-gray-300">
-                                        @if(!empty($row['bidang_keahlian']))
-                                            <span class="px-2 py-1 text-xs font-semibold rounded bg-blue-100 text-blue-800">
-                                                {{ $row['bidang_keahlian'] }}
-                                            </span>
+                                    <td class="px-3 py-3.5 font-bold text-gray-800">
+                                        {{ $row['front_title'] ? $row['front_title'] . ' ' : '' }}{{ $row['nama_calon'] }}{{ $row['back_title'] ? ', ' . $row['back_title'] : '' }}
+                                    </td>
+                                    <td class="px-3 py-3.5 font-semibold text-gray-500">{{ $row['jenis_kelamin'] }}</td>
+                                    <td class="px-3 py-3.5 font-semibold text-gray-600">{{ $row['tahun_ajar'] }}</td>
+                                    <td class="px-3 py-3.5 text-gray-600">{{ $row['prodi_name'] ?? '-' }}</td>
+                                    <td class="px-3 py-3.5 text-gray-600">{{ $row['jalur_lamaran'] ?? '-' }}</td>
+                                    <td class="px-3 py-3.5 text-gray-500">
+                                        @if(isset($row['universitas_s1']))
+                                            <div class="font-bold text-gray-700">{{ $row['universitas_s1'] }}</div>
+                                            <div>{{ $row['prodi_s1'] }} (Lulus: {{ $row['tanggal_lulus_s1'] }})</div>
                                         @else
                                             -
                                         @endif
                                     </td>
-                                    <!-- Jalur Lamaran -->
-                                    <td class="px-2 py-2 text-xs border border-gray-300">
-                                        @if(!empty($row['jalur_lamaran']))
-                                            <span class="px-2 py-1 text-xs font-semibold rounded bg-blue-100 text-blue-800">
-                                                {{ $row['jalur_lamaran'] }}
-                                            </span>
+                                    <td class="px-3 py-3.5 text-gray-500">
+                                        @if(isset($row['universitas_s2']))
+                                            <div class="font-bold text-gray-700">{{ $row['universitas_s2'] }}</div>
+                                            <div>{{ $row['prodi_s2'] }} (Lulus: {{ $row['tanggal_lulus_s2'] }})</div>
                                         @else
                                             -
                                         @endif
                                     </td>
-                                    <!-- H-Index -->
-                                    <td class="px-2 py-2 text-xs border border-gray-300">
-                                        @if(!empty($row['h_index']))
-                                            <span class="px-2 py-1 text-xs font-semibold rounded bg-purple-100 text-purple-800">
-                                                {{ $row['h_index'] }}
-                                            </span>
+                                    <td class="px-3 py-3.5 text-gray-500">
+                                        @if(isset($row['universitas_s3']))
+                                            <div class="font-bold text-gray-700">{{ $row['universitas_s3'] }}</div>
+                                            <div>{{ $row['prodi_s3'] }} (Lulus: {{ $row['tanggal_lulus_s3'] }})</div>
                                         @else
                                             -
                                         @endif
                                     </td>
-                                    <!-- S1 -->
-                                    <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['universitas_s1'] ?? '-' }}</td>
-                                    <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['prodi_s1'] ?? '-' }}</td>
-                                    <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['tanggal_lulus_s1'] ?? '-' }}</td>
-                                    <!-- S2 -->
-                                    <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['universitas_s2'] ?? '-' }}</td>
-                                    <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['prodi_s2'] ?? '-' }}</td>
-                                    <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['tanggal_lulus_s2'] ?? '-' }}</td>
-                                    <!-- S3 -->
-                                    <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['universitas_s3'] ?? '-' }}</td>
-                                    <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['prodi_s3'] ?? '-' }}</td>
-                                    <td class="px-2 py-2 text-xs border border-gray-300">{{ $row['tanggal_lulus_s3'] ?? '-' }}</td>
-                                    <td class="px-2 py-2 text-xs border border-gray-300">
+                                    <td class="px-3 py-3.5">
                                         @if(!empty($row['errors']))
-                                            <span class="text-red-600">{{ implode(', ', $row['errors']) }}</span>
+                                            <div class="text-red-600 font-medium flex flex-col gap-0.5">
+                                                @foreach($row['errors'] as $err)
+                                                    <span>• {{ $err }}</span>
+                                                @endforeach
+                                            </div>
                                         @else
-                                            <span class="text-green-600">Valid</span>
+                                            <span class="text-emerald-600 font-bold">Valid</span>
                                         @endif
                                     </td>
                                 </tr>
                                 @endforeach
                             @else
                                 <tr>
-                                    <td colspan="20" class="px-4 py-12 text-center text-gray-500 border border-gray-300">
-                                        <div class="flex flex-col items-center">
-                                            <i class="fas fa-inbox text-4xl mb-4 text-gray-400"></i>
-                                            <p>Tidak ada data untuk ditampilkan. Silakan upload file terlebih dahulu.</p>
+                                    <td colspan="10" class="px-4 py-16 text-center text-gray-400">
+                                        <div class="flex flex-col items-center gap-3">
+                                            <div class="p-4 bg-gray-50 text-gray-300 rounded-full">
+                                                <i class="fas fa-file-excel text-4xl"></i>
+                                            </div>
+                                            <p class="font-medium text-gray-500">Berkas spreadsheet belum diunggah</p>
+                                            <p class="text-xs text-gray-400 max-w-xs">Silakan unggah file Excel di atas untuk menampilkan hasil tinjauan data.</p>
                                         </div>
                                     </td>
                                 </tr>
@@ -251,57 +256,88 @@
                     </table>
                 </div>
 
-                {{-- Save Button --}}
+                {{-- Action Panel --}}
                 @if(session()->has('import_data') && count(session('import_data')) > 0)
-                <div class="mt-6 flex items-center space-x-4">
-                    <form action="{{ route('rekrutasi-dosen.import.save') }}" method="POST">
-                        @csrf
-                        <button type="submit" 
-                                class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-all duration-200 shadow-md">
-                            <i class="fas fa-save mr-2"></i>
-                            Simpan Data Valid
+                <div class="mt-6 flex items-center justify-between gap-4 border-t border-gray-100 pt-6">
+                    <p class="text-xs text-gray-400">Pastikan memeriksa seluruh pesan kesalahan berwarna merah sebelum menyimpan.</p>
+                    <div class="flex items-center gap-3">
+                        <a href="{{ route('rekrutasi-dosen.import.view', ['step' => 2, 'reset' => 1]) }}" 
+                           class="px-5 py-3 bg-gray-100 hover:bg-gray-200 text-gray-600 font-semibold rounded-xl text-sm transition-all">
+                            <i class="fas fa-redo mr-1"></i> Upload Ulang
+                        </a>
+                        @if($validCount > 0)
+                        <form action="{{ route('rekrutasi-dosen.import.save') }}" method="POST">
+                            @csrf
+                            <button type="submit" 
+                                    class="px-6 py-3 bg-[#FBB03B] hover:bg-[#E09A2A] text-black font-semibold rounded-xl text-sm transition-all shadow-sm">
+                                <i class="fas fa-save mr-1"></i> Simpan Data Valid
+                            </button>
+                        </form>
+                        @else
+                        <button disabled
+                                class="px-6 py-3 bg-gray-300 text-gray-500 font-semibold rounded-xl text-sm cursor-not-allowed">
+                            <i class="fas fa-ban mr-1"></i> Tidak Ada Data Valid
                         </button>
-                    </form>
-
-                    <a href="{{ route('rekrutasi-dosen.import.view', ['step' => 2, 'reset' => 1]) }}" 
-                       class="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg transition-all duration-200 shadow-md">
-                        <i class="fas fa-redo mr-2"></i>
-                        Upload Ulang
-                    </a>
+                        @endif
+                    </div>
                 </div>
                 @endif
             </div>
+
         </div>
         @endif
     </main>
 
-    {{-- Messages --}}
-    @if(session('success'))
-        <div class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in">
-            <div class="flex items-center">
-                <i class="fas fa-check-circle mr-2"></i>
-                {{ session('success') }}
-            </div>
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div class="fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-fade-in">
-            <div class="flex items-center">
-                <i class="fas fa-times-circle mr-2"></i>
-                {{ session('error') }}
-            </div>
-        </div>
-    @endif
-
+    {{-- SweetAlert2 / Toast scripts --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        // Auto-hide messages
-        setTimeout(() => {
-            document.querySelectorAll('.fixed.z-50').forEach(el => {
-                el.style.opacity = '0';
-                setTimeout(() => el.remove(), 300);
-            });
-        }, 3000);
+        document.addEventListener('DOMContentLoaded', function() {
+            // Drag and drop / file input listener
+            const fileInput = document.getElementById('fileInput');
+            const filePlaceholder = document.getElementById('fileNamePlaceholder');
+            const uploadIcon = document.getElementById('uploadIcon');
+
+            if(fileInput && filePlaceholder) {
+                fileInput.addEventListener('change', function() {
+                    if(this.files && this.files.length > 0) {
+                        filePlaceholder.innerText = this.files[0].name;
+                        filePlaceholder.classList.add('text-[#C41E3A]');
+                        if(uploadIcon) {
+                            uploadIcon.className = 'fas fa-file-excel text-3xl text-green-600 mb-3';
+                        }
+                    } else {
+                        filePlaceholder.innerText = 'Pilih atau Seret file Excel Anda di sini';
+                        filePlaceholder.classList.remove('text-[#C41E3A]');
+                        if(uploadIcon) {
+                            uploadIcon.className = 'fas fa-cloud-upload-alt text-3xl text-gray-400 mb-3';
+                        }
+                    }
+                });
+            }
+
+            @if(session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: '{{ session('success') }}',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    toast: true,
+                    position: 'top-end'
+                });
+            @endif
+
+            @if(session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: '{{ session('error') }}',
+                    showConfirmButton: true,
+                    confirmButtonColor: '#C41E3A'
+                });
+            @endif
+        });
     </script>
 </body>
 </html>
