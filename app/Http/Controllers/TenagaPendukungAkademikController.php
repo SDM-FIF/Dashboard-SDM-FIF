@@ -535,6 +535,94 @@ class TenagaPendukungAkademikController extends Controller
     }
 
     /**
-     * Halaman laporan TPA
+     * Halaman Dashboard TPA untuk Pengguna Login
      */
+    public function dashboard()
+    {
+        $data = $this->getDashboardData();
+        return view('dashboard-tpa', $data);
+    }
+
+    /**
+     * Halaman Dashboard TPA untuk Guest/Publik
+     */
+    public function guestDashboard()
+    {
+        $data = $this->getDashboardData();
+        return view('guest-tpa', $data);
+    }
+
+    /**
+     * Helper untuk mengambil data statistik TPA dari database
+     */
+    private function getDashboardData()
+    {
+        $totalTPA = TenagaPendukungAkademik::count();
+
+        // 1. Pendidikan Terakhir
+        $pendidikanRaw = TenagaPendukungAkademik::select('pendidikan_terakhir', DB::raw('count(*) as total'))
+            ->groupBy('pendidikan_terakhir')
+            ->get();
+
+        $pendidikanOrder = ['SMA', 'SMK', 'D3', 'D4', 'S1', 'S2', 'S3'];
+        $pendidikanCountsMap = [];
+        foreach ($pendidikanOrder as $jenjang) {
+            $pendidikanCountsMap[$jenjang] = 0;
+        }
+        foreach ($pendidikanRaw as $row) {
+            $val = strtoupper(trim($row->pendidikan_terakhir));
+            if (array_key_exists($val, $pendidikanCountsMap)) {
+                $pendidikanCountsMap[$val] += $row->total;
+            } else {
+                $pendidikanCountsMap[$val] = $row->total;
+            }
+        }
+
+        // Hitung TPA dengan pendidikan tinggi (D4, S1, S2, S3)
+        $pendidikanTinggiCount = 0;
+        foreach (['D4', 'S1', 'S2', 'S3'] as $jenjang) {
+            if (isset($pendidikanCountsMap[$jenjang])) {
+                $pendidikanTinggiCount += $pendidikanCountsMap[$jenjang];
+            }
+        }
+        $persenPendidikanTinggi = $totalTPA > 0 ? round(($pendidikanTinggiCount / $totalTPA) * 100, 1) : 0;
+
+        // 2. Lokasi Kerja
+        $lokasiRaw = TenagaPendukungAkademik::select('lokasi_kerja', DB::raw('count(*) as total'))
+            ->groupBy('lokasi_kerja')
+            ->get();
+
+        $lokasiCounts = [];
+        foreach ($lokasiRaw as $row) {
+            $lokasiCounts[trim($row->lokasi_kerja)] = $row->total;
+        }
+
+        // 3. Status Pegawai
+        $statusRaw = TenagaPendukungAkademik::select('status_pegawai', DB::raw('count(*) as total'))
+            ->groupBy('status_pegawai')
+            ->get();
+        $statusCounts = [];
+        foreach ($statusRaw as $row) {
+            $statusCounts[trim($row->status_pegawai)] = $row->total;
+        }
+
+        // 4. Jabatan / Pangkat
+        $jabatanRaw = TenagaPendukungAkademik::select('jabatan', DB::raw('count(*) as total'))
+            ->groupBy('jabatan')
+            ->get();
+        $jabatanCounts = [];
+        foreach ($jabatanRaw as $row) {
+            $jabatanCounts[trim($row->jabatan)] = $row->total;
+        }
+
+        return [
+            'totalTPA' => $totalTPA,
+            'pendidikanCountsMap' => $pendidikanCountsMap,
+            'pendidikanTinggiCount' => $pendidikanTinggiCount,
+            'persenPendidikanTinggi' => $persenPendidikanTinggi,
+            'lokasiCounts' => $lokasiCounts,
+            'statusCounts' => $statusCounts,
+            'jabatanCounts' => $jabatanCounts,
+        ];
+    }
 }

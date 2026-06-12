@@ -106,9 +106,7 @@ Route::get('/dashboard-dosen', function () {
     ));
 })->name('dashboard-dosen');
 
-Route::get('/dashboard-tpa', function () {
-    return view('dashboard-tpa');
-})->name('dashboard-tpa');
+Route::get('/dashboard-tpa', [TenagaPendukungAkademikController::class, 'dashboard'])->name('dashboard-tpa');
 
 Route::get('/dashboard-kompetisi', function () {
     return view('dashboard-kompetisi');
@@ -124,9 +122,7 @@ Route::get('/guest-dosen', function () {
     return view('guest-dosen');
 })->name('guest-dosen');
 
-Route::get('/guest-tpa', function () {
-    return view('guest-tpa');
-})->name('guest-tpa');
+Route::get('/guest-tpa', [TenagaPendukungAkademikController::class, 'guestDashboard'])->name('guest-tpa');
 
 Route::get('/guest-kompetisi', function () {
     return view('guest-kompetisi');
@@ -559,9 +555,7 @@ Route::middleware('auth')->group(function () {
         return view('import-tpa');
     })->name('import-tpa');
 
-    Route::get('/dashboard-tpa', function () {
-        return view('dashboard-tpa');
-    })->name('dashboard-tpa');
+    Route::get('/dashboard-tpa', [TenagaPendukungAkademikController::class, 'dashboard'])->name('dashboard-tpa');
 
     // Kompetisi
     Route::get('/kompetisi', function () {
