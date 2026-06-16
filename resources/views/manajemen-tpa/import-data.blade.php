@@ -3,97 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <title>Import Data TPA - Dashboard SDM FIF</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+        }
+    </style>
 </head>
-<body class="flex flex-col md:flex-row bg-gray-50 font-nunito">
-    
+<body class="flex flex-col md:flex-row bg-[#F8FAFC] min-h-screen text-[#1E293B]">
+    {{-- Sidebar Navigation --}}
     <x-navbar />
     
-    <main class="flex-1 p-4 md:p-6 min-h-screen">
+    {{-- Main Content --}}
+    <main class="flex-1 p-6 md:p-8 overflow-y-auto">
+        {{-- Topbar --}}
         <x-topbar />
 
-        {{-- Page Title --}}
-        <div class="mb-6 flex justify-between items-center">
+        {{-- Header Section --}}
+        <div class="mb-8 mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-                <h1 class="text-3xl md:text-4xl font-bold text-[#C41E3A]">Import TPA</h1>
-                <p class="text-gray-600 mt-2">Upload data Tenaga Pendukung Akademik secara massal menggunakan Excel</p>
+                <h1 class="text-3xl md:text-4xl font-extrabold text-[#C41E3A] tracking-tight">Import Data TPA</h1>
+                <p class="text-sm text-gray-500 mt-1">Unggah data Tenaga Kependidikan dan Profesional secara massal menggunakan Excel.</p>
             </div>
-            <a href="{{ route('manajemen-tpa.kelola-data') }}" class="text-gray-500 hover:text-[#C41E3A]">
-                <i class="fas fa-arrow-left mr-1"></i> Kembali
+            
+            <a href="{{ route('manajemen-tpa.kelola-data') }}" class="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-[#C41E3A] font-semibold transition-colors">
+                <i class="fas fa-arrow-left"></i>
+                <span>Kembali ke Kelola Data</span>
             </a>
         </div>
 
-        {{-- Progress Steps --}}
-        <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6 mb-6">
-            <div class="flex items-center justify-between relative">
-                @php
-                    if(request()->has('step')) {
-                        $currentStep = (int) request()->get('step');
-                    } else {
-                        $currentStep = 1;
-                        if(session()->has('tpa_import_data')) $currentStep = 2;
-                        if(session()->has('import_result')) $currentStep = 3;
-                    }
-                    $fileUploaded = session()->has('file_uploaded');
-                @endphp
+        @php
+            if(request()->has('step')) {
+                $currentStep = (int) request()->get('step');
+            } else {
+                $currentStep = 1;
+                if(session()->has('tpa_import_data')) $currentStep = 2;
+                if(session()->has('import_result')) $currentStep = 3;
+            }
+            $fileUploaded = session()->has('tpa_import_data');
+        @endphp
 
-                {{-- Step 1: Template --}}
+        {{-- Progress Steps Section --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8 hover:shadow-md transition-shadow">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-6 md:gap-0">
+                
+                {{-- Step 1 --}}
                 <a href="{{ route('manajemen-tpa.import-data', ['step' => 1]) }}" 
-                   class="flex flex-col items-center flex-1 relative {{ $currentStep == 1 ? 'text-[#FBB03B]' : (($currentStep > 1 || $fileUploaded) ? 'text-green-600' : 'text-gray-400') }} cursor-pointer hover:opacity-80">
-                    <div class="w-16 h-16 rounded-full {{ $currentStep == 1 ? 'bg-[#FBB03B]' : (($currentStep > 1 || $fileUploaded) ? 'bg-green-500' : 'bg-gray-300') }} flex items-center justify-center mb-2 transition-all">
-                        <i class="fas {{ ($currentStep > 1 || $fileUploaded) ? 'fa-check' : 'fa-file-excel' }} text-2xl text-white"></i>
+                   class="flex flex-col items-center text-center md:flex-1 group">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-sm mb-2 transition-all border-2 
+                        {{ $currentStep == 1 ? 'bg-[#C41E3A] text-white border-[#C41E3A]' : (($currentStep > 1 || $fileUploaded) ? 'bg-emerald-500 text-white border-emerald-500' : 'bg-white text-gray-400 border-gray-200') }}">
+                        @if($currentStep > 1 || $fileUploaded)
+                            <i class="fas fa-check"></i>
+                        @else
+                            1
+                        @endif
                     </div>
-                    <span class="text-sm font-semibold">Template</span>
-                    <span class="text-xs">Unduh Format</span>
+                    <span class="text-sm font-bold {{ $currentStep == 1 ? 'text-[#C41E3A]' : 'text-gray-700' }}">Unduh Template</span>
+                    <span class="text-xs text-gray-400 mt-0.5">Siapkan format berkas</span>
                 </a>
 
-                <div class="flex-1 h-1 {{ ($currentStep >= 2 || $fileUploaded) ? 'bg-[#FBB03B]' : 'bg-gray-300' }} mx-2"></div>
+                <div class="hidden md:block flex-1 h-0.5 {{ ($currentStep >= 2 || $fileUploaded) ? 'bg-emerald-500' : 'bg-gray-100' }} mx-4"></div>
 
-                {{-- Step 2: Import --}}
+                {{-- Step 2 --}}
                 <a href="{{ route('manajemen-tpa.import-data', ['step' => 2]) }}" 
-                   class="flex flex-col items-center flex-1 relative {{ $currentStep == 2 ? 'text-[#FBB03B]' : ($currentStep > 2 ? 'text-green-600' : 'text-gray-400') }} cursor-pointer hover:opacity-80">
-                    <div class="w-16 h-16 rounded-full {{ $currentStep == 2 ? 'bg-[#FBB03B]' : ($currentStep > 2 ? 'bg-green-500' : 'bg-gray-300') }} flex items-center justify-center mb-2 transition-all">
-                        <i class="fas {{ $currentStep > 2 ? 'fa-check' : 'fa-file-import' }} text-2xl text-white"></i>
+                   class="flex flex-col items-center text-center md:flex-1 group">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-sm mb-2 transition-all border-2 
+                        {{ $currentStep == 2 ? 'bg-[#C41E3A] text-white border-[#C41E3A]' : ($currentStep > 2 ? 'bg-emerald-500 text-white border-emerald-500' : 'bg-white text-gray-400 border-gray-200') }}">
+                        @if($currentStep > 2)
+                            <i class="fas fa-check"></i>
+                        @else
+                            2
+                        @endif
                     </div>
-                    <span class="text-sm font-semibold">Import</span>
-                    <span class="text-xs">Upload & Preview</span>
+                    <span class="text-sm font-bold {{ $currentStep == 2 ? 'text-[#C41E3A]' : 'text-gray-700' }}">Unggah & Validasi</span>
+                    <span class="text-xs text-gray-400 mt-0.5">Unggah spreadsheet Anda</span>
                 </a>
 
-                <div class="flex-1 h-1 {{ $currentStep >= 3 ? 'bg-green-500' : 'bg-gray-300' }} mx-2"></div>
+                <div class="hidden md:block flex-1 h-0.5 {{ $currentStep >= 3 ? 'bg-emerald-500' : 'bg-gray-100' }} mx-4"></div>
 
-                {{-- Step 3: Selesai --}}
-                <div class="flex flex-col items-center flex-1 relative {{ $currentStep == 3 ? 'text-green-600' : 'text-gray-400' }}">
-                    <div class="w-16 h-16 rounded-full {{ $currentStep == 3 ? 'bg-green-500' : 'bg-gray-300' }} flex items-center justify-center mb-2 transition-all">
-                        <i class="fas fa-check-double text-2xl text-white"></i>
+                {{-- Step 3 --}}
+                <div class="flex flex-col items-center text-center md:flex-1">
+                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-sm mb-2 transition-all border-2 
+                        {{ $currentStep == 3 ? 'bg-emerald-500 text-white border-emerald-500' : 'bg-white text-gray-400 border-gray-200' }}">
+                        3
                     </div>
-                    <span class="text-sm font-semibold">Selesai</span>
-                    <span class="text-xs">Hasil Import</span>
+                    <span class="text-sm font-bold {{ $currentStep == 3 ? 'text-emerald-500' : 'text-gray-700' }}">Selesai</span>
+                    <span class="text-xs text-gray-400 mt-0.5">Hasil Simpan</span>
                 </div>
+
             </div>
         </div>
 
-        {{-- STEP 1: Template Download --}}
+        {{-- STEP 1: Download Template --}}
         @if($currentStep == 1)
-        <div class="bg-white rounded-lg shadow-md border border-gray-200 p-8 animate-fade-in text-center">
-            <div class="mb-6">
-                <div class="inline-block p-6 bg-red-100 rounded-full">
-                    <i class="fas fa-user-tie text-6xl text-[#C41E3A]"></i>
-                </div>
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center max-w-2xl mx-auto hover:shadow-md transition-shadow">
+            <div class="w-20 h-20 bg-red-50 text-[#C41E3A] rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-file-download text-3xl"></i>
             </div>
-            <h2 class="text-2xl font-bold text-[#C41E3A] mb-4">Template Import Data TPA</h2>
-            <p class="text-gray-600 mb-6 max-w-lg mx-auto">
-                Gunakan template standar untuk memastikan data <b>NIP, Nama, Golongan,</b> dan <b>Lokasi Kerja</b> tersimpan dengan benar di sistem.
-            </p>
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Template Import Data TPA</h2>
+            <p class="text-sm text-gray-500 mb-8 max-w-md mx-auto">Untuk menghindari kesalahan pembacaan sistem, harap gunakan berkas template Excel resmi yang telah disediakan di bawah ini.</p>
             
             <a href="{{ route('manajemen-tpa.download-template') }}" 
-            class="inline-flex items-center px-6 py-3 bg-[#FBB03B] hover:bg-orange-600 text-black font-semibold rounded-lg transition-all duration-200 shadow-md">
-                <i class="fas fa-download mr-2"></i> Unduh Template TPA
+               class="inline-flex items-center gap-2 px-6 py-3 bg-[#FBB03B] hover:bg-[#E09A2A] text-black font-semibold rounded-xl transition-all shadow-sm">
+                <i class="fas fa-download"></i>
+                <span>Unduh Template TPA (.xls)</span>
             </a>
-            
             <div class="mt-6">
-                <a href="{{ route('manajemen-tpa.import-data', ['step' => 2]) }}" class="text-sm text-blue-600 hover:underline">
+                <a href="{{ route('manajemen-tpa.import-data', ['step' => 2]) }}" class="text-xs text-gray-400 hover:text-[#C41E3A] transition-colors font-medium">
                     Sudah punya file? Lanjut ke Upload <i class="fas fa-arrow-right ml-1"></i>
                 </a>
             </div>
@@ -102,78 +122,113 @@
 
         {{-- STEP 2: Import Section --}}
         @if($currentStep == 2)
-        <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6 animate-fade-in">
-            <h2 class="text-xl font-bold text-[#C41E3A] mb-4 flex items-center">
-                <i class="fas fa-cloud-upload-alt mr-2"></i> Upload & Preview Data TPA
-            </h2>
-
-            <form action="{{ route('manajemen-tpa.import-process') }}" method="POST" enctype="multipart/form-data" class="mb-8 p-4 bg-gray-50 border border-dashed border-gray-300 rounded-lg">
-                @csrf
-                <div class="flex flex-col md:flex-row items-center gap-4">
-                    <div class="flex-1 w-full">
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Pilih File Excel TPA</label>
-                        <input type="file" name="file" accept=".xlsx,.xls" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-[#C41E3A] hover:file:bg-red-100" required>
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 hover:shadow-md transition-shadow">
+            
+            {{-- Upload Section --}}
+            <div class="max-w-2xl mx-auto mb-8 text-center">
+                <h2 class="text-xl font-bold text-gray-800 mb-4">Unggah File Spreadsheet</h2>
+                
+                <form action="{{ route('manajemen-tpa.import-process') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                    @csrf
+                    
+                    <div class="border-2 border-dashed border-gray-200 hover:border-[#C41E3A] rounded-2xl p-6 transition-colors bg-[#F8FAFC] relative">
+                        <input type="file" name="file" id="fileInput" accept=".xlsx,.xls,.csv" required
+                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                        
+                        <div class="flex flex-col items-center justify-center py-4">
+                            <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-3" id="uploadIcon"></i>
+                            <p class="text-sm font-semibold text-gray-700" id="fileNamePlaceholder">Pilih atau Seret file Excel Anda di sini</p>
+                            <p class="text-xs text-gray-400 mt-1">Mendukung format file .xlsx, .xls, atau .csv (maksimal 10MB)</p>
+                        </div>
                     </div>
-                    <button type="submit" class="w-full md:w-auto px-6 py-2.5 bg-[#FBB03B] hover:bg-orange-600 text-black font-semibold rounded-lg transition-all duration-200 shadow-md">
-                        Preview Data
+                    
+                    <button type="submit" 
+                            class="w-full sm:w-auto px-6 py-3 bg-[#C41E3A] hover:bg-[#A31830] text-white font-semibold rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 mx-auto">
+                        <i class="fas fa-upload"></i>
+                        <span>Unggah & Preview File</span>
                     </button>
-                </div>
-            </form>
+                </form>
+            </div>
 
+            {{-- Preview Import Table --}}
             @if(session()->has('tpa_import_data'))
-            <div>
-                <div class="flex justify-between items-end mb-4">
-                    <h3 class="text-lg font-bold text-[#C41E3A]">Pratinjau Data TPA</h3>
-                    <div class="text-sm">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+            <div class="pt-6 border-t border-gray-50">
+                <div class="flex items-center justify-between mb-4 flex-wrap gap-2">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-800">Preview Data TPA</h3>
+                        <p class="text-xs text-gray-500 mt-0.5">Sistem memvalidasi NIP duplikat secara real-time</p>
+                    </div>
+                    <div class="text-xs font-bold flex gap-2">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100">
                             Siap: {{ collect(session('tpa_import_data'))->where('is_duplicate', false)->count() }}
                         </span>
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 ml-2">
-                            Duplikat/Invalid: {{ collect(session('tpa_import_data'))->where('is_duplicate', true)->count() }}
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-red-50 text-red-700 border border-red-100">
+                            Duplikat: {{ collect(session('tpa_import_data'))->where('is_duplicate', true)->count() }}
                         </span>
                     </div>
                 </div>
-                
-                <div class="overflow-x-auto rounded-lg border border-gray-300">
-                    <table class="w-full border-collapse">
+
+                <div class="overflow-x-auto rounded-xl border border-gray-100">
+                    <table class="min-w-full text-xs">
                         <thead>
-                            <tr class="bg-[#C41E3A] text-white">
-                                <th class="px-4 py-3 text-center text-xs font-semibold uppercase w-16">Status</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase">NIP</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase">Nama Lengkap</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase">Golongan</th>
-                                <th class="px-4 py-3 text-left text-xs font-semibold uppercase">Lokasi Kerja</th>
+                            <tr class="bg-[#F8FAFC] text-gray-500 border-b border-gray-100">
+                                <th class="px-3 py-3 text-center font-bold uppercase w-14">Valid</th>
+                                <th class="px-3 py-3 text-left font-bold uppercase">NIP</th>
+                                <th class="px-3 py-3 text-left font-bold uppercase">Nama Lengkap</th>
+                                <th class="px-3 py-3 text-left font-bold uppercase">Jabatan</th>
+                                <th class="px-3 py-3 text-left font-bold uppercase">Lokasi Kerja</th>
+                                <th class="px-3 py-3 text-left font-bold uppercase">Status</th>
                             </tr>
                         </thead>
-                        <tbody class="bg-white divide-y divide-gray-200">
+                        <tbody class="divide-y divide-gray-100 bg-white">
                             @foreach(session('tpa_import_data') as $row)
-                            <tr class="{{ $row['is_duplicate'] ? 'bg-red-50' : 'hover:bg-gray-50' }}">
-                                <td class="px-4 py-3 text-center">
-                                    <i class="fas {{ $row['is_duplicate'] ? 'fa-times-circle text-red-500' : 'fa-check-circle text-green-500' }} text-xl"></i>
+                            <tr class="{{ $row['is_duplicate'] ? 'bg-red-50/40 hover:bg-red-50/60' : 'bg-white hover:bg-gray-50' }} transition-colors">
+                                <td class="px-3 py-3.5 text-center">
+                                    @if(!$row['is_duplicate'])
+                                        <span class="inline-flex p-1 bg-emerald-100 text-emerald-700 rounded-full">
+                                            <i class="fas fa-check text-[10px]"></i>
+                                        </span>
+                                    @else
+                                        <span class="inline-flex p-1 bg-red-100 text-red-700 rounded-full">
+                                            <i class="fas fa-times text-[10px]"></i>
+                                        </span>
+                                    @endif
                                 </td>
-                                <td class="px-4 py-3 text-sm font-mono {{ $row['is_duplicate'] ? 'text-red-600 font-bold' : 'text-gray-700' }}">
+                                <td class="px-3 py-3.5 font-mono font-semibold {{ $row['is_duplicate'] ? 'text-red-600 font-bold' : 'text-gray-500' }}">
                                     {{ $row['nip'] }}
-                                    @if($row['is_duplicate']) <br><span class="text-[10px] uppercase">Sudah Ada</span> @endif
                                 </td>
-                                <td class="px-4 py-3 text-sm text-gray-700 font-medium">{{ $row['nama_lengkap'] }}</td>
-                                <td class="px-4 py-3 text-sm text-gray-700">{{ $row['jabatan'] }}</td>
-                                <td class="px-4 py-3 text-sm text-gray-700">{{ $row['lokasi_kerja'] }}</td>
+                                <td class="px-3 py-3.5 font-bold text-gray-800">{{ $row['nama_lengkap'] }}</td>
+                                <td class="px-3 py-3.5 text-gray-600 font-medium">{{ $row['jabatan'] }}</td>
+                                <td class="px-3 py-3.5 text-gray-600 font-semibold">{{ $row['lokasi_kerja'] }}</td>
+                                <td class="px-3 py-3.5">
+                                    @if($row['is_duplicate'])
+                                        <span class="text-red-600 font-medium">NIP Duplikat (Sudah ada di database)</span>
+                                    @else
+                                        <span class="text-emerald-600 font-bold">Valid</span>
+                                    @endif
+                                </td>
                             </tr>
                             @endforeach
                         </tbody>
                     </table>
                 </div>
 
-                <div class="mt-6 flex gap-4">
-                    <form action="{{ route('manajemen-tpa.import.store') }}" method="POST">
-                        @csrf
-                        <button type="submit" class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-md transition-all flex items-center">
-                            <i class="fas fa-save mr-2"></i> Simpan Data TPA
-                        </button>
-                    </form>
-                    <a href="{{ route('manajemen-tpa.import-data', ['step' => 2, 'reset' => 1]) }}" class="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-lg shadow-md text-center">
-                        Batalkan
-                    </a>
+                {{-- Action Panel --}}
+                <div class="mt-6 flex items-center justify-between gap-4 border-t border-gray-100 pt-6">
+                    <p class="text-xs text-gray-400">Pastikan memeriksa seluruh pesan kesalahan duplikat sebelum menyimpan data.</p>
+                    <div class="flex items-center gap-3">
+                        <a href="{{ route('manajemen-tpa.import-data', ['step' => 2, 'reset' => 1]) }}" 
+                           class="px-5 py-3 bg-gray-100 hover:bg-gray-200 text-gray-600 font-semibold rounded-xl text-sm transition-all">
+                            <i class="fas fa-redo mr-1"></i> Upload Ulang
+                        </a>
+                        <form action="{{ route('manajemen-tpa.import.store') }}" method="POST">
+                            @csrf
+                            <button type="submit" 
+                                    class="px-6 py-3 bg-[#FBB03B] hover:bg-[#E09A2A] text-black font-semibold rounded-xl text-sm transition-all shadow-sm">
+                                <i class="fas fa-save mr-1"></i> Simpan Data Valid
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
             @endif
@@ -181,26 +236,56 @@
         @endif
     </main>
 
-    {{-- Toast Notif --}}
-    @if(session('success'))
-        <div id="toast" class="fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-xl z-50 flex items-center animate-fade-in-down">
-            <i class="fas fa-check-circle mr-3 text-xl"></i>
-            <div><h4 class="font-bold">Berhasil!</h4><p class="text-sm">{{ session('success') }}</p></div>
-        </div>
-    @endif
-
+    {{-- SweetAlert2 / Toast scripts --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        setTimeout(() => {
-            const toast = document.getElementById('toast');
-            if(toast) toast.remove();
-        }, 4000);
-    </script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Drag and drop / file input listener
+            const fileInput = document.getElementById('fileInput');
+            const filePlaceholder = document.getElementById('fileNamePlaceholder');
+            const uploadIcon = document.getElementById('uploadIcon');
 
-    <style>
-        .animate-fade-in { animation: fadeIn 0.5s ease-in-out; }
-        .animate-fade-in-down { animation: fadeInDown 0.5s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-    </style>
+            if(fileInput && filePlaceholder) {
+                fileInput.addEventListener('change', function() {
+                    if(this.files && this.files.length > 0) {
+                        filePlaceholder.innerText = this.files[0].name;
+                        filePlaceholder.classList.add('text-[#C41E3A]');
+                        if(uploadIcon) {
+                            uploadIcon.className = 'fas fa-file-excel text-3xl text-green-600 mb-3';
+                        }
+                    } else {
+                        filePlaceholder.innerText = 'Pilih atau Seret file Excel Anda di sini';
+                        filePlaceholder.classList.remove('text-[#C41E3A]');
+                        if(uploadIcon) {
+                            uploadIcon.className = 'fas fa-cloud-upload-alt text-3xl text-gray-400 mb-3';
+                        }
+                    }
+                });
+            }
+
+            @if(session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: '{{ session('success') }}',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    toast: true,
+                    position: 'top-end'
+                });
+            @endif
+
+            @if(session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: '{{ session('error') }}',
+                    showConfirmButton: true,
+                    confirmButtonColor: '#C41E3A'
+                });
+            @endif
+        });
+    </script>
 </body>
 </html>

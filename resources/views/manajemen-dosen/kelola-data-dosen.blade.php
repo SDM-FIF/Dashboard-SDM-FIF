@@ -7,28 +7,57 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <title>Kelola Data Dosen - Dashboard SDM FIF</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+        }
+    </style>
 </head>
-<body class="flex flex-col md:flex-row bg-gray-50 font-nunito">
+<body class="flex flex-col md:flex-row bg-[#F8FAFC] min-h-screen text-[#1E293B]">
     {{-- Sidebar Navigation --}}
     <x-navbar />
     
     {{-- Main Content --}}
-    <main class="flex-1 p-4 md:p-6 min-h-screen">
-        {{-- Page Title --}}
-        <div class="mb-6">
-            <h1 class="text-3xl md:text-4xl font-bold text-[#C41E3A]">Kelola Data Dosen</h1>
+    <main class="flex-1 p-6 md:p-8 overflow-y-auto">
+        {{-- Header Section --}}
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+            <div>
+                <h1 class="text-3xl md:text-4xl font-extrabold text-[#C41E3A] tracking-tight">Kelola Data Dosen</h1>
+                <p class="text-sm text-gray-500 mt-1">Kelola informasi profile, jabatan, prodi, dan riwayat pendidikan dosen.</p>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                @can('kelola-data-dosen.create')
+                <a href="{{ route('manajemen-dosen.create') }}"
+                   class="inline-flex items-center gap-2 px-5 py-3 bg-[#C41E3A] hover:bg-[#A31830] text-white font-semibold rounded-xl transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5 text-sm">
+                    <i class="fas fa-plus"></i>
+                    <span>Tambah Dosen</span>
+                </a>
+                @endcan
+            </div>
         </div>
 
         {{-- Filter Section Card --}}
-        <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 mb-8">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8 hover:shadow-md transition-all duration-300">
+            <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-50">
+                <div class="p-2.5 bg-red-50 text-[#C41E3A] rounded-lg">
+                    <i class="fas fa-filter text-lg"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-gray-800">Filter Pencarian</h2>
+                    <p class="text-xs text-gray-500">Saring data dosen berdasarkan kriteria tertentu</p>
+                </div>
+            </div>
+
             <form method="GET" action="{{ route('manajemen-dosen.kelola-data') }}" class="space-y-6">
                 {{-- Filter Row 1 --}}
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {{-- Lokasi Kerja (Prodi) Filter --}}
-                    <div>
-                        <label class="block text-base font-semibold text-[#C41E3A] mb-2">Lokasi Kerja</label>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Lokasi Kerja (Prodi)</label>
                         <select name="prodi_id" 
-                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-700 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                                class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
                             <option value="">Semua Lokasi Kerja</option>
                             @if(isset($filterData['prodi']))
                                 @foreach($filterData['prodi'] as $prodi)
@@ -41,10 +70,10 @@
                     </div>
 
                     {{-- JFA (Jabatan) Filter --}}
-                    <div>
-                        <label class="block text-base font-semibold text-[#C41E3A] mb-2">JFA</label>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">JFA (Jabatan Akademik)</label>
                         <select name="jabatan" 
-                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-700 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                                class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
                             <option value="">Semua JFA</option>
                             @if(isset($filterData['jabatan']))
                                 @foreach($filterData['jabatan'] as $jab)
@@ -57,10 +86,10 @@
                     </div>
 
                     {{-- Kelompok Keahlian Filter --}}
-                    <div>
-                        <label class="block text-base font-semibold text-[#C41E3A] mb-2">Kelompok Keahlian</label>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Kelompok Keahlian</label>
                         <select name="kelompok_keahlian_id" 
-                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-700 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                                class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
                             <option value="">Semua Kelompok Keahlian</option>
                             @if(isset($filterData['kelompok_keahlian']))
                                 @foreach($filterData['kelompok_keahlian'] as $kelompok)
@@ -76,10 +105,10 @@
                 {{-- Filter Row 2 --}}
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {{-- Status Pegawai Filter --}}
-                    <div>
-                        <label class="block text-base font-semibold text-[#C41E3A] mb-2">Status Pegawai</label>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Status Pegawai</label>
                         <select name="status_pegawai" 
-                                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-700 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                                class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
                             <option value="">Semua Status</option>
                             @if(isset($filterData['status_pegawai']))
                                 @foreach($filterData['status_pegawai'] as $status)
@@ -92,229 +121,209 @@
                     </div>
 
                     {{-- Search Input --}}
-                    <div>
-                        <label class="block text-base font-semibold text-[#C41E3A] mb-2">Cari</label>
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Kata Kunci</label>
                         <input type="text" 
                                name="search" 
                                value="{{ request('search') }}"
                                placeholder="Cari NIP, Kode Dosen, atau Nama..."
-                               class="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-white text-gray-700 text-sm focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                               class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
                     </div>
 
                     {{-- Filter & Reset Buttons --}}
-                    <div class="flex items-end gap-2">
-                        <button type="submit" id="applyFilterBtn"
-                                class="flex-1 bg-[#FBB03B] hover:bg-orange-600 text-black font-semibold px-4 py-2.5 rounded-lg flex items-center justify-center space-x-2 transition-all duration-200 shadow-sm hover:shadow-md">
-                            <i class="fas fa-sliders-h text-black"></i>
-                            <span>Filter</span>
-                        </button>
-                        
+                    <div class="flex items-end gap-3">
                         <a href="{{ route('manajemen-dosen.kelola-data') }}" id="resetFilterBtn"
-                           class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-semibold px-4 py-2.5 rounded-lg flex items-center justify-center space-x-2 transition-all duration-200 shadow-sm hover:shadow-md">
+                           class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 font-semibold px-4 py-3 rounded-xl flex items-center justify-center space-x-2 transition-all duration-300">
                             <i class="fas fa-redo"></i>
                             <span>Reset</span>
                         </a>
+
+                        <button type="submit" id="applyFilterBtn"
+                                class="flex-1 bg-[#FBB03B] hover:bg-[#E09A2A] text-black font-semibold px-4 py-3 rounded-xl flex items-center justify-center space-x-2 transition-all duration-300 shadow-sm hover:shadow">
+                            <i class="fas fa-sliders-h"></i>
+                            <span>Terapkan</span>
+                        </button>
                     </div>
                 </div>
             </form>
         </div>
 
-        {{-- Data Table Section --}}
-        <div class="bg-white rounded-xl shadow-lg border border-gray-200 overflow-visible">
-            {{-- Table Header Section --}}
-            <div class="p-6 border-b border-gray-200">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-xl font-bold text-[#C41E3A]">Data Dosen</h2>
+        {{-- Data Table Section Card --}}
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300">
+            {{-- Table Header Info --}}
+            <div class="p-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-xl font-bold text-[#C41E3A]">Daftar Dosen</h2>
+                    <p class="text-xs text-gray-500 mt-0.5">Menampilkan total {{ $dosen->total() }} dosen terdaftar</p>
                 </div>
 
-                {{-- Action Buttons Row --}}
-                <div class="flex flex-col md:flex-row items-start md:items-center justify-between space-y-4 md:space-y-0">
-                    {{-- Tambah Data Button --}}
-                    @can('kelola-data-dosen.create')
-                    <button onclick="openCreateModal()"
-                        class="bg-[#FBB03B] hover:bg-orange-600 text-[#B91432] font-semibold px-6 py-2.5 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
-                        <i class="fas fa-plus mr-2"></i>Tambah Data
+                {{-- Export Button --}}
+                @can('kelola-data-dosen.view')
+                <div class="relative inline-block text-left">
+                    <button type="button" id="exportBtn" class="px-5 py-2.5 text-xs font-bold text-gray-700 bg-[#F8FAFC] border border-gray-200 rounded-xl hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-all duration-300 flex items-center gap-2 shadow-sm">
+                        <i class="fas fa-download text-gray-500"></i>
+                        <span>Export Data</span>
+                        <i class="fas fa-chevron-down text-[10px] ml-1 text-gray-400"></i>
                     </button>
-                    @endcan
 
-                    {{-- Right Side Controls --}}
-                    <div class="flex flex-wrap items-center gap-3">
-                        {{-- Export Button --}}
-                        @can('kelola-data-dosen.view')
-                        <div class="relative inline-block text-left">
-                            <button type="button" id="exportBtn" class="px-4 py-2 text-sm text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-all duration-200 flex items-center space-x-2">
-                                <i class="fas fa-download"></i>
-                                <span>Export</span>
-                                <i class="fas fa-chevron-down text-xs ml-1"></i>
-                            </button>
-
-                            <!-- Dropdown Export -->
-                            <div id="exportDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-xl border border-gray-200" style="z-index: 9999;">
-                                <a href="{{ route('manajemen-dosen.export-excel', request()->query()) }}"
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-t-lg">
-                                    <i class="fas fa-file-excel text-green-600 mr-2"></i>
-                                    Export Excel
-                                </a>
-                                <a href="{{ route('manajemen-dosen.export-csv', request()->query()) }}"
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                                    <i class="fas fa-file-csv text-blue-600 mr-2"></i>
-                                    Export CSV
-                                </a>
-                                <a href="{{ route('manajemen-dosen.export-pdf', request()->query()) }}"
-                                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-b-lg">
-                                    <i class="fas fa-file-pdf text-red-600 mr-2"></i>
-                                    Export PDF
-                                </a>
-                            </div>
-                        </div>
-                        @endcan
+                    <!-- Dropdown Export -->
+                    <div id="exportDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50">
+                        <a href="{{ route('manajemen-dosen.export-excel', request()->query()) }}"
+                            class="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-green-50 transition-colors">
+                            <i class="fas fa-file-excel text-green-600 text-lg"></i>
+                            <span>Export Excel</span>
+                        </a>
+                        <a href="{{ route('manajemen-dosen.export-csv', request()->query()) }}"
+                            class="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 transition-colors border-t border-gray-50">
+                            <i class="fas fa-file-csv text-blue-600 text-lg"></i>
+                            <span>Export CSV</span>
+                        </a>
+                        <a href="{{ route('manajemen-dosen.export-pdf', request()->query()) }}"
+                            class="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-red-50 transition-colors border-t border-gray-50">
+                            <i class="fas fa-file-pdf text-[#C41E3A] text-lg"></i>
+                            <span>Export PDF</span>
+                        </a>
                     </div>
                 </div>
+                @endcan
             </div>
 
             {{-- Table --}}
             <div class="overflow-x-auto">
-                <table class="min-w-full w-full">
+                <table class="min-w-full w-full border-collapse">
                     {{-- Table Header --}}
                     <thead>
                         <tr class="bg-[#C41E3A] text-white">
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
+                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">
                                 <a href="{{ route('manajemen-dosen.kelola-data', array_merge(request()->except(['sort_field', 'sort_direction']), ['sort_field' => 'nip', 'sort_direction' => request('sort_field') == 'nip' && request('sort_direction') == 'asc' ? 'desc' : 'asc'])) }}" 
-                                   class="flex items-center space-x-1 hover:text-gray-200">
+                                   class="flex items-center gap-1.5 hover:text-red-100 transition-colors">
                                     <span>NIP</span>
                                     @if(request('sort_field') == 'nip')
-                                        <i class="fas fa-sort-{{ request('sort_direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                        <i class="fas fa-sort-{{ request('sort_direction') == 'asc' ? 'up' : 'down' }} text-white"></i>
                                     @else
-                                        <i class="fas fa-sort text-gray-300"></i>
+                                        <i class="fas fa-sort text-red-200"></i>
                                     @endif
                                 </a>
                             </th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
-                                <a href="{{ route('manajemen-dosen.kelola-data', array_merge(request()->except(['sort_field', 'sort_direction']), ['sort_field' => 'kode_dosen', 'sort_direction' => request('sort_field') == 'kode_dosen' && request('sort_direction') == 'asc' ? 'desc' : 'asc'])) }}" 
-                                   class="flex items-center space-x-1 hover:text-gray-200">
-                                    <span>Kode Dosen</span>
-                                    @if(request('sort_field') == 'kode_dosen')
-                                        <i class="fas fa-sort-{{ request('sort_direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                    @else
-                                        <i class="fas fa-sort text-gray-300"></i>
-                                    @endif
-                                </a>
-                            </th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
+                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Kode</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">
                                 <a href="{{ route('manajemen-dosen.kelola-data', array_merge(request()->except(['sort_field', 'sort_direction']), ['sort_field' => 'nama_lengkap', 'sort_direction' => request('sort_field') == 'nama_lengkap' && request('sort_direction') == 'asc' ? 'desc' : 'asc'])) }}" 
-                                   class="flex items-center space-x-1 hover:text-gray-200">
-                                    <span>Nama</span>
+                                   class="flex items-center gap-1.5 hover:text-red-100 transition-colors">
+                                    <span>Nama Lengkap</span>
                                     @if(request('sort_field') == 'nama_lengkap')
-                                        <i class="fas fa-sort-{{ request('sort_direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                        <i class="fas fa-sort-{{ request('sort_direction') == 'asc' ? 'up' : 'down' }} text-white"></i>
                                     @else
-                                        <i class="fas fa-sort text-gray-300"></i>
+                                        <i class="fas fa-sort text-red-200"></i>
                                     @endif
                                 </a>
                             </th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
+                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">
                                 <a href="{{ route('manajemen-dosen.kelola-data', array_merge(request()->except(['sort_field', 'sort_direction']), ['sort_field' => 'jabatan', 'sort_direction' => request('sort_field') == 'jabatan' && request('sort_direction') == 'asc' ? 'desc' : 'asc'])) }}" 
-                                   class="flex items-center space-x-1 hover:text-gray-200">
+                                   class="flex items-center gap-1.5 hover:text-red-100 transition-colors">
                                     <span>JFA</span>
                                     @if(request('sort_field') == 'jabatan')
-                                        <i class="fas fa-sort-{{ request('sort_direction') == 'asc' ? 'up' : 'down' }}"></i>
+                                        <i class="fas fa-sort-{{ request('sort_direction') == 'asc' ? 'up' : 'down' }} text-white"></i>
                                     @else
-                                        <i class="fas fa-sort text-gray-300"></i>
+                                        <i class="fas fa-sort text-red-200"></i>
                                     @endif
                                 </a>
                             </th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
-                                <span>Kelompok Keahlian</span>
-                            </th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
-                                <span>Lokasi Kerja</span>
-                            </th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider">
-                                <a href="{{ route('manajemen-dosen.kelola-data', array_merge(request()->except(['sort_field', 'sort_direction']), ['sort_field' => 'status_pegawai', 'sort_direction' => request('sort_field') == 'status_pegawai' && request('sort_direction') == 'asc' ? 'desc' : 'asc'])) }}" 
-                                   class="flex items-center space-x-1 hover:text-gray-200">
-                                    <span>Status</span>
-                                    @if(request('sort_field') == 'status_pegawai')
-                                        <i class="fas fa-sort-{{ request('sort_direction') == 'asc' ? 'up' : 'down' }}"></i>
-                                    @else
-                                        <i class="fas fa-sort text-gray-300"></i>
-                                    @endif
-                                </a>
-                            </th>
-                            <th class="px-4 py-3 text-center text-xs font-semibold uppercase tracking-wider w-32">Aksi</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Kelompok Keahlian</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Lokasi Kerja</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider w-36">Aksi</th>
                         </tr>
                     </thead>
                     
                     {{-- Table Body --}}
-                    <tbody class="bg-white divide-y divide-gray-200">
+                    <tbody class="divide-y divide-gray-100 bg-white">
                         @if(isset($dosen) && $dosen->count() > 0)
-                            @foreach($dosen as $index => $dosenItem)
-                                <tr class="hover:bg-gray-50 transition-colors duration-150">
-                                    <td class="px-4 py-4 text-sm text-gray-900 font-medium">
+                            @foreach($dosen as $dosenItem)
+                                <tr class="hover:bg-[#F8FAFC] transition-colors duration-150 group">
+                                    {{-- NIP --}}
+                                    <td class="px-6 py-4 text-sm text-gray-500 font-semibold">
                                         {{ $dosenItem->nip }}
                                     </td>
-                                    <td class="px-4 py-4 text-sm text-gray-900">
-                                        {{ $dosenItem->kode_dosen }}
+                                    
+                                    {{-- Kode Dosen --}}
+                                    <td class="px-6 py-4 text-sm">
+                                        <span class="px-2 py-0.5 bg-gray-100 text-gray-700 rounded-lg text-xs font-bold font-mono border border-gray-200/50">
+                                            {{ $dosenItem->kode_dosen }}
+                                        </span>
                                     </td>
-                                    <td class="px-4 py-4 text-sm text-gray-900">
-                                        <div class="font-medium">
-                                            @if($dosenItem->front_title){{ $dosenItem->front_title }} @endif{{ $dosenItem->nama_lengkap }}@if($dosenItem->back_title), {{ $dosenItem->back_title }}@endif
-                                        </div>
+                                    
+                                    {{-- Nama Lengkap --}}
+                                    <td class="px-6 py-4 text-sm font-semibold text-gray-900 group-hover:text-[#C41E3A] transition-colors">
+                                        @if($dosenItem->front_title){{ $dosenItem->front_title }} @endif{{ $dosenItem->nama_lengkap }}@if($dosenItem->back_title), {{ $dosenItem->back_title }}@endif
                                     </td>
-                                    <td class="px-4 py-4 text-sm text-gray-900">
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                    
+                                    {{-- JFA --}}
+                                    <td class="px-6 py-4 text-sm">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-100 text-xs font-bold">
                                             {{ $dosenItem->jabatan }}
                                         </span>
                                     </td>
-                                    <td class="px-4 py-4 text-sm text-gray-900">
+                                    
+                                    {{-- Kelompok Keahlian --}}
+                                    <td class="px-6 py-4 text-sm text-gray-600 font-medium">
                                         {{ $dosenItem->kelompokKeahlian->nama_kelompok_keahlian ?? '-' }}
                                     </td>
-                                    <td class="px-4 py-4 text-sm text-gray-900">
+                                    
+                                    {{-- Lokasi Kerja --}}
+                                    <td class="px-6 py-4 text-sm text-gray-600 font-semibold">
                                         {{ $dosenItem->prodi->nama_prodi ?? '-' }}
                                     </td>
-                                    <td class="px-4 py-4 text-sm text-gray-900">
+                                    
+                                    {{-- Status --}}
+                                    <td class="px-6 py-4 text-sm">
                                         @php
-                                            $statusClass = match($dosenItem->status_pegawai) {
-                                                'Tetap' => 'bg-green-100 text-green-800',
-                                                'Perbantuan' => 'bg-blue-100 text-blue-800',
-                                                'Profesional Full Time' => 'bg-purple-100 text-purple-800',
-                                                'Profesional Part Time' => 'bg-yellow-100 text-yellow-800',
-                                                default => 'bg-gray-100 text-gray-800'
+                                            $sc = match($dosenItem->status_pegawai) {
+                                                'Tetap' => 'bg-emerald-50 text-emerald-700 border-emerald-100',
+                                                'Perbantuan' => 'bg-sky-50 text-sky-700 border-sky-100',
+                                                'Profesional Full Time' => 'bg-indigo-50 text-indigo-700 border-indigo-100',
+                                                'Profesional Part Time' => 'bg-amber-50 text-amber-700 border-amber-100',
+                                                default => 'bg-gray-50 text-gray-700 border-gray-100'
                                             };
                                         @endphp
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $statusClass }}">
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded border font-bold text-xs {{ $sc }}">
                                             {{ $dosenItem->status_pegawai ?? '-' }}
                                         </span>
                                     </td>
-                                    <td class="px-4 py-4 whitespace-nowrap text-center text-sm">
-                                        <div class="flex items-center justify-center space-x-2">
-                                            {{-- View Button --}}
+                                    
+                                    {{-- Aksi --}}
+                                    <td class="px-6 py-4 text-center text-sm">
+                                        <div class="flex items-center justify-center gap-2.5">
+                                            {{-- Detail Button --}}
                                             @can('kelola-data-dosen.detail')
-                                            <button type="button" class="btn-detail text-blue-600 hover:text-blue-800 transition-colors duration-200" 
-                                                    data-id="{{ $dosenItem->id }}" title="Detail">
-                                                <i class="fas fa-eye"></i>
-                                            </button>
+                                            <a href="{{ route('manajemen-dosen.show', $dosenItem->id) }}" 
+                                               class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-100 rounded-lg transition-all"
+                                               title="Lihat Detail">
+                                                <i class="fas fa-eye text-sm"></i>
+                                            </a>
                                             @endcan
                                             
                                             {{-- Edit Button --}}
                                             @can('kelola-data-dosen.edit')
-                                            <button type="button" class="btn-edit text-green-600 hover:text-green-800 transition-colors duration-200" 
-                                                    data-id="{{ $dosenItem->id }}" title="Edit">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
+                                            <a href="{{ route('manajemen-dosen.edit', $dosenItem->id) }}" 
+                                               class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-green-600 hover:bg-green-50 border border-transparent hover:border-green-100 rounded-lg transition-all"
+                                               title="Edit">
+                                                <i class="fas fa-edit text-sm"></i>
+                                            </a>
                                             @endcan
                                             
-                                            {{-- Delete Button - IMPROVED WITH SWEETALERT --}}
+                                            {{-- Delete Button --}}
                                             @can('kelola-data-dosen.delete')
                                             <form action="{{ route('manajemen-dosen.destroy', $dosenItem->id) }}"
                                                 method="POST"
                                                 class="inline-block delete-form">
                                                 @csrf
-                                                @method('DELETE')1
+                                                @method('DELETE')
                                                 <button type="button"
-                                                    class="text-red-600 hover:text-red-800 transition-colors duration-200 delete-btn"
+                                                    class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-100 rounded-lg transition-all delete-btn"
                                                     data-nama="{{ $dosenItem->nama_lengkap }}"
                                                     data-kode="{{ $dosenItem->kode_dosen }}"
                                                     title="Hapus">
-                                                    <i class="fas fa-trash"></i>
+                                                    <i class="fas fa-trash text-sm"></i>
                                                 </button>
                                             </form>
                                             @endcan
@@ -325,9 +334,14 @@
                         @else
                             {{-- Empty State --}}
                             <tr>
-                                <td colspan="8" class="px-6 py-12 text-center text-gray-500">
-                                    <i class="fas fa-users text-4xl mb-2"></i>
-                                    <p>Tidak ada data dosen</p>
+                                <td colspan="8" class="px-6 py-16 text-center text-gray-400">
+                                    <div class="flex flex-col items-center gap-3">
+                                        <div class="p-4 bg-gray-50 text-gray-300 rounded-full">
+                                            <i class="fas fa-users text-4xl"></i>
+                                        </div>
+                                        <p class="font-medium text-gray-500">Tidak ada data dosen ditemukan</p>
+                                        <p class="text-xs text-gray-400 max-w-xs">Silakan sesuaikan filter pencarian atau tambahkan data dosen baru.</p>
+                                    </div>
                                 </td>
                             </tr>
                         @endif
@@ -337,9 +351,12 @@
 
             {{-- Pagination --}}
             @if(isset($dosen) && method_exists($dosen, 'hasPages') && $dosen->hasPages())
-            <div class="px-6 py-4 border-t border-gray-200 bg-gray-50">
-                <div class="flex items-center justify-end">
-                    <div class="flex items-center space-x-2">
+            <div class="px-6 py-4 border-t border-gray-100 bg-[#F8FAFC]">
+                <div class="flex items-center justify-between">
+                    <p class="text-xs font-semibold text-gray-500">
+                        Menampilkan {{ $dosen->firstItem() }} - {{ $dosen->lastItem() }} dari {{ $dosen->total() }} Dosen
+                    </p>
+                    <div class="flex items-center">
                         {{ $dosen->links() }}
                     </div>
                 </div>
@@ -348,7 +365,7 @@
         </div>
     </main>
 
-    {{-- Success/Error Messages --}}
+    {{-- SweetAlert2 JS --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -356,21 +373,11 @@
             const exportBtn = document.getElementById('exportBtn');
             const exportDropdown = document.getElementById('exportDropdown');
 
-            console.log('Export Button:', exportBtn);
-            console.log('Export Dropdown:', exportDropdown);
-
             if (exportBtn && exportDropdown) {
                 exportBtn.addEventListener('click', function(e) {
                     e.preventDefault();
                     e.stopPropagation();
-                    console.log('Button clicked, toggling dropdown');
-                    
-                    // Toggle visibility
-                    if (exportDropdown.classList.contains('hidden')) {
-                        exportDropdown.classList.remove('hidden');
-                    } else {
-                        exportDropdown.classList.add('hidden');
-                    }
+                    exportDropdown.classList.toggle('hidden');
                 });
 
                 // Close dropdown when clicking outside
@@ -379,20 +386,9 @@
                         exportDropdown.classList.add('hidden');
                     }
                 });
-
-                // Prevent dropdown links from being blocked
-                const exportLinks = exportDropdown.querySelectorAll('a');
-                exportLinks.forEach(link => {
-                    link.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        // Link will navigate normally
-                    });
-                });
-            } else {
-                console.error('Export button or dropdown not found!');
             }
 
-            // Success/Error Messages with SweetAlert2
+            // Success/Error Messages with SweetAlert2 Toast
             @if(session('success'))
                 Swal.fire({
                     icon: 'success',
@@ -416,25 +412,8 @@
                 });
             @endif
 
-            // Detail Button
-            document.querySelectorAll('.btn-detail').forEach(button => {
-                button.addEventListener('click', function() {
-                    const id = this.getAttribute('data-id');
-                    showDetail(id);
-                });
-            });
-
-            // Edit Button
-            document.querySelectorAll('.btn-edit').forEach(button => {
-                button.addEventListener('click', function() {
-                    const id = this.getAttribute('data-id');
-                    openEditModal(id);
-                });
-            });
-
             // SWEETALERT DELETE CONFIRMATION
             const deleteBtns = document.querySelectorAll('.delete-btn');
-
             deleteBtns.forEach(btn => {
                 btn.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -446,25 +425,30 @@
                     Swal.fire({
                         title: 'Hapus Data Dosen?',
                         html: `
-                        <div class="text-left space-y-2">
-                            <p class="text-gray-600">Anda akan menghapus data dosen:</p>
-                            <div class="bg-red-50 border border-red-200 rounded-lg p-3 mt-3">
-                                <p class="font-semibold text-red-800">${nama}</p>
-                                <p class="text-sm text-red-600">Kode Dosen: ${kode}</p>
+                            <div class="text-left space-y-2">
+                                <p class="text-gray-600">Apakah Anda yakin ingin menghapus data dosen:</p>
+                                <div class="bg-red-50 border border-red-100 rounded-xl p-4 mt-3">
+                                    <p class="font-bold text-[#C41E3A]">${nama}</p>
+                                    <p class="text-xs text-red-600 mt-0.5">Kode Dosen: ${kode}</p>
+                                </div>
+                                <p class="text-xs text-gray-400 mt-3">
+                                    <i class="fas fa-exclamation-triangle text-amber-500 mr-1"></i>
+                                    Tindakan ini permanen dan data tidak dapat dikembalikan!
+                                </p>
                             </div>
-                            <p class="text-sm text-red-600 mt-3">
-                                <i class="fas fa-exclamation-triangle mr-1"></i>
-                                Data yang dihapus tidak dapat dikembalikan!
-                            </p>
-                        </div>
-                    `,
+                        `,
                         icon: 'warning',
                         showCancelButton: true,
                         confirmButtonColor: '#C41E3A',
-                        cancelButtonColor: '#6c757d',
+                        cancelButtonColor: '#64748B',
                         confirmButtonText: 'Ya, Hapus',
                         cancelButtonText: 'Batal',
-                        reverseButtons: true
+                        reverseButtons: true,
+                        customClass: {
+                            popup: 'rounded-2xl',
+                            confirmButton: 'px-5 py-2.5 rounded-xl font-semibold text-sm',
+                            cancelButton: 'px-5 py-2.5 rounded-xl font-semibold text-sm'
+                        }
                     }).then((result) => {
                         if (result.isConfirmed) {
                             form.submit();
@@ -473,735 +457,6 @@
                 });
             });
         });
-
-        // Helper function for date formatting
-        function formatDate(dateString) {
-            if (!dateString) return '-';
-            return dateString.split('T')[0];
-        }
-
-        function formatDateDisplay(dateString) {
-            if (!dateString) return '-';
-            const date = dateString.split('T')[0];
-            const [year, month, day] = date.split('-');
-            return `${day}-${month}-${year}`;
-        }
-
-        // Modal Functions - Global scope
-        function openCreateModal() {
-                Swal.fire({
-                    title: '<i class="fas fa-user-plus mr-2"></i>Tambah Data Dosen',
-                    html: `
-                        <form id="swalCreateForm" class="text-left">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">NIP <span class="text-red-500">*</span></label>
-                                    <input type="text" name="nip" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Kode Dosen <span class="text-red-500">*</span></label>
-                                    <input type="text" name="kode_dosen" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Gelar Depan</label>
-                                    <input type="text" name="front_title" placeholder="Dr., Prof. Dr., dll" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap <span class="text-red-500">*</span></label>
-                                    <input type="text" name="nama_lengkap" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Gelar Belakang</label>
-                                    <input type="text" name="back_title" placeholder="S.Kom, M.Kom, M.T, dll" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Jabatan Fungsional Akademik <span class="text-red-500">*</span></label>
-                                    <select name="jabatan" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                        <option value="">Pilih Jabatan</option>
-                                        <option value="NJFA">NJFA</option>
-                                        <option value="Asisten Ahli">Asisten Ahli</option>
-                                        <option value="Lektor">Lektor</option>
-                                        <option value="Lektor Kepala">Lektor Kepala</option>
-                                        <option value="Profesor">Profesor</option>
-                                        <option value="Guru Besar">Guru Besar</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Status Pegawai <span class="text-red-500">*</span></label>
-                                    <select name="status_pegawai" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                        <option value="">Pilih Status</option>
-                                        <option value="Tetap">Tetap</option>
-                                        <option value="Perbantuan">Perbantuan</option>
-                                        <option value="Profesional Full Time">Profesional Full Time</option>
-                                        <option value="Profesional Part Time">Profesional Part Time</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Pendidikan Terakhir <span class="text-red-500">*</span></label>
-                                    <select name="pendidikan_terakhir" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                        <option value="">Pilih Pendidikan</option>
-                                        <option value="S1">S1</option>
-                                        <option value="S2">S2</option>
-                                        <option value="S3">S3</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Prodi/Lokasi Kerja <span class="text-red-500">*</span></label>
-                                    <select name="prodi_id" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                        <option value="">Pilih Prodi</option>
-                                        @if(isset($filterData['prodi']))
-                                            @foreach($filterData['prodi'] as $prodi)
-                                                <option value="{{ $prodi->id }}">{{ $prodi->nama_prodi }}</option>
-                                            @endforeach
-                                        @endif
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Kelompok Keahlian <span class="text-red-500">*</span></label>
-                                    <select name="kelompok_keahlian_id" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                        <option value="">Pilih Kelompok Keahlian</option>
-                                        @if(isset($filterData['kelompok_keahlian']))
-                                            @foreach($filterData['kelompok_keahlian'] as $kelompok)
-                                                <option value="{{ $kelompok->id }}">{{ $kelompok->nama_kelompok_keahlian }}</option>
-                                            @endforeach
-                                        @endif
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Status Dosen</label>
-                                    <select name="status_dosen" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                        <option value="Aktif">Aktif</option>
-                                        <option value="Tugas Belajar">Tugas Belajar</option>
-                                        <option value="Izin Belajar">Izin Belajar</option>
-                                        <option value="CLTY">CLTY</option>
-                                    </select>
-                                </div>
-
-                                <!-- Divider -->
-                                <div class="md:col-span-2">
-                                    <hr class="my-4 border-gray-300">
-                                    <h3 class="text-lg font-semibold text-[#C41E3A] mb-3">
-                                        <i class="fas fa-graduation-cap mr-2"></i>Riwayat Pendidikan
-                                    </h3>
-                                </div>
-
-                                <!-- S1 -->
-                                <div class="md:col-span-2">
-                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Pendidikan S1 <span class="text-red-500">*</span></label>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Nama Universitas <span class="text-red-500">*</span></label>
-                                    <input type="text" name="riwayat[s1][nama_universitas]" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Program Studi <span class="text-red-500">*</span></label>
-                                    <input type="text" name="riwayat[s1][prodi_pendidikan]" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Lulus <span class="text-red-500">*</span></label>
-                                    <input type="date" name="riwayat[s1][tanggal_lulus]" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Upload Ijazah (PDF/JPG/PNG)</label>
-                                    <input type="file" name="riwayat[s1][ijazah]" accept=".pdf,.jpg,.jpeg,.png" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Upload Transkrip (PDF/JPG/PNG)</label>
-                                    <input type="file" name="riwayat[s1][transkrip_nilai]" accept=".pdf,.jpg,.jpeg,.png" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-
-                                <!-- S2 -->
-                                <div class="md:col-span-2 mt-3">
-                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Pendidikan S2 (Opsional)</label>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Nama Universitas</label>
-                                    <input type="text" name="riwayat[s2][nama_universitas]" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Program Studi</label>
-                                    <input type="text" name="riwayat[s2][prodi_pendidikan]" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Lulus</label>
-                                    <input type="date" name="riwayat[s2][tanggal_lulus]" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Upload Ijazah (PDF/JPG/PNG)</label>
-                                    <input type="file" name="riwayat[s2][ijazah]" accept=".pdf,.jpg,.jpeg,.png" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Upload Transkrip (PDF/JPG/PNG)</label>
-                                    <input type="file" name="riwayat[s2][transkrip_nilai]" accept=".pdf,.jpg,.jpeg,.png" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-
-                                <!-- S3 -->
-                                <div class="md:col-span-2 mt-3">
-                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Pendidikan S3 (Opsional)</label>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Nama Universitas</label>
-                                    <input type="text" name="riwayat[s3][nama_universitas]" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Program Studi</label>
-                                    <input type="text" name="riwayat[s3][prodi_pendidikan]" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Lulus</label>
-                                    <input type="date" name="riwayat[s3][tanggal_lulus]" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Upload Ijazah (PDF/JPG/PNG)</label>
-                                    <input type="file" name="riwayat[s3][ijazah]" accept=".pdf,.jpg,.jpeg,.png" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Upload Transkrip (PDF/JPG/PNG)</label>
-                                    <input type="file" name="riwayat[s3][transkrip_nilai]" accept=".pdf,.jpg,.jpeg,.png" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-                            </div>
-                        </form>
-                    `,
-                    width: '850px',
-                    showCancelButton: true,
-                    confirmButtonColor: '#C41E3A',
-                    cancelButtonColor: '#6B7280',
-                    confirmButtonText: '<i class="fas fa-save mr-2"></i>Simpan',
-                    cancelButtonText: '<i class="fas fa-times mr-2"></i>Batal',
-                    customClass: {
-                        popup: 'rounded-lg',
-                        confirmButton: 'px-6 py-2.5 rounded-lg font-semibold',
-                        cancelButton: 'px-6 py-2.5 rounded-lg font-semibold',
-                        title: 'text-[#C41E3A]'
-                    },
-                    preConfirm: () => {
-                        const form = document.getElementById('swalCreateForm');
-                        const formData = new FormData(form);
-                        
-                        // Validasi required fields
-                        if (!formData.get('nip') || !formData.get('kode_dosen') || !formData.get('nama_lengkap') || 
-                            !formData.get('jabatan') || !formData.get('status_pegawai') || !formData.get('pendidikan_terakhir') ||
-                            !formData.get('prodi_id') || !formData.get('kelompok_keahlian_id')) {
-                            Swal.showValidationMessage('Mohon lengkapi semua field yang wajib diisi (*)');
-                            return false;
-                        }
-
-                        // Validasi S1 wajib
-                        if (!formData.get('riwayat[s1][nama_universitas]') || !formData.get('riwayat[s1][prodi_pendidikan]') || 
-                            !formData.get('riwayat[s1][tanggal_lulus]')) {
-                            Swal.showValidationMessage('Data Pendidikan S1 wajib diisi!');
-                            return false;
-                        }
-                        
-                        return formData;
-                    }
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        const formData = result.value;
-                        
-                        Swal.fire({
-                            title: 'Menyimpan...',
-                            allowOutsideClick: false,
-                            didOpen: () => Swal.showLoading()
-                        });
-
-                        fetch('{{ route("manajemen-dosen.store") }}', {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                'X-Requested-With': 'XMLHttpRequest'
-                            },
-                            body: formData
-                        })
-                        .then(response => {
-                            if (!response.ok && response.status !== 422) {
-                                throw new Error('HTTP error! status: ' + response.status);
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            if (data.success) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Berhasil!',
-                                    text: data.message || 'Data dosen berhasil ditambahkan',
-                                    showConfirmButton: false,
-                                    timer: 2000
-                                }).then(() => location.reload());
-                            } else {
-                                let errorMessage = 'Gagal menyimpan data';
-                                if (data.message) {
-                                    errorMessage = data.message;
-                                }
-                                if (data.errors) {
-                                    errorMessage += '<br><br>' + Object.values(data.errors).flat().join('<br>');
-                                }
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    html: errorMessage
-                                });
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Fetch error:', error);
-                            Swal.fire('Error', 'Terjadi kesalahan: ' + error.message, 'error');
-                        });
-                    }
-                });
-            }
-
-        // Show Detail Modal
-        function showDetail(id) {
-            Swal.fire({
-                title: 'Memuat...',
-                allowOutsideClick: false,
-                didOpen: () => Swal.showLoading()
-            });
-
-            fetch(`/manajemen-dosen/${id}`, {
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
-            })
-            .then(response => response.json())
-            .then(data => {
-                const dosen = data.dosen;
-                
-                let riwayatHTML = '<p class="text-gray-500 italic">Belum ada data riwayat pendidikan</p>';
-                
-                if (dosen.riwayat_pendidikan && dosen.riwayat_pendidikan.length > 0) {
-                    riwayatHTML = '<div class="space-y-2">';
-                    dosen.riwayat_pendidikan.forEach(riwayat => {
-                        let filesHTML = '';
-                        if (riwayat.ijazah || riwayat.transkrip_nilai) {
-                            filesHTML = '<div class="mt-2 flex gap-2">';
-                            if (riwayat.ijazah) {
-                                filesHTML += `<a href="/storage/${riwayat.ijazah}" target="_blank" class="inline-flex items-center px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs hover:bg-blue-200">
-                                    <i class="fas fa-file-pdf mr-1"></i> Ijazah
-                                </a>`;
-                            }
-                            if (riwayat.transkrip_nilai) {
-                                filesHTML += `<a href="/storage/${riwayat.transkrip_nilai}" target="_blank" class="inline-flex items-center px-2 py-1 bg-green-100 text-green-700 rounded text-xs hover:bg-green-200">
-                                    <i class="fas fa-file-alt mr-1"></i> Transkrip
-                                </a>`;
-                            }
-                            filesHTML += '</div>';
-                        }
-                        
-                        riwayatHTML += `
-                            <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                                <div class="flex items-center justify-between">
-                                    <span class="font-semibold text-purple-800">${riwayat.jenjang.toUpperCase()}</span>
-                                    <span class="text-sm text-gray-600">${formatDateDisplay(riwayat.tanggal_lulus)}</span>
-                                </div>
-                                <p class="text-sm text-gray-700 mt-1">${riwayat.prodi_pendidikan}</p>
-                                <p class="text-sm text-gray-600">${riwayat.nama_universitas}</p>
-                                ${filesHTML}
-                            </div>
-                        `;
-                    });
-                    riwayatHTML += '</div>';
-                }
-
-                const statusClass = dosen.status_pegawai === 'Tetap' ? 'bg-green-100 text-green-800' :
-                                   dosen.status_pegawai === 'Perbantuan' ? 'bg-blue-100 text-blue-800' :
-                                   dosen.status_pegawai === 'Profesional Full Time' ? 'bg-purple-100 text-purple-800' : 'bg-yellow-100 text-yellow-800';
-
-                Swal.fire({
-                    title: '<i class="fas fa-user-circle mr-2"></i>Detail Data Dosen',
-                    html: `
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-500">NIP</label>
-                                    <p class="text-gray-900 font-semibold">${dosen.nip}</p>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-500">Kode Dosen</label>
-                                    <p class="text-gray-900 font-semibold">${dosen.kode_dosen}</p>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-500">Nama Lengkap</label>
-                                    <p class="text-gray-900 font-semibold">${dosen.front_title ? dosen.front_title + ' ' : ''}${dosen.nama_lengkap}${dosen.back_title ? ', ' + dosen.back_title : ''}</p>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-500">Jabatan</label>
-                                    <p class="text-gray-900"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">${dosen.jabatan}</span></p>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-500">Status Pegawai</label>
-                                    <p><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusClass}">${dosen.status_pegawai}</span></p>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-500">Status Dosen</label>
-                                    <p class="text-gray-900">${dosen.status_dosen || 'Aktif'}</p>
-                                </div>
-                            </div>
-                            <div class="space-y-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-500">Lokasi Kerja</label>
-                                    <p class="text-gray-900">${dosen.prodi ? dosen.prodi.nama_prodi : '-'}</p>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-500">Kelompok Keahlian</label>
-                                    <p class="text-gray-900">${dosen.kelompok_keahlian ? dosen.kelompok_keahlian.nama_kelompok_keahlian : '-'}</p>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-500">Pendidikan Terakhir</label>
-                                    <p class="text-gray-900"><span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">${dosen.pendidikan_terakhir}</span></p>
-                                </div>
-                            </div>
-                            <div class="md:col-span-2">
-                                <label class="block text-sm font-medium text-gray-500 mb-2">
-                                    <i class="fas fa-graduation-cap mr-2"></i>Riwayat Pendidikan
-                                </label>
-                                ${riwayatHTML}
-                            </div>
-                        </div>
-                    `,
-                    width: '900px',
-                    confirmButtonText: '<i class="fas fa-times mr-2"></i>Tutup',
-                    confirmButtonColor: '#6B7280',
-                    customClass: {
-                        popup: 'rounded-lg',
-                        confirmButton: 'px-6 py-2.5 rounded-lg font-semibold',
-                        title: 'text-[#C41E3A]'
-                    }
-                });
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                Swal.fire('Error', 'Gagal memuat detail data', 'error');
-            });
-        }
-
-        // Edit Modal
-        function openEditModal(id) {
-            Swal.fire({
-                title: 'Memuat...',
-                allowOutsideClick: false,
-                didOpen: () => Swal.showLoading()
-            });
-
-            fetch(`/manajemen-dosen/${id}`, {
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
-            })
-            .then(response => response.json())
-            .then(data => {
-                const dosen = data.dosen;
-
-                Swal.fire({
-                    title: '<i class="fas fa-edit mr-2"></i>Edit Data Dosen',
-                    html: `
-                        <form id="swalEditForm" class="text-left">
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">NIP <span class="text-red-500">*</span></label>
-                                    <input type="text" name="nip" value="${dosen.nip}" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Kode Dosen <span class="text-red-500">*</span></label>
-                                    <input type="text" name="kode_dosen" value="${dosen.kode_dosen}" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Gelar Depan</label>
-                                    <input type="text" name="front_title" value="${dosen.front_title || ''}" placeholder="Dr., Prof. Dr., dll" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap <span class="text-red-500">*</span></label>
-                                    <input type="text" name="nama_lengkap" value="${dosen.nama_lengkap}" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Gelar Belakang</label>
-                                    <input type="text" name="back_title" value="${dosen.back_title || ''}" placeholder="S.Kom, M.Kom, M.T, dll" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Jabatan Fungsional Akademik <span class="text-red-500">*</span></label>
-                                    <select name="jabatan" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                        <option value="">Pilih Jabatan</option>
-                                        <option value="NJFA" ${dosen.jabatan === 'NJFA' ? 'selected' : ''}>NJFA</option>
-                                        <option value="Asisten Ahli" ${dosen.jabatan === 'Asisten Ahli' ? 'selected' : ''}>Asisten Ahli</option>
-                                        <option value="Lektor" ${dosen.jabatan === 'Lektor' ? 'selected' : ''}>Lektor</option>
-                                        <option value="Lektor Kepala" ${dosen.jabatan === 'Lektor Kepala' ? 'selected' : ''}>Lektor Kepala</option>
-                                        <option value="Profesor" ${dosen.jabatan === 'Profesor' ? 'selected' : ''}>Profesor</option>
-                                        <option value="Guru Besar" ${dosen.jabatan === 'Guru Besar' ? 'selected' : ''}>Guru Besar</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Status Pegawai <span class="text-red-500">*</span></label>
-                                    <select name="status_pegawai" required
-
- class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                        <option value="">Pilih Status</option>
-                                        <option value="Tetap" ${dosen.status_pegawai === 'Tetap' ? 'selected' : ''}>Tetap</option>
-                                        <option value="Perbantuan" ${dosen.status_pegawai === 'Perbantuan' ? 'selected' : ''}>Perbantuan</option>
-                                        <option value="Profesional Full Time" ${dosen.status_pegawai === 'Profesional Full Time' ? 'selected' : ''}>Profesional Full Time</option>
-                                        <option value="Profesional Part Time" ${dosen.status_pegawai === 'Profesional Part Time' ? 'selected' : ''}>Profesional Part Time</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Pendidikan Terakhir <span class="text-red-500">*</span></label>
-                                    <select name="pendidikan_terakhir" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                        <option value="">Pilih Pendidikan</option>
-                                        <option value="S1" ${dosen.pendidikan_terakhir === 'S1' ? 'selected' : ''}>S1</option>
-                                        <option value="S2" ${dosen.pendidikan_terakhir === 'S2' ? 'selected' : ''}>S2</option>
-                                        <option value="S3" ${dosen.pendidikan_terakhir === 'S3' ? 'selected' : ''}>S3</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Prodi/Lokasi Kerja <span class="text-red-500">*</span></label>
-                                    <select name="prodi_id" id="edit_prodi_id" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                        <option value="">Pilih Prodi</option>
-                                        @if(isset($filterData['prodi']))
-                                            @foreach($filterData['prodi'] as $prodi)
-                                                <option value="{{ $prodi->id }}">{{ $prodi->nama_prodi }}</option>
-                                            @endforeach
-                                        @endif
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Kelompok Keahlian <span class="text-red-500">*</span></label>
-                                    <select name="kelompok_keahlian_id" id="edit_kelompok_keahlian_id" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                        <option value="">Pilih Kelompok Keahlian</option>
-                                        @if(isset($filterData['kelompok_keahlian']))
-                                            @foreach($filterData['kelompok_keahlian'] as $kelompok)
-                                                <option value="{{ $kelompok->id }}">{{ $kelompok->nama_kelompok_keahlian }}</option>
-                                            @endforeach
-                                        @endif
-                                    </select>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Status Dosen</label>
-                                    <select name="status_dosen" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                        <option value="Aktif" ${dosen.status_dosen === 'Aktif' ? 'selected' : ''}>Aktif</option>
-                                        <option value="Tugas Belajar" ${dosen.status_dosen === 'Tugas Belajar' ? 'selected' : ''}>Tugas Belajar</option>
-                                        <option value="Izin Belajar" ${dosen.status_dosen === 'Izin Belajar' ? 'selected' : ''}>Izin Belajar</option>
-                                        <option value="CLTY" ${dosen.status_dosen === 'CLTY' ? 'selected' : ''}>CLTY</option>
-                                    </select>
-                                </div>
-
-                                <!-- Divider untuk Riwayat Pendidikan -->
-                                <div class="md:col-span-2">
-                                    <hr class="my-4 border-gray-300">
-                                    <h3 class="text-lg font-semibold text-[#C41E3A] mb-3">
-                                        <i class="fas fa-graduation-cap mr-2"></i>Riwayat Pendidikan
-                                    </h3>
-                                </div>
-
-                                <!-- S1 (Wajib) -->
-                                <div class="md:col-span-2">
-                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Pendidikan S1 <span class="text-red-500">*</span></label>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Nama Universitas <span class="text-red-500">*</span></label>
-                                    <input type="text" name="riwayat[s1][nama_universitas]" value="${dosen.riwayat_pendidikan?.find(r => r.jenjang === 'S1')?.nama_universitas || ''}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Program Studi <span class="text-red-500">*</span></label>
-                                    <input type="text" name="riwayat[s1][prodi_pendidikan]" value="${dosen.riwayat_pendidikan?.find(r => r.jenjang === 'S1')?.prodi_pendidikan || ''}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Lulus <span class="text-red-500">*</span></label>
-                                    <input type="date" name="riwayat[s1][tanggal_lulus]" value="${dosen.riwayat_pendidikan?.find(r => r.jenjang === 'S1')?.tanggal_lulus?.split('T')[0] || ''}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Upload Ijazah Baru (PDF/JPG/PNG)</label>
-                                    <input type="file" name="riwayat[s1][ijazah]" accept=".pdf,.jpg,.jpeg,.png" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                    ${dosen.riwayat_pendidikan?.find(r => r.jenjang === 'S1')?.ijazah ? '<small class="text-gray-500">File saat ini: ' + dosen.riwayat_pendidikan.find(r => r.jenjang === 'S1').ijazah.split('/').pop() + '</small>' : ''}
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Upload Transkrip Baru (PDF/JPG/PNG)</label>
-                                    <input type="file" name="riwayat[s1][transkrip_nilai]" accept=".pdf,.jpg,.jpeg,.png" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                    ${dosen.riwayat_pendidikan?.find(r => r.jenjang === 'S1')?.transkrip_nilai ? '<small class="text-gray-500">File saat ini: ' + dosen.riwayat_pendidikan.find(r => r.jenjang === 'S1').transkrip_nilai.split('/').pop() + '</small>' : ''}
-                                </div>
-
-                                <!-- S2 (Opsional) -->
-                                <div class="md:col-span-2 mt-3">
-                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Pendidikan S2 (Opsional)</label>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Nama Universitas</label>
-                                    <input type="text" name="riwayat[s2][nama_universitas]" value="${dosen.riwayat_pendidikan?.find(r => r.jenjang === 'S2')?.nama_universitas || ''}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Program Studi</label>
-                                    <input type="text" name="riwayat[s2][prodi_pendidikan]" value="${dosen.riwayat_pendidikan?.find(r => r.jenjang === 'S2')?.prodi_pendidikan || ''}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Lulus</label>
-                                    <input type="date" name="riwayat[s2][tanggal_lulus]" value="${dosen.riwayat_pendidikan?.find(r => r.jenjang === 'S2')?.tanggal_lulus?.split('T')[0] || ''}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Upload Ijazah Baru (PDF/JPG/PNG)</label>
-                                    <input type="file" name="riwayat[s2][ijazah]" accept=".pdf,.jpg,.jpeg,.png" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                    ${dosen.riwayat_pendidikan?.find(r => r.jenjang === 'S2')?.ijazah ? '<small class="text-gray-500">File saat ini: ' + dosen.riwayat_pendidikan.find(r => r.jenjang === 'S2').ijazah.split('/').pop() + '</small>' : ''}
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Upload Transkrip Baru (PDF/JPG/PNG)</label>
-                                    <input type="file" name="riwayat[s2][transkrip_nilai]" accept=".pdf,.jpg,.jpeg,.png" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                    ${dosen.riwayat_pendidikan?.find(r => r.jenjang === 'S2')?.transkrip_nilai ? '<small class="text-gray-500">File saat ini: ' + dosen.riwayat_pendidikan.find(r => r.jenjang === 'S2').transkrip_nilai.split('/').pop() + '</small>' : ''}
-                                </div>
-
-                                <!--S3 (Opsional) -->
-                                <div class="md:col-span-2 mt-3">
-                                    <label class="block text-sm font-semibold text-gray-700 mb-2">Pendidikan S3 (Opsional)</label>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Nama Universitas</label>
-                                    <input type="text" name="riwayat[s3][nama_universitas]" value="${dosen.riwayat_pendidikan?.find(r => r.jenjang === 'S3')?.nama_universitas || ''}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Program Studi</label>
-                                    <input type="text" name="riwayat[s3][prodi_pendidikan]" value="${dosen.riwayat_pendidikan?.find(r => r.jenjang === 'S3')?.prodi_pendidikan || ''}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Lulus</label>
-                                    <input type="date" name="riwayat[s3][tanggal_lulus]" value="${dosen.riwayat_pendidikan?.find(r => r.jenjang === 'S3')?.tanggal_lulus?.split('T')[0] || ''}" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Upload Ijazah Baru (PDF/JPG/PNG)</label>
-                                    <input type="file" name="riwayat[s3][ijazah]" accept=".pdf,.jpg,.jpeg,.png" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                    ${dosen.riwayat_pendidikan?.find(r => r.jenjang === 'S3')?.ijazah ? '<small class="text-gray-500">File saat ini: ' + dosen.riwayat_pendidikan.find(r => r.jenjang === 'S3').ijazah.split('/').pop() + '</small>' : ''}
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-700 mb-2">Upload Transkrip Baru (PDF/JPG/PNG)</label>
-                                    <input type="file" name="riwayat[s3][transkrip_nilai]" accept=".pdf,.jpg,.jpeg,.png" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-sm" style="margin: 0; height: 38px;">
-                                    ${dosen.riwayat_pendidikan?.find(r => r.jenjang === 'S3')?.transkrip_nilai ? '<small class="text-gray-500">File saat ini: ' + dosen.riwayat_pendidikan.find(r => r.jenjang === 'S3').transkrip_nilai.split('/').pop() + '</small>' : ''}
-                                </div>
-                            </div>
-                        </form>
-                    `,
-                    width: '850px',
-                    showCancelButton: true,
-                    confirmButtonColor: '#C41E3A',
-                    cancelButtonColor: '#6B7280',
-                    confirmButtonText: '<i class="fas fa-save mr-2"></i>Update',
-                    cancelButtonText: '<i class="fas fa-times mr-2"></i>Batal',
-                    customClass: {
-                        popup: 'rounded-lg',
-                        confirmButton: 'px-6 py-2.5 rounded-lg font-semibold',
-                        cancelButton: 'px-6 py-2.5 rounded-lg font-semibold',
-                        title: 'text-[#C41E3A]'
-                    },
-                    didOpen: () => {
-                        // Set nilai dropdown setelah modal terbuka
-                        document.getElementById('edit_prodi_id').value = dosen.prodi_id || '';
-                        document.getElementById('edit_kelompok_keahlian_id').value = dosen.kelompok_keahlian_id || '';
-                    },
-                    preConfirm: () => {
-                        const form = document.getElementById('swalEditForm');
-                        const formData = new FormData(form);
-                        
-                        // Validasi required fields dasar dengan trim untuk menghindari string kosong
-                        const nip = formData.get('nip')?.trim();
-                        const kodeDosen = formData.get('kode_dosen')?.trim();
-                        const namaLengkap = formData.get('nama_lengkap')?.trim();
-                        const jabatan = formData.get('jabatan')?.trim();
-                        const statusPegawai = formData.get('status_pegawai')?.trim();
-                        const pendidikanTerakhir = formData.get('pendidikan_terakhir')?.trim();
-                        const prodiId = formData.get('prodi_id')?.trim();
-                        const kelompokKeahlianId = formData.get('kelompok_keahlian_id')?.trim();
-                        
-                        if (!nip || !kodeDosen || !namaLengkap || !jabatan || !statusPegawai || 
-                            !pendidikanTerakhir || !prodiId || !kelompokKeahlianId) {
-                            Swal.showValidationMessage('Mohon lengkapi semua field yang wajib diisi (*)');
-                            return false;
-                        }
-
-                        // Validasi S1: Jika ada field S1 yang diisi, maka harus lengkap
-                        const s1Univ = formData.get('riwayat[s1][nama_universitas]')?.trim();
-                        const s1Prodi = formData.get('riwayat[s1][prodi_pendidikan]')?.trim();
-                        const s1Lulus = formData.get('riwayat[s1][tanggal_lulus]')?.trim();
-                        
-                        if ((s1Univ || s1Prodi || s1Lulus) && (!s1Univ || !s1Prodi || !s1Lulus)) {
-                            Swal.showValidationMessage('Jika mengisi data S1, semua field S1 harus diisi lengkap!');
-                            return false;
-                        }
-                        
-                        // Validasi S2: Jika ada field S2 yang diisi, maka harus lengkap
-                        const s2Univ = formData.get('riwayat[s2][nama_universitas]')?.trim();
-                        const s2Prodi = formData.get('riwayat[s2][prodi_pendidikan]')?.trim();
-                        const s2Lulus = formData.get('riwayat[s2][tanggal_lulus]')?.trim();
-                        
-                        if ((s2Univ || s2Prodi || s2Lulus) && (!s2Univ || !s2Prodi || !s2Lulus)) {
-                            Swal.showValidationMessage('Jika mengisi data S2, semua field S2 harus diisi lengkap!');
-                            return false;
-                        }
-                        
-                        // Validasi S3: Jika ada field S3 yang diisi, maka harus lengkap
-                        const s3Univ = formData.get('riwayat[s3][nama_universitas]')?.trim();
-                        const s3Prodi = formData.get('riwayat[s3][prodi_pendidikan]')?.trim();
-                        const s3Lulus = formData.get('riwayat[s3][tanggal_lulus]')?.trim();
-                        
-                        if ((s3Univ || s3Prodi || s3Lulus) && (!s3Univ || !s3Prodi || !s3Lulus)) {
-                            Swal.showValidationMessage('Jika mengisi data S3, semua field S3 harus diisi lengkap!');
-                            return false;
-                        }
-                        
-                        return { formData, id: dosen.id };
-                    }
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        const { formData, id } = result.value;
-                        
-                        // Add _method for Laravel method spoofing
-                        formData.append('_method', 'PUT');
-                        
-                        Swal.fire({
-                            title: 'Menyimpan...',
-                            allowOutsideClick: false,
-                            didOpen: () => Swal.showLoading()
-                        });
-
-                        fetch(`/manajemen-dosen/${id}`, {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                'X-Requested-With': 'XMLHttpRequest'
-                            },
-                            body: formData
-                        })
-                        .then(response => {
-                            if (!response.ok && response.status !== 422) {
-                                throw new Error('HTTP error! status: ' + response.status);
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            if (data.success) {
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Berhasil!',
-                                    text: data.message || 'Data dosen berhasil diupdate',
-                                    showConfirmButton: false,
-                                    timer: 2000
-                                }).then(() => location.reload());
-                            } else {
-                                let errorMessage = 'Gagal mengupdate data';
-                                if (data.message) {
-                                    errorMessage = data.message;
-                                }
-                                if (data.errors) {
-                                    errorMessage += '<br><br>' + Object.values(data.errors).flat().join('<br>');
-                                }
-                                Swal.fire({
-                                    icon: 'error',
-                                    title: 'Error',
-                                    html: errorMessage
-                                });
-                            }
-                        })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            Swal.fire('Error', 'Terjadi kesalahan: ' + error.message, 'error');
-                        });
-                    }
-                });
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                Swal.fire('Error', 'Gagal memuat data', 'error');
-            });
-        }
     </script>
 </body>
 </html>
