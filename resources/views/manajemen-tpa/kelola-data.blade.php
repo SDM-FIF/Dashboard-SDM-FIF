@@ -172,6 +172,7 @@
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">NIP</th>
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Nama Lengkap</th>
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Jabatan</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Pendidikan Terakhir</th>
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Lokasi Kerja</th>
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Status</th>
                             <th class="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider w-36">Aksi</th>
@@ -198,6 +199,14 @@
                                     {{ $item->jabatan ?? '-' }}
                                 </span>
                             </td>
+
+                            {{-- Pendidikan Terakhir --}}
+                            <td class="px-6 py-4 text-sm">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-100 text-xs font-semibold">
+                                    {{ $item->pendidikan_terakhir ?? '-' }}
+                                </span>
+                            </td>
+
 
                             {{-- Lokasi Kerja --}}
                             <td class="px-6 py-4 text-sm text-gray-600 font-semibold">
