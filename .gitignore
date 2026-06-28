@@ -26,3 +26,5 @@ Thumbs.db
 # Docker
 /.docker-data/
 docker-compose.override.yml
+
+.vercel
