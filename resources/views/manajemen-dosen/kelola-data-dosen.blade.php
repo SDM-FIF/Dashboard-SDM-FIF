@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,10 +15,11 @@
         }
     </style>
 </head>
+
 <body class="flex flex-col md:flex-row bg-[#F8FAFC] min-h-screen text-[#1E293B]">
     {{-- Sidebar Navigation --}}
     <x-navbar />
-    
+
     {{-- Main Content --}}
     <main class="flex-1 p-6 md:p-8 overflow-y-auto">
         {{-- Header Section --}}
@@ -26,11 +28,11 @@
                 <h1 class="text-3xl md:text-4xl font-extrabold text-[#C41E3A] tracking-tight">Kelola Data Dosen</h1>
                 <p class="text-sm text-gray-500 mt-1">Kelola informasi profile, jabatan, prodi, dan riwayat pendidikan dosen.</p>
             </div>
-            
+
             <div class="flex items-center gap-3">
                 @can('kelola-data-dosen.create')
                 <a href="{{ route('manajemen-dosen.create') }}"
-                   class="inline-flex items-center gap-2 px-5 py-3 bg-[#C41E3A] hover:bg-[#A31830] text-white font-semibold rounded-xl transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5 text-sm">
+                    class="inline-flex items-center gap-2 px-5 py-3 bg-[#C41E3A] hover:bg-[#A31830] text-white font-semibold rounded-xl transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5 text-sm">
                     <i class="fas fa-plus"></i>
                     <span>Tambah Dosen</span>
                 </a>
@@ -56,15 +58,15 @@
                     {{-- Lokasi Kerja (Prodi) Filter --}}
                     <div class="flex flex-col gap-1.5">
                         <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Lokasi Kerja (Prodi)</label>
-                        <select name="prodi_id" 
-                                class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
+                        <select name="prodi_id"
+                            class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
                             <option value="">Semua Lokasi Kerja</option>
                             @if(isset($filterData['prodi']))
-                                @foreach($filterData['prodi'] as $prodi)
-                                    <option value="{{ $prodi->id }}" {{ request('prodi_id') == $prodi->id ? 'selected' : '' }}>
-                                        {{ $prodi->nama_prodi }}
-                                    </option>
-                                @endforeach
+                            @foreach($filterData['prodi'] as $prodi)
+                            <option value="{{ $prodi->id }}" {{ request('prodi_id') == $prodi->id ? 'selected' : '' }}>
+                                {{ $prodi->nama_prodi }}
+                            </option>
+                            @endforeach
                             @endif
                         </select>
                     </div>
@@ -72,15 +74,15 @@
                     {{-- JFA (Jabatan) Filter --}}
                     <div class="flex flex-col gap-1.5">
                         <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">JFA (Jabatan Akademik)</label>
-                        <select name="jabatan" 
-                                class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
+                        <select name="jabatan"
+                            class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
                             <option value="">Semua JFA</option>
                             @if(isset($filterData['jabatan']))
-                                @foreach($filterData['jabatan'] as $jab)
-                                    <option value="{{ $jab }}" {{ request('jabatan') == $jab ? 'selected' : '' }}>
-                                        {{ $jab }}
-                                    </option>
-                                @endforeach
+                            @foreach($filterData['jabatan'] as $jab)
+                            <option value="{{ $jab }}" {{ request('jabatan') == $jab ? 'selected' : '' }}>
+                                {{ $jab }}
+                            </option>
+                            @endforeach
                             @endif
                         </select>
                     </div>
@@ -88,15 +90,15 @@
                     {{-- Kelompok Keahlian Filter --}}
                     <div class="flex flex-col gap-1.5">
                         <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Kelompok Keahlian</label>
-                        <select name="kelompok_keahlian_id" 
-                                class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
+                        <select name="kelompok_keahlian_id"
+                            class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
                             <option value="">Semua Kelompok Keahlian</option>
                             @if(isset($filterData['kelompok_keahlian']))
-                                @foreach($filterData['kelompok_keahlian'] as $kelompok)
-                                    <option value="{{ $kelompok->id }}" {{ request('kelompok_keahlian_id') == $kelompok->id ? 'selected' : '' }}>
-                                        {{ $kelompok->nama_kelompok_keahlian }}
-                                    </option>
-                                @endforeach
+                            @foreach($filterData['kelompok_keahlian'] as $kelompok)
+                            <option value="{{ $kelompok->id }}" {{ request('kelompok_keahlian_id') == $kelompok->id ? 'selected' : '' }}>
+                                {{ $kelompok->nama_kelompok_keahlian }}
+                            </option>
+                            @endforeach
                             @endif
                         </select>
                     </div>
@@ -107,15 +109,15 @@
                     {{-- Status Pegawai Filter --}}
                     <div class="flex flex-col gap-1.5">
                         <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Status Pegawai</label>
-                        <select name="status_pegawai" 
-                                class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
+                        <select name="status_pegawai"
+                            class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
                             <option value="">Semua Status</option>
                             @if(isset($filterData['status_pegawai']))
-                                @foreach($filterData['status_pegawai'] as $status)
-                                    <option value="{{ $status }}" {{ request('status_pegawai') == $status ? 'selected' : '' }}>
-                                        {{ $status }}
-                                    </option>
-                                @endforeach
+                            @foreach($filterData['status_pegawai'] as $status)
+                            <option value="{{ $status }}" {{ request('status_pegawai') == $status ? 'selected' : '' }}>
+                                {{ $status }}
+                            </option>
+                            @endforeach
                             @endif
                         </select>
                     </div>
@@ -123,23 +125,23 @@
                     {{-- Search Input --}}
                     <div class="flex flex-col gap-1.5">
                         <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Kata Kunci</label>
-                        <input type="text" 
-                               name="search" 
-                               value="{{ request('search') }}"
-                               placeholder="Cari NIP, Kode Dosen, atau Nama..."
-                               class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
+                        <input type="text"
+                            name="search"
+                            value="{{ request('search') }}"
+                            placeholder="Cari NIP, Kode Dosen, atau Nama..."
+                            class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
                     </div>
 
                     {{-- Filter & Reset Buttons --}}
                     <div class="flex items-end gap-3">
                         <a href="{{ route('manajemen-dosen.kelola-data') }}" id="resetFilterBtn"
-                           class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 font-semibold px-4 py-3 rounded-xl flex items-center justify-center space-x-2 transition-all duration-300">
+                            class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 font-semibold px-4 py-3 rounded-xl flex items-center justify-center space-x-2 transition-all duration-300">
                             <i class="fas fa-redo"></i>
                             <span>Reset</span>
                         </a>
 
                         <button type="submit" id="applyFilterBtn"
-                                class="flex-1 bg-[#FBB03B] hover:bg-[#E09A2A] text-black font-semibold px-4 py-3 rounded-xl flex items-center justify-center space-x-2 transition-all duration-300 shadow-sm hover:shadow">
+                            class="flex-1 bg-[#FBB03B] hover:bg-[#E09A2A] text-black font-semibold px-4 py-3 rounded-xl flex items-center justify-center space-x-2 transition-all duration-300 shadow-sm hover:shadow">
                             <i class="fas fa-sliders-h"></i>
                             <span>Terapkan</span>
                         </button>
@@ -195,36 +197,36 @@
                     <thead>
                         <tr class="bg-[#C41E3A] text-white">
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">
-                                <a href="{{ route('manajemen-dosen.kelola-data', array_merge(request()->except(['sort_field', 'sort_direction']), ['sort_field' => 'nip', 'sort_direction' => request('sort_field') == 'nip' && request('sort_direction') == 'asc' ? 'desc' : 'asc'])) }}" 
-                                   class="flex items-center gap-1.5 hover:text-red-100 transition-colors">
+                                <a href="{{ route('manajemen-dosen.kelola-data', array_merge(request()->except(['sort_field', 'sort_direction']), ['sort_field' => 'nip', 'sort_direction' => request('sort_field') == 'nip' && request('sort_direction') == 'asc' ? 'desc' : 'asc'])) }}"
+                                    class="flex items-center gap-1.5 hover:text-red-100 transition-colors">
                                     <span>NIP</span>
                                     @if(request('sort_field') == 'nip')
-                                        <i class="fas fa-sort-{{ request('sort_direction') == 'asc' ? 'up' : 'down' }} text-white"></i>
+                                    <i class="fas fa-sort-{{ request('sort_direction') == 'asc' ? 'up' : 'down' }} text-white"></i>
                                     @else
-                                        <i class="fas fa-sort text-red-200"></i>
+                                    <i class="fas fa-sort text-red-200"></i>
                                     @endif
                                 </a>
                             </th>
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Kode</th>
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">
-                                <a href="{{ route('manajemen-dosen.kelola-data', array_merge(request()->except(['sort_field', 'sort_direction']), ['sort_field' => 'nama_lengkap', 'sort_direction' => request('sort_field') == 'nama_lengkap' && request('sort_direction') == 'asc' ? 'desc' : 'asc'])) }}" 
-                                   class="flex items-center gap-1.5 hover:text-red-100 transition-colors">
+                                <a href="{{ route('manajemen-dosen.kelola-data', array_merge(request()->except(['sort_field', 'sort_direction']), ['sort_field' => 'nama_lengkap', 'sort_direction' => request('sort_field') == 'nama_lengkap' && request('sort_direction') == 'asc' ? 'desc' : 'asc'])) }}"
+                                    class="flex items-center gap-1.5 hover:text-red-100 transition-colors">
                                     <span>Nama Lengkap</span>
                                     @if(request('sort_field') == 'nama_lengkap')
-                                        <i class="fas fa-sort-{{ request('sort_direction') == 'asc' ? 'up' : 'down' }} text-white"></i>
+                                    <i class="fas fa-sort-{{ request('sort_direction') == 'asc' ? 'up' : 'down' }} text-white"></i>
                                     @else
-                                        <i class="fas fa-sort text-red-200"></i>
+                                    <i class="fas fa-sort text-red-200"></i>
                                     @endif
                                 </a>
                             </th>
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">
-                                <a href="{{ route('manajemen-dosen.kelola-data', array_merge(request()->except(['sort_field', 'sort_direction']), ['sort_field' => 'jabatan', 'sort_direction' => request('sort_field') == 'jabatan' && request('sort_direction') == 'asc' ? 'desc' : 'asc'])) }}" 
-                                   class="flex items-center gap-1.5 hover:text-red-100 transition-colors">
+                                <a href="{{ route('manajemen-dosen.kelola-data', array_merge(request()->except(['sort_field', 'sort_direction']), ['sort_field' => 'jabatan', 'sort_direction' => request('sort_field') == 'jabatan' && request('sort_direction') == 'asc' ? 'desc' : 'asc'])) }}"
+                                    class="flex items-center gap-1.5 hover:text-red-100 transition-colors">
                                     <span>JFA</span>
                                     @if(request('sort_field') == 'jabatan')
-                                        <i class="fas fa-sort-{{ request('sort_direction') == 'asc' ? 'up' : 'down' }} text-white"></i>
+                                    <i class="fas fa-sort-{{ request('sort_direction') == 'asc' ? 'up' : 'down' }} text-white"></i>
                                     @else
-                                        <i class="fas fa-sort text-red-200"></i>
+                                    <i class="fas fa-sort text-red-200"></i>
                                     @endif
                                 </a>
                             </th>
@@ -234,197 +236,198 @@
                             <th class="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider w-36">Aksi</th>
                         </tr>
                     </thead>
-                    
+
                     {{-- Table Body --}}
                     <tbody class="divide-y divide-gray-100 bg-white">
                         @if(isset($dosen) && $dosen->count() > 0)
-                            @foreach($dosen as $dosenItem)
-                                <tr class="hover:bg-[#F8FAFC] transition-colors duration-150 group">
-                                    {{-- NIP --}}
-                                    <td class="px-6 py-4 text-sm text-gray-500 font-semibold">
-                                        {{ $dosenItem->nip }}
-                                    </td>
-                                    
-                                    {{-- Kode Dosen --}}
-                                    <td class="px-6 py-4 text-sm">
-                                        <span class="px-2 py-0.5 bg-gray-100 text-gray-700 rounded-lg text-xs font-bold font-mono border border-gray-200/50">
-                                            {{ $dosenItem->kode_dosen }}
-                                        </span>
-                                    </td>
-                                    
-                                    {{-- Nama Lengkap --}}
-                                    <td class="px-6 py-4 text-sm font-semibold text-gray-900 group-hover:text-[#C41E3A] transition-colors">
-                                        @if($dosenItem->front_title){{ $dosenItem->front_title }} @endif{{ $dosenItem->nama_lengkap }}@if($dosenItem->back_title), {{ $dosenItem->back_title }}@endif
-                                    </td>
-                                    
-                                    {{-- JFA --}}
-                                    <td class="px-6 py-4 text-sm">
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-100 text-xs font-bold">
-                                            {{ $dosenItem->jabatan }}
-                                        </span>
-                                    </td>
-                                    
-                                    {{-- Kelompok Keahlian --}}
-                                    <td class="px-6 py-4 text-sm text-gray-600 font-medium">
-                                        {{ $dosenItem->kelompokKeahlian->nama_kelompok_keahlian ?? '-' }}
-                                    </td>
-                                    
-                                    {{-- Lokasi Kerja --}}
-                                    <td class="px-6 py-4 text-sm text-gray-600 font-semibold">
-                                        {{ $dosenItem->prodi->nama_prodi ?? '-' }}
-                                    </td>
-                                    
-                                    {{-- Status --}}
-                                    <td class="px-6 py-4 text-sm">
-                                        @php
-                                            $sc = match($dosenItem->status_pegawai) {
-                                                'Tetap' => 'bg-emerald-50 text-emerald-700 border-emerald-100',
-                                                'Perbantuan' => 'bg-sky-50 text-sky-700 border-sky-100',
-                                                'Profesional Full Time' => 'bg-indigo-50 text-indigo-700 border-indigo-100',
-                                                'Profesional Part Time' => 'bg-amber-50 text-amber-700 border-amber-100',
-                                                default => 'bg-gray-50 text-gray-700 border-gray-100'
-                                            };
-                                        @endphp
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded border font-bold text-xs {{ $sc }}">
-                                            {{ $dosenItem->status_pegawai ?? '-' }}
-                                        </span>
-                                    </td>
-                                    
-                                    {{-- Aksi --}}
-                                    <td class="px-6 py-4 text-center text-sm">
-                                        <div class="flex items-center justify-center gap-2.5">
-                                            {{-- Detail Button --}}
-                                            @can('kelola-data-dosen.detail')
-                                            <a href="{{ route('manajemen-dosen.show', $dosenItem->id) }}" 
-                                               class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-100 rounded-lg transition-all"
-                                               title="Lihat Detail">
-                                                <i class="fas fa-eye text-sm"></i>
-                                            </a>
-                                            @endcan
-                                            
-                                            {{-- Edit Button --}}
-                                            @can('kelola-data-dosen.edit')
-                                            <a href="{{ route('manajemen-dosen.edit', $dosenItem->id) }}" 
-                                               class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-green-600 hover:bg-green-50 border border-transparent hover:border-green-100 rounded-lg transition-all"
-                                               title="Edit">
-                                                <i class="fas fa-edit text-sm"></i>
-                                            </a>
-                                            @endcan
-                                            
-                                            {{-- Delete Button --}}
-                                            @can('kelola-data-dosen.delete')
-                                            <form action="{{ route('manajemen-dosen.destroy', $dosenItem->id) }}"
-                                                method="POST"
-                                                class="inline-block delete-form">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button"
-                                                    class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-100 rounded-lg transition-all delete-btn"
-                                                    data-nama="{{ $dosenItem->nama_lengkap }}"
-                                                    data-kode="{{ $dosenItem->kode_dosen }}"
-                                                    title="Hapus">
-                                                    <i class="fas fa-trash text-sm"></i>
-                                                </button>
-                                            </form>
-                                            @endcan
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
+                        @foreach($dosen as $dosenItem)
+                        <tr class="hover:bg-[#F8FAFC] transition-colors duration-150 group">
+                            {{-- NIP --}}
+                            <td class="px-6 py-4 text-sm text-gray-500 font-semibold">
+                                {{ $dosenItem->nip }}
+                            </td>
+
+                            {{-- Kode Dosen --}}
+                            <td class="px-6 py-4 text-sm">
+                                <span class="px-2 py-0.5 bg-gray-100 text-gray-700 rounded-lg text-xs font-bold font-mono border border-gray-200/50">
+                                    {{ $dosenItem->kode_dosen }}
+                                </span>
+                            </td>
+
+                            {{-- Nama Lengkap --}}
+                            <td class="px-6 py-4 text-sm font-semibold text-gray-900 group-hover:text-[#C41E3A] transition-colors">
+                                @if($dosenItem->front_title){{ $dosenItem->front_title }} @endif{{ $dosenItem->nama_lengkap }}@if($dosenItem->back_title), {{ $dosenItem->back_title }}@endif
+                            </td>
+
+                            {{-- JFA --}}
+                            <td class="px-6 py-4 text-sm">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-100 text-xs font-bold">
+                                    {{ $dosenItem->jabatan }}
+                                </span>
+                            </td>
+
+                            {{-- Kelompok Keahlian --}}
+                            <td class="px-6 py-4 text-sm text-gray-600 font-medium">
+                                {{ $dosenItem->kelompokKeahlian->nama_kelompok_keahlian ?? '-' }}
+                            </td>
+
+                            {{-- Lokasi Kerja --}}
+                            <td class="px-6 py-4 text-sm text-gray-600 font-semibold">
+                                {{ $dosenItem->prodi->nama_prodi ?? '-' }}
+                            </td>
+
+                            {{-- Status --}}
+                            <td class="px-6 py-4 text-sm">
+                                @php
+                                $sc = match($dosenItem->status_pegawai) {
+                                'Tetap' => 'bg-emerald-50 text-emerald-700 border-emerald-100',
+                                'Perbantuan' => 'bg-sky-50 text-sky-700 border-sky-100',
+                                'Profesional Full Time' => 'bg-indigo-50 text-indigo-700 border-indigo-100',
+                                'Profesional Part Time' => 'bg-amber-50 text-amber-700 border-amber-100',
+                                default => 'bg-gray-50 text-gray-700 border-gray-100'
+                                };
+                                @endphp
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded border font-bold text-xs {{ $sc }}">
+                                    {{ $dosenItem->status_pegawai ?? '-' }}
+                                </span>
+                            </td>
+
+                            {{-- Aksi --}}
+                            <td class="px-6 py-4 text-center text-sm">
+                                <div class="flex items-center justify-center gap-2.5">
+                                    {{-- Detail Button --}}
+                                    @can('kelola-data-dosen.detail')
+                                    <a href="{{ route('manajemen-dosen.show', $dosenItem->id) }}"
+                                        class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-100 rounded-lg transition-all"
+                                        title="Lihat Detail">
+                                        <i class="fas fa-eye text-sm"></i>
+                                    </a>
+                                    @endcan
+
+                                    {{-- Edit Button --}}
+                                    @can('kelola-data-dosen.edit')
+                                    <a href="{{ route('manajemen-dosen.edit', $dosenItem->id) }}"
+                                        class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-green-600 hover:bg-green-50 border border-transparent hover:border-green-100 rounded-lg transition-all"
+                                        title="Edit">
+                                        <i class="fas fa-edit text-sm"></i>
+                                    </a>
+                                    @endcan
+
+                                    {{-- Delete Button --}}
+                                    @can('kelola-data-dosen.delete')
+                                    <form action="{{ route('manajemen-dosen.destroy', $dosenItem->id) }}"
+                                        method="POST"
+                                        class="inline-block delete-form">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button"
+                                            class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-100 rounded-lg transition-all delete-btn"
+                                            data-nama="{{ $dosenItem->nama_lengkap }}"
+                                            data-kode="{{ $dosenItem->kode_dosen }}"
+                                            title="Hapus">
+                                            <i class="fas fa-trash text-sm"></i>
+                                        </button>
+                                    </form>
+                                    @endcan
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
                         @else
-                            {{-- Empty State --}}
-                            <tr>
-                                <td colspan="8" class="px-6 py-16 text-center text-gray-400">
-                                    <div class="flex flex-col items-center gap-3">
-                                        <div class="p-4 bg-gray-50 text-gray-300 rounded-full">
-                                            <i class="fas fa-users text-4xl"></i>
-                                        </div>
-                                        <p class="font-medium text-gray-500">Tidak ada data dosen ditemukan</p>
-                                        <p class="text-xs text-gray-400 max-w-xs">Silakan sesuaikan filter pencarian atau tambahkan data dosen baru.</p>
+                        {{-- Empty State --}}
+                        <tr>
+                            <td colspan="8" class="px-6 py-16 text-center text-gray-400">
+                                <div class="flex flex-col items-center gap-3">
+                                    <div class="p-4 bg-gray-50 text-gray-300 rounded-full">
+                                        <i class="fas fa-users text-4xl"></i>
                                     </div>
-                                </td>
-                            </tr>
+                                    <p class="font-medium text-gray-500">Tidak ada data dosen ditemukan</p>
+                                    <p class="text-xs text-gray-400 max-w-xs">Silakan sesuaikan filter pencarian atau tambahkan data dosen baru.</p>
+                                </div>
+                            </td>
+                        </tr>
                         @endif
                     </tbody>
                 </table>
             </div>
 
             {{-- Pagination --}}
-            @if(isset($dosen) && method_exists($dosen, 'hasPages') && $dosen->hasPages())
-            <div class="px-6 py-4 border-t border-gray-100 bg-[#F8FAFC]">
-                <div class="flex items-center justify-between">
-                    <p class="text-xs font-semibold text-gray-500">
-                        Menampilkan {{ $dosen->firstItem() }} - {{ $dosen->lastItem() }} dari {{ $dosen->total() }} Dosen
-                    </p>
-                    <div class="flex items-center">
-                        {{ $dosen->links() }}
-                    </div>
-                </div>
-            </div>
-            @endif
+            {{-- Pagination --}}
+@if(isset($dosen) && $dosen->total() > 0)
+<div class="px-6 py-4 border-t border-gray-100 bg-[#F8FAFC]">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <p class="text-xs font-semibold text-gray-500">
+            Menampilkan {{ $dosen->firstItem() }} - {{ $dosen->lastItem() }} dari {{ $dosen->total() }} Dosen
+        </p>
+        <div>
+            {{ $dosen->links('components.custom-pagination') }}
         </div>
-    </main>
+    </div>
+</div>
+@endif
 
-    {{-- SweetAlert2 JS --}}
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Export dropdown toggle
-            const exportBtn = document.getElementById('exportBtn');
-            const exportDropdown = document.getElementById('exportDropdown');
+            {{-- SweetAlert2 JS --}}
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Export dropdown toggle
+                    const exportBtn = document.getElementById('exportBtn');
+                    const exportDropdown = document.getElementById('exportDropdown');
 
-            if (exportBtn && exportDropdown) {
-                exportBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    exportDropdown.classList.toggle('hidden');
-                });
+                    if (exportBtn && exportDropdown) {
+                        exportBtn.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            exportDropdown.classList.toggle('hidden');
+                        });
 
-                // Close dropdown when clicking outside
-                document.addEventListener('click', function(e) {
-                    if (!exportBtn.contains(e.target) && !exportDropdown.contains(e.target)) {
-                        exportDropdown.classList.add('hidden');
+                        // Close dropdown when clicking outside
+                        document.addEventListener('click', function(e) {
+                            if (!exportBtn.contains(e.target) && !exportDropdown.contains(e.target)) {
+                                exportDropdown.classList.add('hidden');
+                            }
+                        });
                     }
-                });
-            }
 
-            // Success/Error Messages with SweetAlert2 Toast
-            @if(session('success'))
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: '{{ session('success') }}',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    toast: true,
-                    position: 'top-end'
-                });
-            @endif
-
-            @if(session('error'))
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: '{{ session('error') }}',
-                    showConfirmButton: true,
-                    confirmButtonColor: '#C41E3A'
-                });
-            @endif
-
-            // SWEETALERT DELETE CONFIRMATION
-            const deleteBtns = document.querySelectorAll('.delete-btn');
-            deleteBtns.forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-
-                    const form = this.closest('.delete-form');
-                    const nama = this.getAttribute('data-nama');
-                    const kode = this.getAttribute('data-kode');
-
+                    // Success/Error Messages with SweetAlert2 Toast
+                    @if(session('success'))
                     Swal.fire({
-                        title: 'Hapus Data Dosen?',
-                        html: `
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: '{{ session('
+                        success ') }}',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        toast: true,
+                        position: 'top-end'
+                    });
+                    @endif
+
+                    @if(session('error'))
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: '{{ session('
+                        error ') }}',
+                        showConfirmButton: true,
+                        confirmButtonColor: '#C41E3A'
+                    });
+                    @endif
+
+                    // SWEETALERT DELETE CONFIRMATION
+                    const deleteBtns = document.querySelectorAll('.delete-btn');
+                    deleteBtns.forEach(btn => {
+                        btn.addEventListener('click', function(e) {
+                            e.preventDefault();
+
+                            const form = this.closest('.delete-form');
+                            const nama = this.getAttribute('data-nama');
+                            const kode = this.getAttribute('data-kode');
+
+                            Swal.fire({
+                                title: 'Hapus Data Dosen?',
+                                html: `
                             <div class="text-left space-y-2">
                                 <p class="text-gray-600">Apakah Anda yakin ingin menghapus data dosen:</p>
                                 <div class="bg-red-50 border border-red-100 rounded-xl p-4 mt-3">
@@ -437,26 +440,27 @@
                                 </p>
                             </div>
                         `,
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#C41E3A',
-                        cancelButtonColor: '#64748B',
-                        confirmButtonText: 'Ya, Hapus',
-                        cancelButtonText: 'Batal',
-                        reverseButtons: true,
-                        customClass: {
-                            popup: 'rounded-2xl',
-                            confirmButton: 'px-5 py-2.5 rounded-xl font-semibold text-sm',
-                            cancelButton: 'px-5 py-2.5 rounded-xl font-semibold text-sm'
-                        }
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit();
-                        }
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#C41E3A',
+                                cancelButtonColor: '#64748B',
+                                confirmButtonText: 'Ya, Hapus',
+                                cancelButtonText: 'Batal',
+                                reverseButtons: true,
+                                customClass: {
+                                    popup: 'rounded-2xl',
+                                    confirmButton: 'px-5 py-2.5 rounded-xl font-semibold text-sm',
+                                    cancelButton: 'px-5 py-2.5 rounded-xl font-semibold text-sm'
+                                }
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    form.submit();
+                                }
+                            });
+                        });
                     });
                 });
-            });
-        });
-    </script>
+            </script>
 </body>
+
 </html>

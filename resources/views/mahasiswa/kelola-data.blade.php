@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,6 +15,7 @@
         }
     </style>
 </head>
+
 <body class="flex flex-col md:flex-row bg-[#F8FAFC] min-h-screen text-[#1E293B]">
     {{-- Sidebar Navigation --}}
     <x-navbar />
@@ -33,7 +35,7 @@
             <div class="flex items-center gap-3">
                 @can('kelola-data-mahasiswa.create')
                 <a href="{{ route('mahasiswa.create') }}"
-                   class="inline-flex items-center gap-2 px-5 py-3 bg-[#C41E3A] hover:bg-[#A31830] text-white font-semibold rounded-xl transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5 text-sm">
+                    class="inline-flex items-center gap-2 px-5 py-3 bg-[#C41E3A] hover:bg-[#A31830] text-white font-semibold rounded-xl transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5 text-sm">
                     <i class="fas fa-plus"></i>
                     <span>Tambah Mahasiswa</span>
                 </a>
@@ -62,11 +64,11 @@
                             class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
                             <option value="">Semua Prodi</option>
                             @if(isset($filterData['prodi']))
-                                @foreach($filterData['prodi'] as $prodi)
-                                    <option value="{{ $prodi->id }}" {{ request('prodi_id') == $prodi->id ? 'selected' : '' }}>
-                                        {{ $prodi->nama_prodi }}
-                                    </option>
-                                @endforeach
+                            @foreach($filterData['prodi'] as $prodi)
+                            <option value="{{ $prodi->id }}" {{ request('prodi_id') == $prodi->id ? 'selected' : '' }}>
+                                {{ $prodi->nama_prodi }}
+                            </option>
+                            @endforeach
                             @endif
                         </select>
                     </div>
@@ -78,12 +80,12 @@
                             class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
                             <option value="">Semua Status</option>
                             @php
-                                $statuses = ['aktif', 'cuti', 'nonaktif', 'lulus', 'resign', 'dikeluarkan'];
+                            $statuses = ['aktif', 'cuti', 'nonaktif', 'lulus', 'resign', 'dikeluarkan'];
                             @endphp
                             @foreach($statuses as $status)
-                                <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
-                                    {{ ucfirst($status) }}
-                                </option>
+                            <option value="{{ $status }}" {{ request('status') == $status ? 'selected' : '' }}>
+                                {{ ucfirst($status) }}
+                            </option>
                             @endforeach
                         </select>
                     </div>
@@ -189,146 +191,146 @@
 
                     <tbody class="divide-y divide-gray-100 bg-white">
                         @if(isset($mahasiswa) && $mahasiswa->count() > 0)
-                            @foreach($mahasiswa as $item)
-                                <tr class="hover:bg-[#F8FAFC] transition-colors duration-150 group">
-                                    <td class="px-6 py-4 text-sm text-gray-500 font-semibold">{{ $item->nim }}</td>
-                                    <td class="px-6 py-4 text-sm font-semibold text-gray-900 group-hover:text-[#C41E3A] transition-colors">
-                                        <div class="font-bold">{{ $item->nama_lengkap }}</div>
-                                        <div class="text-xs text-gray-400 font-normal mt-0.5">{{ $item->email_telkom ?? '-' }}</div>
-                                    </td>
-                                    <td class="px-6 py-4 text-sm text-gray-600 font-medium">
-                                        {{ $item->prodi->nama_prodi ?? '-' }}
-                                    </td>
-                                    <td class="px-6 py-4 text-sm text-gray-600 font-semibold">
-                                        {{ $item->angkatan }}
-                                    </td>
-                                    <td class="px-6 py-4 text-sm">
-                                        @php
-                                            $statusClass = match (strtolower($item->status)) {
-                                                'aktif' => 'bg-emerald-50 text-emerald-700 border-emerald-100',
-                                                'lulus' => 'bg-blue-50 text-blue-700 border-blue-100',
-                                                'nonaktif' => 'bg-rose-50 text-rose-700 border-rose-100',
-                                                'cuti' => 'bg-amber-50 text-amber-700 border-amber-100',
-                                                default => 'bg-gray-50 text-gray-700 border-gray-100'
-                                            };
-                                        @endphp
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg border font-bold text-xs {{ $statusClass }}">
-                                            {{ ucfirst($item->status) }}
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 text-center text-sm">
-                                        <div class="flex items-center justify-center gap-2.5">
-                                            @can('kelola-data-mahasiswa.detail')
-                                            <a href="{{ route('mahasiswa.show', $item->id) }}"
-                                                class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-100 rounded-lg transition-all"
-                                                title="Lihat Detail">
-                                                <i class="fas fa-eye text-sm"></i>
-                                            </a>
-                                            @endcan
-                                            @can('kelola-data-mahasiswa.edit')
-                                            <a href="{{ route('mahasiswa.edit', $item->id) }}"
-                                                class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-green-600 hover:bg-green-50 border border-transparent hover:border-green-100 rounded-lg transition-all"
-                                                title="Edit">
-                                                <i class="fas fa-edit text-sm"></i>
-                                            </a>
-                                            @endcan
-                                            @can('kelola-data-mahasiswa.delete')
-                                            <form action="{{ route('mahasiswa.destroy', $item->id) }}" method="POST"
-                                                class="inline delete-form">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-100 rounded-lg transition-all delete-btn"
-                                                    data-nama="{{ $item->nama_lengkap }}" data-nim="{{ $item->nim }}">
-                                                    <i class="fas fa-trash text-sm"></i>
-                                                </button>
-                                            </form>
-                                            @endcan
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
+                        @foreach($mahasiswa as $item)
+                        <tr class="hover:bg-[#F8FAFC] transition-colors duration-150 group">
+                            <td class="px-6 py-4 text-sm text-gray-500 font-semibold">{{ $item->nim }}</td>
+                            <td class="px-6 py-4 text-sm font-semibold text-gray-900 group-hover:text-[#C41E3A] transition-colors">
+                                <div class="font-bold">{{ $item->nama_lengkap }}</div>
+                                <div class="text-xs text-gray-400 font-normal mt-0.5">{{ $item->email_telkom ?? '-' }}</div>
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-600 font-medium">
+                                {{ $item->prodi->nama_prodi ?? '-' }}
+                            </td>
+                            <td class="px-6 py-4 text-sm text-gray-600 font-semibold">
+                                {{ $item->angkatan }}
+                            </td>
+                            <td class="px-6 py-4 text-sm">
+                                @php
+                                $statusClass = match (strtolower($item->status)) {
+                                'aktif' => 'bg-emerald-50 text-emerald-700 border-emerald-100',
+                                'lulus' => 'bg-blue-50 text-blue-700 border-blue-100',
+                                'nonaktif' => 'bg-rose-50 text-rose-700 border-rose-100',
+                                'cuti' => 'bg-amber-50 text-amber-700 border-amber-100',
+                                default => 'bg-gray-50 text-gray-700 border-gray-100'
+                                };
+                                @endphp
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg border font-bold text-xs {{ $statusClass }}">
+                                    {{ ucfirst($item->status) }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-4 text-center text-sm">
+                                <div class="flex items-center justify-center gap-2.5">
+                                    @can('kelola-data-mahasiswa.detail')
+                                    <a href="{{ route('mahasiswa.show', $item->id) }}"
+                                        class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-100 rounded-lg transition-all"
+                                        title="Lihat Detail">
+                                        <i class="fas fa-eye text-sm"></i>
+                                    </a>
+                                    @endcan
+                                    @can('kelola-data-mahasiswa.edit')
+                                    <a href="{{ route('mahasiswa.edit', $item->id) }}"
+                                        class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-green-600 hover:bg-green-50 border border-transparent hover:border-green-100 rounded-lg transition-all"
+                                        title="Edit">
+                                        <i class="fas fa-edit text-sm"></i>
+                                    </a>
+                                    @endcan
+                                    @can('kelola-data-mahasiswa.delete')
+                                    <form action="{{ route('mahasiswa.destroy', $item->id) }}" method="POST"
+                                        class="inline delete-form">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-100 rounded-lg transition-all delete-btn"
+                                            data-nama="{{ $item->nama_lengkap }}" data-nim="{{ $item->nim }}">
+                                            <i class="fas fa-trash text-sm"></i>
+                                        </button>
+                                    </form>
+                                    @endcan
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
                         @else
-                            <tr>
-                                <td colspan="6" class="px-6 py-16 text-center text-gray-400">
-                                    <div class="flex flex-col items-center gap-3">
-                                        <div class="p-4 bg-gray-50 text-gray-300 rounded-full">
-                                            <i class="fas fa-user-graduate text-4xl"></i>
-                                        </div>
-                                        <p class="font-medium text-gray-500">Tidak ada data mahasiswa ditemukan</p>
-                                        <p class="text-xs text-gray-400 max-w-xs">Silakan sesuaikan filter pencarian atau tambahkan data mahasiswa baru.</p>
+                        <tr>
+                            <td colspan="6" class="px-6 py-16 text-center text-gray-400">
+                                <div class="flex flex-col items-center gap-3">
+                                    <div class="p-4 bg-gray-50 text-gray-300 rounded-full">
+                                        <i class="fas fa-user-graduate text-4xl"></i>
                                     </div>
-                                </td>
-                            </tr>
+                                    <p class="font-medium text-gray-500">Tidak ada data mahasiswa ditemukan</p>
+                                    <p class="text-xs text-gray-400 max-w-xs">Silakan sesuaikan filter pencarian atau tambahkan data mahasiswa baru.</p>
+                                </div>
+                            </td>
+                        </tr>
                         @endif
                     </tbody>
                 </table>
             </div>
 
             {{-- Pagination --}}
-            @if(isset($mahasiswa) && $mahasiswa->hasPages())
-                <div class="px-6 py-4 border-t border-gray-100 bg-[#F8FAFC]">
-                    <div class="flex items-center justify-between">
-                        <p class="text-xs font-semibold text-gray-500">
-                            Menampilkan {{ $mahasiswa->firstItem() }} - {{ $mahasiswa->lastItem() }} dari {{ $mahasiswa->total() }} Mahasiswa
-                        </p>
-                        <div class="flex items-center">
-                            {{ $mahasiswa->links() }}
-                        </div>
+            @if(isset($mahasiswa) && $mahasiswa->total() > 0)
+            <div class="px-6 py-4 border-t border-gray-100 bg-[#F8FAFC]">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <p class="text-xs font-semibold text-gray-500">
+                        Menampilkan {{ $mahasiswa->firstItem() }} - {{ $mahasiswa->lastItem() }} dari {{ $mahasiswa->total() }} Mahasiswa
+                    </p>
+                    <div>
+                        {{ $mahasiswa->appends(request()->query())->links('components.custom-pagination') }}
                     </div>
                 </div>
-            @endif
-        </div>
-    </main>
-
-    {{-- Notification Handlers --}}
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Dropdown Export Logic
-            const exportBtn = document.getElementById('exportBtn');
-            const exportDropdown = document.getElementById('exportDropdown');
-            if (exportBtn && exportDropdown) {
-                exportBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    exportDropdown.classList.toggle('hidden');
-                });
-                document.addEventListener('click', () => exportDropdown.classList.add('hidden'));
-            }
-
-            @if(session('success'))
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: '{{ session('success') }}',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    toast: true,
-                    position: 'top-end'
-                });
+            </div>
             @endif
 
-            @if(session('error'))
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error!',
-                    text: '{{ session('error') }}',
-                    showConfirmButton: true,
-                    confirmButtonColor: '#C41E3A'
-                });
-            @endif
+            {{-- Notification Handlers --}}
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Dropdown Export Logic
+                    const exportBtn = document.getElementById('exportBtn');
+                    const exportDropdown = document.getElementById('exportDropdown');
+                    if (exportBtn && exportDropdown) {
+                        exportBtn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            exportDropdown.classList.toggle('hidden');
+                        });
+                        document.addEventListener('click', () => exportDropdown.classList.add('hidden'));
+                    }
 
-            // SWEETALERT DELETE CONFIRMATION
-            const deleteBtns = document.querySelectorAll('.delete-btn');
-            deleteBtns.forEach(btn => {
-                btn.addEventListener('click', function () {
-                    const form = this.closest('.delete-form');
-                    const nama = this.getAttribute('data-nama');
-                    const nim = this.getAttribute('data-nim'); 
-
+                    @if(session('success'))
                     Swal.fire({
-                        title: 'Hapus Data Mahasiswa?',
-                        html: `
+                        icon: 'success',
+                        title: 'Berhasil!',
+                        text: '{{ session('
+                        success ') }}',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        toast: true,
+                        position: 'top-end'
+                    });
+                    @endif
+
+                    @if(session('error'))
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: '{{ session('
+                        error ') }}',
+                        showConfirmButton: true,
+                        confirmButtonColor: '#C41E3A'
+                    });
+                    @endif
+
+                    // SWEETALERT DELETE CONFIRMATION
+                    const deleteBtns = document.querySelectorAll('.delete-btn');
+                    deleteBtns.forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const form = this.closest('.delete-form');
+                            const nama = this.getAttribute('data-nama');
+                            const nim = this.getAttribute('data-nim');
+
+                            Swal.fire({
+                                title: 'Hapus Data Mahasiswa?',
+                                html: `
                         <div class="text-left space-y-2">
                             <p class="text-gray-600">Anda akan menghapus data Mahasiswa:</p>
                             <div class="bg-red-50 border border-red-200 rounded-xl p-4 mt-3">
@@ -341,26 +343,27 @@
                             </p>
                         </div>
                         `,
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#C41E3A',
-                        cancelButtonColor: '#6B7280',
-                        confirmButtonText: 'Ya, Hapus',
-                        cancelButtonText: 'Batal',
-                        reverseButtons: true,
-                        customClass: {
-                            popup: 'rounded-2xl',
-                            confirmButton: 'px-5 py-2.5 rounded-xl font-semibold text-sm',
-                            cancelButton: 'px-5 py-2.5 rounded-xl font-semibold text-sm'
-                        }
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit();
-                        }
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#C41E3A',
+                                cancelButtonColor: '#6B7280',
+                                confirmButtonText: 'Ya, Hapus',
+                                cancelButtonText: 'Batal',
+                                reverseButtons: true,
+                                customClass: {
+                                    popup: 'rounded-2xl',
+                                    confirmButton: 'px-5 py-2.5 rounded-xl font-semibold text-sm',
+                                    cancelButton: 'px-5 py-2.5 rounded-xl font-semibold text-sm'
+                                }
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    form.submit();
+                                }
+                            });
+                        });
                     });
                 });
-            });
-        });
-    </script>
+            </script>
 </body>
+
 </html>
