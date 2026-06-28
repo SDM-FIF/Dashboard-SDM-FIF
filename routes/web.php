@@ -30,9 +30,22 @@ Route::post('/logout', [AuthController::class, 'logout'])
 // ============================
 // Bagian Dashboard
 Route::get('/dashboard', function () {
-    // Jika dia login, kita cek akses utamanya, 
-    // tapi jika dia GUEST, kita izinkan lihat view dashboard sdm secara default
-    return view('dashboard');
+    $totalDosen = \App\Models\Dosen::count();
+    $dosenAktif = \App\Models\Dosen::where('status_dosen', 'Aktif')->count();
+    $dosenTugasBelajar = \App\Models\Dosen::where('status_dosen', 'Tugas Belajar')->count();
+    $dosenIzinBelajar = \App\Models\Dosen::where('status_dosen', 'Izin Belajar')->count();
+
+    $pendidikanDosen = \App\Models\Dosen::select('pendidikan_terakhir', \DB::raw('count(*) as count'))
+        ->groupBy('pendidikan_terakhir')
+        ->pluck('count', 'pendidikan_terakhir')
+        ->toArray();
+        
+    $jadDosen = \App\Models\Dosen::select('jabatan', \DB::raw('count(*) as count'))
+        ->groupBy('jabatan')
+        ->pluck('count', 'jabatan')
+        ->toArray();
+
+    return view('dashboard', compact('totalDosen', 'dosenAktif', 'dosenTugasBelajar', 'dosenIzinBelajar', 'pendidikanDosen', 'jadDosen'));
 })->name('dashboard');
 
 Route::get('/dashboard-dosen', function () {
@@ -109,7 +122,29 @@ Route::get('/dashboard-dosen', function () {
 Route::get('/dashboard-tpa', [TenagaPendukungAkademikController::class, 'dashboard'])->name('dashboard-tpa');
 
 Route::get('/dashboard-kompetisi', function () {
-    return view('dashboard-kompetisi');
+    $kompetisiTahun = \App\Models\Kompetisi::selectRaw('YEAR(tanggal_kompetisi) as year, tingkat_kompetisi, count(*) as count')
+        ->groupBy('year', 'tingkat_kompetisi')
+        ->get();
+
+    $juaraTahun = \Illuminate\Support\Facades\DB::table('mahasiswa_kompetisi')
+        ->join('kompetisi', 'mahasiswa_kompetisi.kompetisi_id', '=', 'kompetisi.id')
+        ->selectRaw('YEAR(kompetisi.tanggal_kompetisi) as year, mahasiswa_kompetisi.juara, count(*) as count')
+        ->whereNotNull('mahasiswa_kompetisi.juara')
+        ->groupBy('year', 'mahasiswa_kompetisi.juara')
+        ->get();
+        
+    $kompetisiProdi = \Illuminate\Support\Facades\DB::table('mahasiswa_kompetisi')
+        ->join('mahasiswa', 'mahasiswa_kompetisi.mahasiswa_id', '=', 'mahasiswa.id')
+        ->join('prodi', 'mahasiswa.prodi_id', '=', 'prodi.id')
+        ->select('prodi.nama_prodi', \Illuminate\Support\Facades\DB::raw('count(*) as count'))
+        ->groupBy('prodi.nama_prodi')
+        ->get();
+
+    $kompetisiKategori = \App\Models\Kompetisi::select('jenis', \Illuminate\Support\Facades\DB::raw('count(*) as count'))
+        ->groupBy('jenis')
+        ->get();
+        
+    return view('dashboard-kompetisi', compact('kompetisiTahun', 'juaraTahun', 'kompetisiProdi', 'kompetisiKategori'));
 })->name('dashboard-kompetisi');
 
 Route::get('/guest', function () {
@@ -569,7 +604,29 @@ Route::middleware('auth')->group(function () {
     })->name('kompetisi');
 
     Route::get('dashboard-kompetisi', function () {
-        return view('dashboard-kompetisi');
+        $kompetisiTahun = \App\Models\Kompetisi::selectRaw('YEAR(tanggal_kompetisi) as year, tingkat_kompetisi, count(*) as count')
+            ->groupBy('year', 'tingkat_kompetisi')
+            ->get();
+
+        $juaraTahun = \Illuminate\Support\Facades\DB::table('mahasiswa_kompetisi')
+            ->join('kompetisi', 'mahasiswa_kompetisi.kompetisi_id', '=', 'kompetisi.id')
+            ->selectRaw('YEAR(kompetisi.tanggal_kompetisi) as year, mahasiswa_kompetisi.juara, count(*) as count')
+            ->whereNotNull('mahasiswa_kompetisi.juara')
+            ->groupBy('year', 'mahasiswa_kompetisi.juara')
+            ->get();
+            
+        $kompetisiProdi = \Illuminate\Support\Facades\DB::table('mahasiswa_kompetisi')
+            ->join('mahasiswa', 'mahasiswa_kompetisi.mahasiswa_id', '=', 'mahasiswa.id')
+            ->join('prodi', 'mahasiswa.prodi_id', '=', 'prodi.id')
+            ->select('prodi.nama_prodi', \Illuminate\Support\Facades\DB::raw('count(*) as count'))
+            ->groupBy('prodi.nama_prodi')
+            ->get();
+
+        $kompetisiKategori = \App\Models\Kompetisi::select('jenis', \Illuminate\Support\Facades\DB::raw('count(*) as count'))
+            ->groupBy('jenis')
+            ->get();
+            
+        return view('dashboard-kompetisi', compact('kompetisiTahun', 'juaraTahun', 'kompetisiProdi', 'kompetisiKategori'));
     })->name('dashboard-kompetisi');
 
     // Management
