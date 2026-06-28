@@ -182,92 +182,85 @@
                     {{-- Table Body --}}
                     <tbody class="divide-y divide-gray-100 bg-white">
                         @forelse($tpa as $item)
-                        <tr class="hover:bg-[#F8FAFC] transition-colors duration-150 group">
-                            {{-- NIP --}}
-                            <td class="px-6 py-4 text-sm text-gray-500 font-semibold">
-                                {{ $item->nip }}
-                            </td>
-
-                            {{-- Nama Lengkap --}}
-                            <td class="px-6 py-4 text-sm font-semibold text-gray-900 group-hover:text-[#C41E3A] transition-colors">
-                                {{ $item->nama_lengkap }}
-                            </td>
-
-                            {{-- Jabatan --}}
-                            <td class="px-6 py-4 text-sm">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded border border-blue-100 bg-blue-50 text-blue-700 text-xs font-bold">
-                                    {{ $item->jabatan ?? '-' }}
-                                </span>
-                            </td>
-
-                            {{-- Pendidikan Terakhir --}}
-                            <td class="px-6 py-4 text-sm">
-                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-purple-100 text-purple-700 text-xs font-semibold">
-                                    {{ $item->pendidikan_terakhir ?? '-' }}
-                                </span>
-                            </td>
-
-                            {{-- Lokasi Kerja --}}
-                            <td class="px-6 py-4 text-sm text-gray-600 font-semibold">
-                                {{ $item->lokasi_kerja }}
-                            </td>
-
-                            {{-- Status --}}
-                            <td class="px-6 py-4 text-sm">
-                                @php
-                                $sc = match($item->status_pegawai) {
-                                'Pegawai Tetap', 'Tetap' => 'bg-emerald-50 text-emerald-700 border-emerald-100',
-                                'Perbantuan LLDIKTI', 'Perbantuan' => 'bg-sky-50 text-sky-700 border-sky-100',
-                                'Profesional Full Time' => 'bg-indigo-50 text-indigo-700 border-indigo-100',
-                                'Profesional Part Time' => 'bg-amber-50 text-amber-700 border-amber-100',
-                                default => 'bg-gray-50 text-gray-700 border-gray-100'
-                                };
-                                @endphp
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded border font-bold text-xs {{ $sc }}">
-                                    {{ $item->status_pegawai ?? '-' }}
-                                </span>
-                            </td>
-
-                            {{-- Aksi --}}
-                            <td class="px-6 py-4 text-center text-sm">
-                                <div class="flex items-center justify-center gap-2.5">
-                                    {{-- Detail Button --}}
-                                    @can('kelola-data-tpa.detail')
-                                    <a href="{{ route('manajemen-tpa.show', $item->id) }}"
-                                        class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-100 rounded-lg transition-all"
-                                        title="Lihat Detail">
-                                        <i class="fas fa-eye text-sm"></i>
-                                    </a>
-                                    @endcan
-
-                                    {{-- Edit Button --}}
-                                    @can('kelola-data-tpa.edit')
-                                    <a href="{{ route('manajemen-tpa.edit', $item->id) }}"
-                                        class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-green-600 hover:bg-green-50 border border-transparent hover:border-green-100 rounded-lg transition-all"
-                                        title="Edit">
-                                        <i class="fas fa-edit text-sm"></i>
-                                    </a>
-                                    @endcan
-
-                                    {{-- Delete Button --}}
-                                    @can('kelola-data-tpa.delete')
-                                    <form action="{{ route('manajemen-tpa.destroy', $item->id) }}"
-                                        method="POST"
-                                        class="inline-block delete-form">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="button"
-                                            class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-100 rounded-lg transition-all delete-btn"
-                                            data-nama="{{ $item->nama_lengkap }}"
-                                            data-nip="{{ $item->nip }}"
-                                            title="Hapus">
-                                            <i class="fas fa-trash text-sm"></i>
-                                        </button>
-                                    </form>
-                                    @endcan
-                                </div>
-                            </td>
-                        </tr>
+                            <tr class="hover:bg-[#F8FAFC] transition-colors duration-150 group">
+                                {{-- NIP --}}
+                                <td class="px-6 py-4 text-sm text-gray-500 font-semibold">
+                                    {{ $item->nip }}
+                                </td>
+                                
+                                {{-- Nama Lengkap --}}
+                                <td class="px-6 py-4 text-sm font-semibold text-gray-900 group-hover:text-[#C41E3A] transition-colors">
+                                    {{ $item->nama_lengkap }}
+                                </td>
+                                
+                                {{-- Jabatan --}}
+                                <td class="px-6 py-4 text-sm">
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded border border-blue-100 bg-blue-50 text-blue-700 text-xs font-bold">
+                                        {{ $item->jabatan ?? '-' }}
+                                    </span>
+                                </td>
+                                
+                                {{-- Lokasi Kerja --}}
+                                <td class="px-6 py-4 text-sm text-gray-600 font-semibold">
+                                    {{ $item->lokasi_kerja }}
+                                </td>
+                                
+                                {{-- Status --}}
+                                <td class="px-6 py-4 text-sm">
+                                    @php
+                                        $sc = match($item->status_pegawai) {
+                                            'Pegawai Tetap', 'Tetap' => 'bg-emerald-50 text-emerald-700 border-emerald-100',
+                                            'Perbantuan LLDIKTI', 'Perbantuan' => 'bg-sky-50 text-sky-700 border-sky-100',
+                                            'Profesional Full Time' => 'bg-indigo-50 text-indigo-700 border-indigo-100',
+                                            'Profesional Part Time' => 'bg-amber-50 text-amber-700 border-amber-100',
+                                            default => 'bg-gray-50 text-gray-700 border-gray-100'
+                                        };
+                                    @endphp
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded border font-bold text-xs {{ $sc }}">
+                                        {{ $item->status_pegawai ?? '-' }}
+                                    </span>
+                                </td>
+                                
+                                {{-- Aksi --}}
+                                <td class="px-6 py-4 text-center text-sm">
+                                    <div class="flex items-center justify-center gap-2.5">
+                                        {{-- Detail Button --}}
+                                        @can('kelola-data-tpa.detail')
+                                        <a href="{{ route('manajemen-tpa.show', $item->id) }}" 
+                                           class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-100 rounded-lg transition-all"
+                                           title="Lihat Detail">
+                                            <i class="fas fa-eye text-sm"></i>
+                                        </a>
+                                        @endcan
+                                        
+                                        {{-- Edit Button --}}
+                                        @can('kelola-data-tpa.edit')
+                                        <a href="{{ route('manajemen-tpa.edit', $item->id) }}" 
+                                           class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-green-600 hover:bg-green-50 border border-transparent hover:border-green-100 rounded-lg transition-all"
+                                           title="Edit">
+                                            <i class="fas fa-edit text-sm"></i>
+                                        </a>
+                                        @endcan
+                                        
+                                        {{-- Delete Button --}}
+                                        @can('kelola-data-tpa.delete')
+                                        <form action="{{ route('manajemen-tpa.destroy', $item->id) }}"
+                                            method="POST"
+                                            class="inline-block delete-form">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="button"
+                                                class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-100 rounded-lg transition-all delete-btn"
+                                                data-nama="{{ $item->nama_lengkap }}"
+                                                data-nip="{{ $item->nip }}"
+                                                title="Hapus">
+                                                <i class="fas fa-trash text-sm"></i>
+                                            </button>
+                                        </form>
+                                        @endcan
+                                    </div>
+                                </td>
+                            </tr>
                         @empty
                         {{-- Empty State --}}
                         <tr>
@@ -287,83 +280,86 @@
             </div>
 
             {{-- Pagination --}}
-            @if(isset($tpa) && method_exists($tpa, 'hasPages') && $tpa->hasPages())
-            <div class="px-6 py-4 border-t border-gray-100 bg-[#F8FAFC]">
-                <div class="flex items-center justify-between">
-                    <p class="text-xs font-semibold text-gray-500">
-                        Menampilkan {{ $tpa->firstItem() }} - {{ $tpa->lastItem() }} dari {{ $tpa->total() }} TPA
-                    </p>
-                    <div class="flex items-center">
-                        {{ $tpa->appends(request()->query())->links() }}
+            <div class="border-t border-gray-200 bg-gray-50 px-6 py-4 rounded-b-2xl">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div class="text-sm text-gray-500">
+                        Menampilkan
+                        <span class="font-semibold text-gray-800">{{ $tpa->firstItem() ?? 0 }}</span>
+                        –
+                        <span class="font-semibold text-gray-800">{{ $tpa->lastItem() ?? 0 }}</span>
+                        dari
+                        <span class="font-semibold text-[#C41E3A]">{{ $tpa->total() }}</span>
+                        data
+                    </div>
+                    <div>
+                        {{ $tpa->appends(request()->query())->links('components.custom-pagination') }}
                     </div>
                 </div>
             </div>
-            @endif
-        </div>
-    </main>
 
-    {{-- SweetAlert2 JS --}}
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Export dropdown toggle
-            const exportBtn = document.getElementById('exportBtn');
-            const exportDropdown = document.getElementById('exportDropdown');
+            {{-- SweetAlert2 JS --}}
 
-            if (exportBtn && exportDropdown) {
-                exportBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    exportDropdown.classList.toggle('hidden');
-                });
 
-                // Close dropdown when clicking outside
-                document.addEventListener('click', function(e) {
-                    if (!exportBtn.contains(e.target) && !exportDropdown.contains(e.target)) {
-                        exportDropdown.classList.add('hidden');
+            {{-- SweetAlert2 JS --}}
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Export dropdown toggle
+                    const exportBtn = document.getElementById('exportBtn');
+                    const exportDropdown = document.getElementById('exportDropdown');
+
+                    if (exportBtn && exportDropdown) {
+                        exportBtn.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            exportDropdown.classList.toggle('hidden');
+                        });
+
+                        // Close dropdown when clicking outside
+                        document.addEventListener('click', function(e) {
+                            if (!exportBtn.contains(e.target) && !exportDropdown.contains(e.target)) {
+                                exportDropdown.classList.add('hidden');
+                            }
+                        });
                     }
-                });
-            }
 
             // Success/Error Messages with SweetAlert2 Toast
             @if(session('success'))
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: '{{ session('
-                success ') }}',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                toast: true,
-                position: 'top-end'
-            });
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: '{{ session('success') }}',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    toast: true,
+                    position: 'top-end'
+                });
             @endif
 
             @if(session('error'))
-            Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: '{{ session('
-                error ') }}',
-                showConfirmButton: true,
-                confirmButtonColor: '#C41E3A'
-            });
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: '{{ session('error') }}',
+                    showConfirmButton: true,
+                    confirmButtonColor: '#C41E3A'
+                });
             @endif
 
-            // SWEETALERT DELETE CONFIRMATION
-            const deleteBtns = document.querySelectorAll('.delete-btn');
-            deleteBtns.forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
+                    // SWEETALERT DELETE CONFIRMATION
+                    const deleteBtns = document.querySelectorAll('.delete-btn');
+                    deleteBtns.forEach(btn => {
+                        btn.addEventListener('click', function(e) {
+                            e.preventDefault();
 
-                    const form = this.closest('.delete-form');
-                    const nama = this.getAttribute('data-nama');
-                    const nip = this.getAttribute('data-nip');
+                            const form = this.closest('.delete-form');
+                            const nama = this.getAttribute('data-nama');
+                            const nip = this.getAttribute('data-nip');
 
-                    Swal.fire({
-                        title: 'Hapus Data TPA?',
-                        html: `
+                            Swal.fire({
+                                title: 'Hapus Data TPA?',
+                                html: `
                             <div class="text-left space-y-2">
                                 <p class="text-gray-600">Apakah Anda yakin ingin menghapus data TPA:</p>
                                 <div class="bg-red-50 border border-red-100 rounded-xl p-4 mt-3">
@@ -376,27 +372,27 @@
                                 </p>
                             </div>
                         `,
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#C41E3A',
-                        cancelButtonColor: '#64748B',
-                        confirmButtonText: 'Ya, Hapus',
-                        cancelButtonText: 'Batal',
-                        reverseButtons: true,
-                        customClass: {
-                            popup: 'rounded-2xl',
-                            confirmButton: 'px-5 py-2.5 rounded-xl font-semibold text-sm',
-                            cancelButton: 'px-5 py-2.5 rounded-xl font-semibold text-sm'
-                        }
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit();
-                        }
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#C41E3A',
+                                cancelButtonColor: '#64748B',
+                                confirmButtonText: 'Ya, Hapus',
+                                cancelButtonText: 'Batal',
+                                reverseButtons: true,
+                                customClass: {
+                                    popup: 'rounded-2xl',
+                                    confirmButton: 'px-5 py-2.5 rounded-xl font-semibold text-sm',
+                                    cancelButton: 'px-5 py-2.5 rounded-xl font-semibold text-sm'
+                                }
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    form.submit();
+                                }
+                            });
+                        });
                     });
                 });
-            });
-        });
-    </script>
+            </script>
 </body>
 
 </html>
