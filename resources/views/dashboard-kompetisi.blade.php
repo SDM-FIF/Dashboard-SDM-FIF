@@ -83,6 +83,45 @@
 
         <!-- Bar Charts (Row 2) -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- Capaian Juara per Tahun -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow duration-300">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center text-indigo-600">
+                            <i class="fa-solid fa-medal text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-base">Capaian Juara per Tahun</h3>
+                            <p class="text-xs text-slate-400">Distribusi juara (1, 2, 3, Harapan 1, 2, 3) setiap tahun.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative min-h-[300px] flex items-center justify-center">
+                    <canvas id="chartJuaraTahun"></canvas>
+                </div>
+            </div>
+
+            <!-- Tingkat Kejuaraan per Tahun -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow duration-300">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center text-amber-600">
+                            <i class="fa-solid fa-globe text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-base">Tingkat Kejuaraan per Tahun</h3>
+                            <p class="text-xs text-slate-400">Distribusi tingkat kompetisi (Nasional, Internasional, Universitas).</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative min-h-[300px] flex items-center justify-center">
+                    <canvas id="chartTingkatTahun"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bar Charts (Row 3) -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             <!-- Jumlah Kompetisi per Prodi -->
             <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow duration-300">
                 <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
@@ -92,7 +131,7 @@
                         </div>
                         <div>
                             <h3 class="font-bold text-slate-800 text-base">Kompetisi per Prodi</h3>
-                            <p class="text-xs text-slate-400">Jumlah kompetisi yang diikuti per program studi.</p>
+                            <p class="text-xs text-slate-400">Jumlah mahasiswa yang mengikuti kompetisi per prodi.</p>
                         </div>
                     </div>
                 </div>
@@ -110,7 +149,7 @@
                         </div>
                         <div>
                             <h3 class="font-bold text-slate-800 text-base">Kompetisi per Kategori</h3>
-                            <p class="text-xs text-slate-400">Distribusi kompetisi per kategori kejuaraan.</p>
+                            <p class="text-xs text-slate-400">Distribusi jenis kompetisi.</p>
                         </div>
                     </div>
                 </div>
@@ -122,6 +161,13 @@
     </main>
 
     <script>
+        window.kompetisiData = {
+            kompetisiTahun: @json($kompetisiTahun ?? []),
+            juaraTahun: @json($juaraTahun ?? []),
+            kompetisiProdi: @json($kompetisiProdi ?? []),
+            kompetisiKategori: @json($kompetisiKategori ?? [])
+        };
+
         document.addEventListener('DOMContentLoaded', () => {
             const dateSpan = document.getElementById('current-date-span');
             if (dateSpan) {

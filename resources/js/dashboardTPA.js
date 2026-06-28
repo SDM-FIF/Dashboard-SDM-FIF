@@ -1,5 +1,8 @@
 import "./bootstrap";
 import Chart from "chart.js/auto";
+import ChartDataLabels from 'chartjs-plugin-datalabels';
+
+Chart.register(ChartDataLabels);
 
 // Palet warna yang kamu pilih
 const colors = [
@@ -20,39 +23,29 @@ function getChartData(elementId) {
     const el = document.getElementById(elementId);
     if (!el) return null;
     try {
-        const labels = JSON.parse(el.getAttribute('data-labels') || '[]');
-        const values = JSON.parse(el.getAttribute('data-values') || '[]');
+        const labels = JSON.parse(el.getAttribute("data-labels") || "[]");
+        const values = JSON.parse(el.getAttribute("data-values") || "[]");
         return { labels, values };
     } catch (e) {
-        console.error('Failed to parse chart data for ' + elementId, e);
+        console.error("Failed to parse chart data for " + elementId, e);
         return null;
     }
 }
 
-// 1. Chart Lokasi Kerja TPA (Doughnut)
-const lokasiData = getChartData("lokasiKerjaChart");
-if (lokasiData) {
-    new Chart(document.getElementById("lokasiKerjaChart"), {
-        type: "doughnut",
-        data: {
-            labels: lokasiData.labels,
-            datasets: [
-                {
-                    data: lokasiData.values,
-                    backgroundColor: colors,
-                },
-            ],
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                }
-            }
-        }
-    });
-}
+const datalabelsConfig = {
+    color: '#fff',
+    font: {
+        weight: 'bold',
+        size: 11
+    },
+    formatter: (value, ctx) => {
+        const datapoints = ctx.chart.data.datasets[0].data;
+        const total = datapoints.reduce((total, datapoint) => total + datapoint, 0);
+        const percentage = total > 0 ? (value / total * 100).toFixed(1) + "%" : "0%";
+        // Only show label if percentage is greater than 0%
+        return value > 0 ? percentage : '';
+    }
+};
 
 // 2. Chart Jabatan/Pangkat TPA (Doughnut)
 const jabatanData = getChartData("jabatanChart");
@@ -64,7 +57,13 @@ if (jabatanData) {
             datasets: [
                 {
                     data: jabatanData.values,
-                    backgroundColor: [colors[1], colors[3], colors[5], colors[7], colors[9]],
+                    backgroundColor: [
+                        colors[1],
+                        colors[3],
+                        colors[5],
+                        colors[7],
+                        colors[9],
+                    ],
                 },
             ],
         },
@@ -72,10 +71,11 @@ if (jabatanData) {
             responsive: true,
             plugins: {
                 legend: {
-                    position: 'bottom',
-                }
-            }
-        }
+                    position: "bottom",
+                },
+                datalabels: datalabelsConfig
+            },
+        },
     });
 }
 
@@ -89,7 +89,14 @@ if (pendidikanData) {
             datasets: [
                 {
                     data: pendidikanData.values,
-                    backgroundColor: [colors[5], colors[2], colors[0], colors[4], colors[6], colors[7]],
+                    backgroundColor: [
+                        colors[5],
+                        colors[2],
+                        colors[0],
+                        colors[4],
+                        colors[6],
+                        colors[7],
+                    ],
                 },
             ],
         },
@@ -97,10 +104,11 @@ if (pendidikanData) {
             responsive: true,
             plugins: {
                 legend: {
-                    position: 'bottom',
-                }
-            }
-        }
+                    position: "bottom",
+                },
+                datalabels: datalabelsConfig
+            },
+        },
     });
 }
 
@@ -125,15 +133,30 @@ if (statusPegawaiData) {
             responsive: true,
             plugins: {
                 legend: { display: false },
+                datalabels: {
+                    color: '#fff',
+                    font: { weight: 'bold' },
+                    align: 'end',
+                    anchor: 'end',
+                    formatter: (value, ctx) => {
+                        const datapoints = ctx.chart.data.datasets[0].data;
+                        const total = datapoints.reduce((total, datapoint) => total + datapoint, 0);
+                        const percentage = total > 0 ? (value / total * 100).toFixed(1) + "%" : "0%";
+                        return percentage;
+                    },
+                    // Since it's outside the bar in horizontal, maybe we want it inside or with different color if outside. 
+                    // Let's set it to dark if we place it outside.
+                    color: '#475569'
+                }
             },
             scales: {
                 x: {
                     beginAtZero: true,
                     ticks: {
                         stepSize: 1,
-                    }
-                }
-            }
+                    },
+                },
+            },
         },
     });
 }
