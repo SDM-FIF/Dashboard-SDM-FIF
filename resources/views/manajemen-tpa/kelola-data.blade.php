@@ -173,6 +173,7 @@
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Nama Lengkap</th>
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Jabatan</th>
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Pendidikan Terakhir</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Pendidikan Terakhir</th>
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Lokasi Kerja</th>
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Status</th>
                             <th class="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider w-36">Aksi</th>
@@ -182,85 +183,93 @@
                     {{-- Table Body --}}
                     <tbody class="divide-y divide-gray-100 bg-white">
                         @forelse($tpa as $item)
-                            <tr class="hover:bg-[#F8FAFC] transition-colors duration-150 group">
-                                {{-- NIP --}}
-                                <td class="px-6 py-4 text-sm text-gray-500 font-semibold">
-                                    {{ $item->nip }}
-                                </td>
-                                
-                                {{-- Nama Lengkap --}}
-                                <td class="px-6 py-4 text-sm font-semibold text-gray-900 group-hover:text-[#C41E3A] transition-colors">
-                                    {{ $item->nama_lengkap }}
-                                </td>
-                                
-                                {{-- Jabatan --}}
-                                <td class="px-6 py-4 text-sm">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded border border-blue-100 bg-blue-50 text-blue-700 text-xs font-bold">
-                                        {{ $item->jabatan ?? '-' }}
-                                    </span>
-                                </td>
-                                
-                                {{-- Lokasi Kerja --}}
-                                <td class="px-6 py-4 text-sm text-gray-600 font-semibold">
-                                    {{ $item->lokasi_kerja }}
-                                </td>
-                                
-                                {{-- Status --}}
-                                <td class="px-6 py-4 text-sm">
-                                    @php
-                                        $sc = match($item->status_pegawai) {
-                                            'Pegawai Tetap', 'Tetap' => 'bg-emerald-50 text-emerald-700 border-emerald-100',
-                                            'Perbantuan LLDIKTI', 'Perbantuan' => 'bg-sky-50 text-sky-700 border-sky-100',
-                                            'Profesional Full Time' => 'bg-indigo-50 text-indigo-700 border-indigo-100',
-                                            'Profesional Part Time' => 'bg-amber-50 text-amber-700 border-amber-100',
-                                            default => 'bg-gray-50 text-gray-700 border-gray-100'
-                                        };
-                                    @endphp
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded border font-bold text-xs {{ $sc }}">
-                                        {{ $item->status_pegawai ?? '-' }}
-                                    </span>
-                                </td>
-                                
-                                {{-- Aksi --}}
-                                <td class="px-6 py-4 text-center text-sm">
-                                    <div class="flex items-center justify-center gap-2.5">
-                                        {{-- Detail Button --}}
-                                        @can('kelola-data-tpa.detail')
-                                        <a href="{{ route('manajemen-tpa.show', $item->id) }}" 
-                                           class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-100 rounded-lg transition-all"
-                                           title="Lihat Detail">
-                                            <i class="fas fa-eye text-sm"></i>
-                                        </a>
-                                        @endcan
-                                        
-                                        {{-- Edit Button --}}
-                                        @can('kelola-data-tpa.edit')
-                                        <a href="{{ route('manajemen-tpa.edit', $item->id) }}" 
-                                           class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-green-600 hover:bg-green-50 border border-transparent hover:border-green-100 rounded-lg transition-all"
-                                           title="Edit">
-                                            <i class="fas fa-edit text-sm"></i>
-                                        </a>
-                                        @endcan
-                                        
-                                        {{-- Delete Button --}}
-                                        @can('kelola-data-tpa.delete')
-                                        <form action="{{ route('manajemen-tpa.destroy', $item->id) }}"
-                                            method="POST"
-                                            class="inline-block delete-form">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="button"
-                                                class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-100 rounded-lg transition-all delete-btn"
-                                                data-nama="{{ $item->nama_lengkap }}"
-                                                data-nip="{{ $item->nip }}"
-                                                title="Hapus">
-                                                <i class="fas fa-trash text-sm"></i>
-                                            </button>
-                                        </form>
-                                        @endcan
-                                    </div>
-                                </td>
-                            </tr>
+                        <tr class="hover:bg-[#F8FAFC] transition-colors duration-150 group">
+                            {{-- NIP --}}
+                            <td class="px-6 py-4 text-sm text-gray-500 font-semibold">
+                                {{ $item->nip }}
+                            </td>
+
+                            {{-- Nama Lengkap --}}
+                            <td class="px-6 py-4 text-sm font-semibold text-gray-900 group-hover:text-[#C41E3A] transition-colors">
+                                {{ $item->nama_lengkap }}
+                            </td>
+
+                            {{-- Jabatan --}}
+                            <td class="px-6 py-4 text-sm">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded border border-blue-100 bg-blue-50 text-blue-700 text-xs font-bold">
+                                    {{ $item->jabatan ?? '-' }}
+                                </span>
+                            </td>
+
+                            {{-- Pendidikan Terakhir --}}
+                            <td class="px-6 py-4 text-sm">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-100 text-xs font-semibold">
+                                    {{ $item->pendidikan_terakhir ?? '-' }}
+                                </span>
+                            </td>
+
+
+                            {{-- Lokasi Kerja --}}
+                            <td class="px-6 py-4 text-sm text-gray-600 font-semibold">
+                                {{ $item->lokasi_kerja }}
+                            </td>
+
+                            {{-- Status --}}
+                            <td class="px-6 py-4 text-sm">
+                                @php
+                                $sc = match($item->status_pegawai) {
+                                'Pegawai Tetap', 'Tetap' => 'bg-emerald-50 text-emerald-700 border-emerald-100',
+                                'Perbantuan LLDIKTI', 'Perbantuan' => 'bg-sky-50 text-sky-700 border-sky-100',
+                                'Profesional Full Time' => 'bg-indigo-50 text-indigo-700 border-indigo-100',
+                                'Profesional Part Time' => 'bg-amber-50 text-amber-700 border-amber-100',
+                                default => 'bg-gray-50 text-gray-700 border-gray-100'
+                                };
+                                @endphp
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded border font-bold text-xs {{ $sc }}">
+                                    {{ $item->status_pegawai ?? '-' }}
+                                </span>
+                            </td>
+
+                            {{-- Aksi --}}
+                            <td class="px-6 py-4 text-center text-sm">
+                                <div class="flex items-center justify-center gap-2.5">
+                                    {{-- Detail Button --}}
+                                    @can('kelola-data-tpa.detail')
+                                    <a href="{{ route('manajemen-tpa.show', $item->id) }}"
+                                        class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-100 rounded-lg transition-all"
+                                        title="Lihat Detail">
+                                        <i class="fas fa-eye text-sm"></i>
+                                    </a>
+                                    @endcan
+
+                                    {{-- Edit Button --}}
+                                    @can('kelola-data-tpa.edit')
+                                    <a href="{{ route('manajemen-tpa.edit', $item->id) }}"
+                                        class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-green-600 hover:bg-green-50 border border-transparent hover:border-green-100 rounded-lg transition-all"
+                                        title="Edit">
+                                        <i class="fas fa-edit text-sm"></i>
+                                    </a>
+                                    @endcan
+
+                                    {{-- Delete Button --}}
+                                    @can('kelola-data-tpa.delete')
+                                    <form action="{{ route('manajemen-tpa.destroy', $item->id) }}"
+                                        method="POST"
+                                        class="inline-block delete-form">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button"
+                                            class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-100 rounded-lg transition-all delete-btn"
+                                            data-nama="{{ $item->nama_lengkap }}"
+                                            data-nip="{{ $item->nip }}"
+                                            title="Hapus">
+                                            <i class="fas fa-trash text-sm"></i>
+                                        </button>
+                                    </form>
+                                    @endcan
+                                </div>
+                            </td>
+                        </tr>
                         @empty
                         {{-- Empty State --}}
                         <tr>
