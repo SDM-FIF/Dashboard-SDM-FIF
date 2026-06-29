@@ -202,11 +202,10 @@
 
                             {{-- Pendidikan Terakhir --}}
                             <td class="px-6 py-4 text-sm">
-                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-100 text-xs font-semibold">
-                                    {{ $item->pendidikan_terakhir ?? '-' }}
+                                 <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-100 text-xs font-semibold">
+                                  {{ $item->pendidikan_terakhir ?? '-' }}
                                 </span>
                             </td>
-
 
                             {{-- Lokasi Kerja --}}
                             <td class="px-6 py-4 text-sm text-gray-600 font-semibold">
@@ -304,8 +303,6 @@
                     </div>
                 </div>
             </div>
-
-            {{-- SweetAlert2 JS --}}
 
 
             {{-- SweetAlert2 JS --}}
