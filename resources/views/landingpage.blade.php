@@ -32,7 +32,7 @@
                 <div class="flex justify-between items-center">
                     <div>
                         <h2 class="text-slate-400 font-medium text-sm uppercase tracking-wider">Total Dosen</h2>
-                        <p class="text-4xl font-black text-slate-800 mt-2 tracking-tight group-hover:scale-105 transition-transform duration-300 origin-left">150</p>
+                        <p class="text-4xl font-black text-slate-800 mt-2 tracking-tight group-hover:scale-105 transition-transform duration-300 origin-left">{{ $totalDosen }}</p>
                     </div>
                     <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shadow-inner group-hover:rotate-6 transition-transform">
                         <i class="fa-solid fa-user-tie text-xl"></i>
@@ -49,7 +49,7 @@
                 <div class="flex justify-between items-center">
                     <div>
                         <h2 class="text-slate-400 font-medium text-sm uppercase tracking-wider">Total TPA</h2>
-                        <p class="text-4xl font-black text-slate-800 mt-2 tracking-tight group-hover:scale-105 transition-transform duration-300 origin-left">125</p>
+                        <p class="text-4xl font-black text-slate-800 mt-2 tracking-tight group-hover:scale-105 transition-transform duration-300 origin-left">{{ $totalTPA }}</p>
                     </div>
                     <div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 shadow-inner group-hover:rotate-6 transition-transform">
                         <i class="fa-solid fa-users text-xl"></i>
@@ -66,7 +66,7 @@
                 <div class="flex justify-between items-center">
                     <div>
                         <h2 class="text-slate-400 font-medium text-sm uppercase tracking-wider">Total Mahasiswa</h2>
-                        <p class="text-4xl font-black text-slate-800 mt-2 tracking-tight group-hover:scale-105 transition-transform duration-300 origin-left">200</p>
+                        <p class="text-4xl font-black text-slate-800 mt-2 tracking-tight group-hover:scale-105 transition-transform duration-300 origin-left">{{ $totalMahasiswa }}</p>
                     </div>
                     <div class="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 shadow-inner group-hover:rotate-6 transition-transform">
                         <i class="fa-solid fa-graduation-cap text-xl"></i>
