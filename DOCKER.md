@@ -161,11 +161,11 @@ docker-compose exec app chmod -R 775 /var/www/html/bootstrap/cache
 The default `.env.docker` uses the containerized MySQL database. If you prefer to use your existing remote database, update these values in `.env`:
 
 ```env
-DB_HOST=db-sdm-fif-fadilafgani808-9076.h.aivencloud.com
-DB_PORT=27491
-DB_DATABASE=db_dashboard_sdm_fif
-DB_USERNAME=avnadmin
-DB_PASSWORD=AVNS_Px1OxHDppdFMv3xCfup
+DB_HOST=your-db-host
+DB_PORT=3306
+DB_DATABASE=your_database
+DB_USERNAME=your_username
+DB_PASSWORD=your_password
 ```
 
 ### Changing Ports

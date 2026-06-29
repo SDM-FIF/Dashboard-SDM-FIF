@@ -173,6 +173,7 @@
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Nama Lengkap</th>
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Jabatan</th>
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Pendidikan Terakhir</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Pendidikan Terakhir</th>
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Lokasi Kerja</th>
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Status</th>
                             <th class="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider w-36">Aksi</th>
@@ -202,10 +203,11 @@
 
                             {{-- Pendidikan Terakhir --}}
                             <td class="px-6 py-4 text-sm">
-                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-purple-100 text-purple-700 text-xs font-semibold">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-100 text-xs font-semibold">
                                     {{ $item->pendidikan_terakhir ?? '-' }}
                                 </span>
                             </td>
+
 
                             {{-- Lokasi Kerja --}}
                             <td class="px-6 py-4 text-sm text-gray-600 font-semibold">
@@ -287,83 +289,86 @@
             </div>
 
             {{-- Pagination --}}
-            @if(isset($tpa) && method_exists($tpa, 'hasPages') && $tpa->hasPages())
-            <div class="px-6 py-4 border-t border-gray-100 bg-[#F8FAFC]">
-                <div class="flex items-center justify-between">
-                    <p class="text-xs font-semibold text-gray-500">
-                        Menampilkan {{ $tpa->firstItem() }} - {{ $tpa->lastItem() }} dari {{ $tpa->total() }} TPA
-                    </p>
-                    <div class="flex items-center">
-                        {{ $tpa->appends(request()->query())->links() }}
+            <div class="border-t border-gray-200 bg-gray-50 px-6 py-4 rounded-b-2xl">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div class="text-sm text-gray-500">
+                        Menampilkan
+                        <span class="font-semibold text-gray-800">{{ $tpa->firstItem() ?? 0 }}</span>
+                        –
+                        <span class="font-semibold text-gray-800">{{ $tpa->lastItem() ?? 0 }}</span>
+                        dari
+                        <span class="font-semibold text-[#C41E3A]">{{ $tpa->total() }}</span>
+                        data
+                    </div>
+                    <div>
+                        {{ $tpa->appends(request()->query())->links('components.custom-pagination') }}
                     </div>
                 </div>
             </div>
-            @endif
-        </div>
-    </main>
 
-    {{-- SweetAlert2 JS --}}
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Export dropdown toggle
-            const exportBtn = document.getElementById('exportBtn');
-            const exportDropdown = document.getElementById('exportDropdown');
+            {{-- SweetAlert2 JS --}}
 
-            if (exportBtn && exportDropdown) {
-                exportBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    exportDropdown.classList.toggle('hidden');
-                });
 
-                // Close dropdown when clicking outside
-                document.addEventListener('click', function(e) {
-                    if (!exportBtn.contains(e.target) && !exportDropdown.contains(e.target)) {
-                        exportDropdown.classList.add('hidden');
+            {{-- SweetAlert2 JS --}}
+            <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Export dropdown toggle
+                    const exportBtn = document.getElementById('exportBtn');
+                    const exportDropdown = document.getElementById('exportDropdown');
+
+                    if (exportBtn && exportDropdown) {
+                        exportBtn.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            exportDropdown.classList.toggle('hidden');
+                        });
+
+                        // Close dropdown when clicking outside
+                        document.addEventListener('click', function(e) {
+                            if (!exportBtn.contains(e.target) && !exportDropdown.contains(e.target)) {
+                                exportDropdown.classList.add('hidden');
+                            }
+                        });
                     }
-                });
-            }
 
             // Success/Error Messages with SweetAlert2 Toast
             @if(session('success'))
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: '{{ session('
-                success ') }}',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                toast: true,
-                position: 'top-end'
-            });
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: '{{ session('success') }}',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    toast: true,
+                    position: 'top-end'
+                });
             @endif
 
             @if(session('error'))
-            Swal.fire({
-                icon: 'error',
-                title: 'Error!',
-                text: '{{ session('
-                error ') }}',
-                showConfirmButton: true,
-                confirmButtonColor: '#C41E3A'
-            });
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: '{{ session('error') }}',
+                    showConfirmButton: true,
+                    confirmButtonColor: '#C41E3A'
+                });
             @endif
 
-            // SWEETALERT DELETE CONFIRMATION
-            const deleteBtns = document.querySelectorAll('.delete-btn');
-            deleteBtns.forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
+                    // SWEETALERT DELETE CONFIRMATION
+                    const deleteBtns = document.querySelectorAll('.delete-btn');
+                    deleteBtns.forEach(btn => {
+                        btn.addEventListener('click', function(e) {
+                            e.preventDefault();
 
-                    const form = this.closest('.delete-form');
-                    const nama = this.getAttribute('data-nama');
-                    const nip = this.getAttribute('data-nip');
+                            const form = this.closest('.delete-form');
+                            const nama = this.getAttribute('data-nama');
+                            const nip = this.getAttribute('data-nip');
 
-                    Swal.fire({
-                        title: 'Hapus Data TPA?',
-                        html: `
+                            Swal.fire({
+                                title: 'Hapus Data TPA?',
+                                html: `
                             <div class="text-left space-y-2">
                                 <p class="text-gray-600">Apakah Anda yakin ingin menghapus data TPA:</p>
                                 <div class="bg-red-50 border border-red-100 rounded-xl p-4 mt-3">
@@ -376,27 +381,27 @@
                                 </p>
                             </div>
                         `,
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#C41E3A',
-                        cancelButtonColor: '#64748B',
-                        confirmButtonText: 'Ya, Hapus',
-                        cancelButtonText: 'Batal',
-                        reverseButtons: true,
-                        customClass: {
-                            popup: 'rounded-2xl',
-                            confirmButton: 'px-5 py-2.5 rounded-xl font-semibold text-sm',
-                            cancelButton: 'px-5 py-2.5 rounded-xl font-semibold text-sm'
-                        }
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            form.submit();
-                        }
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#C41E3A',
+                                cancelButtonColor: '#64748B',
+                                confirmButtonText: 'Ya, Hapus',
+                                cancelButtonText: 'Batal',
+                                reverseButtons: true,
+                                customClass: {
+                                    popup: 'rounded-2xl',
+                                    confirmButton: 'px-5 py-2.5 rounded-xl font-semibold text-sm',
+                                    cancelButton: 'px-5 py-2.5 rounded-xl font-semibold text-sm'
+                                }
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    form.submit();
+                                }
+                            });
+                        });
                     });
                 });
-            });
-        });
-    </script>
+            </script>
 </body>
 
 </html>
