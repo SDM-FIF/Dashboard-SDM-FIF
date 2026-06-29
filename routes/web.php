@@ -9,6 +9,10 @@ use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\FakultasController;
 use App\Http\Controllers\ProdiController;
 use App\Http\Controllers\KompetisiController;
+use App\Models\Dosen;
+use App\Models\Mahasiswa;
+use App\Models\TenagaPendukungAkademik;
+use Illuminate\Support\Facades\DB;
 
 // ============================
 // Auth Routes
@@ -35,18 +39,66 @@ Route::get('/dashboard', function () {
     $dosenTugasBelajar = \App\Models\Dosen::where('status_dosen', 'Tugas Belajar')->count();
     $dosenIzinBelajar = \App\Models\Dosen::where('status_dosen', 'Izin Belajar')->count();
 
-    $pendidikanDosen = \App\Models\Dosen::select('pendidikan_terakhir', \DB::raw('count(*) as count'))
+    $pendidikanDosen = \App\Models\Dosen::select('pendidikan_terakhir', DB::raw('count(*) as count'))
         ->groupBy('pendidikan_terakhir')
         ->pluck('count', 'pendidikan_terakhir')
         ->toArray();
-        
-    $jadDosen = \App\Models\Dosen::select('jabatan', \DB::raw('count(*) as count'))
+
+    $jadDosen = \App\Models\Dosen::select('jabatan', DB::raw('count(*) as count'))
         ->groupBy('jabatan')
         ->pluck('count', 'jabatan')
         ->toArray();
 
-    return view('dashboard', compact('totalDosen', 'dosenAktif', 'dosenTugasBelajar', 'dosenIzinBelajar', 'pendidikanDosen', 'jadDosen'));
+    $nisbah = \App\Models\Prodi::withCount([
+        'dosen',
+        'mahasiswa as mahasiswa_aktif_count' => function ($query) {
+            $query->where('status', 'Aktif');
+        }
+    ])
+        ->get()
+        ->map(function ($prodi) {
+
+            $hasilNisbah = $prodi->dosen_count > 0
+                ? round($prodi->mahasiswa_aktif_count / $prodi->dosen_count, 2)
+                : 0;
+
+            return [
+                'nama_prodi' => $prodi->nama_prodi,
+                'jumlah_dosen' => $prodi->dosen_count,
+                'jumlah_mahasiswa' => $prodi->mahasiswa_aktif_count,
+                'nisbah' => '1 : 27',
+                'hasil_nisbah' => $hasilNisbah,
+                'status' => $hasilNisbah > 27 ? 'Melebihi' : 'Sesuai',
+            ];
+        });
+
+    return view('dashboard', compact('totalDosen', 'dosenAktif', 'dosenTugasBelajar', 'dosenIzinBelajar', 'pendidikanDosen', 'jadDosen', 'nisbah'));
 })->name('dashboard');
+
+// Landing Page
+Route::get('/', function () {
+
+    $totalDosen = Dosen::count();
+    $totalTPA = TenagaPendukungAkademik::count();
+    $totalMahasiswa = Mahasiswa::count();
+
+    return view('landingpage', compact(
+        'totalDosen',
+        'totalTPA',
+        'totalMahasiswa'
+    ));
+})->name('guest');
+
+Route::get('/guest-dosen', function () {
+    return view('guest-dosen');
+})->name('guest-dosen');
+
+Route::get('/guest-tpa', [TenagaPendukungAkademikController::class, 'guestDashboard'])
+    ->name('guest-tpa');
+
+Route::get('/guest-kompetisi', function () {
+    return view('guest-kompetisi');
+})->name('guest-kompetisi');
 
 Route::get('/dashboard-dosen', function () {
     $studiLanjut = \App\Models\Dosen::with('prodi')
@@ -132,7 +184,7 @@ Route::get('/dashboard-kompetisi', function () {
         ->whereNotNull('mahasiswa_kompetisi.juara')
         ->groupBy('year', 'mahasiswa_kompetisi.juara')
         ->get();
-        
+
     $kompetisiProdi = \Illuminate\Support\Facades\DB::table('mahasiswa_kompetisi')
         ->join('mahasiswa', 'mahasiswa_kompetisi.mahasiswa_id', '=', 'mahasiswa.id')
         ->join('prodi', 'mahasiswa.prodi_id', '=', 'prodi.id')
@@ -143,30 +195,10 @@ Route::get('/dashboard-kompetisi', function () {
     $kompetisiKategori = \App\Models\Kompetisi::select('jenis', \Illuminate\Support\Facades\DB::raw('count(*) as count'))
         ->groupBy('jenis')
         ->get();
-        
+
     return view('dashboard-kompetisi', compact('kompetisiTahun', 'juaraTahun', 'kompetisiProdi', 'kompetisiKategori'));
 })->name('dashboard-kompetisi');
 
-Route::get('/guest', function () {
-    // Jika dia login, kita cek akses utamanya, 
-    // tapi jika dia GUEST, kita izinkan lihat view dashboard sdm secara default
-    return view('landingpage');
-})->name('guest');
-
-Route::get('/guest-dosen', function () {
-    return view('guest-dosen');
-})->name('guest-dosen');
-
-Route::get('/guest-tpa', [TenagaPendukungAkademikController::class, 'guestDashboard'])->name('guest-tpa');
-
-Route::get('/guest-kompetisi', function () {
-    return view('guest-kompetisi');
-})->name('guest-kompetisi');
-
-
-Route::get('/', function () {
-    return view('landingpage');
-});
 // ============================
 // 🧪 DEBUG ROUTES FOR FRONTEND (DEVELOPMENT ONLY)
 // ============================
@@ -614,7 +646,7 @@ Route::middleware('auth')->group(function () {
             ->whereNotNull('mahasiswa_kompetisi.juara')
             ->groupBy('year', 'mahasiswa_kompetisi.juara')
             ->get();
-            
+
         $kompetisiProdi = \Illuminate\Support\Facades\DB::table('mahasiswa_kompetisi')
             ->join('mahasiswa', 'mahasiswa_kompetisi.mahasiswa_id', '=', 'mahasiswa.id')
             ->join('prodi', 'mahasiswa.prodi_id', '=', 'prodi.id')
@@ -625,7 +657,7 @@ Route::middleware('auth')->group(function () {
         $kompetisiKategori = \App\Models\Kompetisi::select('jenis', \Illuminate\Support\Facades\DB::raw('count(*) as count'))
             ->groupBy('jenis')
             ->get();
-            
+
         return view('dashboard-kompetisi', compact('kompetisiTahun', 'juaraTahun', 'kompetisiProdi', 'kompetisiKategori'));
     })->name('dashboard-kompetisi');
 
