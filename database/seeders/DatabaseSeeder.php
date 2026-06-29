@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use DeepCopy\f013\C;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -9,12 +10,59 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->call([
-            RoleSeeder::class,              // 1. Buat roles & permissions dulu
-            UserSeeder::class,              // 2. Super admin (HANYA butuh role_id)
-            FakultasSeeder::class,          // 3. Buat fakultas (master data)
-            ProdiSeeder::class,             // 4. Buat prodi (butuh fakultas_id)
-            KelompokKeahlianSeeder::class,  // 5. Buat kelompok keahlian
-            DosenSeeder::class,             // 6. TERAKHIR - Dosen (butuh semua data di atas)
+            // ============================================
+            // 1. BASE DATA (Roles & Master Data)
+            // ============================================
+            RoleSeeder::class,
+            FakultasSeeder::class,
+            ProdiSeeder::class,
+            KelompokKeahlianSeeder::class,
+            TahunAjarSeeder::class,
+
+            // ============================================
+            // 2. USERS & RELATED DATA
+            // ============================================
+            UserSeeder::class,
+            // DosenSeeder::class,               // ❌ DISABLED - Data dummy
+            TenagaPendukungAkademikSeeder::class,
+            // CalonDosenSeeder::class,          // ❌ DISABLED - Data dummy
+            // RiwayatPendidikanCalonDosenSeeder::class,  // ❌ DISABLED - Data dummy
+            MahasiswaSeeder::class,
+            // JadwalPengujianSeeder::class,     // ❌ DISABLED - Data dummy
+
+            // ============================================
+            // 3. PERMISSIONS (Menu Access Control)
+            // ============================================
+            DashboardPermissionSeeder::class,
+            
+            // Manajemen Dosen
+            ManajemenDosenPermissionSeeder::class,
+            ManajemenDosenImportPermissionSeeder::class,
+            ManajemenDosenLaporanPermissionSeeder::class,
+            
+            // Rekrutasi Dosen
+            ManajemenRekrutasiDosenPermissionSeeder::class,
+            ManajemenRekrutasiDosenImportPermissionSeeder::class,
+            ManajemenPenilaianCalonDosenPermissionSeeder::class,
+            ManajemenJadwalPengujianPermissionSeeder::class,
+            ManajemenHasilPengujianPermissionSeeder::class,
+            ManajemenBeritaAcaraPermissionSeeder::class,
+            
+            // Manajemen TPA
+            ManajemenTPAPermissionSeeder::class,
+            ManajemenTPAImportPermissionSeeder::class,
+            
+            // Manajemen Mahasiswa
+            ManajemenKelolaMahasiswaPermissionSeeder::class,
+            ManajemenImportMahasiswaPermissionSeeder::class,
+            
+            // Master Data
+            ManajemenMasterDataFakultasPermissionSeeder::class,
+            ManajemenMasterDataProdiPermissionSeeder::class,
+            ManajemenMasterDataKompetisiPermissionSeeder::class,
+            
+            // Pengaturan
+            PengaturanPermissionsSeeder::class,
         ]);
     }
 }

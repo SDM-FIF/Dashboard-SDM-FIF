@@ -11,24 +11,42 @@ class JadwalPengujian extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'dosen_penguji_id',
-        'rekrutasi_dosen_id',
+        'tahun_ajar_id',
+        'calon_dosen_id',
         'jadwal_ujian',
+        'metode_pelaksanaan',
+        'gedung',
+        'ruangan',
+        'waktu',
     ];
 
     protected $casts = [
         'jadwal_ujian' => 'date',
+        'waktu' => 'datetime:H:i',
     ];
 
     // Relasi
-    public function dosenPenguji()
+    public function tahunAjar()
     {
-        return $this->belongsTo(Dosen::class, 'dosen_penguji_id');
+        return $this->belongsTo(TahunAjar::class);
     }
 
-    public function rekrutasiDosen()
+    public function calonDosen()
     {
-        return $this->belongsTo(RekrutasiDosen::class);
+        return $this->belongsTo(CalonDosen::class);
+    }
+
+    public function dosenPenguji()
+    {
+        return $this->belongsToMany(Dosen::class, 'jadwal_pengujian_dosen')
+                    ->withPivot('urutan')
+                    ->withTimestamps()
+                    ->orderBy('urutan');
+    }
+
+    public function penilaianDetails()
+    {
+        return $this->hasMany(PenilaianDetail::class, 'jadwal_pengujian_id');
     }
 
     public function hasilPengujian()

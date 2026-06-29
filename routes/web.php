@@ -4,6 +4,11 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DosenController;
 use App\Http\Controllers\TenagaPendukungAkademikController;
+use App\Http\Controllers\RekrutasiDosenController;
+use App\Http\Controllers\MahasiswaController;
+use App\Http\Controllers\FakultasController;
+use App\Http\Controllers\ProdiController;
+use App\Http\Controllers\KompetisiController;
 
 // ============================
 // Auth Routes
@@ -21,16 +26,112 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->middleware('auth');
 
 // ============================
-// Landing & Welcome
+// Public Dashboard (Bisa diakses Guest & Auth)
 // ============================
+// Bagian Dashboard
+Route::get('/dashboard', function () {
+    // Jika dia login, kita cek akses utamanya, 
+    // tapi jika dia GUEST, kita izinkan lihat view dashboard sdm secara default
+    return view('dashboard');
+})->name('dashboard');
+
+Route::get('/dashboard-dosen', function () {
+    $studiLanjut = \App\Models\Dosen::with('prodi')
+        ->whereNotNull('status_studi_lanjut')
+        ->get(['id', 'nama_lengkap', 'prodi_id', 'jabatan', 'status_studi_lanjut', 'lokasi_kampus_studi', 'tahun_mulai_studi', 'batas_studi']);
+
+    $nisbah = \App\Models\Prodi::withCount(['dosen', 'mahasiswa'])
+        ->get()
+        ->map(function ($prodi) {
+            $rasio = $prodi->dosen_count > 0
+                ? round($prodi->mahasiswa_count / $prodi->dosen_count, 1)
+                : 0;
+            return [
+                'nama_prodi' => $prodi->nama_prodi,
+                'dosen' => $prodi->dosen_count,
+                'mahasiswa' => $prodi->mahasiswa_count,
+                'rasio' => $rasio,
+                'over_limit' => $rasio > 27,
+            ];
+        });
+
+    $totalDosen = \App\Models\Dosen::count();
+
+    $totalStudiLanjut = \App\Models\Dosen::whereNotNull('status_studi_lanjut')
+        ->count();
+
+    $s1 = \App\Models\Dosen::where('pendidikan_terakhir', 'S1')
+        ->count();
+
+    $s2 = \App\Models\Dosen::where('pendidikan_terakhir', 'S2')
+        ->count();
+
+    $s3 = \App\Models\Dosen::where('pendidikan_terakhir', 'S3')
+        ->count();
+
+    $prodiOverNisbah = collect($nisbah)
+        ->where('over_limit', true)
+        ->count();
+
+    $pendidikanPerProdi = collect([
+        'Informatika',
+        'Rekayasa Perangkat Lunak',
+        'Data Sains',
+        'Teknologi Informasi'
+    ])->map(function ($namaProdi) {
+
+        $dosen = \App\Models\Dosen::whereHas('prodi', function ($q) use ($namaProdi) {
+            $q->where('nama_prodi', 'like', '%' . $namaProdi . '%');
+        })->get();
+
+        return [
+            'nama_prodi' => $namaProdi,
+            's1' => $dosen->where('pendidikan_terakhir', 'S1')->count(),
+            's2' => $dosen->where('pendidikan_terakhir', 'S2')->count(),
+            's3' => $dosen->where('pendidikan_terakhir', 'S3')->count(),
+            'total' => $dosen->count(),
+        ];
+    });
+
+    return view('dashboard-dosen', compact(
+        'studiLanjut',
+        'nisbah',
+        'totalDosen',
+        'totalStudiLanjut',
+        's1',
+        's2',
+        's3',
+        'prodiOverNisbah',
+        'pendidikanPerProdi'
+    ));
+})->name('dashboard-dosen');
+
+Route::get('/dashboard-tpa', [TenagaPendukungAkademikController::class, 'dashboard'])->name('dashboard-tpa');
+
+Route::get('/dashboard-kompetisi', function () {
+    return view('dashboard-kompetisi');
+})->name('dashboard-kompetisi');
+
+Route::get('/guest', function () {
+    // Jika dia login, kita cek akses utamanya, 
+    // tapi jika dia GUEST, kita izinkan lihat view dashboard sdm secara default
+    return view('landingpage');
+})->name('guest');
+
+Route::get('/guest-dosen', function () {
+    return view('guest-dosen');
+})->name('guest-dosen');
+
+Route::get('/guest-tpa', [TenagaPendukungAkademikController::class, 'guestDashboard'])->name('guest-tpa');
+
+Route::get('/guest-kompetisi', function () {
+    return view('guest-kompetisi');
+})->name('guest-kompetisi');
+
+
 Route::get('/', function () {
     return view('landingpage');
-})->name('landingpage');
-
-Route::get('/welcome', function () {
-    return view('welcome');
-})->name('welcome');
-
+});
 // ============================
 // 🧪 DEBUG ROUTES FOR FRONTEND (DEVELOPMENT ONLY)
 // ============================
@@ -170,51 +271,263 @@ Route::prefix('debug')->group(function () {
 // Protected Routes (harus login)
 // ============================
 Route::middleware('auth')->group(function () {
-    // Dashboard
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    // Dashboard - with permission check and smart redirect
+
 
     // Dashboard Dosen
-    Route::get('/dashboard-dosen', function () {
-        return view('dashboard-dosen');
-    })->name('dashboard-dosen');
 
+    // ============================
+    // 🆕 MASTER DATA ROUTES (Fakultas, Prodi, Kompetisi)
+    // ============================
+    // Menggunakan Route::resource agar otomatis ada index, create, store, edit, update, destroy
+    Route::prefix('master-data')->middleware(['auth'])->group(function () {
+
+        // Fakultas - view permission for all roles, edit permission for Super Admin only
+        Route::middleware('can:master-data-fakultas.view')->group(function () {
+            Route::get('fakultas', [FakultasController::class, 'index'])->name('fakultas.index');
+
+            Route::middleware('can:master-data-fakultas.edit')->group(function () {
+                Route::get('fakultas/create', [FakultasController::class, 'create'])->name('fakultas.create');
+                Route::post('fakultas', [FakultasController::class, 'store'])->name('fakultas.store');
+                Route::get('fakultas/{fakultas}/edit', [FakultasController::class, 'edit'])->name('fakultas.edit');
+                Route::put('fakultas/{fakultas}', [FakultasController::class, 'update'])->name('fakultas.update');
+                Route::delete('fakultas/{fakultas}', [FakultasController::class, 'destroy'])->name('fakultas.destroy');
+            });
+        });
+
+        // Prodi - view permission for all roles, create/edit/delete for Super Admin only
+        Route::middleware('can:master-data-prodi.view')->group(function () {
+            Route::get('prodi', [ProdiController::class, 'index'])->name('prodi.index');
+
+            Route::middleware('can:master-data-prodi.create')->group(function () {
+                Route::get('prodi/create', [ProdiController::class, 'create'])->name('prodi.create');
+                Route::post('prodi', [ProdiController::class, 'store'])->name('prodi.store');
+            });
+
+            Route::middleware('can:master-data-prodi.edit')->group(function () {
+                Route::get('prodi/{prodi}/edit', [ProdiController::class, 'edit'])->name('prodi.edit');
+                Route::put('prodi/{prodi}', [ProdiController::class, 'update'])->name('prodi.update');
+            });
+
+            Route::middleware('can:master-data-prodi.delete')->group(function () {
+                Route::delete('prodi/{prodi}', [ProdiController::class, 'destroy'])->name('prodi.destroy');
+            });
+        });
+
+        // Kompetisi - view permission for all roles, create/edit/delete for Super Admin only
+        Route::middleware('can:master-data-kompetisi.view')->group(function () {
+            Route::get('kompetisi', [KompetisiController::class, 'index'])->name('kompetisi.index');
+
+            Route::middleware('can:master-data-kompetisi.create')->group(function () {
+                Route::get('kompetisi/create', [KompetisiController::class, 'create'])->name('kompetisi.create');
+                Route::post('kompetisi', [KompetisiController::class, 'store'])->name('kompetisi.store');
+            });
+
+            Route::middleware('can:master-data-kompetisi.edit')->group(function () {
+                Route::get('kompetisi/{kompetisi}/edit', [KompetisiController::class, 'edit'])->name('kompetisi.edit');
+                Route::put('kompetisi/{kompetisi}', [KompetisiController::class, 'update'])->name('kompetisi.update');
+            });
+
+            Route::middleware('can:master-data-kompetisi.delete')->group(function () {
+                Route::delete('kompetisi/{kompetisi}', [KompetisiController::class, 'destroy'])->name('kompetisi.destroy');
+            });
+        });
+    });
     // ============================
     // Manajemen Dosen Routes
     // ============================
-    Route::prefix('manajemen-dosen')->name('manajemen-dosen.')->group(function () {
+    Route::prefix('manajemen-dosen')->name('manajemen-dosen.')->middleware('can:kelola-data-dosen.view')->group(function () {
+        // Kelola Data Routes (View permission required)
         Route::get('/kelola-data', [DosenController::class, 'kelolaData'])->name('kelola-data');
-        Route::get('/import-data', [DosenController::class, 'importForm'])->name('import-data');
-        Route::post('/import-data', [DosenController::class, 'importProcess'])->name('import-process');
-        Route::get('/laporan', [DosenController::class, 'laporan'])->name('laporan');
+        Route::get('/export-excel', [DosenController::class, 'exportExcel'])->name('export-excel');
+        Route::get('/export-csv', [DosenController::class, 'exportCsv'])->name('export-csv');
+        Route::get('/export-pdf', [DosenController::class, 'exportPdf'])->name('export-pdf');
+        Route::get('/export', [DosenController::class, 'exportExcel'])->name('export'); // Backward compatibility
 
-        // CRUD Routes
-        Route::get('/create', [DosenController::class, 'create'])->name('create');
-        Route::post('/store', [DosenController::class, 'store'])->name('store');
-        Route::get('/{dosen}', [DosenController::class, 'show'])->name('show');
-        Route::get('/{dosen}/edit', [DosenController::class, 'edit'])->name('edit');
-        Route::put('/{dosen}', [DosenController::class, 'update'])->name('update');
-        Route::delete('/{dosen}', [DosenController::class, 'destroy'])->name('destroy');
+        // Import Routes (Protected - Super Admin only)
+        Route::middleware('can:import-data-dosen.view')->group(function () {
+            Route::get('/import', [DosenController::class, 'importView'])->name('import.view');
+            Route::get('/import/template', [DosenController::class, 'downloadTemplate'])->name('import.template');
+            Route::post('/import/upload', [DosenController::class, 'uploadImport'])->name('import.upload');
+            Route::post('/import/save', [DosenController::class, 'saveImport'])->name('import.save');
+            Route::get('/import/result', [DosenController::class, 'importResult'])->name('import.result');
+            Route::get('/import/download-result', [DosenController::class, 'downloadImportResult'])->name('import.download-result');
+        });
+
+        // Laporan Routes (All roles can access)
+        Route::middleware('can:laporan-data-dosen.view')->group(function () {
+            Route::get('/laporan', [DosenController::class, 'laporan'])->name('laporan');
+            Route::get('/laporan/export-pdf', [DosenController::class, 'exportLaporanPDF'])->name('laporan.export-pdf');
+        });
+
+        // CRUD Routes with specific permissions
+        Route::get('/create', [DosenController::class, 'create'])->name('create')->middleware('can:kelola-data-dosen.create');
+        Route::post('/store', [DosenController::class, 'store'])->name('store')->middleware('can:kelola-data-dosen.create');
+        Route::get('/{dosen}', [DosenController::class, 'show'])->name('show')->middleware('can:kelola-data-dosen.detail');
+        Route::get('/{dosen}/edit', [DosenController::class, 'edit'])->name('edit')->middleware('can:kelola-data-dosen.edit');
+        Route::put('/{dosen}', [DosenController::class, 'update'])->name('update')->middleware('can:kelola-data-dosen.edit');
+        Route::delete('/{dosen}', [DosenController::class, 'destroy'])->name('destroy')->middleware('can:kelola-data-dosen.delete');
     });
+
     // ============================
     // Manajemen TPA Routes
     // ============================
-    Route::prefix('manajemen-tpa')->name('manajemen-tpa.')->group(function () {
+    Route::prefix('manajemen-tpa')->name('manajemen-tpa.')->middleware('can:kelola-data-tpa.view')->group(function () {
+        // Kelola Data & Laporan
         Route::get('/kelola-data', [TenagaPendukungAkademikController::class, 'kelolaData'])->name('kelola-data');
-        Route::get('/import-data', [TenagaPendukungAkademikController::class, 'importForm'])->name('import-data');
-        Route::post('/import-data', [TenagaPendukungAkademikController::class, 'importProcess'])->name('import-process');
         Route::get('/laporan', [TenagaPendukungAkademikController::class, 'laporan'])->name('laporan');
 
+
+        Route::get('/download-template', [TenagaPendukungAkademikController::class, 'downloadTemplate'])->name('download-template');
+
+        // Import Features (Protected - Super Admin only)
+        Route::middleware('can:import-data-tpa.view')->group(function () {
+            Route::get('/import-data', [TenagaPendukungAkademikController::class, 'importForm'])->name('import-data');
+            Route::post('/import-process', [TenagaPendukungAkademikController::class, 'importProcess'])->name('import-process');
+            Route::post('/import-store', [TenagaPendukungAkademikController::class, 'storeImport'])->name('import.store');
+        });
+
+        // CRUD Routes with specific permissions
+        Route::get('/create', [TenagaPendukungAkademikController::class, 'create'])->name('create')->middleware('can:kelola-data-tpa.create');
+        Route::post('/store', [TenagaPendukungAkademikController::class, 'store'])->name('store')->middleware('can:kelola-data-tpa.create');
+
+        // Letakkan route dengan parameter {tpa} di paling bawah agar tidak bentrok dengan route statis
+        Route::get('/{tpa}', [TenagaPendukungAkademikController::class, 'show'])->name('show')->middleware('can:kelola-data-tpa.detail');
+        Route::get('/{tpa}/edit', [TenagaPendukungAkademikController::class, 'edit'])->name('edit')->middleware('can:kelola-data-tpa.edit');
+        Route::put('/{tpa}', [TenagaPendukungAkademikController::class, 'update'])->name('update')->middleware('can:kelola-data-tpa.edit');
+        Route::delete('/{tpa}', [TenagaPendukungAkademikController::class, 'destroy'])->name('destroy')->middleware('can:kelola-data-tpa.delete');
+    });
+    // ============================
+    // Manajemen Mahasiswa Routes
+    // ============================
+
+    Route::prefix('mahasiswa')->name('mahasiswa.')->middleware('can:kelola-data-mahasiswa.view')->group(function () {
+
+        // --- FITUR IMPORT (Pola Multi-Step) - Super Admin Only ---
+        Route::middleware('can:import-data-mahasiswa.view')->group(function () {
+            // Halaman utama import & Step 1 (Upload View)
+            Route::get('/import', [MahasiswaController::class, 'importView'])->name('import.view');
+            // Proses Upload & Parsing (Step 1 ke Step 2)
+            Route::post('/import/upload', [MahasiswaController::class, 'uploadImport'])->name('import.upload');
+            // Proses Simpan ke Database (Step 2 ke Result)
+            Route::post('/import/save', [MahasiswaController::class, 'saveImport'])->name('import.save');
+            // Halaman Hasil Akhir (Step 3)
+            Route::get('/import/result', [MahasiswaController::class, 'importResult'])->name('import.result');
+            // Downloads
+            Route::get('/download-template', [MahasiswaController::class, 'downloadTemplate'])->name('download.template');
+            Route::get('/download-result', [MahasiswaController::class, 'downloadImportResult'])->name('download.result');
+        });
+        // Di dalam group Route::prefix('mahasiswa')->name('mahasiswa.')
+
+        // Hapus kata '/mahasiswa/' di URL dan hapus 'mahasiswa.' di name
+        Route::get('/export-excel', [MahasiswaController::class, 'exportExcel'])->name('export-excel');
+        Route::get('/export-pdf', [MahasiswaController::class, 'exportPdf'])->name('export-pdf');
+        // --- MANAJEMEN DATA (CRUD) ---
+        Route::get('/kelola-data', [MahasiswaController::class, 'index'])->name('kelola-data');
+        Route::get('/laporan', [MahasiswaController::class, 'laporan'])->name('laporan');
+
+        Route::get('/create', [MahasiswaController::class, 'create'])->name('create')->middleware('can:kelola-data-mahasiswa.create');
+        Route::post('/store', [MahasiswaController::class, 'store'])->name('store')->middleware('can:kelola-data-mahasiswa.create');
+
+        // --- MAHASISWA KOMPETISI ---
+        Route::get('/kompetisi-mahasiswa', [MahasiswaController::class, 'kompetisiIndex'])->name('kompetisi.index');
+        Route::get('/kompetisi-mahasiswa/create', [MahasiswaController::class, 'kompetisiCreate'])->name('kompetisi.create')->middleware('can:kelola-data-mahasiswa.create');
+        Route::post('/kompetisi-mahasiswa', [MahasiswaController::class, 'kompetisiStore'])->name('kompetisi.store')->middleware('can:kelola-data-mahasiswa.create');
+        Route::delete('/kompetisi-mahasiswa/{id}', [MahasiswaController::class, 'kompetisiDestroy'])->name('kompetisi.destroy')->middleware('can:kelola-data-mahasiswa.delete');
+
+        // Route dengan Parameter diletakkan di bawah agar tidak "memakan" route statis di atas
+        Route::get('/{mahasiswa}', [MahasiswaController::class, 'show'])->name('show')->middleware('can:kelola-data-mahasiswa.detail');
+        Route::get('/{mahasiswa}/edit', [MahasiswaController::class, 'edit'])->name('edit')->middleware('can:kelola-data-mahasiswa.edit');
+        Route::put('/{mahasiswa}', [MahasiswaController::class, 'update'])->name('update')->middleware('can:kelola-data-mahasiswa.edit');
+        Route::delete('/{mahasiswa}', [MahasiswaController::class, 'destroy'])->name('destroy')->middleware('can:kelola-data-mahasiswa.delete');
+    });
+    // ============================
+    // 🆕 Rekrutasi Dosen Routes (TAMBAHAN BARU)
+    // ============================
+    Route::prefix('rekrutasi-dosen')->name('rekrutasi-dosen.')->middleware('can:rekrutasi-data-dosen.view')->group(function () {
+        // Overview / Main List
+        Route::get('/', [RekrutasiDosenController::class, 'index'])->name('index');
+
+        // Import Routes - Super Admin Only
+        Route::middleware('can:import-rekrutasi-dosen.view')->group(function () {
+            Route::get('/import', [RekrutasiDosenController::class, 'importView'])->name('import.view');
+            Route::post('/import', [RekrutasiDosenController::class, 'import'])->name('import');
+            // Import Routes - Detail
+            Route::get('/import/template', [RekrutasiDosenController::class, 'downloadTemplate'])->name('import.template');
+            Route::post('/import/upload', [RekrutasiDosenController::class, 'uploadImport'])->name('import.upload');
+            Route::post('/import/save', [RekrutasiDosenController::class, 'saveImport'])->name('import.save');
+            Route::get('/import/result', [RekrutasiDosenController::class, 'importResult'])->name('import.result');
+            Route::get('/import/download-result', [RekrutasiDosenController::class, 'downloadImportResult'])->name('import.download-result');
+        });
+
+        // Jadwal Pengujian - Protected Routes
+        Route::middleware('can:jadwal-pengujian.view')->group(function () {
+            Route::get('/jadwal-pengujian', [RekrutasiDosenController::class, 'jadwalPengujian'])->name('jadwal-pengujian');
+            Route::get('/jadwal-pengujian/export-excel', [RekrutasiDosenController::class, 'exportJadwalPengujianExcel'])->name('jadwal-pengujian.export-excel');
+            Route::get('/jadwal-pengujian/export-csv', [RekrutasiDosenController::class, 'exportJadwalPengujianCsv'])->name('jadwal-pengujian.export-csv');
+            Route::get('/jadwal-pengujian/export-pdf', [RekrutasiDosenController::class, 'exportJadwalPengujianPdf'])->name('jadwal-pengujian.export-pdf');
+
+            // Detail - requires separate permission
+            Route::get('/jadwal-pengujian/{id}', [RekrutasiDosenController::class, 'showJadwalPengujian'])->name('jadwal-pengujian.show')->middleware('can:jadwal-pengujian.detail');
+
+            // Create/Edit/Delete - Super Admin only
+            Route::post('/jadwal-pengujian', [RekrutasiDosenController::class, 'storeJadwalPengujian'])->name('jadwal-pengujian.store')->middleware('can:jadwal-pengujian.create');
+            Route::get('/jadwal-pengujian/{id}/edit', [RekrutasiDosenController::class, 'editJadwalPengujian'])->name('jadwal-pengujian.edit')->middleware('can:jadwal-pengujian.edit');
+            Route::match(['put', 'post'], '/jadwal-pengujian/{id}', [RekrutasiDosenController::class, 'updateJadwalPengujian'])->name('jadwal-pengujian.update')->middleware('can:jadwal-pengujian.edit');
+            Route::delete('/jadwal-pengujian/{id}', [RekrutasiDosenController::class, 'destroyJadwalPengujian'])->name('jadwal-pengujian.destroy')->middleware('can:jadwal-pengujian.delete');
+        });
+
+        // Penilaian Calon Dosen - Protected Routes
+        Route::middleware('can:penilaian-dosen.access')->group(function () {
+            Route::get('/penilaian/{jadwal_id}', [RekrutasiDosenController::class, 'penilaian'])->name('penilaian');
+            Route::get('/penilaian/export/{id}', [RekrutasiDosenController::class, 'exportPenilaianExcel'])->name('penilaian.export');
+            Route::get('/penilaian/export-pdf/{id}', [RekrutasiDosenController::class, 'exportPenilaianPdf'])->name('penilaian.export-pdf');
+
+            // Submit - requires separate permission (Dosen Penguji only, not Super Admin)
+            Route::post('/penilaian/store', [RekrutasiDosenController::class, 'storePenilaian'])->name('penilaian.store')->middleware('can:penilaian-dosen.submit');
+        });
+
+        // Download Riwayat Pendidikan Files
+        Route::get('/riwayat-file/{filename}', [RekrutasiDosenController::class, 'downloadRiwayatFile'])->name('riwayat.download');
+
+        // Hasil Pengujian
+        Route::middleware('can:hasil-pengujian.view')->group(function () {
+            Route::get('/hasil-pengujian', [RekrutasiDosenController::class, 'hasilPengujian'])->name('hasil-pengujian');
+            Route::get('/hasil-pengujian/combined-pdf/{calon_dosen_id}', [RekrutasiDosenController::class, 'hasilPengujianCombinedPdf'])->name('hasil-pengujian.combined-pdf');
+            Route::get('/hasil-pengujian/berita-acara/{jadwal_id}', [RekrutasiDosenController::class, 'publicDownloadBeritaAcara'])->name('hasil-pengujian.berita-acara');
+        });
+
+        // Berita Acara - Protected Routes (Dosen Penguji 1 & Super Admin only)
+        Route::middleware('can:berita-acara.access')->group(function () {
+            Route::get('/berita-acara/{jadwal_id}', [RekrutasiDosenController::class, 'beritaAcara'])->name('berita-acara');
+            Route::get('/berita-acara/{jadwal_id}/download', [RekrutasiDosenController::class, 'downloadBeritaAcara'])->name('berita-acara.download');
+
+            // Submit - requires separate permission (Dosen Penguji 1 only, not Super Admin)
+            Route::post('/berita-acara/{jadwal_id}', [RekrutasiDosenController::class, 'storeBeritaAcara'])->name('berita-acara.store')->middleware('can:berita-acara.submit');
+        });
+
+        // ⚠️ EXPORT ROUTES - HARUS DI ATAS {id} ⚠️
+        Route::get('/export-excel', [RekrutasiDosenController::class, 'exportExcel'])->name('export-excel');
+        Route::get('/export-csv', [RekrutasiDosenController::class, 'exportCsv'])->name('export-csv');
+        Route::get('/export-pdf', [RekrutasiDosenController::class, 'exportPdf'])->name('export-pdf');
+
         // CRUD Routes
-        Route::get('/create', [TenagaPendukungAkademikController::class, 'create'])->name('create');
-        Route::post('/store', [TenagaPendukungAkademikController::class, 'store'])->name('store');
-        Route::get('/{tpa}', [TenagaPendukungAkademikController::class, 'show'])->name('show');
-        Route::get('/{tpa}/edit', [TenagaPendukungAkademikController::class, 'edit'])->name('edit');
-        Route::put('/{tpa}', [TenagaPendukungAkademikController::class, 'update'])->name('update');
-        Route::delete('/{tpa}', [TenagaPendukungAkademikController::class, 'destroy'])->name('destroy');
+        Route::get('/create', [RekrutasiDosenController::class, 'create'])->name('create');
+        Route::post('/', [RekrutasiDosenController::class, 'store'])->name('store');
+        Route::get('/{id}', [RekrutasiDosenController::class, 'show'])->name('show');
+        Route::get('/{id}/edit', [RekrutasiDosenController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [RekrutasiDosenController::class, 'update'])->name('update');
+        Route::delete('/{id}', [RekrutasiDosenController::class, 'destroy'])->name('destroy');
     });
 
+    // ============================
+    // Backward Compatibility Routes (untuk Navbar)
+    // ============================
+    // UBAH route ini dari yang lama
+    Route::get('/rekrutasi-dosen', [RekrutasiDosenController::class, 'index'])->name('rekrutasi-dosen');
+
+    // UBAH route ini dari yang lama
+    Route::get('/import-rekruitasi', [RekrutasiDosenController::class, 'importView'])->name('import-rekruitasi');
 
     // ============================
     // Data Routes (Backward Compatibility)
@@ -236,10 +549,6 @@ Route::middleware('auth')->group(function () {
         return view('kelola-tpa');
     })->name('kelola-tpa');
 
-    Route::get('/import-dosen', function () {
-        return view('import-dosen');
-    })->name('import-dosen');
-    
     Route::get('/import-file-dosen', function () {
         return view('import-file-dosen');
     })->name('import-file-dosen');
@@ -248,17 +557,11 @@ Route::middleware('auth')->group(function () {
         return view('import-mahasiswa');
     })->name('import-mahasiswa');
 
-    Route::get('/import-rekruitasi', function () {
-        return view('import-rekruitasi');
-    })->name('import-rekruitasi');
-
     Route::get('/import-tpa', function () {
         return view('import-tpa');
     })->name('import-tpa');
 
-    Route::get('/dashboard-tpa', function () {
-        return view('dashboard-tpa');
-    })->name('dashboard-tpa');
+    Route::get('/dashboard-tpa', [TenagaPendukungAkademikController::class, 'dashboard'])->name('dashboard-tpa');
 
     // Kompetisi
     Route::get('/kompetisi', function () {
@@ -274,11 +577,6 @@ Route::middleware('auth')->group(function () {
         return view('manajemen.tpa');
     })->name('manajemen-tpa');
 
-    // Recruitment
-    Route::get('/rekrutasi-dosen', function () {
-        return view('kelola-rekruitasi');
-    })->name('rekrutasi-dosen');
-
     Route::get('/manajemen-mahasiswa', function () {
         return view('kelola-mahasiswa');
     })->name('manajemen-mahasiswa');
@@ -288,8 +586,62 @@ Route::middleware('auth')->group(function () {
         return view('reports.master-data');
     })->name('master-data');
 
-    // System
-    Route::get('/pengaturan', function () {
-        return view('system.pengaturan');
-    })->name('pengaturan');
+    // System - Pengaturan - Konfigurasi Sistem
+    Route::get('/pengaturan', [App\Http\Controllers\PengaturanController::class, 'index'])
+        ->name('pengaturan')
+        ->middleware('permission:konfigurasi-sistem.view');
+    Route::post('/pengaturan/role', [App\Http\Controllers\PengaturanController::class, 'storeRole'])
+        ->name('pengaturan.role.store')
+        ->middleware('permission:konfigurasi-sistem.create');
+    Route::put('/pengaturan/role/{id}', [App\Http\Controllers\PengaturanController::class, 'updateRole'])
+        ->name('pengaturan.role.update')
+        ->middleware('permission:konfigurasi-sistem.edit');
+    Route::delete('/pengaturan/role/{id}', [App\Http\Controllers\PengaturanController::class, 'destroyRole'])
+        ->name('pengaturan.role.destroy')
+        ->middleware('permission:konfigurasi-sistem.delete');
+
+    // Pengaturan - Plotting Permission
+    Route::get('/pengaturan/plotting/{roleId}', [App\Http\Controllers\PengaturanController::class, 'plotting'])->name('pengaturan.plotting');
+    Route::put('/pengaturan/plotting/{roleId}/update', [App\Http\Controllers\PengaturanController::class, 'updatePermissions'])->name('pengaturan.plotting.update');
+
+    // Pengaturan - Plotting Permission Export
+    Route::get('/pengaturan/plotting/{roleId}/export/excel', [App\Http\Controllers\PengaturanController::class, 'exportPlottingExcel'])->name('pengaturan.plotting.export.excel');
+    Route::get('/pengaturan/plotting/{roleId}/export/csv', [App\Http\Controllers\PengaturanController::class, 'exportPlottingCsv'])->name('pengaturan.plotting.export.csv');
+    Route::get('/pengaturan/plotting/{roleId}/export/pdf', [App\Http\Controllers\PengaturanController::class, 'exportPlottingPdf'])->name('pengaturan.plotting.export.pdf');
+
+    // Pengaturan - User Management
+    Route::get('/pengaturan/user-management', [App\Http\Controllers\PengaturanController::class, 'userManagement'])
+        ->name('pengaturan.user-management')
+        ->middleware('permission:user-management.view');
+    Route::post('/pengaturan/user', [App\Http\Controllers\PengaturanController::class, 'storeUser'])
+        ->name('pengaturan.user.store')
+        ->middleware('permission:user-management.create');
+    Route::put('/pengaturan/user/{id}', [App\Http\Controllers\PengaturanController::class, 'updateUser'])
+        ->name('pengaturan.user.update')
+        ->middleware('permission:user-management.edit');
+    Route::delete('/pengaturan/user/{id}', [App\Http\Controllers\PengaturanController::class, 'destroyUser'])
+        ->name('pengaturan.user.destroy')
+        ->middleware('permission:user-management.delete');
+
+    // Pengaturan - User Export
+    Route::get('/pengaturan/user/export/excel', [App\Http\Controllers\PengaturanController::class, 'exportUserExcel'])
+        ->name('pengaturan.user.export.excel')
+        ->middleware('permission:user-management.view');
+    Route::get('/pengaturan/user/export/csv', [App\Http\Controllers\PengaturanController::class, 'exportUserCsv'])
+        ->name('pengaturan.user.export.csv')
+        ->middleware('permission:user-management.view');
+    Route::get('/pengaturan/user/export/pdf', [App\Http\Controllers\PengaturanController::class, 'exportUserPdf'])
+        ->name('pengaturan.user.export.pdf')
+        ->middleware('permission:user-management.view');
+
+    // Pengaturan - Konfigurasi Sistem Export
+    Route::get('/pengaturan/export/excel', [App\Http\Controllers\PengaturanController::class, 'exportExcel'])
+        ->name('pengaturan.export.excel')
+        ->middleware('permission:konfigurasi-sistem.view');
+    Route::get('/pengaturan/export/csv', [App\Http\Controllers\PengaturanController::class, 'exportCsv'])
+        ->name('pengaturan.export.csv')
+        ->middleware('permission:konfigurasi-sistem.view');
+    Route::get('/pengaturan/export/pdf', [App\Http\Controllers\PengaturanController::class, 'exportPdf'])
+        ->name('pengaturan.export.pdf')
+        ->middleware('permission:konfigurasi-sistem.view');
 });

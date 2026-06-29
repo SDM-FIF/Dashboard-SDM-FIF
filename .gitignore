@@ -22,3 +22,9 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Docker
+/.docker-data/
+docker-compose.override.yml
+
+.vercel

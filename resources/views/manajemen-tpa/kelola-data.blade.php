@@ -4,29 +4,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <title>Kelola Data TPA - Dashboard SDM</title>
+    <title>Kelola Data TPA - Dashboard SDM FIF</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+        }
+    </style>
 </head>
-
-<body class="flex flex-col md:flex-row bg-gray-50 font-nunito">
     {{-- Sidebar Navigation --}}
     <x-navbar />
-
+    
     {{-- Main Content --}}
-    <main class="flex-1 p-4 md:p-6 min-h-screen">
-        {{-- Top Search Bar --}}
+    <main class="flex-1 p-6 md:p-8 overflow-y-auto">
+        {{-- Top Search Bar / Topbar --}}
         <x-topbar />
 
-        {{-- Page Title --}}
-        <div class="mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Kelola Data TPA</h1>
+        {{-- Header Section --}}
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 mt-4">
+            <div>
+                <h1 class="text-3xl md:text-4xl font-extrabold text-[#C41E3A] tracking-tight">Kelola Data TPA</h1>
+                <p class="text-sm text-gray-500 mt-1">Kelola informasi profile, jabatan, lokasi kerja, dan status Tenaga Kependidikan dan Profesional.</p>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                @can('kelola-data-tpa.create')
+                <a href="{{ route('manajemen-tpa.create') }}"
+                   class="inline-flex items-center gap-2 px-5 py-3 bg-[#C41E3A] hover:bg-[#A31830] text-white font-semibold rounded-xl transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5 text-sm">
+                    <i class="fas fa-plus"></i>
+                    <span>Tambah Data</span>
+                </a>
+                @endcan
+            </div>
         </div>
 
         {{-- Filter Section Card --}}
-        <div class="bg-white rounded-xl shadow-lg border border-gray-200 p-6 mb-8">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8 hover:shadow-md transition-all duration-300">
+            <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-50">
+                <div class="p-2.5 bg-red-50 text-[#C41E3A] rounded-lg">
+                    <i class="fas fa-filter text-lg"></i>
+                </div>
+                <div>
+                    <h2 class="text-lg font-bold text-gray-800">Filter Pencarian</h2>
+                    <p class="text-xs text-gray-500">Saring data TPA berdasarkan kriteria tertentu</p>
+                </div>
+            </div>
+
             <form method="GET" action="{{ route('manajemen-tpa.kelola-data') }}" class="space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {{-- Filter Row --}}
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                     {{-- Lokasi Kerja Filter --}}
                     <div>
                         <label class="block text-lg font-semibold text-red-600 mb-3">Lokasi Kerja</label>
@@ -67,12 +96,9 @@
                             <option value="terbaru" {{ request('sort') == 'terbaru' ? 'selected' : '' }}>Terbaru</option>
                             <option value="terlama" {{ request('sort') == 'terlama' ? 'selected' : '' }}>Terlama</option>
                             <option value="nama-az" {{ request('sort') == 'nama-az' ? 'selected' : '' }}>Nama A-Z</option>
-                            <option value="nama-za" {{ request('sort') == 'nama-za' ? 'selected' : '' }}>Nama Z-A</option>
-                            <option value="nip-asc" {{ request('sort') == 'nip-asc' ? 'selected' : '' }}>NIP Naik</option>
-                            <option value="nip-desc" {{ request('sort') == 'nip-desc' ? 'selected' : '' }}>NIP Turun</option>
+                            <option value="nip-asc" {{ request('sort') == 'nip-asc' ? 'selected' : '' }}>NIP Terkecil</option>
                         </select>
                     </div>
-                </div>
 
                 {{-- Filter Row 2 --}}
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -85,6 +111,7 @@
                             placeholder="Cari nama TPA..."
                             class="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-700 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all duration-200">
                     </div>
+                </div>
 
                     {{-- Buttons --}}
                     <div class="flex items-end">
@@ -142,7 +169,8 @@
 
             {{-- Table --}}
             <div class="overflow-x-auto">
-                <table class="w-full">
+                <table class="min-w-full w-full border-collapse">
+                    {{-- Table Header --}}
                     <thead>
                         <tr class="bg-red-600 text-white">
                             <th class="px-6 py-4 text-left text-sm font-semibold">Nama</th>
@@ -299,43 +327,93 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const successMessage = document.getElementById('successMessage');
-            const errorMessage = document.getElementById('errorMessage');
-
-            if (successMessage) {
-                setTimeout(() => {
-                    successMessage.style.transform = 'translateX(100%)';
-                    setTimeout(() => successMessage.remove(), 300);
-                }, 3000);
-            }
-
-            if (errorMessage) {
-                setTimeout(() => {
-                    errorMessage.style.transform = 'translateX(100%)';
-                    setTimeout(() => errorMessage.remove(), 300);
-                }, 5000);
-            }
-
+            // Export dropdown toggle
+            const exportBtn = document.getElementById('exportBtn');
             const exportDropdown = document.getElementById('exportDropdown');
-            if (exportDropdown) {
-                exportDropdown.addEventListener('change', function() {
-                    if (this.value) {
-                        alert(`Export ${this.value.toUpperCase()} akan segera tersedia`);
-                        this.value = '';
+
+            if (exportBtn && exportDropdown) {
+                exportBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    exportDropdown.classList.toggle('hidden');
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!exportBtn.contains(e.target) && !exportDropdown.contains(e.target)) {
+                        exportDropdown.classList.add('hidden');
                     }
                 });
             }
 
-            const filterForm = document.querySelector('form');
-            if (filterForm) {
-                filterForm.addEventListener('submit', function() {
-                    const submitBtn = this.querySelector('button[type="submit"]');
-                    if (submitBtn) {
-                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Memfilter...</span>';
-                        submitBtn.disabled = true;
-                    }
+            // Success/Error Messages with SweetAlert2 Toast
+            @if(session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: '{{ session('success') }}',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    toast: true,
+                    position: 'top-end'
                 });
-            }
+            @endif
+
+            @if(session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: '{{ session('error') }}',
+                    showConfirmButton: true,
+                    confirmButtonColor: '#C41E3A'
+                });
+            @endif
+
+            // SWEETALERT DELETE CONFIRMATION
+            const deleteBtns = document.querySelectorAll('.delete-btn');
+            deleteBtns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    const form = this.closest('.delete-form');
+                    const nama = this.getAttribute('data-nama');
+                    const nip = this.getAttribute('data-nip');
+
+                    Swal.fire({
+                        title: 'Hapus Data TPA?',
+                        html: `
+                            <div class="text-left space-y-2">
+                                <p class="text-gray-600">Apakah Anda yakin ingin menghapus data TPA:</p>
+                                <div class="bg-red-50 border border-red-100 rounded-xl p-4 mt-3">
+                                    <p class="font-bold text-[#C41E3A]">${nama}</p>
+                                    <p class="text-xs text-red-600 mt-0.5">NIP: ${nip}</p>
+                                </div>
+                                <p class="text-xs text-gray-400 mt-3">
+                                    <i class="fas fa-exclamation-triangle text-amber-500 mr-1"></i>
+                                    Tindakan ini permanen dan data tidak dapat dikembalikan!
+                                </p>
+                            </div>
+                        `,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#C41E3A',
+                        cancelButtonColor: '#64748B',
+                        confirmButtonText: 'Ya, Hapus',
+                        cancelButtonText: 'Batal',
+                        reverseButtons: true,
+                        customClass: {
+                            popup: 'rounded-2xl',
+                            confirmButton: 'px-5 py-2.5 rounded-xl font-semibold text-sm',
+                            cancelButton: 'px-5 py-2.5 rounded-xl font-semibold text-sm'
+                        }
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
         });
     </script>
 </body>

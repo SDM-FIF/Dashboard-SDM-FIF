@@ -1,11 +1,11 @@
-    <nav class="bg-redmain text-white min-h-screen w-64 hidden md:flex flex-col font-nunito ">
+    <nav class="bg-redmain text-white h-screen w-64 hidden md:flex flex-col font-nunito sticky top-0 flex-shrink-0">
         {{-- Header/Logo Section --}}
-        <div class="p-4 border-b border-red-500">
+        <div class="p-4 border-b border-red-500 flex-shrink-0">
             <h2 class="text-lg font-semibold">Dashboard SDM FIF</h2>
         </div>
 
         {{-- Navigation Menu --}}
-        <div class="flex-1 py-4">
+        <div class="flex-1 py-4 overflow-y-auto sidebar-scroll">
             <ul class="space-y-2.5">
                 {{-- Dashboard with Dropdown --}}
                 <li class="relative">
@@ -30,54 +30,43 @@
                     <div id="dashboardDropdown" class="hidden bg-red-600 border-l-4 border-red-400">
                         <ul class="py-2">
                             <li>
-                                <a href="{{ route('dashboard') }}"
+                                <a href="{{ route('guest') }}"
                                     class="block px-8 py-2 text-sm hover:bg-red-500 transition-colors duration-200 {{ request()->routeIs('data-dosen*') ? 'bg-red-500 text-white' : 'text-red-100' }}">
-                                    Dashboard SDM
+                                    Dashboard
                                 </a>
                             </li>
                             <li>
-                                <a href="{{ route('dashboard-dosen') }}"
+                                <a href="{{ route('guest-dosen') }}"
                                     class="block px-8 py-2 text-sm hover:bg-red-500 transition-colors duration-200 {{ request()->routeIs('data-dosen*') ? 'bg-red-500 text-white' : 'text-red-100' }}">
                                     Dashboard Dosen
                                 </a>
                             </li>
+
                             <li>
-                                <a href="{{ route('data-dosen') }}"
-                                    class="block px-8 py-2 text-sm hover:bg-red-500 transition-colors duration-200 {{ request()->routeIs('data-dosen*') ? 'bg-red-500 text-white' : 'text-red-100' }}">
-                                    Data Dosen
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('data-dosen') }}"
+                                <a href="{{ route('guest-tpa') }}"
                                     class="block px-8 py-2 text-sm hover:bg-red-500 transition-colors duration-200 {{ request()->routeIs('data-dosen*') ? 'bg-red-500 text-white' : 'text-red-100' }}">
                                     Dashboard TPA
                                 </a>
                             </li>
+
                             <li>
-                                <a href="{{ route('data-dosen') }}"
-                                    class="block px-8 py-2 text-sm hover:bg-red-500 transition-colors duration-200 {{ request()->routeIs('data-dosen*') ? 'bg-red-500 text-white' : 'text-red-100' }}">
-                                    Data TPA
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('data-tpa') }}"
+                                <a href="{{ route('guest-kompetisi') }}"
                                     class="block px-8 py-2 text-sm hover:bg-red-500 transition-colors duration-200 {{ request()->routeIs('data-tpa*') ? 'bg-red-500 text-white' : 'text-red-100' }}">
                                     Dashboard Kompetisi
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('kompetisi') }}"
-                                    class="block px-8 py-2 text-sm hover:bg-red-500 transition-colors duration-200 {{ request()->routeIs('data-tpa*') ? 'bg-red-500 text-white' : 'text-red-100' }}">
-                                    Data Kompetisi
                                 </a>
                             </li>
                         </ul>
                     </div>
                 </li>
+            </ul>
+        </div>
 
-
-
-
+        <div class="p-6 border-t border-red-500/30 mt-auto flex-shrink-0">
+            <a href="{{ route('login') }}"
+                class="block w-full text-center px-4 py-2 bg-white text-red-600 rounded-md text-sm font-bold">
+                Login
+            </a>
+        </div>
 
     </nav>
 <script>

@@ -14,6 +14,7 @@ class MahasiswaKompetisi extends Pivot
     protected $fillable = [
         'mahasiswa_id',
         'kompetisi_id',
+        'juara',
     ];
 
     // Relasi

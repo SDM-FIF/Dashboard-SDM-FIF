@@ -1,87 +1,139 @@
-import './bootstrap';
-import Chart from 'chart.js/auto';
+import "./bootstrap";
+import Chart from "chart.js/auto";
 
-//MASIH DUMMY DISESUAIKAN SETELAH ADA CONTROLLER
+// Palet warna yang kamu pilih
+const colors = [
+    "#3b82f6", // Blue
+    "#10b981", // Emerald
+    "#f59e0b", // Amber
+    "#4f46e5", // Indigo
+    "#06b6d4", // Cyan
+    "#8b5cf6", // Violet
+    "#ec4899", // Pink
+    "#f97316", // Orange
+    "#64748b", // Slate
+    "#22c55e", // Green
+];
 
-new Chart(document.getElementById('jumlahJuara'), {
-    type: 'doughnut',
-    data: {
-        labels: ['Juara 1', 'Juara 2', 'Juara 3'],
-        datasets: [{
-            data: [110, 30, 10],
-            backgroundColor: ['#b91c1c', '#ef4444', '#f87171']
-        }]
+// Helper to parse data from element
+function getChartData(elementId) {
+    const el = document.getElementById(elementId);
+    if (!el) return null;
+    try {
+        const labels = JSON.parse(el.getAttribute('data-labels') || '[]');
+        const values = JSON.parse(el.getAttribute('data-values') || '[]');
+        return { labels, values };
+    } catch (e) {
+        console.error('Failed to parse chart data for ' + elementId, e);
+        return null;
     }
-});
+}
 
-new Chart(document.getElementById('jumlahMahasiswa'), {
-    type: 'doughnut',
-    data: {
-        labels: ['AKADEMIK', 'NON-AKADEMIK'],
-        datasets: [{
-            data: [110, 30],
-            backgroundColor: ['#b91c1c', '#ef4444']
-        }]
-    }
-});
-
-new Chart(document.getElementById('statusMahasiswa'), {
-    type: 'doughnut',
-    data: {
-        labels: ['AKTIF', 'CUTI','TIDAK AKTIF'],
-        datasets: [{
-            data: [110, 30, 10],
-            backgroundColor: ['#991b1b','#b91c1c', '#ef4444', '#f87171']
-        }]
-    }
-});
-
-new Chart(document.getElementById('jumlahKompetisi'), {
-    type: 'bar',
-    data: {
-        labels: ['RPL', 'IT', 'DS', 'IF', 'PJJ'],
-        datasets: [{
-            label: 'Jumlah Dosen',
-            data: [30, 40, 20, 45, 5],
-            backgroundColor: [
-                '#b91c1c',
-                '#ef4444',
-                '#f87171',
-                '#fca5a5',
-                '#fecaca'
-            ]
-        }]
-    },
-    options: {
-        responsive: true,
-        plugins: {
-            title: {
-                display: true,
-                text: 'JFA Dosen'
-            },
-            legend: {
-                display: false
-            }
+// 1. Chart Lokasi Kerja TPA (Doughnut)
+const lokasiData = getChartData("lokasiKerjaChart");
+if (lokasiData) {
+    new Chart(document.getElementById("lokasiKerjaChart"), {
+        type: "doughnut",
+        data: {
+            labels: lokasiData.labels,
+            datasets: [
+                {
+                    data: lokasiData.values,
+                    backgroundColor: colors,
+                },
+            ],
         },
-        scales: {
-            y: {
-                beginAtZero: true
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                }
             }
         }
-    }
-});
+    });
+}
 
-new Chart(document.getElementById('jumlahKompetisi2'), {
-    type: 'bar',
-    data: {
-        labels: ['PEGAWAI TETAP','PROFESIONAL FULL TIME','PROFESIONAL PART TIME','PERBANTUAN LLDIKTI'],
-        datasets: [{
-            label: 'Jumlah',
-            data: [40,20,60,80],
-            backgroundColor: '#b91c1c'
-        }]
-    },
-    options: {
-        indexAxis: 'y'
-    }
-});
+// 2. Chart Jabatan/Pangkat TPA (Doughnut)
+const jabatanData = getChartData("jabatanChart");
+if (jabatanData) {
+    new Chart(document.getElementById("jabatanChart"), {
+        type: "doughnut",
+        data: {
+            labels: jabatanData.labels,
+            datasets: [
+                {
+                    data: jabatanData.values,
+                    backgroundColor: [colors[1], colors[3], colors[5], colors[7], colors[9]],
+                },
+            ],
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                }
+            }
+        }
+    });
+}
+
+// 3. Chart Pendidikan TPA (Doughnut)
+const pendidikanData = getChartData("pendidikanChart");
+if (pendidikanData) {
+    new Chart(document.getElementById("pendidikanChart"), {
+        type: "doughnut",
+        data: {
+            labels: pendidikanData.labels,
+            datasets: [
+                {
+                    data: pendidikanData.values,
+                    backgroundColor: [colors[5], colors[2], colors[0], colors[4], colors[6], colors[7]],
+                },
+            ],
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                }
+            }
+        }
+    });
+}
+
+// 4. Bar Chart Status Pegawai - TPA (Horizontal Bar)
+const statusPegawaiData = getChartData("statusPegawaiChart");
+if (statusPegawaiData) {
+    new Chart(document.getElementById("statusPegawaiChart"), {
+        type: "bar",
+        data: {
+            labels: statusPegawaiData.labels,
+            datasets: [
+                {
+                    label: "Jumlah Pegawai",
+                    data: statusPegawaiData.values,
+                    backgroundColor: colors[0],
+                    borderRadius: 8,
+                },
+            ],
+        },
+        options: {
+            indexAxis: "y",
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1,
+                    }
+                }
+            }
+        },
+    });
+}

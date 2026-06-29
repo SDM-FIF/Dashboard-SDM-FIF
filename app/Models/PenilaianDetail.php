@@ -9,20 +9,143 @@ class PenilaianDetail extends Model
     protected $table = 'penilaian_detail';
 
     protected $fillable = [
-        'komponen_penilaian_id',
-        'hasil_pengujian_id',
-        'skor',
-        'catatan',
+        'dosen_id',
+        'user_id',
+        'calon_dosen_id',
+        'jadwal_pengujian_id',
+        'nilai_jalur_lamaran',
+        'nilai_h_index',
+        'nilai_jfa',
+        'nilai_pma',
+        'nilai_sistematika',
+        'nilai_kst',
+        'nilai_motivasi',
+        'nilai_kmp_mengajar',
+        'nilai_kmp_mkp',
+        'nilai_kmp_pp',
+        'nilai_kmp_abdimas',
+        'nilai_kmp_bdt',
+        'nilai_keahlian_lainnya',
+        'nilai_kmt_wkm',
+        'rata_a',
+        'rata_b',
+        'rata_c',
+        'rata_nilai',
+        'rata_akhir',
+        'keterangan_berbobot',
+        'kesiapan',
+        'kesediaan',
+        'catatan_penilai',
+        'rekomendasi_akhir',
+        'prodi_rekomendasi',
+        'status_rekomendasi',
+        'jfa_rekomendasi',
+        'pendidikan_rekomendasi',
+        'kk_rekomendasi',
+    ];
+
+    protected $casts = [
+        'nilai_jalur_lamaran' => 'decimal:2',
+        'nilai_h_index' => 'decimal:2',
+        'nilai_jfa' => 'decimal:2',
+        'nilai_pma' => 'decimal:2',
+        'nilai_sistematika' => 'decimal:2',
+        'nilai_kst' => 'decimal:2',
+        'nilai_motivasi' => 'decimal:2',
+        'nilai_kmp_mengajar' => 'decimal:2',
+        'nilai_kmp_mkp' => 'decimal:2',
+        'nilai_kmp_pp' => 'decimal:2',
+        'nilai_kmp_abdimas' => 'decimal:2',
+        'nilai_kmp_bdt' => 'decimal:2',
+        'nilai_keahlian_lainnya' => 'decimal:2',
+        'nilai_kmt_wkm' => 'decimal:2',
+        'rata_a' => 'decimal:2',
+        'rata_b' => 'decimal:2',
+        'rata_c' => 'decimal:2',
+        'rata_nilai' => 'decimal:2',
+        'rata_akhir' => 'decimal:2',
+        'kesiapan' => 'boolean',
+        'kesediaan' => 'boolean',
+        'rekomendasi_akhir' => 'boolean',
     ];
 
     // Relasi
-    public function komponenPenilaian()
+    public function dosen()
     {
-        return $this->belongsTo(KomponenPenilaian::class);
+        return $this->belongsTo(Dosen::class);
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function calonDosen()
+    {
+        return $this->belongsTo(CalonDosen::class);
+    }
+
+    public function jadwalPengujian()
+    {
+        return $this->belongsTo(JadwalPengujian::class);
+    }
+
+    // Alias untuk kemudahan akses
+    public function jadwal()
+    {
+        return $this->jadwalPengujian();
     }
 
     public function hasilPengujian()
     {
-        return $this->belongsTo(HasilPengujian::class);
+        return $this->hasOne(HasilPengujian::class);
+    }
+
+    public function prodiRekomendasi()
+    {
+        return $this->belongsTo(Prodi::class, 'prodi_rekomendasi');
+    }
+
+    public function kkRekomendasi()
+    {
+        return $this->belongsTo(KelompokKeahlian::class, 'kk_rekomendasi');
+    }
+
+    // Constants for enum values
+    const STATUS_REKOMENDASI_FULL_TIME = 'Full Time';
+    const STATUS_REKOMENDASI_PART_TIME = 'Part Time';
+
+    const JFA_NJFA = 'NJFA';
+    const JFA_ASISTEN_AHLI = 'Asisten Ahli';
+    const JFA_LEKTOR = 'Lektor';
+    const JFA_LEKTOR_KEPALA = 'Lektor Kepala';
+
+    const PENDIDIKAN_S2 = 'S2';
+    const PENDIDIKAN_S3 = 'S3';
+
+    public static function getStatusRekomendasiOptions()
+    {
+        return [
+            self::STATUS_REKOMENDASI_FULL_TIME,
+            self::STATUS_REKOMENDASI_PART_TIME,
+        ];
+    }
+
+    public static function getJfaRekomendasiOptions()
+    {
+        return [
+            self::JFA_NJFA,
+            self::JFA_ASISTEN_AHLI,
+            self::JFA_LEKTOR,
+            self::JFA_LEKTOR_KEPALA,
+        ];
+    }
+
+    public static function getPendidikanRekomendasiOptions()
+    {
+        return [
+            self::PENDIDIKAN_S2,
+            self::PENDIDIKAN_S3,
+        ];
     }
 }

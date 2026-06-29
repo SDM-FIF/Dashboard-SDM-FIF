@@ -10,8 +10,10 @@ class HasilPengujian extends Model
     
     protected $fillable = [
         'jadwal_pengujian_id',
-        'total_nilai',
-        'berita_acara',
+        'calon_dosen_id',
+        'dosen_id',
+        'penilaian_detail_id',
+        'rekomendasi_akhir',
     ];
 
     // Relasi
@@ -20,8 +22,18 @@ class HasilPengujian extends Model
         return $this->belongsTo(JadwalPengujian::class);
     }
 
+    public function calonDosen()
+    {
+        return $this->belongsTo(CalonDosen::class);
+    }
+
+    public function dosen()
+    {
+        return $this->belongsTo(Dosen::class);
+    }
+
     public function penilaianDetail()
     {
-        return $this->hasMany(PenilaianDetail::class);
+        return $this->belongsTo(PenilaianDetail::class);
     }
 }

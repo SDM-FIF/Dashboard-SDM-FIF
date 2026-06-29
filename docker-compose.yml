@@ -1,0 +1,92 @@
+version: "3.9"
+
+services:
+
+  # Nginx
+  nginx:
+    image: nginx:alpine
+    container_name: dashboard-sdm-nginx
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-8080}:80"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+    networks:
+      - dashboard-network
+
+
+  # Laravel App (PHP-FPM)
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: dashboard-sdm-app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    environment:
+      DB_CONNECTION: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_DATABASE: ${DB_DATABASE:-dashboard_sdm}
+      DB_USERNAME: ${DB_USERNAME:-root}
+      DB_PASSWORD: ${DB_PASSWORD:-secret}
+
+      CACHE_DRIVER: redis
+      SESSION_DRIVER: redis
+      QUEUE_CONNECTION: redis
+
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - dashboard-network
+
+
+  # MySQL
+  mysql:
+    image: mysql:8.0
+    container_name: dashboard-sdm-mysql
+    restart: unless-stopped
+    ports:
+      - "3307:3306"   # tidak bentrok dengan mysql lokal
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE:-dashboard_sdm}
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-secret}
+      MYSQL_USER: ${DB_USERNAME:-dbuser}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - dashboard-network
+
+
+  # Redis
+  redis:
+    image: redis:alpine
+    container_name: dashboard-sdm-redis
+    restart: unless-stopped
+    ports:
+      - "6380:6379"   # supaya tidak bentrok kalau ada redis lokal
+    volumes:
+      - redis-data:/data
+    networks:
+      - dashboard-network
+
+
+networks:
+  dashboard-network:
+    driver: bridge
+
+
+volumes:
+  mysql-data:
+  redis-data:
