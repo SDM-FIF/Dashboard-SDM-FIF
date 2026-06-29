@@ -9,28 +9,6 @@
       "runtime": "vercel-php@0.8.0"
     }
   },
-  "env": {
-    "APP_NAME": "Laravel",
-    "APP_ENV": "production",
-    "APP_KEY": "base64:aCDzDQAlPccvBJmisvozLel2LYGw0EJ2SkS93+uCsZQ=",
-    "APP_DEBUG": "true",
-    "APP_URL": "https://dashboard-sdm-fif.vercel.app",
-    "DB_CONNECTION": "mysql",
-    "DB_HOST": "db-sdm-fif-fadilafgani808-9076.h.aivencloud.com",
-    "DB_PORT": "27491",
-    "DB_DATABASE": "defaultdb",
-    "DB_USERNAME": "avnadmin",
-    "DB_PASSWORD": "AVNS_1hcPnqVd5AJRwdEMxe_",
-    "SESSION_DRIVER": "cookie",
-    "CACHE_STORE": "array",
-    "CACHE_DRIVER": "array",
-    "LOG_CHANNEL": "stderr",
-    "APP_CONFIG_CACHE": "/tmp/config.php",
-    "APP_SERVICES_CACHE": "/tmp/services.php",
-    "APP_PACKAGES_CACHE": "/tmp/packages.php",
-    "APP_ROUTES_CACHE": "/tmp/routes.php",
-    "APP_EVENTS_CACHE": "/tmp/events.php"
-  },
   "routes": [
     {
       "src": "/build/(.*)",
