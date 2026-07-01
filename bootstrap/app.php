@@ -18,11 +18,11 @@ $app = Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->render(function (\Throwable $e) {
+        $exceptions->report(function (\Throwable $e) {
             if ((env('VERCEL') || isset($_SERVER['VERCEL'])) && env('APP_DEBUG')) {
                 header('HTTP/1.1 500 Internal Server Error');
                 header('Content-Type: text/plain');
-                echo "Original Exception: " . $e->getMessage() . "\n\nStack Trace:\n" . $e->getTraceAsString();
+                echo "Original Exception (Reported): " . $e->getMessage() . "\n\nStack Trace:\n" . $e->getTraceAsString();
                 exit;
             }
         });
