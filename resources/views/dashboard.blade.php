@@ -331,15 +331,18 @@
             </div>
     </main>
 
-    <script type="application/json" id="dashboard-data">
-        {
-            !!json_encode([
-                'pendidikan' => $pendidikanDosen,
-                'jad' => $jadDosen
-            ]) !!
-        }
+    <script>
+        window.dashboardData = {
+            pendidikan: @json($pendidikanDosen),
+            jad: @json($jadDosen)
+        };
     </script>
-    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/dashboardSDM.js'])
+
+    @vite([
+    'resources/css/app.css',
+    'resources/js/app.js',
+    'resources/js/dashboardSDM.js'
+    ])
 </body>
 
 </html>

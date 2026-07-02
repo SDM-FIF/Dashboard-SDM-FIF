@@ -537,6 +537,7 @@ class TenagaPendukungAkademikController extends Controller
     public function dashboard()
     {
         $data = $this->getDashboardData();
+        
         return view('dashboard-tpa', $data);
     }
 
