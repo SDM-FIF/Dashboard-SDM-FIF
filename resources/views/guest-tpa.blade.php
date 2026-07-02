@@ -79,24 +79,7 @@
         </div>
 
         <!-- Doughnut Charts (Row 1) -->
-        <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-8">
-            <!-- Lokasi Kerja TPA -->
-            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col hover:shadow-md transition-shadow duration-300">
-                <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600">
-                            <i class="fa-solid fa-map-location-dot text-lg"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-slate-800 text-base">Lokasi Kerja TPA</h3>
-                            <p class="text-xs text-slate-400">Unit kerja penempatan TPA.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex-1 flex items-center justify-center relative min-h-[260px]">
-                    <canvas id="lokasiKerjaChart" data-labels='@json(array_keys($lokasiCounts))' data-values='@json(array_values($lokasiCounts))'></canvas>
-                </div>
-            </div>
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-4">
 
             <!-- Pangkat & Jabatan TPA -->
             <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col hover:shadow-md transition-shadow duration-300">
