@@ -2,6 +2,9 @@ import "./bootstrap";
 import Chart from "chart.js/auto";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
+console.log("dashboardTPA loaded");
+console.log(document.getElementById("jabatanChart"));
+
 Chart.register(ChartDataLabels);
 
 // Palet warna yang kamu pilih
@@ -48,36 +51,39 @@ const datalabelsConfig = {
 };
 
 // 2. Chart Jabatan/Pangkat TPA (Doughnut)
+// 2. Chart Jabatan/Pangkat TPA (DEBUG)
+
+const jabatanCanvas = document.getElementById("jabatanChart");
 const jabatanData = getChartData("jabatanChart");
-if (jabatanData) {
-    new Chart(document.getElementById("jabatanChart"), {
+
+if (jabatanCanvas && jabatanData) {
+    new Chart(jabatanCanvas, {
         type: "doughnut",
         data: {
             labels: jabatanData.labels,
-            datasets: [
-                {
-                    data: jabatanData.values,
-                    backgroundColor: [
-                        colors[1],
-                        colors[3],
-                        colors[5],
-                        colors[7],
-                        colors[9],
-                    ],
-                },
-            ],
+            datasets: [{
+                data: jabatanData.values,
+                backgroundColor: [
+                    colors[1],
+                    colors[3],
+                    colors[5],
+                    colors[7],
+                    colors[9],
+                ],
+            }]
         },
         options: {
             responsive: true,
             plugins: {
                 legend: {
-                    position: "bottom",
+                    position: "bottom"
                 },
                 datalabels: datalabelsConfig
-            },
-        },
+            }
+        }
     });
 }
+
 
 // 3. Chart Pendidikan TPA (Doughnut)
 const pendidikanData = getChartData("pendidikanChart");
