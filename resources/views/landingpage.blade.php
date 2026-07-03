@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard SDM - FIF</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body class="flex bg-[#F8FAFC] text-slate-800 font-nunito min-h-screen overflow-x-hidden">
-    <x-navbarguest /> 
-    
+    <x-navbarguest />
+
     <main class="flex-1 flex flex-col min-h-screen p-6 md:p-8 overflow-y-auto">
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
@@ -88,7 +90,7 @@
                             <i class="fa-solid fa-chart-pie text-lg"></i>
                         </div>
                         <div>
-                            <h3 class="font-bold text-slate-800 text-lg">Distribusi Dosen</h3>
+                            <h3 class="font-bold text-slate-800 text-lg">Pendidikan Terakhir Dosen</h3>
                             <p class="text-xs text-slate-400">Berdasarkan kualifikasi pendidikan.</p>
                         </div>
                     </div>
@@ -106,8 +108,8 @@
                             <i class="fa-solid fa-chart-pie text-lg"></i>
                         </div>
                         <div>
-                            <h3 class="font-bold text-slate-800 text-lg">Distribusi TPA</h3>
-                            <p class="text-xs text-slate-400">Berdasarkan unit kerja pendukung.</p>
+                            <h3 class="font-bold text-slate-800 text-lg">Jabatan Akademik Dosen</h3>
+                            <p class="text-xs text-slate-400">Berdasarkan jabatan akademik.</p>
                         </div>
                     </div>
                 </div>
@@ -125,8 +127,8 @@
                         <i class="fa-solid fa-chart-column text-lg"></i>
                     </div>
                     <div>
-                        <h3 class="font-bold text-slate-800 text-lg">Distribusi Mahasiswa</h3>
-                        <p class="text-xs text-slate-400">Berdasarkan program studi pilihan.</p>
+                        <h3 class="font-bold text-slate-800 text-lg">Jumlah Dosen Prodi</h3>
+                        <p class="text-xs text-slate-400">Berdasarkan program studi.</p>
                     </div>
                 </div>
             </div>
@@ -137,6 +139,7 @@
     </main>
 
     <script>
+<<<<<<< HEAD
         window.dashboardData = {!! json_encode([
             'pendidikan' => $pendidikanDosen,
             'tpa' => $lokasiTPA,
@@ -150,7 +153,21 @@
                 dateSpan.textContent = new Date().toLocaleDateString('id-ID', options);
             }
         });
+=======
+        window.dashboardData = {
+            pendidikan: @json($pendidikanDosen),
+            jad: @json($jadDosen),
+            prodi: @json($jumlahDosenProdi)
+        };
+
+       
+>>>>>>> 0a77649e7a13758c9b858b03cb2386c5a4d2538a
     </script>
-    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/dashboardSDM.js'])
+     @vite([
+            'resources/css/app.css',
+            'resources/js/app.js',
+            'resources/js/dashboardSDM.js'
+        ])
 </body>
+
 </html>

@@ -97,58 +97,119 @@ if (chartTPAEl) {
 }
 
 // Bar chart Dosen Prodi
-const chartDosenProdiEl = document.getElementById('chartDosenProdi');
-if (chartDosenProdiEl) {
-    new Chart(chartDosenProdiEl, {
-        type: 'bar',
+const prodiData = window.dashboardData?.prodi || {};
+
+const prodiLabels = Object.keys(prodiData).map(label =>
+    label
+        .replace("Informatika", "IF")
+        .replace("Rekayasa Perangkat Lunak", "RPL")
+        .replace("Data Sains", "DS")
+        .replace("Teknologi Informasi", "IT")
+);
+const prodiValues = Object.values(prodiData);
+
+const chartKompetisiEl = document.getElementById("chartKompetisi");
+
+if (chartKompetisiEl) {
+
+    new Chart(chartKompetisiEl, {
+        type: "bar",
+
         data: {
-            labels: [
-                'S1 IF (TUB)', 'S1 IT (TUB)', 'S1 RPL (TUB)', 'S1 PJJ (TUB)',
-                'S2 IF (TUB)', 'S2 Ilmu Forensik (TUB)', 'S1 Sains Data (TUB)',
-                'S3 INFORMATIKA (TUB)', 'S1 IT TUKJ', 'S1 IF TUKJ'
-            ],
+            labels: prodiLabels,
+
             datasets: [{
-                label: 'Jumlah',
-                data: [86, 28, 24, 12, 7, 5, 14, 5, 20, 2],
-                backgroundColor: '#3b82f6', // Blue
-                borderRadius: 4
+                label: "Jumlah Dosen",
+
+                data: prodiValues,
+
+                backgroundColor: prodiValues.map(value =>
+                    value > 0
+                        ? "#3b82f6"
+                        : "#CBD5E1"
+                ),
+
+                borderRadius: 8,
+                borderSkipped: false
             }]
         },
+
         options: {
+
+            responsive: true,
             maintainAspectRatio: false,
+
             plugins: {
+
                 legend: {
                     display: false
                 },
+
                 datalabels: {
-                    anchor: 'end',
-                    align: 'top',
+
+                    color: "#334155",
+
+                    anchor: "end",
+                    align: "top",
+
                     font: {
-                        weight: 'bold'
+                        weight: "bold",
+                        size: 12
                     },
-                    color: '#64748b'
+
+                    formatter: value => value
                 }
+
             },
+
             scales: {
+
                 y: {
+
                     beginAtZero: true,
-                    max: 100,
+
+                    ticks: {
+                        precision: 0
+                    },
+
                     grid: {
-                        color: '#f1f5f9'
+                        color: "#E5E7EB"
                     }
+
                 },
+
                 x: {
+
+                    ticks: {
+
+                        maxRotation: 0,
+
+                        minRotation: 0,
+
+                        autoSkip: false,
+
+                        callback: function(value) {
+
+                            const label = this.getLabelForValue(value);
+
+                            return label
+                                .replace(" - ", "\n");
+                        }
+
+                    },
+
                     grid: {
                         display: false
-                    },
-                    ticks: {
-                        maxRotation: 45,
-                        minRotation: 45
                     }
+
                 }
+
             }
+
         }
+
     });
+<<<<<<< HEAD
 }
 
 // Bar chart Mahasiswa Prodi
@@ -199,4 +260,7 @@ if (chartKompetisiEl) {
             }
         }
     });
+=======
+
+>>>>>>> 0a77649e7a13758c9b858b03cb2386c5a4d2538a
 }

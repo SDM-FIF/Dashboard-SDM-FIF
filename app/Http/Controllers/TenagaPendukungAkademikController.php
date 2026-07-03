@@ -58,13 +58,14 @@ class TenagaPendukungAkademikController extends Controller
             'status_pegawai' => TenagaPendukungAkademik::distinct()->pluck('status_pegawai')->filter(),
         ];
 
+
         return view('manajemen-tpa.kelola-data', compact('tpa', 'filterData'));
     }
 
     public function kelolaData(Request $request)
     {
         $this->authorize('kelola-data-tpa.view');
-        
+
         $query = TenagaPendukungAkademik::with('user');
 
         // Filter lokasi kerja
@@ -115,7 +116,7 @@ class TenagaPendukungAkademikController extends Controller
     public function importForm(Request $request)
     {
         $this->authorize('import-data-tpa.view');
-        
+
         // Jika ada parameter reset, bersihkan session lalu redirect SATU KALI ke URL bersih
         if ($request->has('reset')) {
             session()->forget([
@@ -228,7 +229,7 @@ class TenagaPendukungAkademikController extends Controller
     public function importProcess(Request $request)
     {
         $this->authorize('import-data-tpa.view');
-        
+
         $request->validate([
             'file' => 'required|mimes:xlsx,xls,csv|max:2048'
         ]);
@@ -263,7 +264,6 @@ class TenagaPendukungAkademikController extends Controller
                 'previewData' => $importData,
                 'step' => 2
             ]);
-
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Gagal membaca file: ' . $e->getMessage()]);
         }
@@ -275,7 +275,7 @@ class TenagaPendukungAkademikController extends Controller
     public function storeImport(Request $request)
     {
         $this->authorize('import-data-tpa.view');
-        
+
         $data = session('tpa_import_data');
 
         if (!$data) {
@@ -354,7 +354,7 @@ class TenagaPendukungAkademikController extends Controller
     public function create()
     {
         $this->authorize('kelola-data-tpa.create');
-        
+
         return view('manajemen-tpa.tambah-data');
     }
 
@@ -398,7 +398,6 @@ class TenagaPendukungAkademikController extends Controller
             return redirect()
                 ->route('manajemen-tpa.kelola-data')
                 ->with('success', 'Data TPA berhasil ditambahkan!');
-
         } catch (\Exception $e) {
             return back()
                 ->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()])
@@ -412,7 +411,7 @@ class TenagaPendukungAkademikController extends Controller
     public function show(Request $request, TenagaPendukungAkademik $tpa)
     {
         $this->authorize('kelola-data-tpa.detail');
-        
+
         // load relasi user
         $tpa->load('user');
 
@@ -457,7 +456,7 @@ class TenagaPendukungAkademikController extends Controller
     public function edit(TenagaPendukungAkademik $tpa)
     {
         $this->authorize('kelola-data-tpa.edit');
-        
+
         $tpa->load('user');
         return view('manajemen-tpa.edit-data', compact('tpa'));
     }
@@ -505,7 +504,6 @@ class TenagaPendukungAkademikController extends Controller
             return redirect()
                 ->route('manajemen-tpa.kelola-data')
                 ->with('success', 'Data TPA berhasil diperbarui!');
-
         } catch (\Exception $e) {
             return back()
                 ->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()])
@@ -519,7 +517,7 @@ class TenagaPendukungAkademikController extends Controller
     public function destroy(TenagaPendukungAkademik $tpa)
     {
         $this->authorize('kelola-data-tpa.delete');
-        
+
         try {
             $user = $tpa->user;
             $tpa->delete();
@@ -528,7 +526,6 @@ class TenagaPendukungAkademikController extends Controller
             return redirect()
                 ->route('manajemen-tpa.kelola-data')
                 ->with('success', 'Data TPA berhasil dihapus!');
-
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
         }
@@ -540,6 +537,7 @@ class TenagaPendukungAkademikController extends Controller
     public function dashboard()
     {
         $data = $this->getDashboardData();
+        
         return view('dashboard-tpa', $data);
     }
 
@@ -549,6 +547,7 @@ class TenagaPendukungAkademikController extends Controller
     public function guestDashboard()
     {
         $data = $this->getDashboardData();
+
         return view('guest-tpa', $data);
     }
 

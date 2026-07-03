@@ -12,6 +12,7 @@ use App\Http\Controllers\KompetisiController;
 use App\Models\Dosen;
 use App\Models\Mahasiswa;
 use App\Models\TenagaPendukungAkademik;
+use App\Models\Prodi;
 use Illuminate\Support\Facades\DB;
 
 // ============================
@@ -82,6 +83,7 @@ Route::get('/', function () {
     $totalTPA = TenagaPendukungAkademik::count();
     $totalMahasiswa = Mahasiswa::count();
 
+<<<<<<< HEAD
     $pendidikanDosen = Dosen::select('pendidikan_terakhir', DB::raw('count(*) as count'))
         ->groupBy('pendidikan_terakhir')
         ->pluck('count', 'pendidikan_terakhir')
@@ -97,17 +99,44 @@ Route::get('/', function () {
         ->groupBy('prodi.nama_prodi')
         ->pluck('count', 'prodi.nama_prodi')
         ->toArray();
+=======
+    // Pendidikan dosen
+    $pendidikanDosen = Dosen::select(
+        'pendidikan_terakhir',
+        DB::raw('COUNT(*) as total')
+    )
+        ->groupBy('pendidikan_terakhir')
+        ->pluck('total', 'pendidikan_terakhir')
+        ->toArray();
+
+    // Jabatan Akademik Dosen
+    $jadDosen = Dosen::select(
+        'jabatan',
+        DB::raw('count(*) as count')
+    )
+        ->groupBy('jabatan')
+        ->pluck('count', 'jabatan')
+        ->toArray();
+
+    $jumlahDosenProdi = Prodi::withCount('dosen')
+    ->pluck('dosen_count', 'nama_prodi')
+    ->toArray();
+>>>>>>> 0a77649e7a13758c9b858b03cb2386c5a4d2538a
 
     return view('landingpage', compact(
         'totalDosen',
         'totalTPA',
         'totalMahasiswa',
         'pendidikanDosen',
+<<<<<<< HEAD
         'lokasiTPA',
         'mahasiswaProdi'
+=======
+        'jadDosen',
+        'jumlahDosenProdi'
+>>>>>>> 0a77649e7a13758c9b858b03cb2386c5a4d2538a
     ));
 })->name('guest');
-
 Route::get('/guest-dosen', function () {
     return view('guest-dosen');
 })->name('guest-dosen');
