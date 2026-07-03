@@ -119,7 +119,35 @@ Route::get('/', function () {
     ));
 })->name('guest');
 Route::get('/guest-dosen', function () {
-    return view('guest-dosen');
+    $dosenProdi = \App\Models\Dosen::join('prodi', 'dosen.prodi_id', '=', 'prodi.id')
+        ->select('prodi.nama_prodi', DB::raw('count(*) as count'))
+        ->groupBy('prodi.nama_prodi')
+        ->pluck('count', 'prodi.nama_prodi')
+        ->toArray();
+
+    $dosenKK = \App\Models\Dosen::join('kelompok_keahlian', 'dosen.kelompok_keahlian_id', '=', 'kelompok_keahlian.id')
+        ->select('kelompok_keahlian.nama_kelompok_keahlian', DB::raw('count(*) as count'))
+        ->groupBy('kelompok_keahlian.nama_kelompok_keahlian')
+        ->pluck('count', 'kelompok_keahlian.nama_kelompok_keahlian')
+        ->toArray();
+
+    $pendDosen = \App\Models\Dosen::select('pendidikan_terakhir', DB::raw('count(*) as count'))
+        ->groupBy('pendidikan_terakhir')
+        ->pluck('count', 'pendidikan_terakhir')
+        ->toArray();
+    $pendDosen['ONGOING'] = \App\Models\Dosen::whereNotNull('status_studi_lanjut')->count();
+
+    $jfaDosen = \App\Models\Dosen::select('jabatan', DB::raw('count(*) as count'))
+        ->groupBy('jabatan')
+        ->pluck('count', 'jabatan')
+        ->toArray();
+
+    $statusDosen = \App\Models\Dosen::select('status_pegawai', DB::raw('count(*) as count'))
+        ->groupBy('status_pegawai')
+        ->pluck('count', 'status_pegawai')
+        ->toArray();
+
+    return view('guest-dosen', compact('dosenProdi', 'dosenKK', 'pendDosen', 'jfaDosen', 'statusDosen'));
 })->name('guest-dosen');
 
 Route::get('/guest-tpa', [TenagaPendukungAkademikController::class, 'guestDashboard'])
@@ -187,6 +215,34 @@ Route::get('/dashboard-dosen', function () {
         ];
     });
 
+    $dosenProdi = \App\Models\Dosen::join('prodi', 'dosen.prodi_id', '=', 'prodi.id')
+        ->select('prodi.nama_prodi', DB::raw('count(*) as count'))
+        ->groupBy('prodi.nama_prodi')
+        ->pluck('count', 'prodi.nama_prodi')
+        ->toArray();
+
+    $dosenKK = \App\Models\Dosen::join('kelompok_keahlian', 'dosen.kelompok_keahlian_id', '=', 'kelompok_keahlian.id')
+        ->select('kelompok_keahlian.nama_kelompok_keahlian', DB::raw('count(*) as count'))
+        ->groupBy('kelompok_keahlian.nama_kelompok_keahlian')
+        ->pluck('count', 'kelompok_keahlian.nama_kelompok_keahlian')
+        ->toArray();
+
+    $pendDosen = \App\Models\Dosen::select('pendidikan_terakhir', DB::raw('count(*) as count'))
+        ->groupBy('pendidikan_terakhir')
+        ->pluck('count', 'pendidikan_terakhir')
+        ->toArray();
+    $pendDosen['ONGOING'] = $totalStudiLanjut;
+
+    $jfaDosen = \App\Models\Dosen::select('jabatan', DB::raw('count(*) as count'))
+        ->groupBy('jabatan')
+        ->pluck('count', 'jabatan')
+        ->toArray();
+
+    $statusDosen = \App\Models\Dosen::select('status_pegawai', DB::raw('count(*) as count'))
+        ->groupBy('status_pegawai')
+        ->pluck('count', 'status_pegawai')
+        ->toArray();
+
     return view('dashboard-dosen', compact(
         'studiLanjut',
         'nisbah',
@@ -196,7 +252,12 @@ Route::get('/dashboard-dosen', function () {
         's2',
         's3',
         'prodiOverNisbah',
-        'pendidikanPerProdi'
+        'pendidikanPerProdi',
+        'dosenProdi',
+        'dosenKK',
+        'pendDosen',
+        'jfaDosen',
+        'statusDosen'
     ));
 })->name('dashboard-dosen');
 

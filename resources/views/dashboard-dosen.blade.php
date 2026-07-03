@@ -27,7 +27,7 @@
         </div>
 
 
-        <!-- Sebaran Pendidikan Per Prodi -->
+        <!-- Sebaran Pendidikan Terakhir Dosen Per Prodi -->
         <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm mb-8">
 
             <div class="flex items-center gap-3 border-b border-slate-100 pb-4 mb-6">
@@ -37,7 +37,7 @@
 
                 <div>
                     <h3 class="font-bold text-slate-800 text-base">
-                        Sebaran Pendidikan Per Prodi
+                        Sebaran Pendidikan Terakhir Dosen Per Prodi
                     </h3>
                     <p class="text-xs text-slate-400">
                         Jumlah dosen yang mengajar pada setiap program studi.
@@ -286,6 +286,14 @@
     </main>
 
     <script>
+        window.dosenData = {
+            prodi: @json($dosenProdi),
+            kk: @json($dosenKK),
+            pendidikan: @json($pendDosen),
+            jfa: @json($jfaDosen),
+            status: @json($statusDosen)
+        };
+
         document.addEventListener('DOMContentLoaded', () => {
             const dateSpan = document.getElementById('current-date-span');
             if (dateSpan) {

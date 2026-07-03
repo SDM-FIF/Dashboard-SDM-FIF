@@ -122,6 +122,14 @@
     </main>
 
     <script>
+        window.dosenData = {
+            prodi: @json($dosenProdi),
+            kk: @json($dosenKK),
+            pendidikan: @json($pendDosen),
+            jfa: @json($jfaDosen),
+            status: @json($statusDosen)
+        };
+
         document.addEventListener('DOMContentLoaded', () => {
             const dateSpan = document.getElementById('current-date-span');
             if (dateSpan) {
