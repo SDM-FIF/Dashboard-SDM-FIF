@@ -139,12 +139,11 @@
     </main>
 
     <script>
-<<<<<<< HEAD
-        window.dashboardData = {!! json_encode([
-            'pendidikan' => $pendidikanDosen,
-            'tpa' => $lokasiTPA,
-            'mahasiswa' => $mahasiswaProdi
-        ]) !!};
+        window.dashboardData = {
+            pendidikan: @json($pendidikanDosen),
+            jad: @json($jadDosen),
+            prodi: @json($jumlahDosenProdi)
+        };
 
         document.addEventListener('DOMContentLoaded', () => {
             const dateSpan = document.getElementById('current-date-span');
@@ -153,15 +152,6 @@
                 dateSpan.textContent = new Date().toLocaleDateString('id-ID', options);
             }
         });
-=======
-        window.dashboardData = {
-            pendidikan: @json($pendidikanDosen),
-            jad: @json($jadDosen),
-            prodi: @json($jumlahDosenProdi)
-        };
-
-       
->>>>>>> 0a77649e7a13758c9b858b03cb2386c5a4d2538a
     </script>
      @vite([
             'resources/css/app.css',

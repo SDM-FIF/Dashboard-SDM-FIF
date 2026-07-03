@@ -332,17 +332,11 @@
     </main>
 
     <script>
-<<<<<<< HEAD
-        window.dashboardData = {!! json_encode([
-            'pendidikan' => $pendidikanDosen,
-            'jad' => $jadDosen
-        ]) !!};
-=======
         window.dashboardData = {
             pendidikan: @json($pendidikanDosen),
-            jad: @json($jadDosen)
+            jad: @json($jadDosen),
+            prodi: @json($jumlahDosenProdi)
         };
->>>>>>> 0a77649e7a13758c9b858b03cb2386c5a4d2538a
     </script>
 
     @vite([

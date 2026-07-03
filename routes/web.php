@@ -73,7 +73,11 @@ Route::get('/dashboard', function () {
             ];
         });
 
-    return view('dashboard', compact('totalDosen', 'dosenAktif', 'dosenTugasBelajar', 'dosenIzinBelajar', 'pendidikanDosen', 'jadDosen', 'nisbah'));
+    $jumlahDosenProdi = \App\Models\Prodi::withCount('dosen')
+        ->pluck('dosen_count', 'nama_prodi')
+        ->toArray();
+
+    return view('dashboard', compact('totalDosen', 'dosenAktif', 'dosenTugasBelajar', 'dosenIzinBelajar', 'pendidikanDosen', 'jadDosen', 'nisbah', 'jumlahDosenProdi'));
 })->name('dashboard');
 
 // Landing Page
@@ -83,23 +87,6 @@ Route::get('/', function () {
     $totalTPA = TenagaPendukungAkademik::count();
     $totalMahasiswa = Mahasiswa::count();
 
-<<<<<<< HEAD
-    $pendidikanDosen = Dosen::select('pendidikan_terakhir', DB::raw('count(*) as count'))
-        ->groupBy('pendidikan_terakhir')
-        ->pluck('count', 'pendidikan_terakhir')
-        ->toArray();
-
-    $lokasiTPA = TenagaPendukungAkademik::select('lokasi_kerja', DB::raw('count(*) as count'))
-        ->groupBy('lokasi_kerja')
-        ->pluck('count', 'lokasi_kerja')
-        ->toArray();
-
-    $mahasiswaProdi = Mahasiswa::join('prodi', 'mahasiswa.prodi_id', '=', 'prodi.id')
-        ->select('prodi.nama_prodi', DB::raw('count(*) as count'))
-        ->groupBy('prodi.nama_prodi')
-        ->pluck('count', 'prodi.nama_prodi')
-        ->toArray();
-=======
     // Pendidikan dosen
     $pendidikanDosen = Dosen::select(
         'pendidikan_terakhir',
@@ -121,20 +108,14 @@ Route::get('/', function () {
     $jumlahDosenProdi = Prodi::withCount('dosen')
     ->pluck('dosen_count', 'nama_prodi')
     ->toArray();
->>>>>>> 0a77649e7a13758c9b858b03cb2386c5a4d2538a
 
     return view('landingpage', compact(
         'totalDosen',
         'totalTPA',
         'totalMahasiswa',
         'pendidikanDosen',
-<<<<<<< HEAD
-        'lokasiTPA',
-        'mahasiswaProdi'
-=======
         'jadDosen',
         'jumlahDosenProdi'
->>>>>>> 0a77649e7a13758c9b858b03cb2386c5a4d2538a
     ));
 })->name('guest');
 Route::get('/guest-dosen', function () {

@@ -108,7 +108,7 @@ const prodiLabels = Object.keys(prodiData).map(label =>
 );
 const prodiValues = Object.values(prodiData);
 
-const chartKompetisiEl = document.getElementById("chartKompetisi");
+const chartKompetisiEl = document.getElementById("chartKompetisi") || document.getElementById("chartDosenProdi");
 
 if (chartKompetisiEl) {
 
@@ -209,58 +209,4 @@ if (chartKompetisiEl) {
         }
 
     });
-<<<<<<< HEAD
-}
-
-// Bar chart Mahasiswa Prodi
-const chartKompetisiEl = document.getElementById('chartKompetisi');
-if (chartKompetisiEl) {
-    const mhsData = window.dashboardData?.mahasiswa || {};
-    const mhsLabels = Object.keys(mhsData).length > 0 ? Object.keys(mhsData) : ['IF', 'IT', 'RPL'];
-    const mhsValues = Object.keys(mhsData).length > 0 ? Object.values(mhsData) : [0, 0, 0];
-
-    new Chart(chartKompetisiEl, {
-        type: 'bar',
-        data: {
-            labels: mhsLabels,
-            datasets: [{
-                label: 'Jumlah',
-                data: mhsValues,
-                backgroundColor: '#f59e0b', // Amber
-                borderRadius: 4
-            }]
-        },
-        options: {
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    display: false
-                },
-                datalabels: {
-                    anchor: 'end',
-                    align: 'top',
-                    font: {
-                        weight: 'bold'
-                    },
-                    color: '#64748b'
-                }
-            },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: {
-                        color: '#f1f5f9'
-                    }
-                },
-                x: {
-                    grid: {
-                        display: false
-                    }
-                }
-            }
-        }
-    });
-=======
-
->>>>>>> 0a77649e7a13758c9b858b03cb2386c5a4d2538a
 }
