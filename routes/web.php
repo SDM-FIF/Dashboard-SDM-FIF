@@ -154,7 +154,60 @@ Route::get('/guest-tpa', [TenagaPendukungAkademikController::class, 'guestDashbo
     ->name('guest-tpa');
 
 Route::get('/guest-kompetisi', function () {
-    return view('guest-kompetisi');
+    $kompetisiTahun = \App\Models\Kompetisi::selectRaw('YEAR(tanggal_kompetisi) as year, tingkat_kompetisi, count(*) as count')
+        ->groupBy('year', 'tingkat_kompetisi')
+        ->get();
+
+    $juaraTahun = \Illuminate\Support\Facades\DB::table('mahasiswa_kompetisi')
+        ->join('kompetisi', 'mahasiswa_kompetisi.kompetisi_id', '=', 'kompetisi.id')
+        ->selectRaw('YEAR(kompetisi.tanggal_kompetisi) as year, mahasiswa_kompetisi.juara, count(*) as count')
+        ->whereNotNull('mahasiswa_kompetisi.juara')
+        ->groupBy('year', 'mahasiswa_kompetisi.juara')
+        ->get();
+
+    $kompetisiProdi = \Illuminate\Support\Facades\DB::table('mahasiswa_kompetisi')
+        ->join('mahasiswa', 'mahasiswa_kompetisi.mahasiswa_id', '=', 'mahasiswa.id')
+        ->join('prodi', 'mahasiswa.prodi_id', '=', 'prodi.id')
+        ->select('prodi.nama_prodi', \Illuminate\Support\Facades\DB::raw('count(*) as count'))
+        ->groupBy('prodi.nama_prodi')
+        ->get();
+
+    $kompetisiKategori = \App\Models\Kompetisi::select('jenis', \Illuminate\Support\Facades\DB::raw('count(*) as count'))
+        ->groupBy('jenis')
+        ->get();
+
+    $mahasiswaProdi = \App\Models\Mahasiswa::join('prodi', 'mahasiswa.prodi_id', '=', 'prodi.id')
+        ->select('prodi.nama_prodi', DB::raw('count(*) as count'))
+        ->groupBy('prodi.nama_prodi')
+        ->pluck('count', 'prodi.nama_prodi')
+        ->toArray();
+
+    $mahasiswaStatus = \App\Models\Mahasiswa::select('status', DB::raw('count(*) as count'))
+        ->groupBy('status')
+        ->pluck('count', 'status')
+        ->toArray();
+
+    $mahasiswaAngkatan = \App\Models\Mahasiswa::select(DB::raw("CONCAT('20', SUBSTRING(nim, 1, 2)) as angkatan"), DB::raw('count(*) as count'))
+        ->groupBy('angkatan')
+        ->pluck('count', 'angkatan')
+        ->toArray();
+
+    $juaraDoughnut = DB::table('mahasiswa_kompetisi')
+        ->select('juara', DB::raw('count(*) as count'))
+        ->whereIn('juara', ['Juara 1', 'Juara 2', 'Juara 3'])
+        ->groupBy('juara')
+        ->pluck('count', 'juara')
+        ->toArray();
+
+    $jenisDoughnut = \App\Models\Kompetisi::select('jenis', DB::raw('count(*) as count'))
+        ->groupBy('jenis')
+        ->pluck('count', 'jenis')
+        ->toArray();
+
+    return view('guest-kompetisi', compact(
+        'kompetisiTahun', 'juaraTahun', 'kompetisiProdi', 'kompetisiKategori',
+        'mahasiswaProdi', 'mahasiswaStatus', 'mahasiswaAngkatan', 'juaraDoughnut', 'jenisDoughnut'
+    ));
 })->name('guest-kompetisi');
 
 Route::get('/dashboard-dosen', function () {
@@ -262,32 +315,6 @@ Route::get('/dashboard-dosen', function () {
 })->name('dashboard-dosen');
 
 Route::get('/dashboard-tpa', [TenagaPendukungAkademikController::class, 'dashboard'])->name('dashboard-tpa');
-
-Route::get('/dashboard-kompetisi', function () {
-    $kompetisiTahun = \App\Models\Kompetisi::selectRaw('YEAR(tanggal_kompetisi) as year, tingkat_kompetisi, count(*) as count')
-        ->groupBy('year', 'tingkat_kompetisi')
-        ->get();
-
-    $juaraTahun = \Illuminate\Support\Facades\DB::table('mahasiswa_kompetisi')
-        ->join('kompetisi', 'mahasiswa_kompetisi.kompetisi_id', '=', 'kompetisi.id')
-        ->selectRaw('YEAR(kompetisi.tanggal_kompetisi) as year, mahasiswa_kompetisi.juara, count(*) as count')
-        ->whereNotNull('mahasiswa_kompetisi.juara')
-        ->groupBy('year', 'mahasiswa_kompetisi.juara')
-        ->get();
-
-    $kompetisiProdi = \Illuminate\Support\Facades\DB::table('mahasiswa_kompetisi')
-        ->join('mahasiswa', 'mahasiswa_kompetisi.mahasiswa_id', '=', 'mahasiswa.id')
-        ->join('prodi', 'mahasiswa.prodi_id', '=', 'prodi.id')
-        ->select('prodi.nama_prodi', \Illuminate\Support\Facades\DB::raw('count(*) as count'))
-        ->groupBy('prodi.nama_prodi')
-        ->get();
-
-    $kompetisiKategori = \App\Models\Kompetisi::select('jenis', \Illuminate\Support\Facades\DB::raw('count(*) as count'))
-        ->groupBy('jenis')
-        ->get();
-
-    return view('dashboard-kompetisi', compact('kompetisiTahun', 'juaraTahun', 'kompetisiProdi', 'kompetisiKategori'));
-})->name('dashboard-kompetisi');
 
 // ============================
 // 🧪 DEBUG ROUTES FOR FRONTEND (DEVELOPMENT ONLY)
@@ -748,7 +775,39 @@ Route::middleware('auth')->group(function () {
             ->groupBy('jenis')
             ->get();
 
-        return view('dashboard-kompetisi', compact('kompetisiTahun', 'juaraTahun', 'kompetisiProdi', 'kompetisiKategori'));
+        // New real-time student and competition metrics
+        $mahasiswaProdi = \App\Models\Mahasiswa::join('prodi', 'mahasiswa.prodi_id', '=', 'prodi.id')
+            ->select('prodi.nama_prodi', DB::raw('count(*) as count'))
+            ->groupBy('prodi.nama_prodi')
+            ->pluck('count', 'prodi.nama_prodi')
+            ->toArray();
+
+        $mahasiswaStatus = \App\Models\Mahasiswa::select('status', DB::raw('count(*) as count'))
+            ->groupBy('status')
+            ->pluck('count', 'status')
+            ->toArray();
+
+        $mahasiswaAngkatan = \App\Models\Mahasiswa::select(DB::raw("CONCAT('20', SUBSTRING(nim, 1, 2)) as angkatan"), DB::raw('count(*) as count'))
+            ->groupBy('angkatan')
+            ->pluck('count', 'angkatan')
+            ->toArray();
+
+        $juaraDoughnut = DB::table('mahasiswa_kompetisi')
+            ->select('juara', DB::raw('count(*) as count'))
+            ->whereIn('juara', ['Juara 1', 'Juara 2', 'Juara 3'])
+            ->groupBy('juara')
+            ->pluck('count', 'juara')
+            ->toArray();
+
+        $jenisDoughnut = \App\Models\Kompetisi::select('jenis', DB::raw('count(*) as count'))
+            ->groupBy('jenis')
+            ->pluck('count', 'jenis')
+            ->toArray();
+
+        return view('dashboard-kompetisi', compact(
+            'kompetisiTahun', 'juaraTahun', 'kompetisiProdi', 'kompetisiKategori',
+            'mahasiswaProdi', 'mahasiswaStatus', 'mahasiswaAngkatan', 'juaraDoughnut', 'jenisDoughnut'
+        ));
     })->name('dashboard-kompetisi');
 
     // Management

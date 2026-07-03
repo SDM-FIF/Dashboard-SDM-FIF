@@ -59,12 +59,12 @@
                             </li>
                         @endcan
 
-                        {{-- Dashboard Kompetisi: HANYA UNTUK YANG PUNYA AKSES --}}
+                        {{-- Dashboard Mahasiswa: HANYA UNTUK YANG PUNYA AKSES --}}
                         @can('dashboard-kompetisi.view')
                             <li>
                                 <a href="{{ route('dashboard-kompetisi') }}"
                                     class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('dashboard-kompetisi') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
-                                    Dashboard Kompetisi
+                                    Dashboard Mahasiswa
                                 </a>
                             </li>
                         @endcan

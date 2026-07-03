@@ -52,7 +52,7 @@
                             <li>
                                 <a href="{{ route('guest-kompetisi') }}"
                                     class="block px-8 py-2 text-sm hover:bg-red-500 transition-colors duration-200 {{ request()->routeIs('data-tpa*') ? 'bg-red-500 text-white' : 'text-red-100' }}">
-                                    Dashboard Kompetisi
+                                    Dashboard Mahasiswa
                                 </a>
                             </li>
                         </ul>

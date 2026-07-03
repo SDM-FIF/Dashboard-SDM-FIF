@@ -1,79 +1,87 @@
 import "./bootstrap";
 import Chart from "chart.js/auto";
 
-new Chart(document.getElementById("jumlahJuara"), {
-    type: "doughnut",
-    data: {
-        labels: ["Juara 1", "Juara 2", "Juara 3"],
-        datasets: [
-            {
-                data: [110, 30, 10],
-                backgroundColor: [
-                    "#3b82f6", // Blue
-                    "#10b981", // Emerald
-                    "#f59e0b", // Amber
-                    "#4f46e5", // Indigo
-                    "#06b6d4", // Cyan
-                    "#8b5cf6", // Violet
-                    "#ec4899", // Pink
-                    "#f97316", // Orange
-                    "#64748b", // Slate
-                    "#22c55e", // Green
-                ],
-            },
-        ],
-    },
-});
+// === 1. Tingkat Prestasi Juara ===
+const juaraDoughnutData = window.kompetisiData?.juaraDoughnut || {};
+const juaraLabels = Object.keys(juaraDoughnutData).length > 0 ? Object.keys(juaraDoughnutData) : ["Juara 1", "Juara 2", "Juara 3"];
+const juaraValues = Object.keys(juaraDoughnutData).length > 0 ? Object.values(juaraDoughnutData) : [0, 0, 0];
+const jumlahJuaraEl = document.getElementById("jumlahJuara");
+if (jumlahJuaraEl) {
+    new Chart(jumlahJuaraEl, {
+        type: "doughnut",
+        data: {
+            labels: juaraLabels,
+            datasets: [
+                {
+                    data: juaraValues,
+                    backgroundColor: [
+                        "#3b82f6", // Blue
+                        "#10b981", // Emerald
+                        "#f59e0b", // Amber
+                        "#4f46e5", // Indigo
+                        "#06b6d4"  // Cyan
+                    ],
+                },
+            ],
+        },
+    });
+}
 
-new Chart(document.getElementById("jumlahMahasiswa"), {
-    type: "doughnut",
-    data: {
-        labels: ["AKADEMIK", "NON-AKADEMIK"],
-        datasets: [
-            {
-                data: [110, 30],
-                backgroundColor: [
-                    "#3b82f6", // Blue
-                    "#10b981", // Emerald
-                    "#f59e0b", // Amber
-                    "#4f46e5", // Indigo
-                    "#06b6d4", // Cyan
-                    "#8b5cf6", // Violet
-                    "#ec4899", // Pink
-                    "#f97316", // Orange
-                    "#64748b", // Slate
-                    "#22c55e", // Green
-                ],
-            },
-        ],
-    },
-});
+// === 2. Kategori Bidang Kompetisi ===
+const jenisDoughnutData = window.kompetisiData?.jenisDoughnut || {};
+const jenisLabels = Object.keys(jenisDoughnutData).length > 0 ? Object.keys(jenisDoughnutData).map(l => l.toUpperCase()) : ["SAINS", "TEKNOLOGI", "SENI", "OLAHRAGA", "LAINNYA"];
+const jenisValues = Object.keys(jenisDoughnutData).length > 0 ? Object.values(jenisDoughnutData) : [0, 0, 0, 0, 0];
+const jumlahMahasiswaEl = document.getElementById("jumlahMahasiswa");
+if (jumlahMahasiswaEl) {
+    new Chart(jumlahMahasiswaEl, {
+        type: "doughnut",
+        data: {
+            labels: jenisLabels,
+            datasets: [
+                {
+                    data: jenisValues,
+                    backgroundColor: [
+                        "#3b82f6", // Blue
+                        "#10b981", // Emerald
+                        "#f59e0b", // Amber
+                        "#4f46e5", // Indigo
+                        "#06b6d4", // Cyan
+                        "#8b5cf6"  // Violet
+                    ],
+                },
+            ],
+        },
+    });
+}
 
-new Chart(document.getElementById("statusMahasiswa"), {
-    type: "doughnut",
-    data: {
-        labels: ["AKTIF", "CUTI", "TIDAK AKTIF"],
-        datasets: [
-            {
-                data: [110, 30, 10],
-                backgroundColor: [
-                    "#3b82f6", // Blue
-                    "#10b981", // Emerald
-                    "#f59e0b", // Amber
-                    "#4f46e5", // Indigo
-                    "#06b6d4", // Cyan
-                    "#8b5cf6", // Violet
-                    "#ec4899", // Pink
-                    "#f97316", // Orange
-                    "#64748b", // Slate
-                    "#22c55e", // Green
-                ],
-            },
-        ],
-    },
-});
+// === 3. Status Keaktifan Mahasiswa ===
+const statusMahasiswaData = window.kompetisiData?.mahasiswaStatus || {};
+const statusLabels = Object.keys(statusMahasiswaData).length > 0 ? Object.keys(statusMahasiswaData).map(l => l.toUpperCase()) : ["AKTIF", "CUTI", "NONAKTIF"];
+const statusValues = Object.keys(statusMahasiswaData).length > 0 ? Object.values(statusMahasiswaData) : [0, 0, 0];
+const statusMahasiswaEl = document.getElementById("statusMahasiswa");
+if (statusMahasiswaEl) {
+    new Chart(statusMahasiswaEl, {
+        type: "doughnut",
+        data: {
+            labels: statusLabels,
+            datasets: [
+                {
+                    data: statusValues,
+                    backgroundColor: [
+                        "#3b82f6", // Blue
+                        "#10b981", // Emerald
+                        "#f59e0b", // Amber
+                        "#4f46e5", // Indigo
+                        "#06b6d4", // Cyan
+                        "#8b5cf6"  // Violet
+                    ],
+                },
+            ],
+        },
+    });
+}
 
-// === Capaian Juara per Tahun ===
+// === 4. Capaian Juara per Tahun ===
 const chartJuaraTahunEl = document.getElementById("chartJuaraTahun");
 if (chartJuaraTahunEl) {
     const rawData = window.kompetisiData?.juaraTahun || [];
@@ -118,7 +126,7 @@ if (chartJuaraTahunEl) {
     });
 }
 
-// === Tingkat Kejuaraan per Tahun ===
+// === 5. Tingkat Kejuaraan per Tahun ===
 const chartTingkatTahunEl = document.getElementById("chartTingkatTahun");
 if (chartTingkatTahunEl) {
     const rawData = window.kompetisiData?.kompetisiTahun || [];
@@ -163,7 +171,7 @@ if (chartTingkatTahunEl) {
     });
 }
 
-// === Kompetisi per Prodi ===
+// === 6. Kompetisi per Prodi ===
 const jumlahKompetisiEl = document.getElementById("jumlahKompetisi");
 if (jumlahKompetisiEl) {
     const rawData = window.kompetisiData?.kompetisiProdi || [];
@@ -199,7 +207,7 @@ if (jumlahKompetisiEl) {
     });
 }
 
-// === Kompetisi per Kategori ===
+// === 7. Kompetisi per Kategori ===
 const jumlahKompetisi2El = document.getElementById("jumlahKompetisi2");
 if (jumlahKompetisi2El) {
     const rawData = window.kompetisiData?.kompetisiKategori || [];
@@ -230,6 +238,78 @@ if (jumlahKompetisi2El) {
                 x: {
                     beginAtZero: true,
                     ticks: { stepSize: 1 }
+                }
+            }
+        }
+    });
+}
+
+// === 8. Total Mahasiswa per Prodi (New) ===
+const mahasiswaProdiEl = document.getElementById("mahasiswaProdiChart");
+if (mahasiswaProdiEl) {
+    const rawData = window.kompetisiData?.mahasiswaProdi || {};
+    const labels = Object.keys(rawData).length > 0 ? Object.keys(rawData) : [];
+    const data = Object.keys(rawData).length > 0 ? Object.values(rawData) : [];
+    const colors = ["#3b82f6", "#10b981", "#f59e0b", "#4f46e5", "#06b6d4"];
+    
+    new Chart(mahasiswaProdiEl, {
+        type: "bar",
+        data: {
+            labels: labels,
+            datasets: [{
+                label: "Jumlah Mahasiswa",
+                data: data,
+                backgroundColor: colors.slice(0, labels.length),
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false,
+                },
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 10 }
+                }
+            }
+        }
+    });
+}
+
+// === 9. Mahasiswa per Angkatan (New) ===
+const mahasiswaAngkatanEl = document.getElementById("mahasiswaAngkatanChart");
+if (mahasiswaAngkatanEl) {
+    const rawData = window.kompetisiData?.mahasiswaAngkatan || {};
+    const labels = Object.keys(rawData).length > 0 ? Object.keys(rawData) : [];
+    const data = Object.keys(rawData).length > 0 ? Object.values(rawData) : [];
+    const colors = ["#8b5cf6", "#ec4899", "#f97316", "#22c55e"];
+    
+    new Chart(mahasiswaAngkatanEl, {
+        type: "bar",
+        data: {
+            labels: labels,
+            datasets: [{
+                label: "Jumlah Mahasiswa",
+                data: data,
+                backgroundColor: colors.slice(0, labels.length),
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false,
+                },
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 10 }
                 }
             }
         }

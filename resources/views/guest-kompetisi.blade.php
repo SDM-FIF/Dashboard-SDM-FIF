@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Kompetisi - FIF</title>
+    <title>Dashboard Mahasiswa - FIF</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="flex bg-[#F8FAFC] text-slate-800 font-nunito min-h-screen overflow-x-hidden">
@@ -13,8 +13,8 @@
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <div>
-                <h1 class="text-3xl md:text-4xl font-extrabold text-[#C41E3A] tracking-tight">Dashboard Kompetisi FIF</h1>
-                <p class="text-slate-500 mt-1 text-sm md:text-base">Statistik pencapaian prestasi mahasiswa dalam kompetisi akademik & non-akademik (Akses Publik).</p>
+                <h1 class="text-3xl md:text-4xl font-extrabold text-[#C41E3A] tracking-tight">Dashboard Mahasiswa FIF</h1>
+                <p class="text-slate-500 mt-1 text-sm md:text-base">Statistik data mahasiswa dan pencapaian prestasi mahasiswa dalam kompetisi akademik & non-akademik (Akses Publik).</p>
             </div>
             <div class="flex items-center gap-3 bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-100 self-start md:self-auto">
                 <div class="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center text-[#C41E3A]">
@@ -24,7 +24,46 @@
             </div>
         </div>
 
-        <!-- Doughnut Charts (Row 1) -->
+        <!-- Bar Charts (Row 1 - Data Mahasiswa Umum) -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <!-- Jumlah Mahasiswa per Prodi -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow duration-300">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600">
+                            <i class="fa-solid fa-graduation-cap text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-base">Total Mahasiswa per Prodi</h3>
+                            <p class="text-xs text-slate-400">Distribusi seluruh mahasiswa di lingkungan FIF.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative min-h-[300px] flex items-center justify-center">
+                    <canvas id="mahasiswaProdiChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Jumlah Mahasiswa per Angkatan -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow duration-300">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600">
+                            <i class="fa-solid fa-calendar-check text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-base">Mahasiswa per Angkatan</h3>
+                            <p class="text-xs text-slate-400">Jumlah mahasiswa terdaftar per tahun angkatan.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative min-h-[300px] flex items-center justify-center">
+                    <canvas id="mahasiswaAngkatanChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Doughnut Charts (Row 2) -->
         <div class="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-8">
             <!-- Jumlah Juara -->
             <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col hover:shadow-md transition-shadow duration-300">
@@ -44,7 +83,7 @@
                 </div>
             </div>
 
-            <!-- Jumlah Mahasiswa -->
+            <!-- Jenis Kompetisi -->
             <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col hover:shadow-md transition-shadow duration-300">
                 <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
                     <div class="flex items-center gap-3">
@@ -52,8 +91,8 @@
                             <i class="fa-solid fa-users text-lg"></i>
                         </div>
                         <div>
-                            <h3 class="font-bold text-slate-800 text-base">Jenis Kompetisi</h3>
-                            <p class="text-xs text-slate-400">Kompetisi akademik vs non-akademik.</p>
+                            <h3 class="font-bold text-slate-800 text-base">Kategori Bidang Kompetisi</h3>
+                            <p class="text-xs text-slate-400">Sains, teknologi, seni, olahraga, lainnya.</p>
                         </div>
                     </div>
                 </div>
@@ -70,8 +109,8 @@
                             <i class="fa-solid fa-user-check text-lg"></i>
                         </div>
                         <div>
-                            <h3 class="font-bold text-slate-800 text-base">Status Keaktifan</h3>
-                            <p class="text-xs text-slate-400">Status mahasiswa dalam kompetisi.</p>
+                            <h3 class="font-bold text-slate-800 text-base">Status Keaktifan Mahasiswa</h3>
+                            <p class="text-xs text-slate-400">Aktif, cuti, nonaktif, lulus, dll.</p>
                         </div>
                     </div>
                 </div>
@@ -81,7 +120,7 @@
             </div>
         </div>
 
-        <!-- Bar Charts (Row 2) -->
+        <!-- Bar Charts (Row 3) -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
             <!-- Jumlah Kompetisi per Prodi -->
             <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow duration-300">
@@ -122,6 +161,18 @@
     </main>
 
     <script>
+        window.kompetisiData = {
+            kompetisiTahun: @json($kompetisiTahun ?? []),
+            juaraTahun: @json($juaraTahun ?? []),
+            kompetisiProdi: @json($kompetisiProdi ?? []),
+            kompetisiKategori: @json($kompetisiKategori ?? []),
+            mahasiswaProdi: @json($mahasiswaProdi ?? []),
+            mahasiswaStatus: @json($mahasiswaStatus ?? []),
+            mahasiswaAngkatan: @json($mahasiswaAngkatan ?? []),
+            juaraDoughnut: @json($juaraDoughnut ?? []),
+            jenisDoughnut: @json($jenisDoughnut ?? [])
+        };
+
         document.addEventListener('DOMContentLoaded', () => {
             const dateSpan = document.getElementById('current-date-span');
             if (dateSpan) {
