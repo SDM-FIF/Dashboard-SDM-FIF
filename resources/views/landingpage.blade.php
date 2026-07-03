@@ -137,6 +137,12 @@
     </main>
 
     <script>
+        window.dashboardData = {!! json_encode([
+            'pendidikan' => $pendidikanDosen,
+            'tpa' => $lokasiTPA,
+            'mahasiswa' => $mahasiswaProdi
+        ]) !!};
+
         document.addEventListener('DOMContentLoaded', () => {
             const dateSpan = document.getElementById('current-date-span');
             if (dateSpan) {

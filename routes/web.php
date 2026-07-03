@@ -82,10 +82,29 @@ Route::get('/', function () {
     $totalTPA = TenagaPendukungAkademik::count();
     $totalMahasiswa = Mahasiswa::count();
 
+    $pendidikanDosen = Dosen::select('pendidikan_terakhir', DB::raw('count(*) as count'))
+        ->groupBy('pendidikan_terakhir')
+        ->pluck('count', 'pendidikan_terakhir')
+        ->toArray();
+
+    $lokasiTPA = TenagaPendukungAkademik::select('lokasi_kerja', DB::raw('count(*) as count'))
+        ->groupBy('lokasi_kerja')
+        ->pluck('count', 'lokasi_kerja')
+        ->toArray();
+
+    $mahasiswaProdi = Mahasiswa::join('prodi', 'mahasiswa.prodi_id', '=', 'prodi.id')
+        ->select('prodi.nama_prodi', DB::raw('count(*) as count'))
+        ->groupBy('prodi.nama_prodi')
+        ->pluck('count', 'prodi.nama_prodi')
+        ->toArray();
+
     return view('landingpage', compact(
         'totalDosen',
         'totalTPA',
-        'totalMahasiswa'
+        'totalMahasiswa',
+        'pendidikanDosen',
+        'lokasiTPA',
+        'mahasiswaProdi'
     ));
 })->name('guest');
 
