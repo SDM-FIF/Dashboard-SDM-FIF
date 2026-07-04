@@ -27,7 +27,7 @@
         </div>
 
         <!-- Statistic Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
             <!-- Card 1 -->
             <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 group relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-2 h-full bg-blue-500"></div>
@@ -37,7 +37,7 @@
                         <p class="text-4xl font-black text-slate-800 mt-2 tracking-tight group-hover:scale-105 transition-transform duration-300 origin-left">{{ $totalDosen }}</p>
                     </div>
                     <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 shadow-inner group-hover:rotate-6 transition-transform">
-                        <i class="fa-solid fa-user-tie text-xl"></i>
+                        <i class="fa-solid fa-users text-xl"></i>
                     </div>
                 </div>
                 <div class="mt-4 flex items-center text-xs text-blue-600 font-semibold gap-1">
@@ -50,15 +50,15 @@
                 <div class="absolute top-0 left-0 w-2 h-full bg-emerald-500"></div>
                 <div class="flex justify-between items-center">
                     <div>
-                        <h2 class="text-slate-400 font-medium text-sm uppercase tracking-wider">Total TPA</h2>
-                        <p class="text-4xl font-black text-slate-800 mt-2 tracking-tight group-hover:scale-105 transition-transform duration-300 origin-left">{{ $totalTPA }}</p>
+                        <h2 class="text-slate-400 font-medium text-sm uppercase tracking-wider">Dosen Tugas Belajar</h2>
+                        <p class="text-4xl font-black text-slate-800 mt-2 tracking-tight group-hover:scale-105 transition-transform duration-300 origin-left">{{ $dosenTugasBelajar }}</p>
                     </div>
                     <div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 shadow-inner group-hover:rotate-6 transition-transform">
-                        <i class="fa-solid fa-users text-xl"></i>
+                        <i class="fa-solid fa-book-open-reader text-xl"></i>
                     </div>
                 </div>
                 <div class="mt-4 flex items-center text-xs text-emerald-600 font-semibold gap-1">
-                    <span class="bg-emerald-50 px-2.5 py-0.5 rounded-full">Tenaga Pendukung Akademik</span>
+                    <span class="bg-emerald-50 px-2.5 py-0.5 rounded-full">Dosen Tugas Belajar</span>
                 </div>
             </div>
 
@@ -67,21 +67,39 @@
                 <div class="absolute top-0 left-0 w-2 h-full bg-amber-500"></div>
                 <div class="flex justify-between items-center">
                     <div>
-                        <h2 class="text-slate-400 font-medium text-sm uppercase tracking-wider">Total Mahasiswa</h2>
-                        <p class="text-4xl font-black text-slate-800 mt-2 tracking-tight group-hover:scale-105 transition-transform duration-300 origin-left">{{ $totalMahasiswa }}</p>
+                        <h2 class="text-slate-400 font-medium text-sm uppercase tracking-wider">Dosen Izin Belajar</h2>
+                        <p class="text-4xl font-black text-slate-800 mt-2 tracking-tight group-hover:scale-105 transition-transform duration-300 origin-left">{{ $dosenIzinBelajar }}</p>
                     </div>
                     <div class="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 shadow-inner group-hover:rotate-6 transition-transform">
-                        <i class="fa-solid fa-graduation-cap text-xl"></i>
+                       <i class="fa-solid fa-user-clock text-xl"></i>
                     </div>
                 </div>
                 <div class="mt-4 flex items-center text-xs text-amber-600 font-semibold gap-1">
-                    <span class="bg-amber-50 px-2.5 py-0.5 rounded-full">Mahasiswa Aktif & Kompetisi</span>
+                    <span class="bg-amber-50 px-2.5 py-0.5 rounded-full">Dosen Izin Belajar</span>
+                </div>
+            </div>
+
+        
+            <!-- Card 4 -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-all duration-300 group relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-2 h-full bg-amber-500"></div>
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-slate-400 font-medium text-sm uppercase tracking-wider">Dosen Aktif</h2>
+                        <p class="text-4xl font-black text-slate-800 mt-2 tracking-tight group-hover:scale-105 transition-transform duration-300 origin-left">{{ $dosenAktif }}</p>
+                    </div>
+                    <div class="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 shadow-inner group-hover:rotate-6 transition-transform">
+                        <i class="fa-solid fa-user-check text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4 flex items-center text-xs text-amber-600 font-semibold gap-1">
+                    <span class="bg-amber-50 px-2.5 py-0.5 rounded-full">Dosen Aktif</span>
                 </div>
             </div>
         </div>
 
         <!-- Charts Section -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-10 mb-8">
             <!-- Chart Dosen Card -->
             <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col">
                 <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">

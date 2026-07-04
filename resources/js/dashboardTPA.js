@@ -1,6 +1,6 @@
 import "./bootstrap";
 import Chart from "chart.js/auto";
-import ChartDataLabels from 'chartjs-plugin-datalabels';
+import ChartDataLabels from "chartjs-plugin-datalabels";
 
 console.log("dashboardTPA loaded");
 console.log(document.getElementById("jabatanChart"));
@@ -36,83 +36,137 @@ function getChartData(elementId) {
 }
 
 const datalabelsConfig = {
-    color: '#fff',
+    color: "#fff",
     font: {
-        weight: 'bold',
-        size: 11
+        weight: "bold",
+        size: 11,
     },
     formatter: (value, ctx) => {
         const datapoints = ctx.chart.data.datasets[0].data;
-        const total = datapoints.reduce((total, datapoint) => total + datapoint, 0);
-        const percentage = total > 0 ? (value / total * 100).toFixed(1) + "%" : "0%";
+        const total = datapoints.reduce(
+            (total, datapoint) => total + datapoint,
+            0,
+        );
+        const percentage =
+            total > 0 ? ((value / total) * 100).toFixed(1) + "%" : "0%";
         // Only show label if percentage is greater than 0%
-        return value > 0 ? percentage : '';
-    }
+        return value > 0 ? percentage : "";
+    },
 };
 
-// 2. Chart Jabatan/Pangkat TPA (Doughnut)
-// 2. Chart Jabatan/Pangkat TPA (DEBUG)
-
+// 2. Chart Jabatan TPA (Bar)
 const jabatanCanvas = document.getElementById("jabatanChart");
 const jabatanData = getChartData("jabatanChart");
 
+// 3. Chart Pendidikan TPA (Doughnut)
+const pendidikanCanvas = document.getElementById("pendidikanChart");
+const pendidikanData = getChartData("pendidikanChart");
 if (jabatanCanvas && jabatanData) {
     new Chart(jabatanCanvas, {
-        type: "doughnut",
+        type: "bar",
         data: {
-            labels: jabatanData.labels,
-            datasets: [{
-                data: jabatanData.values,
-                backgroundColor: [
-                    colors[1],
-                    colors[3],
-                    colors[5],
-                    colors[7],
-                    colors[9],
-                ],
-            }]
-        },
-        options: {
-            responsive: true,
-            plugins: {
-                legend: {
-                    position: "bottom"
-                },
-                datalabels: datalabelsConfig
-            }
-        }
-    });
-}
+            labels: jabatanData.labels.map((label) => {
+                const labelMap = {
+                    "Staff Administrasi": ["Staff", "Admin"],
+                    "Staff Kepegawaian": ["Staff", "Pegawaian"],
+                    "Staff Registrasi": ["Staff", "Registrasi"],
+                    "Staff Penjadwalan": ["Staff", "Penjadwalan"],
+                    "Staff Kelulusan": ["Staff", "Kelulusan"],
+                    "Staff Sarpras": ["Staff", "Sarpras"],
+                    "Staff Layanan": ["Staff", "Layanan"],
+                    "Staff Ujian": ["Staff", "Ujian"],
+                    "Staff Keuangan": ["Staff", "Keuangan"],
+                    "Analisis SDM": ["Analisis", "SDM"],
+                    "Admin Prodi": ["Admin", "Prodi"],
+                    Laboran: ["Laboran"],
+                };
 
-
-// 3. Chart Pendidikan TPA (Doughnut)
-const pendidikanData = getChartData("pendidikanChart");
-if (pendidikanData) {
-    new Chart(document.getElementById("pendidikanChart"), {
-        type: "doughnut",
-        data: {
-            labels: pendidikanData.labels,
+                return labelMap[label] ?? [label];
+            }),
             datasets: [
                 {
-                    data: pendidikanData.values,
-                    backgroundColor: [
-                        colors[5],
-                        colors[2],
-                        colors[0],
-                        colors[4],
-                        colors[6],
-                        colors[7],
-                    ],
+                    label: "Jumlah TPA",
+                    data: jabatanData.values,
+                    backgroundColor: "#10B981",
+                    borderRadius: 8,
                 },
             ],
         },
         options: {
             responsive: true,
+            maintainAspectRatio: false,
             plugins: {
                 legend: {
-                    position: "bottom",
+                    display: false,
                 },
-                datalabels: datalabelsConfig
+                datalabels: {
+                    anchor: "end",
+                    align: "top",
+                    color: "#334155",
+                    font: {
+                        weight: "bold",
+                    },
+                },
+            },
+            scales: {
+                x: {
+                    ticks: {
+                        autoSkip: false,
+                        maxRotation: 0,
+                        minRotation: 0,
+                        font: {
+                            size: 11,
+                        },
+                    },
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0,
+                    },
+                },
+            },
+        },
+    });
+}
+
+if (pendidikanCanvas && pendidikanData) {
+    new Chart(pendidikanCanvas, {
+        type: "bar",
+        data: {
+            labels: pendidikanData.labels,
+            datasets: [
+                {
+                    label: "Jumlah TPA",
+                    data: pendidikanData.values,
+                    backgroundColor: "#8B5CF6",
+                    borderRadius: 8,
+                },
+            ],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false,
+                },
+                datalabels: {
+                    anchor: "end",
+                    align: "top",
+                    color: "#334155",
+                    font: {
+                        weight: "bold",
+                    },
+                },
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0,
+                    },
+                },
             },
         },
     });
@@ -140,20 +194,26 @@ if (statusPegawaiData) {
             plugins: {
                 legend: { display: false },
                 datalabels: {
-                    color: '#fff',
-                    font: { weight: 'bold' },
-                    align: 'end',
-                    anchor: 'end',
+                    color: "#fff",
+                    font: { weight: "bold" },
+                    align: "end",
+                    anchor: "end",
                     formatter: (value, ctx) => {
                         const datapoints = ctx.chart.data.datasets[0].data;
-                        const total = datapoints.reduce((total, datapoint) => total + datapoint, 0);
-                        const percentage = total > 0 ? (value / total * 100).toFixed(1) + "%" : "0%";
+                        const total = datapoints.reduce(
+                            (total, datapoint) => total + datapoint,
+                            0,
+                        );
+                        const percentage =
+                            total > 0
+                                ? ((value / total) * 100).toFixed(1) + "%"
+                                : "0%";
                         return percentage;
                     },
-                    // Since it's outside the bar in horizontal, maybe we want it inside or with different color if outside. 
+                    // Since it's outside the bar in horizontal, maybe we want it inside or with different color if outside.
                     // Let's set it to dark if we place it outside.
-                    color: '#475569'
-                }
+                    color: "#475569",
+                },
             },
             scales: {
                 x: {
