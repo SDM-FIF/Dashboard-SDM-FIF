@@ -89,7 +89,7 @@
                             <i class="fa-solid fa-layer-group text-lg"></i>
                         </div>
                         <div>
-                            <h3 class="font-bold text-slate-800 text-base">Pangkat & Jabatan</h3>
+                            <h3 class="font-bold text-slate-800 text-base">Pangkat Golongan TPA</h3>
                             <p class="text-xs text-slate-400">Distribusi jabatan/pangkat TPA.</p>
                         </div>
                     </div>
@@ -107,7 +107,7 @@
                             <i class="fa-solid fa-user-graduate text-lg"></i>
                         </div>
                         <div>
-                            <h3 class="font-bold text-slate-800 text-base">Tingkat Pendidikan TPA</h3>
+                            <h3 class="font-bold text-slate-800 text-base">Pendidikan TPA</h3>
                             <p class="text-xs text-slate-400">Kualifikasi ijazah terakhir.</p>
                         </div>
                     </div>

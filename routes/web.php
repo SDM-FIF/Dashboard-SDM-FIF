@@ -84,8 +84,11 @@ Route::get('/dashboard', function () {
 Route::get('/', function () {
 
     $totalDosen = Dosen::count();
-    $totalTPA = TenagaPendukungAkademik::count();
-    $totalMahasiswa = Mahasiswa::count();
+    $dosenAktif = Dosen::where('status_dosen', 'Aktif')->count();
+
+    $dosenTugasBelajar = Dosen::where('status_dosen', 'Tugas Belajar')->count();
+
+    $dosenIzinBelajar = Dosen::where('status_dosen', 'Izin Belajar')->count();
 
     // Pendidikan dosen
     $pendidikanDosen = Dosen::select(
@@ -106,13 +109,14 @@ Route::get('/', function () {
         ->toArray();
 
     $jumlahDosenProdi = Prodi::withCount('dosen')
-    ->pluck('dosen_count', 'nama_prodi')
-    ->toArray();
+        ->pluck('dosen_count', 'nama_prodi')
+        ->toArray();
 
     return view('landingpage', compact(
         'totalDosen',
-        'totalTPA',
-        'totalMahasiswa',
+        'dosenAktif',
+        'dosenTugasBelajar',
+        'dosenIzinBelajar',
         'pendidikanDosen',
         'jadDosen',
         'jumlahDosenProdi'
@@ -205,8 +209,15 @@ Route::get('/guest-kompetisi', function () {
         ->toArray();
 
     return view('guest-kompetisi', compact(
-        'kompetisiTahun', 'juaraTahun', 'kompetisiProdi', 'kompetisiKategori',
-        'mahasiswaProdi', 'mahasiswaStatus', 'mahasiswaAngkatan', 'juaraDoughnut', 'jenisDoughnut'
+        'kompetisiTahun',
+        'juaraTahun',
+        'kompetisiProdi',
+        'kompetisiKategori',
+        'mahasiswaProdi',
+        'mahasiswaStatus',
+        'mahasiswaAngkatan',
+        'juaraDoughnut',
+        'jenisDoughnut'
     ));
 })->name('guest-kompetisi');
 
@@ -805,8 +816,15 @@ Route::middleware('auth')->group(function () {
             ->toArray();
 
         return view('dashboard-kompetisi', compact(
-            'kompetisiTahun', 'juaraTahun', 'kompetisiProdi', 'kompetisiKategori',
-            'mahasiswaProdi', 'mahasiswaStatus', 'mahasiswaAngkatan', 'juaraDoughnut', 'jenisDoughnut'
+            'kompetisiTahun',
+            'juaraTahun',
+            'kompetisiProdi',
+            'kompetisiKategori',
+            'mahasiswaProdi',
+            'mahasiswaStatus',
+            'mahasiswaAngkatan',
+            'juaraDoughnut',
+            'jenisDoughnut'
         ));
     })->name('dashboard-kompetisi');
 
