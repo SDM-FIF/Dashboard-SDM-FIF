@@ -1,5 +1,6 @@
 import "./bootstrap";
 import Chart from "chart.js/auto";
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 // === 1. Tingkat Prestasi Juara ===
 const juaraDoughnutData = window.kompetisiData?.juaraDoughnut || {};
@@ -9,6 +10,7 @@ const jumlahJuaraEl = document.getElementById("jumlahJuara");
 if (jumlahJuaraEl) {
     new Chart(jumlahJuaraEl, {
         type: "doughnut",
+        plugins: [ChartDataLabels],
         data: {
             labels: juaraLabels,
             datasets: [
@@ -24,6 +26,20 @@ if (jumlahJuaraEl) {
                 },
             ],
         },
+        options: {
+            plugins: {
+                datalabels: {
+                    color: '#fff',
+                    font: { weight: 'bold' },
+                    display: function(context) {
+                        return context.dataset.data[context.dataIndex] > 0;
+                    },
+                    formatter: (value) => {
+                        return value;
+                    }
+                }
+            }
+        }
     });
 }
 
@@ -35,6 +51,7 @@ const jumlahMahasiswaEl = document.getElementById("jumlahMahasiswa");
 if (jumlahMahasiswaEl) {
     new Chart(jumlahMahasiswaEl, {
         type: "doughnut",
+        plugins: [ChartDataLabels],
         data: {
             labels: jenisLabels,
             datasets: [
@@ -51,6 +68,20 @@ if (jumlahMahasiswaEl) {
                 },
             ],
         },
+        options: {
+            plugins: {
+                datalabels: {
+                    color: '#fff',
+                    font: { weight: 'bold' },
+                    display: function(context) {
+                        return context.dataset.data[context.dataIndex] > 0;
+                    },
+                    formatter: (value) => {
+                        return value;
+                    }
+                }
+            }
+        }
     });
 }
 
@@ -62,6 +93,7 @@ const statusMahasiswaEl = document.getElementById("statusMahasiswa");
 if (statusMahasiswaEl) {
     new Chart(statusMahasiswaEl, {
         type: "doughnut",
+        plugins: [ChartDataLabels],
         data: {
             labels: statusLabels,
             datasets: [
@@ -78,6 +110,20 @@ if (statusMahasiswaEl) {
                 },
             ],
         },
+        options: {
+            plugins: {
+                datalabels: {
+                    color: '#fff',
+                    font: { weight: 'bold' },
+                    display: function(context) {
+                        return context.dataset.data[context.dataIndex] > 0;
+                    },
+                    formatter: (value) => {
+                        return value;
+                    }
+                }
+            }
+        }
     });
 }
 
