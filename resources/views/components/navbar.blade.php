@@ -11,12 +11,12 @@
             {{-- Dashboard Section --}}
             <li class="relative">
                 <button onclick="toggleDropdown('dashboardDropdown')"
-                    class="w-full flex items-center justify-between px-6 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('dashboard*') || request()->routeIs('data-dosen*') || request()->routeIs('data-tpa*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
+                    class="w-full flex items-center justify-between pl-6 pr-4 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('dashboard*') || request()->routeIs('data-dosen*') || request()->routeIs('data-tpa*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
                     <div class="flex items-center">
-                        <svg class="w-5 h-5 mr-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                        <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" />
                         </svg>
-                        <span>Dashboard</span>
+                        <span class="whitespace-nowrap">Dashboard</span>
                     </div>
                     <svg class="w-4 h-4 transform transition-transform duration-200 group-hover:scale-110"
                         id="dashboardArrow" fill="currentColor" viewBox="0 0 20 20">
@@ -77,13 +77,13 @@
             @can('kelola-data-dosen.view')
                 <li class="relative">
                     <button onclick="toggleDropdown('dosenDropdown')"
-                        class="w-full flex items-center justify-between px-6 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('manajemen-dosen*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
+                        class="w-full flex items-center justify-between pl-6 pr-4 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('manajemen-dosen*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
                         <div class="flex items-center">
-                            <svg class="w-5 h-5 mr-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                                 <path
                                     d="M16 4c0-1.11.89-2 2-2s2 .89 2 2-.89 2-2 2-2-.89-2-2zM4 18v-4h3v-3.5c0-.83.67-1.5 1.5-1.5S10 9.67 10 10.5V11h2.5l-2.54 7.63A1.5 1.5 0 0 1 8.46 20H5.5c-.83 0-1.5-.67-1.5-1.5zm15.64-4.24-1.42-1.42A6.97 6.97 0 0 0 19 9c0-3.87-3.13-7-7-7S5 5.13 5 9c0 1.26.35 2.44.96 3.46L4.5 14H4c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1h1.5v-1H7v1h1.5v-1h1v1H11v-2.5L14.5 11H17v2.5c0 .83.67 1.5 1.5 1.5s1.5-.67 1.5-1.5V12h.14z" />
                             </svg>
-                            <span>Manajemen Dosen</span>
+                            <span class="whitespace-nowrap">Manajemen Dosen</span>
                         </div>
                         <svg class="w-4 h-4 transform transition-transform duration-200 group-hover:scale-110"
                             id="dosenArrow" fill="currentColor" viewBox="0 0 20 20">
@@ -128,13 +128,13 @@
             @can('kelola-data-tpa.view')
                 <li class="relative">
                     <button onclick="toggleDropdown('tpaDropdown')"
-                        class="w-full flex items-center justify-between px-6 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('manajemen-tpa.*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
+                        class="w-full flex items-center justify-between pl-6 pr-4 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('manajemen-tpa.*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
                         <div class="flex items-center">
-                            <svg class="w-5 h-5 mr-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                                 <path
                                     d="M12 2C13.1 2 14 2.9 14 4C14 5.1 13.1 6 12 6C10.9 6 10 5.1 10 4C10 2.9 10.9 2 12 2ZM21 9V7L15 1V3H9V1L3 7V9H21ZM12 8C14.76 8 17 10.24 17 13V22H15V13C15 11.34 13.66 10 12 10S9 11.34 9 13V22H7V13C7 10.24 9.24 8 12 8Z" />
                             </svg>
-                            <span>Manajemen TPA</span>
+                            <span class="whitespace-nowrap">Manajemen TPA</span>
                         </div>
                         <svg class="w-4 h-4 transform transition-transform duration-200 group-hover:scale-110" id="tpaArrow"
                             fill="currentColor" viewBox="0 0 20 20">
@@ -170,13 +170,13 @@
             @canany(['rekrutasi-data-dosen.view', 'jadwal-pengujian.view', 'penilaian-dosen.access', 'berita-acara.access', 'hasil-pengujian.view'])
                 <li class="relative">
                     <button onclick="toggleDropdown('rekrutasiDropdown')"
-                        class="w-full flex items-center justify-between px-6 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('rekrutasi-dosen*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
+                        class="w-full flex items-center justify-between pl-6 pr-4 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('rekrutasi-dosen*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
                         <div class="flex items-center">
-                            <svg class="w-5 h-5 mr-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                                 <path
                                     d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V8c0-.55-.45-1-1-1s-1 .45-1 1v2H2c-.55 0-1 .45-1 1s.45 1 1 1h2v2c0 .55.45 1 1 1s1-.45 1-1v-2h2c.55 0 1-.45 1-1s-.45-1-1-1H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
                             </svg>
-                            <span>Rekrutasi Dosen</span>
+                            <span class="whitespace-nowrap">Rekrutasi Dosen</span>
                         </div>
                         <svg class="w-4 h-4 transform transition-transform duration-200 group-hover:scale-110"
                             id="rekrutasiArrow" fill="currentColor" viewBox="0 0 20 20">
@@ -231,14 +231,14 @@
                 <li class="relative">
                     {{-- Button Dropdown: Aktif (Kuning) jika route diawali dengan 'mahasiswa.' --}}
                     <button onclick="toggleDropdown('mahasiswaDropdown')"
-                        class="w-full flex items-center justify-between px-6 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('mahasiswa.*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
+                        class="w-full flex items-center justify-between pl-6 pr-4 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('mahasiswa.*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
                         <div class="flex items-center">
                             {{-- Icon Cap Graduation untuk Mahasiswa --}}
-                            <svg class="w-5 h-5 mr-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                                 <path
                                     d="M12 3L1 9L12 15L21 10.09V17H23V9M5 13.18V17.18L12 21L19 17.18V13.18L12 17L5 13.18Z" />
                             </svg>
-                            <span>Manajemen Mahasiswa</span>
+                            <span class="whitespace-nowrap">Manajemen Mahasiswa</span>
                         </div>
 
                         {{-- Panah Dropdown --}}
@@ -291,14 +291,14 @@
             @canany(['master-data-fakultas.view', 'master-data-prodi.view', 'master-data-kompetisi.view'])
                 <li class="relative">
                     <button onclick="toggleDropdown('masterDataDropdown')"
-                        class="w-full flex items-center justify-between px-6 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->is('master-data*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
+                        class="w-full flex items-center justify-between pl-6 pr-4 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->is('master-data*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
                         <div class="flex items-center">
                             {{-- Icon Database/Layers untuk Master Data --}}
-                            <svg class="w-5 h-5 mr-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                                 <path
                                     d="M12 3C7.58 3 4 4.79 4 7s3.58 4 8 4 8-1.79 8-4-3.58-4-8-4M4 9v3c0 2.21 3.58 4 8 4s8-1.79 8-4V9c0 2.21-3.58 4-8 4s-8-1.79-8-4m0 5v3c0 2.21 3.58 4 8 4s8-1.79 8-4v-3c0 2.21-3.58 4-8 4s-8-1.79-8-4z" />
                             </svg>
-                            <span>Master Data</span>
+                            <span class="whitespace-nowrap">Master Data</span>
                         </div>
                         <svg class="w-4 h-4 transform transition-transform duration-200" id="masterDataArrow"
                             fill="currentColor" viewBox="0 0 20 20">
@@ -346,13 +346,13 @@
             @canany(['konfigurasi-sistem.view', 'user-management.view'])
                 <li class="relative">
                     <button onclick="toggleDropdown('pengaturanDropdown')"
-                        class="w-full flex items-center justify-between px-6 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('pengaturan*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
+                        class="w-full flex items-center justify-between pl-6 pr-4 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('pengaturan*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
                         <div class="flex items-center">
-                            <svg class="w-5 h-5 mr-4 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                                 <path
                                     d="M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.22,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.22,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.68 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z" />
                             </svg>
-                            <span>Pengaturan</span>
+                            <span class="whitespace-nowrap">Pengaturan</span>
                         </div>
                         <svg class="w-4 h-4 transform transition-transform duration-200 group-hover:scale-110"
                             id="pengaturanArrow" fill="currentColor" viewBox="0 0 20 20">
