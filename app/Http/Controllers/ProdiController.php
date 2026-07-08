@@ -5,13 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Prodi;
 use App\Models\Fakultas;
 use Illuminate\Http\Request;
+use App\Models\Dosen;
+use App\Models\Mahasiswa;
 
 class ProdiController extends Controller
 {
     public function index(Request $request)
     {
         $this->authorize('master-data-prodi.view');
-        
+
         $query = Prodi::with('fakultas');
 
         if ($request->has('search')) {
@@ -25,7 +27,7 @@ class ProdiController extends Controller
     public function create()
     {
         $this->authorize('master-data-prodi.create');
-        
+
         $fakultas = Fakultas::all();
         return view('master-data.prodi.create', compact('fakultas'));
     }
@@ -33,7 +35,7 @@ class ProdiController extends Controller
     public function store(Request $request)
     {
         $this->authorize('master-data-prodi.create');
-        
+
         $request->validate([
             'nama_prodi' => 'required|string|max:255',
             'fakultas_id' => 'required|exists:fakultas,id',
@@ -46,35 +48,54 @@ class ProdiController extends Controller
     public function edit($id)
     {
         $this->authorize('master-data-prodi.edit');
-        
-        // 1. Cari data prodi yang mau diedit
+
+
         $prodi = Prodi::findOrFail($id);
 
-        // 2. Ambil SEMUA data fakultas untuk isi dropdown (Ini yang sering terlewat)
         $fakultas = \App\Models\Fakultas::all();
 
-        // 3. Kirim kedua variabel ke view
+
         return view('master-data.prodi.edit', compact('prodi', 'fakultas'));
     }
     public function destroy($id)
     {
-        $this->authorize('master-data-prodi.delete');
-        
         $prodi = Prodi::findOrFail($id);
 
-        // Opsional: Cek jika ada relasi sebelum hapus (biar gak error database constraint)
-        // if($prodi->mahasiswa()->count() > 0) {
-        //     return back()->with('error', 'Tidak bisa hapus Prodi yang masih memiliki mahasiswa!');
-        // }
+        $jumlahDosen = Dosen::where('prodi_id', $id)->count();
+        $jumlahMahasiswa = Mahasiswa::where('prodi_id', $id)->count();
+
+        if ($jumlahDosen > 0 || $jumlahMahasiswa > 0) {
+
+            $pesan = [];
+
+            if ($jumlahDosen > 0) {
+                $pesan[] = "{$jumlahDosen} dosen";
+            }
+
+            if ($jumlahMahasiswa > 0) {
+                $pesan[] = "{$jumlahMahasiswa} mahasiswa";
+            }
+
+            return redirect()
+                ->route('prodi.index')
+                ->with(
+                    'error',
+                    'Tidak bisa menghapus Program Studi karena masih digunakan oleh ' .
+                        implode(' dan ', $pesan) . '.'
+                );
+        }
 
         $prodi->delete();
 
-        return redirect()->route('prodi.index')->with('success', 'Program Studi berhasil dihapus!');
+        return redirect()
+            ->route('prodi.index')
+            ->with('success', 'Program Studi berhasil dihapus.');
     }
+
     public function update(Request $request, $id)
     {
         $this->authorize('master-data-prodi.edit');
-        
+
         $request->validate([
             'nama_prodi' => 'required|string|max:255',
             'fakultas_id' => 'required|exists:fakultas,id',
