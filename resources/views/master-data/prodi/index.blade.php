@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,6 +15,7 @@
         }
     </style>
 </head>
+
 <body class="flex flex-col md:flex-row bg-[#F8FAFC] min-h-screen text-[#1E293B]">
     {{-- Sidebar Navigation --}}
     <x-navbar />
@@ -33,7 +35,7 @@
             <div class="flex items-center gap-3">
                 @can('master-data-prodi.create')
                 <a href="{{ route('prodi.create') }}"
-                   class="inline-flex items-center gap-2 px-5 py-3 bg-[#C41E3A] hover:bg-[#A31830] text-white font-semibold rounded-xl transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5 text-sm">
+                    class="inline-flex items-center gap-2 px-5 py-3 bg-[#C41E3A] hover:bg-[#A31830] text-white font-semibold rounded-xl transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5 text-sm">
                     <i class="fas fa-plus"></i>
                     <span>Tambah Prodi</span>
                 </a>
@@ -49,8 +51,8 @@
                         class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
                 </div>
                 <div class="flex gap-2">
-                    <a href="{{ route('prodi.index') }}" 
-                       class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 font-semibold px-4 py-3 rounded-xl flex items-center justify-center space-x-2 transition-all text-sm">
+                    <a href="{{ route('prodi.index') }}"
+                        class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 font-semibold px-4 py-3 rounded-xl flex items-center justify-center space-x-2 transition-all text-sm">
                         <span>Reset</span>
                     </a>
                     <button type="submit"
@@ -80,46 +82,46 @@
                     </thead>
                     <tbody class="divide-y divide-gray-100 bg-white">
                         @forelse($prodi as $item)
-                            <tr class="hover:bg-[#F8FAFC] transition-colors duration-150 group">
-                                <td class="px-6 py-4 text-sm font-bold text-gray-900 group-hover:text-[#C41E3A] transition-colors">{{ $item->nama_prodi }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-600 font-semibold">{{ $item->fakultas->nama_fakultas ?? '-' }}</td>
-                                <td class="px-6 py-4 text-center text-sm">
-                                    <div class="flex items-center justify-center gap-2.5">
-                                        @can('master-data-prodi.edit')
-                                        <a href="{{ route('prodi.edit', $item->id) }}"
-                                           class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-green-600 hover:bg-green-50 border border-transparent hover:border-green-100 rounded-lg transition-all"
-                                           title="Edit">
-                                            <i class="fas fa-edit text-sm"></i>
-                                        </a>
-                                        @endcan
+                        <tr class="hover:bg-[#F8FAFC] transition-colors duration-150 group">
+                            <td class="px-6 py-4 text-sm font-bold text-gray-900 group-hover:text-[#C41E3A] transition-colors">{{ $item->nama_prodi }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-600 font-semibold">{{ $item->fakultas->nama_fakultas ?? '-' }}</td>
+                            <td class="px-6 py-4 text-center text-sm">
+                                <div class="flex items-center justify-center gap-2.5">
+                                    @can('master-data-prodi.edit')
+                                    <a href="{{ route('prodi.edit', $item->id) }}"
+                                        class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-green-600 hover:bg-green-50 border border-transparent hover:border-green-100 rounded-lg transition-all"
+                                        title="Edit">
+                                        <i class="fas fa-edit text-sm"></i>
+                                    </a>
+                                    @endcan
 
-                                        @can('master-data-prodi.delete')
-                                        <form action="{{ route('prodi.destroy', $item->id) }}" method="POST"
-                                              class="inline-block delete-form">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="button" 
-                                                    class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-100 rounded-lg transition-all delete-btn"
-                                                    data-nama="{{ $item->nama_prodi }}"
-                                                    title="Hapus">
-                                                <i class="fas fa-trash text-sm"></i>
-                                            </button>
-                                        </form>
-                                        @endcan
-                                    </div>
-                                </td>
-                            </tr>
+                                    @can('master-data-prodi.delete')
+                                    <form action="{{ route('prodi.destroy', $item->id) }}" method="POST"
+                                        class="inline-block delete-form">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button"
+                                            class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-100 rounded-lg transition-all delete-btn"
+                                            data-nama="{{ $item->nama_prodi }}"
+                                            title="Hapus">
+                                            <i class="fas fa-trash text-sm"></i>
+                                        </button>
+                                    </form>
+                                    @endcan
+                                </div>
+                            </td>
+                        </tr>
                         @empty
-                            <tr>
-                                <td colspan="3" class="px-6 py-16 text-center text-gray-400">
-                                    <div class="flex flex-col items-center gap-3">
-                                        <div class="p-4 bg-gray-50 text-gray-300 rounded-full">
-                                            <i class="fas fa-university text-4xl"></i>
-                                        </div>
-                                        <p class="font-medium text-gray-500">Tidak ada data program studi ditemukan</p>
+                        <tr>
+                            <td colspan="3" class="px-6 py-16 text-center text-gray-400">
+                                <div class="flex flex-col items-center gap-3">
+                                    <div class="p-4 bg-gray-50 text-gray-300 rounded-full">
+                                        <i class="fas fa-university text-4xl"></i>
                                     </div>
-                                </td>
-                            </tr>
+                                    <p class="font-medium text-gray-500">Tidak ada data program studi ditemukan</p>
+                                </div>
+                            </td>
+                        </tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -134,24 +136,44 @@
     {{-- SweetAlert2 JS --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             @if(session('success'))
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Berhasil!',
-                    text: '{{ session('success') }}',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    toast: true,
-                    position: 'top-end'
-                });
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: '{{ session('
+                success ') }}',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                toast: true,
+                position: 'top-end'
+            });
+            @endif
+
+            @if(session('error'))
+            Swal.fire({
+                icon: 'error',
+                title: 'Gagal!',
+                html: `
+        <p style="font-size:16px; line-height:1.6;">
+            {{ session('error') }}
+        </p>
+    `,
+                confirmButtonText: 'OK',
+                confirmButtonColor: '#C41E3A',
+                customClass: {
+                    popup: 'rounded-2xl',
+                    confirmButton: 'px-5 py-2 rounded-xl font-semibold'
+                }
+            });
             @endif
 
             // SWEETALERT DELETE CONFIRMATION
             const deleteBtns = document.querySelectorAll('.delete-btn');
             deleteBtns.forEach(btn => {
-                btn.addEventListener('click', function () {
+                btn.addEventListener('click', function() {
                     const form = this.closest('.delete-form');
                     const nama = this.getAttribute('data-nama');
 
@@ -191,4 +213,5 @@
         });
     </script>
 </body>
+
 </html>

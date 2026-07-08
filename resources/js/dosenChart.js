@@ -41,11 +41,14 @@ if (dosenProdiEl) {
         options: {
             plugins: {
                 datalabels: {
+                    display: function(context) {
+                        return context.dataset.data[context.dataIndex] > 0;
+                    },
                     formatter: (value, ctx) => {
                         let sum = 0;
                         let dataArr = ctx.chart.data.datasets[0].data;
                         dataArr.map(data => { sum += Number(data); });
-                        if(sum === 0) return '0%';
+                        if(sum === 0) return '';
                         let percentage = (value * 100 / sum).toFixed(0) + "%";
                         return percentage;
                     },
@@ -76,11 +79,14 @@ if (dosenKKEl) {
         options: {
             plugins: {
                 datalabels: {
+                    display: function(context) {
+                        return context.dataset.data[context.dataIndex] > 0;
+                    },
                     formatter: (value, ctx) => {
                         let sum = 0;
                         let dataArr = ctx.chart.data.datasets[0].data;
                         dataArr.map(data => { sum += Number(data); });
-                        if(sum === 0) return '0%';
+                        if(sum === 0) return '';
                         let percentage = (value * 100 / sum).toFixed(0) + "%";
                         return percentage;
                     },
@@ -111,11 +117,14 @@ if (pendDosenEl) {
         options: {
             plugins: {
                 datalabels: {
+                    display: function(context) {
+                        return context.dataset.data[context.dataIndex] > 0;
+                    },
                     formatter: (value, ctx) => {
                         let sum = 0;
                         let dataArr = ctx.chart.data.datasets[0].data;
                         dataArr.map(data => { sum += Number(data); });
-                        if(sum === 0) return '0%';
+                        if(sum === 0) return '';
                         let percentage = (value * 100 / sum).toFixed(0) + "%";
                         return percentage;
                     },
