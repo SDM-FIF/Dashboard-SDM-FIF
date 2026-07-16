@@ -34,6 +34,12 @@
 
             <div class="flex items-center gap-3">
                 @can('kelola-data-mahasiswa.create')
+                <a href="{{ route('kompetisi.import.view') }}"
+                    class="inline-flex items-center gap-2 px-5 py-3 bg-white border border-[#C41E3A] text-[#C41E3A] hover:bg-red-50 font-semibold rounded-xl transition-all duration-300 shadow-sm hover:shadow text-sm">
+                    <i class="fas fa-file-import"></i>
+                    <span>Import Data</span>
+                </a>
+
                 <a href="{{ route('mahasiswa.kompetisi.create') }}"
                     class="inline-flex items-center gap-2 px-5 py-3 bg-[#C41E3A] hover:bg-[#A31830] text-white font-semibold rounded-xl transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5 text-sm">
                     <i class="fas fa-plus"></i>

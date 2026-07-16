@@ -74,6 +74,12 @@
                                 <td class="px-6 py-4 text-sm text-gray-500 font-medium">{{ $item->tanggal_kompetisi->format('d M Y') }}</td>
                                 <td class="px-6 py-4 text-center text-sm">
                                     <div class="flex items-center justify-center gap-2.5">
+                                        <a href="{{ route('kompetisi.show', $item->id) }}"
+                                           class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-blue-600 hover:bg-blue-50 border border-transparent hover:border-blue-100 rounded-lg transition-all"
+                                           title="Lihat Detail">
+                                            <i class="fas fa-eye text-sm"></i>
+                                        </a>
+
                                         @can('master-data-kompetisi.edit')
                                         <a href="{{ route('kompetisi.edit', $item->id) }}"
                                            class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-green-600 hover:bg-green-50 border border-transparent hover:border-green-100 rounded-lg transition-all"

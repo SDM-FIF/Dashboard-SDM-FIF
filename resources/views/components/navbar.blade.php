@@ -161,6 +161,12 @@
                                     </a>
                                 </li>
                             @endcan
+                            <li>
+                                <a href="{{ route('manajemen-tpa.laporan') }}"
+                                    class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 text-red-100 {{ request()->routeIs('manajemen-tpa.laporan') ? 'bg-red-600/60' : '' }}">
+                                    Laporan TPA
+                                </a>
+                            </li>
                         </ul>
                     </div>
                 </li>
@@ -191,9 +197,15 @@
                         <ul class="py-2 space-y-1">
                             @can('rekrutasi-data-dosen.view')
                                 <li>
-                                    <a href="{{ route('rekrutasi-dosen') }}"
-                                        class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('rekrutasi-dosen') && !request()->routeIs('rekrutasi-dosen.*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
+                                    <a href="{{ route('rekrutasi-dosen.index') }}"
+                                        class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('rekrutasi-dosen.index') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
                                         Data Rekrutasi Dosen
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('rekrutasi-dosen.laporan') }}"
+                                        class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('rekrutasi-dosen.laporan') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
+                                        Laporan Rekrutasi
                                     </a>
                                 </li>
                             @endcan

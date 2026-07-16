@@ -82,45 +82,49 @@ Route::get('/dashboard', function () {
 
 // Landing Page
 Route::get('/', function () {
+    $totalDosen = \App\Models\Dosen::count();
+    $dosenAktif = \App\Models\Dosen::where('status_dosen', 'Aktif')->count();
+    $dosenTugasBelajar = \App\Models\Dosen::where('status_dosen', 'Tugas Belajar')->count();
+    $dosenIzinBelajar = \App\Models\Dosen::where('status_dosen', 'Izin Belajar')->count();
 
-    $totalDosen = Dosen::count();
-    $dosenAktif = Dosen::where('status_dosen', 'Aktif')->count();
-
-    $dosenTugasBelajar = Dosen::where('status_dosen', 'Tugas Belajar')->count();
-
-    $dosenIzinBelajar = Dosen::where('status_dosen', 'Izin Belajar')->count();
-
-    // Pendidikan dosen
-    $pendidikanDosen = Dosen::select(
-        'pendidikan_terakhir',
-        DB::raw('COUNT(*) as total')
-    )
+    $pendidikanDosen = \App\Models\Dosen::select('pendidikan_terakhir', DB::raw('count(*) as count'))
         ->groupBy('pendidikan_terakhir')
-        ->pluck('total', 'pendidikan_terakhir')
+        ->pluck('count', 'pendidikan_terakhir')
         ->toArray();
 
-    // Jabatan Akademik Dosen
-    $jadDosen = Dosen::select(
-        'jabatan',
-        DB::raw('count(*) as count')
-    )
+    $jadDosen = \App\Models\Dosen::select('jabatan', DB::raw('count(*) as count'))
         ->groupBy('jabatan')
         ->pluck('count', 'jabatan')
         ->toArray();
 
-    $jumlahDosenProdi = Prodi::withCount('dosen')
+    $nisbah = \App\Models\Prodi::withCount([
+        'dosen',
+        'mahasiswa as mahasiswa_aktif_count' => function ($query) {
+            $query->where('status', 'Aktif');
+        }
+    ])
+        ->get()
+        ->map(function ($prodi) {
+
+            $hasilNisbah = $prodi->dosen_count > 0
+                ? round($prodi->mahasiswa_aktif_count / $prodi->dosen_count, 2)
+                : 0;
+
+            return [
+                'nama_prodi' => $prodi->nama_prodi,
+                'jumlah_dosen' => $prodi->dosen_count,
+                'jumlah_mahasiswa' => $prodi->mahasiswa_aktif_count,
+                'nisbah' => '1 : 27',
+                'hasil_nisbah' => $hasilNisbah,
+                'status' => $hasilNisbah > 27 ? 'Melebihi' : 'Sesuai',
+            ];
+        });
+
+    $jumlahDosenProdi = \App\Models\Prodi::withCount('dosen')
         ->pluck('dosen_count', 'nama_prodi')
         ->toArray();
 
-    return view('landingpage', compact(
-        'totalDosen',
-        'dosenAktif',
-        'dosenTugasBelajar',
-        'dosenIzinBelajar',
-        'pendidikanDosen',
-        'jadDosen',
-        'jumlahDosenProdi'
-    ));
+    return view('landingpage', compact('totalDosen', 'dosenAktif', 'dosenTugasBelajar', 'dosenIzinBelajar', 'pendidikanDosen', 'jadDosen', 'nisbah', 'jumlahDosenProdi'));
 })->name('guest');
 Route::get('/guest-dosen', function () {
     $dosenProdi = \App\Models\Dosen::join('prodi', 'dosen.prodi_id', '=', 'prodi.id')
@@ -512,6 +516,7 @@ Route::middleware('auth')->group(function () {
         // Kompetisi - view permission for all roles, create/edit/delete for Super Admin only
         Route::middleware('can:master-data-kompetisi.view')->group(function () {
             Route::get('kompetisi', [KompetisiController::class, 'index'])->name('kompetisi.index');
+            Route::get('kompetisi/{kompetisi}', [KompetisiController::class, 'show'])->name('kompetisi.show');
 
             Route::middleware('can:master-data-kompetisi.create')->group(function () {
                 Route::get('kompetisi/create', [KompetisiController::class, 'create'])->name('kompetisi.create');
@@ -629,6 +634,15 @@ Route::middleware('auth')->group(function () {
         Route::get('/kompetisi-mahasiswa/create', [MahasiswaController::class, 'kompetisiCreate'])->name('kompetisi.create')->middleware('can:kelola-data-mahasiswa.create');
         Route::post('/kompetisi-mahasiswa', [MahasiswaController::class, 'kompetisiStore'])->name('kompetisi.store')->middleware('can:kelola-data-mahasiswa.create');
         Route::delete('/kompetisi-mahasiswa/{id}', [MahasiswaController::class, 'kompetisiDestroy'])->name('kompetisi.destroy')->middleware('can:kelola-data-mahasiswa.delete');
+        
+        // --- IMPORT MAHASISWA KOMPETISI ---
+        Route::middleware('can:kelola-data-mahasiswa.create')->group(function () {
+            Route::get('/kompetisi-mahasiswa/import', [MahasiswaController::class, 'kompetisiImportView'])->name('kompetisi.import.view');
+            Route::post('/kompetisi-mahasiswa/import/upload', [MahasiswaController::class, 'kompetisiUploadImport'])->name('kompetisi.import.upload');
+            Route::post('/kompetisi-mahasiswa/import/save', [MahasiswaController::class, 'kompetisiSaveImport'])->name('kompetisi.import.save');
+            Route::get('/kompetisi-mahasiswa/import/result', [MahasiswaController::class, 'kompetisiImportResult'])->name('kompetisi.import.result');
+            Route::get('/kompetisi-mahasiswa/import/download-template', [MahasiswaController::class, 'kompetisiDownloadTemplate'])->name('kompetisi.import.download.template');
+        });
 
         // Route dengan Parameter diletakkan di bawah agar tidak "memakan" route statis di atas
         Route::get('/{mahasiswa}', [MahasiswaController::class, 'show'])->name('show')->middleware('can:kelola-data-mahasiswa.detail');
@@ -642,6 +656,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('rekrutasi-dosen')->name('rekrutasi-dosen.')->middleware('can:rekrutasi-data-dosen.view')->group(function () {
         // Overview / Main List
         Route::get('/', [RekrutasiDosenController::class, 'index'])->name('index');
+        Route::get('/laporan', [RekrutasiDosenController::class, 'laporan'])->name('laporan');
 
         // Import Routes - Super Admin Only
         Route::middleware('can:import-rekrutasi-dosen.view')->group(function () {

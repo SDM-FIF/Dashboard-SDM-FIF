@@ -624,4 +624,16 @@ class TenagaPendukungAkademikController extends Controller
             'jabatanCounts' => $jabatanCounts,
         ];
     }
+
+    /**
+     * Laporan TPA
+     */
+    public function laporan()
+    {
+        // Gunakan permission yang sesuai (misal laporan-data-tpa.view atau kelola-data-tpa.view)
+        // Kita tidak memakai middleware di method karena route sudah di-protect
+        $statistik = $this->getDashboardData();
+
+        return view('manajemen-tpa.laporan', compact('statistik'));
+    }
 }

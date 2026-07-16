@@ -121,4 +121,12 @@ class KompetisiController extends Controller
 
         return redirect()->route('kompetisi.index')->with('success', 'Data Kompetisi berhasil diperbarui!');
     }
+
+    public function show($id)
+    {
+        $this->authorize('master-data-kompetisi.view');
+        
+        $kompetisi = Kompetisi::with('mahasiswa.prodi')->findOrFail($id);
+        return view('master-data.kompetisi.show', compact('kompetisi'));
+    }
 }

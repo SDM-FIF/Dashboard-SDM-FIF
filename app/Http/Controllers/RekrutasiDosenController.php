@@ -2447,4 +2447,26 @@ class RekrutasiDosenController extends Controller
 
         return response()->file($path);
     }
+
+    public function laporan()
+    {
+        $this->authorize('rekrutasi-data-dosen.view');
+
+        $statistik = [
+            'total' => CalonDosen::count(),
+            'per_status' => CalonDosen::selectRaw('status_penerimaan, COUNT(*) as total')
+                ->groupBy('status_penerimaan')
+                ->pluck('total', 'status_penerimaan'),
+            'per_prodi' => CalonDosen::join('prodi', 'calon_dosen.prodi_id', '=', 'prodi.id')
+                ->selectRaw('prodi.nama_prodi, COUNT(calon_dosen.id) as total')
+                ->groupBy('prodi.nama_prodi')
+                ->pluck('total', 'nama_prodi'),
+            'per_jenjang' => CalonDosen::join('prodi', 'calon_dosen.prodi_id', '=', 'prodi.id')
+                ->selectRaw('prodi.jenjang, COUNT(calon_dosen.id) as total')
+                ->groupBy('prodi.jenjang')
+                ->pluck('total', 'jenjang')
+        ];
+
+        return view('rekrutasi-dosen.laporan', compact('statistik'));
+    }
 }

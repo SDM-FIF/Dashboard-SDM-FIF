@@ -747,4 +747,247 @@ public function exportPdf(Request $request)
             return back()->withErrors(['error' => 'Error: ' . $e->getMessage()]);
         }
     }
+
+    // =========================================================================
+    // START: FEATURE IMPORT MAHASISWA KOMPETISI
+    // =========================================================================
+
+    public function kompetisiImportView(Request $request)
+    {
+        $this->authorize('kelola-data-mahasiswa.create');
+
+        $step = $request->get('step');
+        $reset = $request->get('reset');
+
+        if ($reset == '1') {
+            session()->forget(['import_kompetisi_data', 'show_kompetisi_import', 'import_kompetisi_result', 'kompetisi_file_uploaded']);
+            return redirect()->route('mahasiswa.kompetisi.import.view', ['step' => 1]);
+        }
+
+        if (!$step) {
+            if (session()->has('import_kompetisi_result')) {
+                return redirect()->route('mahasiswa.kompetisi.import.result');
+            } elseif (session()->has('import_kompetisi_data')) {
+                $step = 2;
+            } else {
+                $step = 1;
+            }
+        }
+
+        if ($step == 1) {
+            session()->forget(['import_kompetisi_data', 'show_kompetisi_import']);
+        }
+
+        return view('mahasiswa.kompetisi-import', compact('step'));
+    }
+
+    public function kompetisiUploadImport(Request $request)
+    {
+        $this->authorize('kelola-data-mahasiswa.create');
+
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv|max:2048'
+        ]);
+
+        try {
+            $file = $request->file('file');
+            $data = $this->kompetisiParseImportFile($file);
+
+            if (empty($data)) {
+                return redirect()->back()
+                    ->with('error', 'File kosong atau format tidak sesuai.');
+            }
+
+            $validatedData = $this->kompetisiValidateImportData($data);
+
+            session([
+                'import_kompetisi_data' => $validatedData,
+                'show_kompetisi_import' => true,
+                'kompetisi_file_uploaded' => true
+            ]);
+
+            $validCount = collect($validatedData)->where('is_valid', true)->count();
+            $totalCount = count($validatedData);
+
+            return redirect()->route('mahasiswa.kompetisi.import.view', ['step' => 2])
+                ->with('success', "File berhasil diupload! {$validCount} dari {$totalCount} data valid.");
+
+        } catch (\Exception $e) {
+            Log::error('Upload error: ' . $e->getMessage());
+            return redirect()->back()
+                ->with('error', 'Error upload file: ' . $e->getMessage());
+        }
+    }
+
+    private function kompetisiParseImportFile($file)
+    {
+        try {
+            $dataRaw = Excel::toArray([], $file);
+            $rows = $dataRaw[0] ?? [];
+            array_shift($rows);
+
+            $data = [];
+            foreach ($rows as $row) {
+                if (!empty(trim($row[0] ?? ''))) {
+                    $data[] = [
+                        'nim' => trim($row[0] ?? ''),
+                        'nama_kompetisi' => trim($row[1] ?? ''),
+                        'juara' => trim($row[2] ?? ''),
+                    ];
+                }
+            }
+            return $data;
+        } catch (\Exception $e) {
+            Log::error('Excel parse error: ' . $e->getMessage());
+            return [];
+        }
+    }
+
+    private function kompetisiValidateImportData($data)
+    {
+        $validated = [];
+
+        foreach ($data as $row) {
+            $errors = [];
+            $mahasiswaId = null;
+            $kompetisiId = null;
+
+            if (empty($row['nim'])) {
+                $errors[] = 'NIM kosong';
+            } else {
+                $mahasiswa = Mahasiswa::where('nim', $row['nim'])->first();
+                if ($mahasiswa) {
+                    $mahasiswaId = $mahasiswa->id;
+                } else {
+                    $errors[] = 'Mahasiswa dengan NIM tersebut tidak ditemukan';
+                }
+            }
+
+            if (empty($row['nama_kompetisi'])) {
+                $errors[] = 'Nama Kompetisi kosong';
+            } else {
+                $kompetisi = Kompetisi::where('nama_kompetisi', $row['nama_kompetisi'])->first();
+                if ($kompetisi) {
+                    $kompetisiId = $kompetisi->id;
+                } else {
+                    $errors[] = 'Kompetisi tidak ditemukan';
+                }
+            }
+
+            if ($mahasiswaId && $kompetisiId) {
+                $exists = MahasiswaKompetisi::where('mahasiswa_id', $mahasiswaId)
+                    ->where('kompetisi_id', $kompetisiId)
+                    ->exists();
+                if ($exists) {
+                    $errors[] = 'Mahasiswa sudah terdaftar di kompetisi ini';
+                }
+            }
+
+            $validated[] = [
+                'nim' => $row['nim'],
+                'mahasiswa_id' => $mahasiswaId,
+                'nama_kompetisi' => $row['nama_kompetisi'],
+                'kompetisi_id' => $kompetisiId,
+                'juara' => $row['juara'],
+                'is_valid' => empty($errors),
+                'errors' => $errors
+            ];
+        }
+        return $validated;
+    }
+
+    public function kompetisiSaveImport(Request $request)
+    {
+        $this->authorize('kelola-data-mahasiswa.create');
+
+        $importData = session('import_kompetisi_data', []);
+
+        if (empty($importData)) {
+            return redirect()->route('mahasiswa.kompetisi.import.view')
+                ->with('error', 'Tidak ada data untuk diimport.');
+        }
+
+        $successCount = 0;
+        $failCount = 0;
+
+        foreach ($importData as $row) {
+            if ($row['is_valid']) {
+                try {
+                    MahasiswaKompetisi::create([
+                        'mahasiswa_id' => $row['mahasiswa_id'],
+                        'kompetisi_id' => $row['kompetisi_id'],
+                        'juara' => $row['juara'] ?: null,
+                    ]);
+                    $successCount++;
+                } catch (\Exception $e) {
+                    $failCount++;
+                }
+            } else {
+                $failCount++;
+            }
+        }
+
+        session([
+            'import_kompetisi_result' => [
+                'success' => $successCount,
+                'failed' => $failCount,
+                'data' => array_filter($importData, fn($row) => $row['is_valid'])
+            ]
+        ]);
+
+        session()->forget('import_kompetisi_data');
+
+        return redirect()->route('mahasiswa.kompetisi.import.result')
+            ->with('success', "Import selesai! {$successCount} sukses, {$failCount} gagal.");
+    }
+
+    public function kompetisiImportResult()
+    {
+        $this->authorize('kelola-data-mahasiswa.create');
+
+        $result = session('import_kompetisi_result', []);
+        return view('mahasiswa.kompetisi-import-result', compact('result'));
+    }
+
+    public function kompetisiDownloadTemplate()
+    {
+        $this->authorize('kelola-data-mahasiswa.create');
+
+        $filename = 'template-mahasiswa-kompetisi.xls';
+
+        $headers = [
+            'Content-Type' => 'application/vnd.ms-excel',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
+
+        return response()->stream(function () {
+            echo $this->generateKompetisiTemplateExcel();
+        }, 200, $headers);
+    }
+
+    private function generateKompetisiTemplateExcel()
+    {
+        return '<?xml version="1.0" encoding="UTF-8"?>
+        <?mso-application progid="Excel.Sheet"?>
+        <Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+        xmlns:o="urn:schemas-microsoft-com:office:office"
+        xmlns:x="urn:schemas-microsoft-com:office:excel"
+        xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+        xmlns:html="http://www.w3.org/TR/REC-html40">
+        <Worksheet ss:Name="TemplateMahasiswaKompetisi">
+            <Table>
+                <Row ss:StyleID="s62">
+                    <Cell><Data ss:Type="String">NIM</Data></Cell>
+                    <Cell><Data ss:Type="String">Nama Kompetisi</Data></Cell>
+                    <Cell><Data ss:Type="String">Juara</Data></Cell>
+                </Row>
+                <Row>
+                    <Cell><Data ss:Type="String">1301201234</Data></Cell>
+                    <Cell><Data ss:Type="String">Gemastik 2024</Data></Cell>
+                    <Cell><Data ss:Type="String">Juara 1</Data></Cell>
+                </Row>
+            </Table>
+        </Worksheet>
+        </Workbook>';
+    }
 }
