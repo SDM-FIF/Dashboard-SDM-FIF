@@ -408,6 +408,10 @@
                     </button>
                     @else
                         @can('penilaian-dosen.submit')
+                        <button type="button" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all duration-300 shadow-md hover:shadow-lg text-sm flex items-center gap-2" id="btnKalkulasiNilai">
+                            <i class="fas fa-calculator"></i>
+                            <span>Kalkulasi Rata-Rata</span>
+                        </button>
                         <button type="submit" class="px-6 py-3 bg-[#C41E3A] hover:bg-[#A31830] text-white font-bold rounded-xl transition-all duration-300 shadow-md hover:shadow-lg text-sm flex items-center gap-2" id="btnSimpanPenilaian">
                             <i class="fas fa-save"></i>
                             <span>{{ $existingPenilaian ? 'Simpan Perubahan' : 'Simpan Penilaian' }}</span>
@@ -613,6 +617,65 @@
                             confirmButtonColor: '#C41E3A'
                         });
                     }
+                });
+            });
+
+            // Click event for Kalkulasi Rata-Rata button
+            $('#btnKalkulasiNilai').on('click', function() {
+                // Validation: Check all nilai inputs (B and C sections)
+                let isValid = true;
+                let errorMessage = '';
+                
+                // Check Section B inputs
+                for (let i = 1; i <= 3; i++) {
+                    const nilai = parseFloat($(`#nilai_b${i}`).val());
+                    if (!nilai || nilai < 1 || nilai > 5) {
+                        isValid = false;
+                        errorMessage = 'Semua kriteria penilaian Section B harus diisi dengan angka 1-5';
+                        break;
+                    }
+                }
+                
+                // Check Section C inputs
+                if (isValid) {
+                    for (let i = 1; i <= 8; i++) {
+                        const nilai = parseFloat($(`#nilai_c${i}`).val());
+                        if (!nilai || nilai < 1 || nilai > 5) {
+                            isValid = false;
+                            errorMessage = 'Semua kriteria penilaian Section C harus diisi dengan angka 1-5';
+                            break;
+                        }
+                    }
+                }
+                
+                if (!isValid) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Kalkulasi Gagal',
+                        text: errorMessage,
+                        confirmButtonColor: '#C41E3A'
+                    });
+                    return;
+                }
+                
+                // Calculate all averages
+                const rataA = calculateRataA();
+                const rataB = calculateRataB();
+                const rataC = calculateRataC();
+                const totalNilai = (rataA + rataB + rataC) / 3;
+                const keterangan = getKeterangan(totalNilai);
+                
+                // Update displays
+                $('#rata_b_value').text(rataB.toFixed(2));
+                $('#rata_c_value').text(rataC.toFixed(2));
+                $('#total_nilai').val(totalNilai.toFixed(2));
+                $('#keterangan_berbobot').val(keterangan);
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Kalkulasi Sukses',
+                    text: 'Nilai rata-rata berhasil dihitung: ' + totalNilai.toFixed(2) + ' (' + keterangan + ')',
+                    confirmButtonColor: '#C41E3A'
                 });
             });
         });
