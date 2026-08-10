@@ -111,7 +111,7 @@ class RekrutasiDosenController extends Controller
                 'alamat' => 'nullable|string',
                 'jabatan_fungsional_akademik' => 'nullable|string',
                 'bidang_keahlian' => 'nullable|string',
-                'jalur_lamaran' => 'nullable|in:S3 Prof Full time,S2 Praktisi Part time,Praktisi Part time,Prof Full time,S3 OnGoing',
+                'jalur_lamaran' => 'nullable|in:S3 Prof Full time,S2 Praktisi Part time,S3 Praktisi Part time,S2 Prof Full time,S3 OnGoing',
                 'h_index' => 'nullable|numeric|min:0',
                 // Validasi S1 (wajib)
                 'riwayat.s1.nama_universitas' => 'required|string|max:255',

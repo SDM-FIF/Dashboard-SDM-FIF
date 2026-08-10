@@ -15,3 +15,9 @@ try {
 } catch (\Exception $e) {
     echo "rekrutasi-dosen Error: " . $e->getMessage() . "\n";
 }
+
+try {
+    echo "kompetisi.import.view URL: " . route('kompetisi.import.view') . "\n";
+} catch (\Exception $e) {
+    echo "kompetisi.import.view Error: " . $e->getMessage() . "\n";
+}

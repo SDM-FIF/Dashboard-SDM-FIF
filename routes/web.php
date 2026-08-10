@@ -735,6 +735,14 @@ Route::middleware('auth')->group(function () {
     // ============================
     Route::get('/rekrutasi-dosen-legacy', [RekrutasiDosenController::class, 'index'])->name('rekrutasi-dosen')->middleware(['auth', 'can:rekrutasi-data-dosen.view']);
 
+    Route::middleware(['auth', 'can:kelola-data-mahasiswa.create'])->group(function () {
+        Route::get('/mahasiswa/kompetisi-mahasiswa/import', [MahasiswaController::class, 'kompetisiImportView'])->name('kompetisi.import.view');
+        Route::post('/mahasiswa/kompetisi-mahasiswa/import/upload', [MahasiswaController::class, 'kompetisiUploadImport'])->name('kompetisi.import.upload');
+        Route::post('/mahasiswa/kompetisi-mahasiswa/import/save', [MahasiswaController::class, 'kompetisiSaveImport'])->name('kompetisi.import.save');
+        Route::get('/mahasiswa/kompetisi-mahasiswa/import/result', [MahasiswaController::class, 'kompetisiImportResult'])->name('kompetisi.import.result');
+        Route::get('/mahasiswa/kompetisi-mahasiswa/import/download-template', [MahasiswaController::class, 'kompetisiDownloadTemplate'])->name('kompetisi.import.download.template');
+    });
+
     // ============================
     // Data Routes (Backward Compatibility)
     // ============================
