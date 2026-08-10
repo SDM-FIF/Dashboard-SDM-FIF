@@ -330,20 +330,9 @@ class TenagaPendukungAkademikController extends Controller
         ]);
     }
 
-    /**
-     * Halaman Laporan TPA
-     */
     public function laporan()
     {
-        $statistik = [
-            'total' => TenagaPendukungAkademik::count(),
-            'per_status' => TenagaPendukungAkademik::selectRaw('status_pegawai, COUNT(*) as total')
-                ->groupBy('status_pegawai')
-                ->pluck('total', 'status_pegawai'),
-            'per_lokasi' => TenagaPendukungAkademik::selectRaw('lokasi_kerja, COUNT(*) as total')
-                ->groupBy('lokasi_kerja')
-                ->pluck('total', 'lokasi_kerja'),
-        ];
+        $statistik = $this->getDashboardData();
 
         return view('manajemen-tpa.laporan', compact('statistik'));
     }
@@ -623,17 +612,5 @@ class TenagaPendukungAkademikController extends Controller
             'statusCounts' => $statusCounts,
             'jabatanCounts' => $jabatanCounts,
         ];
-    }
-
-    /**
-     * Laporan TPA
-     */
-    public function laporan()
-    {
-        // Gunakan permission yang sesuai (misal laporan-data-tpa.view atau kelola-data-tpa.view)
-        // Kita tidak memakai middleware di method karena route sudah di-protect
-        $statistik = $this->getDashboardData();
-
-        return view('manajemen-tpa.laporan', compact('statistik'));
     }
 }

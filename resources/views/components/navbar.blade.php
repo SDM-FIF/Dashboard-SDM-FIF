@@ -211,8 +211,8 @@
                             @endcan
                             @can('import-rekrutasi-dosen.view')
                                 <li>
-                                    <a href="{{ route('import-rekruitasi') }}"
-                                        class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('import-rekruitasi') || request()->routeIs('rekrutasi-dosen.import*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
+                                    <a href="{{ route('rekrutasi-dosen.import.view') }}"
+                                        class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('rekrutasi-dosen.import.view') || request()->routeIs('rekrutasi-dosen.import*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
                                         Import Rekrutasi Dosen
                                     </a>
                                 </li>

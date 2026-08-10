@@ -731,13 +731,9 @@ Route::middleware('auth')->group(function () {
     });
 
     // ============================
-    // Backward Compatibility Routes (untuk Navbar)
+    // Legacy Route Name Compatibility
     // ============================
-    // UBAH route ini dari yang lama
-    Route::get('/rekrutasi-dosen', [RekrutasiDosenController::class, 'index'])->name('rekrutasi-dosen');
-
-    // UBAH route ini dari yang lama
-    Route::get('/import-rekruitasi', [RekrutasiDosenController::class, 'importView'])->name('import-rekruitasi');
+    Route::get('/rekrutasi-dosen-legacy', [RekrutasiDosenController::class, 'index'])->name('rekrutasi-dosen')->middleware(['auth', 'can:rekrutasi-data-dosen.view']);
 
     // ============================
     // Data Routes (Backward Compatibility)
