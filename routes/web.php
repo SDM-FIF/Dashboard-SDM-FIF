@@ -31,6 +31,18 @@ Route::post('/logout', [AuthController::class, 'logout'])
     ->name('logout')
     ->middleware('auth');
 
+Route::post('/switch-role', function (Illuminate\Http\Request $request) {
+    $role = $request->input('role');
+    $user = Auth::user();
+    
+    if ($user && $user->roles->contains('name', $role)) {
+        session()->put('active_role', $role);
+        return redirect()->route('dashboard')->with('success', 'Role berhasil diganti ke ' . $role);
+    }
+    
+    return redirect()->back()->with('error', 'Akses ditolak.');
+})->name('switch-role')->middleware('auth');
+
 // ============================
 // Public Dashboard (Bisa diakses Guest & Auth)
 // ============================
@@ -673,10 +685,10 @@ Route::middleware('auth')->group(function () {
     // ============================
     // 🆕 Rekrutasi Dosen Routes (TAMBAHAN BARU)
     // ============================
-    Route::prefix('rekrutasi-dosen')->name('rekrutasi-dosen.')->middleware('can:rekrutasi-data-dosen.view')->group(function () {
+    Route::prefix('rekrutasi-dosen')->name('rekrutasi-dosen.')->middleware('auth')->group(function () {
         // Overview / Main List
-        Route::get('/', [RekrutasiDosenController::class, 'index'])->name('index');
-        Route::get('/laporan', [RekrutasiDosenController::class, 'laporan'])->name('laporan');
+        Route::get('/', [RekrutasiDosenController::class, 'index'])->name('index')->middleware('can:rekrutasi-data-dosen.view');
+        Route::get('/laporan', [RekrutasiDosenController::class, 'laporan'])->name('laporan')->middleware('can:rekrutasi-data-dosen.view');
 
         // Import Routes - Super Admin Only
         Route::middleware('can:import-rekrutasi-dosen.view')->group(function () {
@@ -718,7 +730,7 @@ Route::middleware('auth')->group(function () {
         });
 
         // Download Riwayat Pendidikan Files
-        Route::get('/riwayat-file/{filename}', [RekrutasiDosenController::class, 'downloadRiwayatFile'])->name('riwayat.download');
+        Route::get('/riwayat-file/{filename}', [RekrutasiDosenController::class, 'downloadRiwayatFile'])->name('riwayat.download')->middleware('can:rekrutasi-data-dosen.view');
 
         // Hasil Pengujian
         Route::middleware('can:hasil-pengujian.view')->group(function () {
@@ -737,17 +749,17 @@ Route::middleware('auth')->group(function () {
         });
 
         // ⚠️ EXPORT ROUTES - HARUS DI ATAS {id} ⚠️
-        Route::get('/export-excel', [RekrutasiDosenController::class, 'exportExcel'])->name('export-excel');
-        Route::get('/export-csv', [RekrutasiDosenController::class, 'exportCsv'])->name('export-csv');
-        Route::get('/export-pdf', [RekrutasiDosenController::class, 'exportPdf'])->name('export-pdf');
+        Route::get('/export-excel', [RekrutasiDosenController::class, 'exportExcel'])->name('export-excel')->middleware('can:rekrutasi-data-dosen.view');
+        Route::get('/export-csv', [RekrutasiDosenController::class, 'exportCsv'])->name('export-csv')->middleware('can:rekrutasi-data-dosen.view');
+        Route::get('/export-pdf', [RekrutasiDosenController::class, 'exportPdf'])->name('export-pdf')->middleware('can:rekrutasi-data-dosen.view');
 
         // CRUD Routes
-        Route::get('/create', [RekrutasiDosenController::class, 'create'])->name('create');
-        Route::post('/', [RekrutasiDosenController::class, 'store'])->name('store');
-        Route::get('/{id}', [RekrutasiDosenController::class, 'show'])->name('show');
-        Route::get('/{id}/edit', [RekrutasiDosenController::class, 'edit'])->name('edit');
-        Route::put('/{id}', [RekrutasiDosenController::class, 'update'])->name('update');
-        Route::delete('/{id}', [RekrutasiDosenController::class, 'destroy'])->name('destroy');
+        Route::get('/create', [RekrutasiDosenController::class, 'create'])->name('create')->middleware('can:rekrutasi-data-dosen.view');
+        Route::post('/', [RekrutasiDosenController::class, 'store'])->name('store')->middleware('can:rekrutasi-data-dosen.view');
+        Route::get('/{id}', [RekrutasiDosenController::class, 'show'])->name('show')->middleware('can:rekrutasi-data-dosen.view');
+        Route::get('/{id}/edit', [RekrutasiDosenController::class, 'edit'])->name('edit')->middleware('can:rekrutasi-data-dosen.view');
+        Route::put('/{id}', [RekrutasiDosenController::class, 'update'])->name('update')->middleware('can:rekrutasi-data-dosen.view');
+        Route::delete('/{id}', [RekrutasiDosenController::class, 'destroy'])->name('destroy')->middleware('can:rekrutasi-data-dosen.view');
     });
 
     // ============================

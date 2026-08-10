@@ -429,9 +429,22 @@
 
                     {{-- Cek apakah user punya role sebelum memanggil count() --}}
                     @if(Auth::user()->roles && Auth::user()->roles->count() > 0)
-                        <p class="text-xs text-red-200 opacity-80 truncate">
-                            {{ Auth::user()->roles->pluck('name')->join(' + ') }}
-                        </p>
+                        @if(Auth::user()->roles->count() > 1)
+                            <form action="{{ route('switch-role') }}" method="POST" class="mt-1">
+                                @csrf
+                                <select name="role" onchange="this.form.submit()" class="text-[10px] bg-red-700 border border-red-500/30 text-yellow-300 font-bold rounded-lg px-2 py-0.5 focus:outline-none focus:ring-1 focus:ring-yellow-300 w-full cursor-pointer max-w-[150px]">
+                                    @foreach(Auth::user()->roles as $role)
+                                        <option value="{{ $role->name }}" {{ Auth::user()->active_role === $role->name ? 'selected' : '' }} class="bg-red-800 text-white text-[10px]">
+                                            {{ $role->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </form>
+                        @else
+                            <p class="text-xs text-red-200 opacity-80 truncate">
+                                {{ Auth::user()->active_role }}
+                            </p>
+                        @endif
                     @else
                         <p class="text-xs text-red-200 opacity-80">Administrator</p>
                     @endif

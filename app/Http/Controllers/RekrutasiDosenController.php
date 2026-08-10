@@ -470,20 +470,30 @@ class RekrutasiDosenController extends Controller
             ->with('success', 'Data berhasil diimport!');
     }
 
+    private function getJadwalPengujianQuery()
+    {
+        $query = \App\Models\JadwalPengujian::with(['calonDosen', 'dosenPenguji', 'tahunAjar']);
+        
+        $currentDosen = \App\Models\Dosen::where('user_id', Auth::id())->first();
+        if ($currentDosen) {
+            $activeRole = Auth::user()->active_role;
+            if (in_array($activeRole, ['Dosen Penguji 1', 'Dosen Penguji 2', 'Dosen Penguji 3'])) {
+                $urutan = (int) str_replace('Dosen Penguji ', '', $activeRole);
+                $query->whereHas('dosenPenguji', function($q) use ($currentDosen, $urutan) {
+                    $q->where('dosen.id', $currentDosen->id)
+                      ->where('jadwal_pengujian_dosen.urutan', $urutan);
+                });
+            }
+        }
+        
+        return $query;
+    }
+
     public function jadwalPengujian(Request $request)
     {
         $this->authorize('jadwal-pengujian.view');
         
-        $query = \App\Models\JadwalPengujian::with(['calonDosen', 'dosenPenguji', 'tahunAjar']);
-
-        // Filter untuk Dosen Penguji: hanya tampilkan jadwal dimana mereka berperan sebagai penguji
-        $currentDosen = \App\Models\Dosen::where('user_id', Auth::id())->first();
-        
-        if ($currentDosen && Auth::user()->hasAnyRole(['Dosen Penguji 1', 'Dosen Penguji 2', 'Dosen Penguji 3'])) {
-            $query->whereHas('dosenPenguji', function($q) use ($currentDosen) {
-                $q->where('dosen.id', $currentDosen->id);
-            });
-        }
+        $query = $this->getJadwalPengujianQuery();
 
         // Apply filters
         if ($request->filled('metode')) {
@@ -1003,7 +1013,7 @@ class RekrutasiDosenController extends Controller
 
     public function exportJadwalPengujianExcel()
     {
-        $jadwalList = \App\Models\JadwalPengujian::with(['calonDosen', 'dosenPenguji', 'tahunAjar'])->get();
+        $jadwalList = $this->getJadwalPengujianQuery()->get();
 
 
         $filename = 'jadwal-pengujian-' . date('Y-m-d-His') . '.xls';
@@ -1114,7 +1124,7 @@ class RekrutasiDosenController extends Controller
 
     public function exportJadwalPengujianCsv()
     {
-        $jadwalList = \App\Models\JadwalPengujian::with(['calonDosen', 'dosenPenguji', 'tahunAjar'])->get();
+        $jadwalList = $this->getJadwalPengujianQuery()->get();
 
         $filename = 'jadwal-pengujian-' . date('Y-m-d-His') . '.csv';
 
@@ -1162,7 +1172,7 @@ class RekrutasiDosenController extends Controller
 
     public function exportJadwalPengujianPdf()
     {
-        $jadwalList = \App\Models\JadwalPengujian::with(['calonDosen', 'dosenPenguji', 'tahunAjar'])->get();
+        $jadwalList = $this->getJadwalPengujianQuery()->get();
 
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('rekrutasi-dosen.jadwal-pengujian-pdf', compact('jadwalList'));
         
@@ -1180,11 +1190,16 @@ class RekrutasiDosenController extends Controller
             'jadwalPengujian.penilaianDetails.user.dosen'
         ]);
         
-        // Filter untuk Dosen Penguji: hanya tampilkan calon dosen yang mereka uji
-        if ($currentDosen && Auth::user()->hasAnyRole(['Dosen Penguji 1', 'Dosen Penguji 2', 'Dosen Penguji 3'])) {
-            $query->whereHas('jadwalPengujian.dosenPenguji', function($q) use ($currentDosen) {
-                $q->where('dosen.id', $currentDosen->id);
-            });
+        // Filter untuk Dosen Penguji: hanya tampilkan calon dosen yang mereka uji sesuai role
+        if ($currentDosen) {
+            $activeRole = Auth::user()->active_role;
+            if (in_array($activeRole, ['Dosen Penguji 1', 'Dosen Penguji 2', 'Dosen Penguji 3'])) {
+                $urutan = (int) str_replace('Dosen Penguji ', '', $activeRole);
+                $query->whereHas('jadwalPengujian.dosenPenguji', function($q) use ($currentDosen, $urutan) {
+                    $q->where('dosen.id', $currentDosen->id)
+                      ->where('jadwal_pengujian_dosen.urutan', $urutan);
+                });
+            }
         }
         
         $calonDosenList = $query->get();
