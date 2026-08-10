@@ -9,6 +9,7 @@ use App\Http\Controllers\MahasiswaController;
 use App\Http\Controllers\FakultasController;
 use App\Http\Controllers\ProdiController;
 use App\Http\Controllers\KompetisiController;
+use App\Http\Controllers\TahunAjarController;
 use App\Models\Dosen;
 use App\Models\Mahasiswa;
 use App\Models\TenagaPendukungAkademik;
@@ -530,6 +531,25 @@ Route::middleware('auth')->group(function () {
 
             Route::middleware('can:master-data-kompetisi.delete')->group(function () {
                 Route::delete('kompetisi/{kompetisi}', [KompetisiController::class, 'destroy'])->name('kompetisi.destroy');
+            });
+        });
+
+        // Tahun Ajar - using prodi permissions for simplicity and instant authorization
+        Route::middleware('can:master-data-prodi.view')->group(function () {
+            Route::get('tahun-ajar', [TahunAjarController::class, 'index'])->name('tahun-ajar.index');
+
+            Route::middleware('can:master-data-prodi.create')->group(function () {
+                Route::get('tahun-ajar/create', [TahunAjarController::class, 'create'])->name('tahun-ajar.create');
+                Route::post('tahun-ajar', [TahunAjarController::class, 'store'])->name('tahun-ajar.store');
+            });
+
+            Route::middleware('can:master-data-prodi.edit')->group(function () {
+                Route::get('tahun-ajar/{tahun_ajar}/edit', [TahunAjarController::class, 'edit'])->name('tahun-ajar.edit');
+                Route::put('tahun-ajar/{tahun_ajar}', [TahunAjarController::class, 'update'])->name('tahun-ajar.update');
+            });
+
+            Route::middleware('can:master-data-prodi.delete')->group(function () {
+                Route::delete('tahun-ajar/{tahun_ajar}', [TahunAjarController::class, 'destroy'])->name('tahun-ajar.destroy');
             });
         });
     });

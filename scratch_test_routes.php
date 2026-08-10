@@ -21,3 +21,9 @@ try {
 } catch (\Exception $e) {
     echo "kompetisi.import.view Error: " . $e->getMessage() . "\n";
 }
+
+try {
+    echo "tahun-ajar.index URL: " . route('tahun-ajar.index') . "\n";
+} catch (\Exception $e) {
+    echo "tahun-ajar.index Error: " . $e->getMessage() . "\n";
+}

@@ -349,6 +349,15 @@
                                     </a>
                                 </li>
                             @endcan
+                            {{-- Data Tahun Ajaran --}}
+                            @can('master-data-prodi.view')
+                                <li>
+                                    <a href="{{ route('tahun-ajar.index') }}"
+                                        class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('tahun-ajar.*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
+                                        <i class="fas fa-calendar-alt mr-2"></i> Data Tahun Ajaran
+                                    </a>
+                                </li>
+                            @endcan
                         </ul>
                     </div>
                 </li>
