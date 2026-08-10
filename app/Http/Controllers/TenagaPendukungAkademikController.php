@@ -353,6 +353,18 @@ class TenagaPendukungAkademikController extends Controller
     public function store(Request $request)
     {
         $this->authorize('kelola-data-tpa.create');
+
+        // Default username and password to NIP if empty/hidden
+        if (!$request->filled('username')) {
+            $request->merge(['username' => $request->nip]);
+        }
+        if (!$request->filled('password')) {
+            $request->merge([
+                'password' => $request->nip,
+                'password_confirmation' => $request->nip
+            ]);
+        }
+
         $validated = $request->validate([
             'nama_lengkap' => 'required|string|max:255',
             'nip' => 'required|string|max:50|unique:tenaga_pendukung_akademik,nip',
@@ -456,6 +468,12 @@ class TenagaPendukungAkademikController extends Controller
     public function update(Request $request, TenagaPendukungAkademik $tpa)
     {
         $this->authorize('kelola-data-tpa.edit');
+
+        // Default username to existing username if empty/hidden
+        if (!$request->filled('username')) {
+            $request->merge(['username' => $tpa->user->username]);
+        }
+
         $validated = $request->validate([
             'nama_lengkap' => 'required|string|max:255',
             'nip' => 'required|string|max:50|unique:tenaga_pendukung_akademik,nip,' . $tpa->id,

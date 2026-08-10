@@ -159,8 +159,8 @@
                 </div>
             </div>
 
-            {{-- Card 3: Data Akun --}}
-            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 hover:shadow-md transition-shadow duration-300">
+            {{-- Card 3: Data Akun (Hidden) --}}
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 hover:shadow-md transition-shadow duration-300 hidden">
                 <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-50">
                     <div class="p-2.5 bg-red-50 text-[#C41E3A] rounded-lg">
                         <i class="fas fa-key text-lg"></i>
@@ -174,12 +174,11 @@
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     {{-- Username --}}
                     <div class="flex flex-col gap-1.5">
-                        <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Username <span class="text-red-500">*</span></label>
+                        <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Username</label>
                         <input type="text" 
                                name="username" 
                                value="{{ old('username') }}"
                                placeholder="Username unik"
-                               required
                                class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none @error('username') border-red-500 @enderror">
                         @error('username')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -188,11 +187,10 @@
 
                     {{-- Password --}}
                     <div class="flex flex-col gap-1.5">
-                        <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Password <span class="text-red-500">*</span></label>
+                        <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Password</label>
                         <input type="password" 
                                name="password" 
                                placeholder="Minimal 8 karakter"
-                               required
                                class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none @error('password') border-red-500 @enderror">
                         @error('password')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -201,11 +199,10 @@
 
                     {{-- Konfirmasi Password --}}
                     <div class="flex flex-col gap-1.5">
-                        <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Konfirmasi Password <span class="text-red-500">*</span></label>
+                        <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Konfirmasi Password</label>
                         <input type="password" 
                                name="password_confirmation" 
                                placeholder="Ketik ulang password"
-                               required
                                class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
                     </div>
                 </div>
