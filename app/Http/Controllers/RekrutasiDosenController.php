@@ -532,6 +532,12 @@ class RekrutasiDosenController extends Controller
     {
         $this->authorize('jadwal-pengujian.create');
         
+        if ($request->has('dosen_penguji_id')) {
+            $request->merge([
+                'dosen_penguji_id' => array_values(array_filter($request->input('dosen_penguji_id')))
+            ]);
+        }
+        
         try {
             $validated = $request->validate([
                 'tahun_ajar_id' => 'required|exists:tahun_ajar,id',
@@ -623,6 +629,12 @@ class RekrutasiDosenController extends Controller
     public function updateJadwalPengujian(Request $request, $id)
     {
         $this->authorize('jadwal-pengujian.edit');
+        
+        if ($request->has('dosen_penguji_id')) {
+            $request->merge([
+                'dosen_penguji_id' => array_values(array_filter($request->input('dosen_penguji_id')))
+            ]);
+        }
         
         try {
             $validated = $request->validate([

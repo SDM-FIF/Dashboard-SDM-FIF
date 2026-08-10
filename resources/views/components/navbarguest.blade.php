@@ -59,3 +59,18 @@
     </div>
 
 </nav>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const dateSpan = document.getElementById('current-date-span');
+        if (dateSpan) {
+            const options = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            };
+            dateSpan.textContent = new Date().toLocaleDateString('id-ID', options);
+        }
+    });
+</script>

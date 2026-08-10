@@ -38,7 +38,13 @@
 
         {{-- Form Card --}}
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8 hover:shadow-md transition-shadow duration-300">
-            <form action="{{ route('rekrutasi-dosen.jadwal-pengujian.update', $jadwal->id) }}" method="POST" class="space-y-6">
+            @php
+                $dosenPengujiIds = $jadwal->dosenPenguji->sortBy('pivot.urutan')->pluck('id')->toArray();
+                $dosenPenguji1 = $dosenPengujiIds[0] ?? null;
+                $dosenPenguji2 = $dosenPengujiIds[1] ?? null;
+                $dosenPenguji3 = $dosenPengujiIds[2] ?? null;
+            @endphp
+            <form action="{{ route('rekrutasi-dosen.jadwal-pengujian.update', $jadwal->id) }}" method="POST" class="space-y-6" onsubmit="return validateForm()">
                 @csrf
                 @method('PUT')
 
@@ -63,12 +69,39 @@
                         </select>
                     </div>
 
-                    {{-- Dosen Penguji --}}
+                    {{-- Dosen Penguji 1 --}}
                     <div class="flex flex-col gap-1.5">
-                        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Dosen Penguji <span class="text-red-500">*</span></label>
-                        <select name="dosen_penguji_id" required class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
+                        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Dosen Penguji 1 <span class="text-red-500">*</span></label>
+                        <select name="dosen_penguji_id[]" required class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
+                            <option value="">Pilih Dosen Penguji 1</option>
                             @foreach($dosenList as $dosen)
-                                <option value="{{ $dosen->id }}" {{ $jadwal->dosen_penguji_id == $dosen->id ? 'selected' : '' }}>
+                                <option value="{{ $dosen->id }}" {{ $dosenPenguji1 == $dosen->id ? 'selected' : '' }}>
+                                    {{ $dosen->front_title }} {{ $dosen->nama_lengkap }}{{ $dosen->back_title ? ', ' . $dosen->back_title : '' }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    {{-- Dosen Penguji 2 --}}
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Dosen Penguji 2 <span class="text-red-500">*</span></label>
+                        <select name="dosen_penguji_id[]" required class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
+                            <option value="">Pilih Dosen Penguji 2</option>
+                            @foreach($dosenList as $dosen)
+                                <option value="{{ $dosen->id }}" {{ $dosenPenguji2 == $dosen->id ? 'selected' : '' }}>
+                                    {{ $dosen->front_title }} {{ $dosen->nama_lengkap }}{{ $dosen->back_title ? ', ' . $dosen->back_title : '' }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    {{-- Dosen Penguji 3 --}}
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Dosen Penguji 3 <span class="text-gray-400">(Opsional)</span></label>
+                        <select name="dosen_penguji_id[]" class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
+                            <option value="">Pilih Dosen Penguji 3 (Opsional)</option>
+                            @foreach($dosenList as $dosen)
+                                <option value="{{ $dosen->id }}" {{ $dosenPenguji3 == $dosen->id ? 'selected' : '' }}>
                                     {{ $dosen->front_title }} {{ $dosen->nama_lengkap }}{{ $dosen->back_title ? ', ' . $dosen->back_title : '' }}
                                 </option>
                             @endforeach
@@ -130,5 +163,58 @@
             </form>
         </div>
     </main>
+    <script>
+        function validateForm() {
+            const selects = document.querySelectorAll('select[name="dosen_penguji_id[]"]');
+            const dp1 = selects[0].value;
+            const dp2 = selects[1].value;
+            const dp3 = selects[2].value;
+
+            if (!dp1) {
+                alert('Dosen Penguji 1 wajib dipilih');
+                return false;
+            }
+            if (!dp2) {
+                alert('Dosen Penguji 2 wajib dipilih');
+                return false;
+            }
+
+            const selected = [dp1, dp2];
+            if (dp3) selected.push(dp3);
+
+            const hasDuplicates = new Set(selected).size !== selected.length;
+            if (hasDuplicates) {
+                alert('Setiap Dosen Penguji harus berbeda');
+                return false;
+            }
+            return true;
+        }
+
+        function enforceUniqueStandardSelects() {
+            const selects = document.querySelectorAll('select[name="dosen_penguji_id[]"]');
+            
+            function onChange() {
+                const values = Array.from(selects).map(sel => sel.value);
+                
+                selects.forEach((currentSelect, currentIndex) => {
+                    const options = currentSelect.querySelectorAll('option');
+                    options.forEach(opt => {
+                        const optVal = opt.value;
+                        if (!optVal) return;
+                        
+                        // Check if selected in another dropdown
+                        const isSelectedElsewhere = values.some((val, idx) => idx !== currentIndex && val === optVal);
+                        opt.disabled = isSelectedElsewhere;
+                    });
+                });
+            }
+            
+            selects.forEach(sel => sel.addEventListener('change', onChange));
+            // Run once initially
+            onChange();
+        }
+        
+        document.addEventListener('DOMContentLoaded', enforceUniqueStandardSelects);
+    </script>
 </body>
 </html>

@@ -498,6 +498,18 @@
 
     // Auto-open dropdown if current route is one of the sub-pages
     document.addEventListener('DOMContentLoaded', function () {
+        // Populate current date in header if span exists
+        const dateSpan = document.getElementById('current-date-span');
+        if (dateSpan) {
+            const options = {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            };
+            dateSpan.textContent = new Date().toLocaleDateString('id-ID', options);
+        }
+
         const currentRoute = window.location.pathname;
 
         // Define route mappings for each section

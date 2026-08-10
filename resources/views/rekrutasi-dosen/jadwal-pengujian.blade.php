@@ -76,6 +76,12 @@
             border-radius: 8px !important;
             padding: 6px 10px !important;
             outline: none !important;
+            font-family: 'Outfit', sans-serif !important;
+            font-size: 14px !important;
+        }
+        .select2-results__option {
+            font-family: 'Outfit', sans-serif !important;
+            font-size: 14px !important;
         }
         /* Select2 Multiple styling inside SweetAlert2 */
         .select2-container--default .select2-selection--multiple {
@@ -83,6 +89,18 @@
             border-radius: 12px !important;
             background-color: #F8FAFC !important;
             padding: 4px 8px !important;
+            font-family: 'Outfit', sans-serif !important;
+            font-size: 14px !important;
+        }
+        .select2-container--default .select2-selection--multiple .select2-search__field {
+            font-family: 'Outfit', sans-serif !important;
+            font-size: 14px !important;
+            color: #475569 !important;
+        }
+        .select2-container--default .select2-selection--multiple .select2-search__field::placeholder {
+            font-family: 'Outfit', sans-serif !important;
+            font-size: 14px !important;
+            color: #94A3B8 !important;
         }
         .select2-container--default.select2-container--focus .select2-selection--multiple {
             border-color: #C41E3A !important;
@@ -469,13 +487,31 @@
                             </select>
                         </div>
                         <div class="flex flex-col gap-1">
-                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Dosen Penguji (Pilih 2-3) <span class="text-red-500">*</span></label>
-                            <select id="dosenPengujiSelect" name="dosen_penguji_id[]" required multiple class="w-full" style="width: 100%;">
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Dosen Penguji 1 <span class="text-red-500">*</span></label>
+                            <select id="dosenPenguji1Select" name="dosen_penguji_1" required class="w-full" style="width: 100%;">
+                                <option value="">Pilih Dosen Penguji 1</option>
                                 @foreach($dosenList as $dosen)
                                 <option value="{{ $dosen->id }}">{{ $dosen->front_title }} {{ $dosen->nama_lengkap }}{{ $dosen->back_title ? ', ' . $dosen->back_title : '' }}</option>
                                 @endforeach
                             </select>
-                            <span class="text-[10px] text-gray-400 font-semibold">Minimal 2, maksimal 3 dosen penguji</span>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Dosen Penguji 2 <span class="text-red-500">*</span></label>
+                            <select id="dosenPenguji2Select" name="dosen_penguji_2" required class="w-full" style="width: 100%;">
+                                <option value="">Pilih Dosen Penguji 2</option>
+                                @foreach($dosenList as $dosen)
+                                <option value="{{ $dosen->id }}">{{ $dosen->front_title }} {{ $dosen->nama_lengkap }}{{ $dosen->back_title ? ', ' . $dosen->back_title : '' }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Dosen Penguji 3 <span class="text-gray-400">(Opsional)</span></label>
+                            <select id="dosenPenguji3Select" name="dosen_penguji_3" class="w-full" style="width: 100%;">
+                                <option value="">Pilih Dosen Penguji 3 (Opsional)</option>
+                                @foreach($dosenList as $dosen)
+                                <option value="{{ $dosen->id }}">{{ $dosen->front_title }} {{ $dosen->nama_lengkap }}{{ $dosen->back_title ? ', ' . $dosen->back_title : '' }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div class="flex flex-col gap-1">
@@ -520,14 +556,63 @@
                         dropdownParent: $('.swal2-container')
                     });
 
-                    $('#dosenPengujiSelect').select2({
-                        placeholder: 'Cari dan pilih 2-3 dosen penguji...',
+                    $('#dosenPenguji1Select').select2({
+                        placeholder: 'Cari dan pilih dosen penguji 1...',
                         allowClear: true,
-                        dropdownParent: $('.swal2-container'),
-                        multiple: true,
-                        maximumSelectionLength: 3,
-                        minimumResultsForSearch: 0
+                        dropdownParent: $('.swal2-container')
                     });
+
+                    $('#dosenPenguji2Select').select2({
+                        placeholder: 'Cari dan pilih dosen penguji 2...',
+                        allowClear: true,
+                        dropdownParent: $('.swal2-container')
+                    });
+
+                    $('#dosenPenguji3Select').select2({
+                        placeholder: 'Cari dan pilih dosen penguji 3 (opsional)...',
+                        allowClear: true,
+                        dropdownParent: $('.swal2-container')
+                    });
+
+                    // Enforce unique examiner selection in real-time
+                    const createIds = ['dosenPenguji1Select', 'dosenPenguji2Select', 'dosenPenguji3Select'];
+                    const createOnChangeHandler = function() {
+                        createIds.forEach(id => $('#' + id).off('change.unique'));
+                        
+                        const val1 = $('#dosenPenguji1Select').val();
+                        const val2 = $('#dosenPenguji2Select').val();
+                        const val3 = $('#dosenPenguji3Select').val();
+                        const selections = {
+                            'dosenPenguji1Select': val1,
+                            'dosenPenguji2Select': val2,
+                            'dosenPenguji3Select': val3
+                        };
+
+                        createIds.forEach(id => {
+                            const select = $('#' + id);
+                            select.find('option').each(function() {
+                                const optVal = $(this).val();
+                                if (!optVal) return;
+                                
+                                let shouldDisable = false;
+                                createIds.forEach(otherId => {
+                                    if (otherId !== id && selections[otherId] === optVal) {
+                                        shouldDisable = true;
+                                    }
+                                });
+                                $(this).prop('disabled', shouldDisable);
+                            });
+                            
+                            select.select2({
+                                placeholder: id === 'dosenPenguji3Select' ? 'Cari dan pilih dosen penguji 3 (opsional)...' : (id === 'dosenPenguji2Select' ? 'Cari dan pilih dosen penguji 2...' : 'Cari dan pilih dosen penguji 1...'),
+                                allowClear: true,
+                                dropdownParent: $('.swal2-container')
+                            });
+                        });
+                        
+                        createIds.forEach(id => $('#' + id).on('change.unique', createOnChangeHandler));
+                    };
+                    createIds.forEach(id => $('#' + id).on('change.unique', createOnChangeHandler));
 
                     const metodeSelect = document.getElementById('metodeSelect');
                     const gedungInput = document.getElementById('gedungInput');
@@ -560,18 +645,33 @@
                 },
                 preConfirm: () => {
                     const form = document.getElementById('createForm');
-                    const dosenPenguji = $('#dosenPengujiSelect').val();
+                    const dp1 = $('#dosenPenguji1Select').val();
+                    const dp2 = $('#dosenPenguji2Select').val();
+                    const dp3 = $('#dosenPenguji3Select').val();
                     
-                    if (!dosenPenguji || dosenPenguji.length < 2) {
-                        Swal.showValidationMessage('Pilih minimal 2 dosen penguji');
+                    if (!dp1) {
+                        Swal.showValidationMessage('Dosen Penguji 1 wajib dipilih');
                         return false;
                     }
-                    if (dosenPenguji.length > 3) {
-                        Swal.showValidationMessage('Maksimal 3 dosen penguji');
+                    if (!dp2) {
+                        Swal.showValidationMessage('Dosen Penguji 2 wajib dipilih');
+                        return false;
+                    }
+                    
+                    const selectedDosen = [dp1, dp2];
+                    if (dp3) selectedDosen.push(dp3);
+                    const hasDuplicates = new Set(selectedDosen).size !== selectedDosen.length;
+                    if (hasDuplicates) {
+                        Swal.showValidationMessage('Setiap Dosen Penguji harus berbeda');
                         return false;
                     }
                     
                     const formData = new FormData(form);
+                    formData.append('dosen_penguji_id[]', dp1);
+                    formData.append('dosen_penguji_id[]', dp2);
+                    if (dp3) {
+                        formData.append('dosen_penguji_id[]', dp3);
+                    }
                     
                     return fetch('/rekrutasi-dosen/jadwal-pengujian', {
                         method: 'POST',
@@ -641,13 +741,31 @@
                                     </select>
                                 </div>
                                 <div class="flex flex-col gap-1">
-                                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Dosen Penguji (Pilih 2-3) <span class="text-red-500">*</span></label>
-                                    <select id="editDosenPengujiSelect" name="dosen_penguji_id[]" required multiple class="w-full" style="width: 100%;">
+                                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Dosen Penguji 1 <span class="text-red-500">*</span></label>
+                                    <select id="editDosenPenguji1Select" name="dosen_penguji_1" required class="w-full" style="width: 100%;">
+                                        <option value="">Pilih Dosen Penguji 1</option>
                                         @foreach($dosenList as $dosen)
                                         <option value="{{ $dosen->id }}">{{ $dosen->front_title }} {{ $dosen->nama_lengkap }}{{ $dosen->back_title ? ', ' . $dosen->back_title : '' }}</option>
                                         @endforeach
                                     </select>
-                                    <span class="text-[10px] text-gray-400 font-semibold">Minimal 2, maksimal 3 dosen penguji</span>
+                                </div>
+                                <div class="flex flex-col gap-1">
+                                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Dosen Penguji 2 <span class="text-red-500">*</span></label>
+                                    <select id="editDosenPenguji2Select" name="dosen_penguji_2" required class="w-full" style="width: 100%;">
+                                        <option value="">Pilih Dosen Penguji 2</option>
+                                        @foreach($dosenList as $dosen)
+                                        <option value="{{ $dosen->id }}">{{ $dosen->front_title }} {{ $dosen->nama_lengkap }}{{ $dosen->back_title ? ', ' . $dosen->back_title : '' }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="flex flex-col gap-1">
+                                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider">Dosen Penguji 3 <span class="text-gray-400">(Opsional)</span></label>
+                                    <select id="editDosenPenguji3Select" name="dosen_penguji_3" class="w-full" style="width: 100%;">
+                                        <option value="">Pilih Dosen Penguji 3 (Opsional)</option>
+                                        @foreach($dosenList as $dosen)
+                                        <option value="{{ $dosen->id }}">{{ $dosen->front_title }} {{ $dosen->nama_lengkap }}{{ $dosen->back_title ? ', ' . $dosen->back_title : '' }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                                 <div class="grid grid-cols-2 gap-4">
                                     <div class="flex flex-col gap-1">
@@ -692,18 +810,76 @@
                                 dropdownParent: $('.swal2-container')
                             });
 
-                            $('#editDosenPengujiSelect').select2({
-                                placeholder: 'Cari dan pilih 2-3 dosen penguji...',
+                            $('#editDosenPenguji1Select').select2({
+                                placeholder: 'Cari dan pilih dosen penguji 1...',
                                 allowClear: true,
-                                dropdownParent: $('.swal2-container'),
-                                multiple: true,
-                                maximumSelectionLength: 3,
-                                minimumResultsForSearch: 0
+                                dropdownParent: $('.swal2-container')
+                            });
+
+                            $('#editDosenPenguji2Select').select2({
+                                placeholder: 'Cari dan pilih dosen penguji 2...',
+                                allowClear: true,
+                                dropdownParent: $('.swal2-container')
+                            });
+
+                            $('#editDosenPenguji3Select').select2({
+                                placeholder: 'Cari dan pilih dosen penguji 3 (opsional)...',
+                                allowClear: true,
+                                dropdownParent: $('.swal2-container')
                             });
 
                             if (data.dosen_penguji_ids && data.dosen_penguji_ids.length > 0) {
-                                $('#editDosenPengujiSelect').val(data.dosen_penguji_ids).trigger('change');
+                                $('#editDosenPenguji1Select').val(data.dosen_penguji_ids[0]).trigger('change');
+                                if (data.dosen_penguji_ids.length > 1) {
+                                    $('#editDosenPenguji2Select').val(data.dosen_penguji_ids[1]).trigger('change');
+                                }
+                                if (data.dosen_penguji_ids.length > 2) {
+                                    $('#editDosenPenguji3Select').val(data.dosen_penguji_ids[2]).trigger('change');
+                                }
                             }
+
+                            // Enforce unique examiner selection in real-time for edit modal
+                            const editIds = ['editDosenPenguji1Select', 'editDosenPenguji2Select', 'editDosenPenguji3Select'];
+                            const editOnChangeHandler = function() {
+                                editIds.forEach(id => $('#' + id).off('change.unique'));
+                                
+                                const val1 = $('#editDosenPenguji1Select').val();
+                                const val2 = $('#editDosenPenguji2Select').val();
+                                const val3 = $('#editDosenPenguji3Select').val();
+                                const selections = {
+                                    'editDosenPenguji1Select': val1,
+                                    'editDosenPenguji2Select': val2,
+                                    'editDosenPenguji3Select': val3
+                                };
+
+                                editIds.forEach(id => {
+                                    const select = $('#' + id);
+                                    select.find('option').each(function() {
+                                        const optVal = $(this).val();
+                                        if (!optVal) return;
+                                        
+                                        let shouldDisable = false;
+                                        editIds.forEach(otherId => {
+                                            if (otherId !== id && selections[otherId] === optVal) {
+                                                shouldDisable = true;
+                                            }
+                                        });
+                                        $(this).prop('disabled', shouldDisable);
+                                    });
+                                    
+                                    select.select2({
+                                        placeholder: id === 'editDosenPenguji3Select' ? 'Cari dan pilih dosen penguji 3 (opsional)...' : (id === 'editDosenPenguji2Select' ? 'Cari dan pilih dosen penguji 2...' : 'Cari dan pilih dosen penguji 1...'),
+                                        allowClear: true,
+                                        dropdownParent: $('.swal2-container')
+                                    });
+                                });
+                                
+                                editIds.forEach(id => $('#' + id).on('change.unique', editOnChangeHandler));
+                            };
+                            editIds.forEach(id => $('#' + id).on('change.unique', editOnChangeHandler));
+                            
+                            // Trigger initial enforcement after pre-population
+                            editOnChangeHandler();
 
                             const metodeSelect = document.getElementById('editMetodeSelect');
                             const gedungInput = document.getElementById('editGedungInput');
@@ -736,18 +912,33 @@
                         },
                         preConfirm: () => {
                             const form = document.getElementById('editForm');
-                            const dosenPenguji = $('#editDosenPengujiSelect').val();
+                            const dp1 = $('#editDosenPenguji1Select').val();
+                            const dp2 = $('#editDosenPenguji2Select').val();
+                            const dp3 = $('#editDosenPenguji3Select').val();
                             
-                            if (!dosenPenguji || dosenPenguji.length < 2) {
-                                Swal.showValidationMessage('Pilih minimal 2 dosen penguji');
+                            if (!dp1) {
+                                Swal.showValidationMessage('Dosen Penguji 1 wajib dipilih');
                                 return false;
                             }
-                            if (dosenPenguji.length > 3) {
-                                Swal.showValidationMessage('Maksimal 3 dosen penguji');
+                            if (!dp2) {
+                                Swal.showValidationMessage('Dosen Penguji 2 wajib dipilih');
+                                return false;
+                            }
+                            
+                            const selectedDosen = [dp1, dp2];
+                            if (dp3) selectedDosen.push(dp3);
+                            const hasDuplicates = new Set(selectedDosen).size !== selectedDosen.length;
+                            if (hasDuplicates) {
+                                Swal.showValidationMessage('Setiap Dosen Penguji harus berbeda');
                                 return false;
                             }
                             
                             const formData = new FormData(form);
+                            formData.append('dosen_penguji_id[]', dp1);
+                            formData.append('dosen_penguji_id[]', dp2);
+                            if (dp3) {
+                                formData.append('dosen_penguji_id[]', dp3);
+                            }
                             
                             return fetch(`/rekrutasi-dosen/jadwal-pengujian/${id}`, {
                                 method: 'POST',
