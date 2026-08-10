@@ -173,7 +173,6 @@
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Nama Lengkap</th>
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Jabatan</th>
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Pendidikan Terakhir</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Pendidikan Terakhir</th>
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Lokasi Kerja</th>
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Status</th>
                             <th class="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider w-36">Aksi</th>

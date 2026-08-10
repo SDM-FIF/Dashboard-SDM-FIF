@@ -145,7 +145,7 @@
                         <select name="status_pegawai" 
                                 required
                                 class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none @error('status_pegawai') border-red-500 @enderror">
-                            @foreach(['Pegawai Tetap','Perbantuan LLDIKTI','Profesional Full Time','Profesional Part Time'] as $status)
+                            @foreach(['Pegawai Tetap','Perbantuan LLDIKTI','Profesional Full Time','Profesional Part Time','Tenaga Penunjang Harian'] as $status)
                                 <option value="{{ $status }}" {{ old('status_pegawai', $tpa->status_pegawai) == $status ? 'selected' : '' }}>
                                     {{ $status }}
                                 </option>
