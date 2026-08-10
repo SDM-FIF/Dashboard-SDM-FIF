@@ -326,7 +326,7 @@
                             @can('master-data-fakultas.view')
                                 <li>
                                     <a href="{{ route('fakultas.index') }}"
-                                        class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('fakultas.*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
+                                        class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 whitespace-nowrap {{ request()->routeIs('fakultas.*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
                                         <i class="fas fa-university mr-2"></i> Data Fakultas
                                     </a>
                                 </li>
@@ -335,7 +335,7 @@
                             @can('master-data-prodi.view')
                                 <li>
                                     <a href="{{ route('prodi.index') }}"
-                                        class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('prodi.*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
+                                        class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 whitespace-nowrap {{ request()->routeIs('prodi.*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
                                         <i class="fas fa-graduation-cap mr-2"></i> Data Program Studi
                                     </a>
                                 </li>
@@ -344,7 +344,7 @@
                             @can('master-data-kompetisi.view')
                                 <li>
                                     <a href="{{ route('kompetisi.index') }}"
-                                        class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('kompetisi.*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
+                                        class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 whitespace-nowrap {{ request()->routeIs('kompetisi.*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
                                         <i class="fas fa-trophy mr-2"></i> Data Kompetisi
                                     </a>
                                 </li>
@@ -353,7 +353,7 @@
                             @can('master-data-prodi.view')
                                 <li>
                                     <a href="{{ route('tahun-ajar.index') }}"
-                                        class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('tahun-ajar.*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
+                                        class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 whitespace-nowrap {{ request()->routeIs('tahun-ajar.*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
                                         <i class="fas fa-calendar-alt mr-2"></i> Data Tahun Ajaran
                                     </a>
                                 </li>

@@ -30,7 +30,7 @@
         </div>
 
         {{-- Filter Section Card --}}
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8 hover:shadow-md transition-all duration-300">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 mb-8 hover:shadow-md transition-all duration-300 hidden">
             <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-50">
                 <div class="p-2.5 bg-red-50 text-[#C41E3A] rounded-lg">
                     <i class="fas fa-filter text-lg"></i>
