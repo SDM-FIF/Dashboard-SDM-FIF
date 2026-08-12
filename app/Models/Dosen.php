@@ -91,4 +91,9 @@ class Dosen extends Model
     {
         return $this->hasMany(RiwayatPendidikanDosen::class);
     }
+
+    public function suratDosen()
+    {
+        return $this->hasMany(SuratDosen::class, 'dosen_id');
+    }
 }

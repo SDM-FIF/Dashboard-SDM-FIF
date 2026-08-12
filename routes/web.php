@@ -11,6 +11,7 @@ use App\Http\Controllers\ProdiController;
 use App\Http\Controllers\KompetisiController;
 use App\Http\Controllers\TahunAjarController;
 use App\Http\Controllers\KelompokKeahlianController;
+use App\Http\Controllers\SuratDosenController;
 use App\Models\Dosen;
 use App\Models\Mahasiswa;
 use App\Models\TenagaPendukungAkademik;
@@ -610,6 +611,18 @@ Route::middleware('auth')->group(function () {
         Route::middleware('can:laporan-data-dosen.view')->group(function () {
             Route::get('/laporan', [DosenController::class, 'laporan'])->name('laporan');
             Route::get('/laporan/export-pdf', [DosenController::class, 'exportLaporanPDF'])->name('laporan.export-pdf');
+        });
+
+        // Surat Tugas & SK Dosen Routes
+        Route::prefix('surat')->name('surat.')->group(function () {
+            Route::get('/', [SuratDosenController::class, 'index'])->name('index');
+            Route::get('/create', [SuratDosenController::class, 'create'])->name('create')->middleware('can:kelola-data-dosen.create');
+            Route::post('/', [SuratDosenController::class, 'store'])->name('store')->middleware('can:kelola-data-dosen.create');
+            Route::get('/{id}', [SuratDosenController::class, 'show'])->name('show');
+            Route::get('/{id}/edit', [SuratDosenController::class, 'edit'])->name('edit')->middleware('can:kelola-data-dosen.edit');
+            Route::put('/{id}', [SuratDosenController::class, 'update'])->name('update')->middleware('can:kelola-data-dosen.edit');
+            Route::delete('/{id}', [SuratDosenController::class, 'destroy'])->name('destroy')->middleware('can:kelola-data-dosen.delete');
+            Route::get('/{id}/download', [SuratDosenController::class, 'download'])->name('download');
         });
 
         // CRUD Routes with specific permissions

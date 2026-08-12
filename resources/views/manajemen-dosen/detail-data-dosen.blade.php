@@ -207,6 +207,84 @@
                     </div>
                 </div>
             </div>
+        {{-- Surat Tugas & SK Section --}}
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-8 hover:shadow-md transition-shadow duration-300 p-6 md:p-8">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                <div>
+                    <h2 class="text-xl font-bold text-[#C41E3A] flex items-center gap-2">
+                        <i class="fas fa-file-signature"></i>
+                        <span>Surat Tugas (ST) & Surat Keputusan (SK)</span>
+                    </h2>
+                    <p class="text-xs text-gray-500 mt-0.5">Daftar dokumen resmi Surat Tugas dan SK yang diterbitkan untuk dosen ini.</p>
+                </div>
+                @can('kelola-data-dosen.create')
+                <a href="{{ route('manajemen-dosen.surat.create', ['dosen_id' => $dosen->id]) }}"
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-[#C41E3A] hover:bg-[#A31830] text-white font-semibold text-xs rounded-xl transition-all shadow-sm">
+                    <i class="fas fa-plus"></i>
+                    <span>Tambah Surat</span>
+                </a>
+                @endcan
+            </div>
+
+            @php
+                $listSuratDosen = $dosen->suratDosen()->orderBy('tanggal_surat', 'desc')->get();
+            @endphp
+
+            @if($listSuratDosen->count() > 0)
+            <div class="overflow-x-auto">
+                <table class="min-w-full w-full border-collapse">
+                    <thead>
+                        <tr class="bg-gray-50 border-y border-gray-100 text-gray-600">
+                            <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider w-28">Jenis</th>
+                            <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Nomor & Judul Surat</th>
+                            <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Tanggal Terbit</th>
+                            <th class="px-4 py-3 text-left text-xs font-bold uppercase tracking-wider">Kategori</th>
+                            <th class="px-4 py-3 text-center text-xs font-bold uppercase tracking-wider w-32">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100 bg-white">
+                        @foreach($listSuratDosen as $st)
+                        <tr class="hover:bg-[#F8FAFC] transition-colors text-sm">
+                            <td class="px-4 py-3">
+                                @if($st->jenis_surat == 'Surat Tugas')
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded font-bold text-xs bg-blue-50 text-blue-700 border border-blue-100">ST</span>
+                                @else
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded font-bold text-xs bg-purple-50 text-purple-700 border border-purple-100">SK</span>
+                                @endif
+                            </td>
+                            <td class="px-4 py-3">
+                                <a href="{{ route('manajemen-dosen.surat.show', $st->id) }}" class="font-bold text-gray-800 hover:text-[#C41E3A] transition-colors block text-xs">
+                                    {{ $st->nomor_surat }}
+                                </a>
+                                <p class="text-[11px] text-gray-500 line-clamp-1 mt-0.5">{{ $st->judul_surat }}</p>
+                            </td>
+                            <td class="px-4 py-3 text-xs text-gray-700 font-semibold whitespace-nowrap">
+                                {{ \Carbon\Carbon::parse($st->tanggal_surat)->locale('id')->translatedFormat('d M Y') }}
+                            </td>
+                            <td class="px-4 py-3 text-xs">
+                                <span class="px-2 py-0.5 rounded bg-gray-100 text-gray-600 font-medium text-[11px]">{{ $st->kategori }}</span>
+                            </td>
+                            <td class="px-4 py-3 text-center text-xs">
+                                <div class="flex items-center justify-center gap-2">
+                                    <a href="{{ route('manajemen-dosen.surat.show', $st->id) }}" class="p-1.5 text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded" title="Lihat">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{{ route('manajemen-dosen.surat.download', $st->id) }}" class="p-1.5 text-emerald-500 hover:text-emerald-700 hover:bg-emerald-50 rounded" title="Unduh">
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            @else
+            <div class="p-8 bg-[#F8FAFC] rounded-xl border border-dashed border-gray-200 text-center text-gray-400 text-xs">
+                <i class="fas fa-folder-open text-3xl mb-2 text-gray-300"></i>
+                <p class="font-semibold">Belum ada Surat Tugas atau SK yang didokumentasikan untuk dosen ini.</p>
+            </div>
+            @endif
         </div>
 
         {{-- List Data Dosen (Other Dosen) --}}

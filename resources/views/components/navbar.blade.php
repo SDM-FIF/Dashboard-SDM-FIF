@@ -118,6 +118,12 @@
                                     </a>
                                 </li>
                             @endcan
+                            <li>
+                                <a href="{{ route('manajemen-dosen.surat.index') }}"
+                                    class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('manajemen-dosen.surat.*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
+                                    Surat Tugas & SK
+                                </a>
+                            </li>
                             <!-- Add more dropdown items here -->
                         </ul>
                     </div>
