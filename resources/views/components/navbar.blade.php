@@ -358,6 +358,15 @@
                                     </a>
                                 </li>
                             @endcan
+                            {{-- Data Kelompok Keahlian --}}
+                            @can('master-data-prodi.view')
+                                <li>
+                                    <a href="{{ route('kelompok-keahlian.index') }}"
+                                        class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 whitespace-nowrap {{ request()->routeIs('kelompok-keahlian.*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
+                                        <i class="fas fa-layer-group mr-2"></i> Data Kelompok Keahlian
+                                    </a>
+                                </li>
+                            @endcan
                         </ul>
                     </div>
                 </li>

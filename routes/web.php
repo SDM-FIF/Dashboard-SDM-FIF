@@ -10,6 +10,7 @@ use App\Http\Controllers\FakultasController;
 use App\Http\Controllers\ProdiController;
 use App\Http\Controllers\KompetisiController;
 use App\Http\Controllers\TahunAjarController;
+use App\Http\Controllers\KelompokKeahlianController;
 use App\Models\Dosen;
 use App\Models\Mahasiswa;
 use App\Models\TenagaPendukungAkademik;
@@ -562,6 +563,25 @@ Route::middleware('auth')->group(function () {
 
             Route::middleware('can:master-data-prodi.delete')->group(function () {
                 Route::delete('tahun-ajar/{tahun_ajar}', [TahunAjarController::class, 'destroy'])->name('tahun-ajar.destroy');
+            });
+        });
+
+        // Kelompok Keahlian - using prodi permissions for simplicity and instant authorization
+        Route::middleware('can:master-data-prodi.view')->group(function () {
+            Route::get('kelompok-keahlian', [KelompokKeahlianController::class, 'index'])->name('kelompok-keahlian.index');
+
+            Route::middleware('can:master-data-prodi.create')->group(function () {
+                Route::get('kelompok-keahlian/create', [KelompokKeahlianController::class, 'create'])->name('kelompok-keahlian.create');
+                Route::post('kelompok-keahlian', [KelompokKeahlianController::class, 'store'])->name('kelompok-keahlian.store');
+            });
+
+            Route::middleware('can:master-data-prodi.edit')->group(function () {
+                Route::get('kelompok-keahlian/{kelompok_keahlian}/edit', [KelompokKeahlianController::class, 'edit'])->name('kelompok-keahlian.edit');
+                Route::put('kelompok-keahlian/{kelompok_keahlian}', [KelompokKeahlianController::class, 'update'])->name('kelompok-keahlian.update');
+            });
+
+            Route::middleware('can:master-data-prodi.delete')->group(function () {
+                Route::delete('kelompok-keahlian/{kelompok_keahlian}', [KelompokKeahlianController::class, 'destroy'])->name('kelompok-keahlian.destroy');
             });
         });
     });
