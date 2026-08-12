@@ -14,7 +14,7 @@ class KelompokKeahlianController extends Controller
      */
     public function index(Request $request)
     {
-        $this->authorize('master-data-prodi.view');
+        $this->authorize('master-data-kelompok-keahlian.view');
 
         $query = KelompokKeahlian::query();
 
@@ -56,7 +56,7 @@ class KelompokKeahlianController extends Controller
      */
     public function create()
     {
-        $this->authorize('master-data-prodi.create');
+        $this->authorize('master-data-kelompok-keahlian.create');
 
         return view('master-data.kelompok-keahlian.create');
     }
@@ -66,7 +66,7 @@ class KelompokKeahlianController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('master-data-prodi.create');
+        $this->authorize('master-data-kelompok-keahlian.create');
 
         $request->validate([
             'singkatan' => 'required|string|max:20|unique:kelompok_keahlian,singkatan',
@@ -93,7 +93,7 @@ class KelompokKeahlianController extends Controller
      */
     public function edit($id)
     {
-        $this->authorize('master-data-prodi.edit');
+        $this->authorize('master-data-kelompok-keahlian.edit');
 
         $kelompokKeahlian = KelompokKeahlian::findOrFail($id);
 
@@ -105,7 +105,7 @@ class KelompokKeahlianController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $this->authorize('master-data-prodi.edit');
+        $this->authorize('master-data-kelompok-keahlian.edit');
 
         $request->validate([
             'singkatan' => [
@@ -143,7 +143,7 @@ class KelompokKeahlianController extends Controller
      */
     public function destroy($id)
     {
-        $this->authorize('master-data-prodi.delete');
+        $this->authorize('master-data-kelompok-keahlian.delete');
 
         $kelompokKeahlian = KelompokKeahlian::findOrFail($id);
 

@@ -33,7 +33,7 @@
             </div>
 
             <div class="flex items-center gap-3">
-                @can('master-data-prodi.create')
+                @can('master-data-tahun-ajar.create')
                 <a href="{{ route('tahun-ajar.create') }}"
                     class="inline-flex items-center gap-2 px-5 py-3 bg-[#C41E3A] hover:bg-[#A31830] text-white font-semibold rounded-xl transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5 text-sm">
                     <i class="fas fa-plus"></i>
@@ -103,7 +103,7 @@
                             <td class="px-6 py-4 text-sm font-bold text-gray-900 group-hover:text-[#C41E3A] transition-colors">{{ $item->label }}</td>
                             <td class="px-6 py-4 text-center text-sm">
                                 <div class="flex items-center justify-center gap-2.5">
-                                    @can('master-data-prodi.edit')
+                                    @can('master-data-tahun-ajar.edit')
                                     <a href="{{ route('tahun-ajar.edit', $item->id) }}"
                                         class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-green-600 hover:bg-green-50 border border-transparent hover:border-green-100 rounded-lg transition-all"
                                         title="Edit">
@@ -111,7 +111,7 @@
                                     </a>
                                     @endcan
 
-                                    @can('master-data-prodi.delete')
+                                    @can('master-data-tahun-ajar.delete')
                                     <form action="{{ route('tahun-ajar.destroy', $item->id) }}" method="POST"
                                         class="inline-block delete-form">
                                         @csrf

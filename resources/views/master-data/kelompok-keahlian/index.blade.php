@@ -62,7 +62,7 @@
             </div>
 
             <div class="flex items-center gap-3">
-                @can('master-data-prodi.create')
+                @can('master-data-kelompok-keahlian.create')
                 <a href="{{ route('kelompok-keahlian.create') }}"
                     class="inline-flex items-center gap-2 px-5 py-3 bg-[#C41E3A] hover:bg-[#A31830] text-white font-semibold rounded-xl transition-all duration-300 shadow-md hover:shadow-lg hover:-translate-y-0.5 text-sm">
                     <i class="fas fa-plus"></i>
@@ -133,7 +133,7 @@
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                                 <div class="flex items-center justify-center gap-2">
-                                    @can('master-data-prodi.edit')
+                                    @can('master-data-kelompok-keahlian.edit')
                                     <a href="{{ route('kelompok-keahlian.edit', $item->id) }}"
                                         class="p-2 text-amber-500 hover:text-amber-700 hover:bg-amber-50 rounded-lg transition-all"
                                         title="Edit Data">
@@ -141,7 +141,7 @@
                                     </a>
                                     @endcan
 
-                                    @can('master-data-prodi.delete')
+                                    @can('master-data-kelompok-keahlian.delete')
                                     <button type="button"
                                         onclick="confirmDelete('{{ $item->id }}', '{{ addslashes($item->nama_kelompok_keahlian) }}')"
                                         class="p-2 text-rose-500 hover:text-rose-700 hover:bg-rose-50 rounded-lg transition-all"

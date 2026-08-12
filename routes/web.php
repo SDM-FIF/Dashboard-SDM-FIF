@@ -547,40 +547,40 @@ Route::middleware('auth')->group(function () {
             });
         });
 
-        // Tahun Ajar - using prodi permissions for simplicity and instant authorization
-        Route::middleware('can:master-data-prodi.view')->group(function () {
+        // Tahun Ajar
+        Route::middleware('can:master-data-tahun-ajar.view')->group(function () {
             Route::get('tahun-ajar', [TahunAjarController::class, 'index'])->name('tahun-ajar.index');
 
-            Route::middleware('can:master-data-prodi.create')->group(function () {
+            Route::middleware('can:master-data-tahun-ajar.create')->group(function () {
                 Route::get('tahun-ajar/create', [TahunAjarController::class, 'create'])->name('tahun-ajar.create');
                 Route::post('tahun-ajar', [TahunAjarController::class, 'store'])->name('tahun-ajar.store');
             });
 
-            Route::middleware('can:master-data-prodi.edit')->group(function () {
+            Route::middleware('can:master-data-tahun-ajar.edit')->group(function () {
                 Route::get('tahun-ajar/{tahun_ajar}/edit', [TahunAjarController::class, 'edit'])->name('tahun-ajar.edit');
                 Route::put('tahun-ajar/{tahun_ajar}', [TahunAjarController::class, 'update'])->name('tahun-ajar.update');
             });
 
-            Route::middleware('can:master-data-prodi.delete')->group(function () {
+            Route::middleware('can:master-data-tahun-ajar.delete')->group(function () {
                 Route::delete('tahun-ajar/{tahun_ajar}', [TahunAjarController::class, 'destroy'])->name('tahun-ajar.destroy');
             });
         });
 
-        // Kelompok Keahlian - using prodi permissions for simplicity and instant authorization
-        Route::middleware('can:master-data-prodi.view')->group(function () {
+        // Kelompok Keahlian
+        Route::middleware('can:master-data-kelompok-keahlian.view')->group(function () {
             Route::get('kelompok-keahlian', [KelompokKeahlianController::class, 'index'])->name('kelompok-keahlian.index');
 
-            Route::middleware('can:master-data-prodi.create')->group(function () {
+            Route::middleware('can:master-data-kelompok-keahlian.create')->group(function () {
                 Route::get('kelompok-keahlian/create', [KelompokKeahlianController::class, 'create'])->name('kelompok-keahlian.create');
                 Route::post('kelompok-keahlian', [KelompokKeahlianController::class, 'store'])->name('kelompok-keahlian.store');
             });
 
-            Route::middleware('can:master-data-prodi.edit')->group(function () {
+            Route::middleware('can:master-data-kelompok-keahlian.edit')->group(function () {
                 Route::get('kelompok-keahlian/{kelompok_keahlian}/edit', [KelompokKeahlianController::class, 'edit'])->name('kelompok-keahlian.edit');
                 Route::put('kelompok-keahlian/{kelompok_keahlian}', [KelompokKeahlianController::class, 'update'])->name('kelompok-keahlian.update');
             });
 
-            Route::middleware('can:master-data-prodi.delete')->group(function () {
+            Route::middleware('can:master-data-kelompok-keahlian.delete')->group(function () {
                 Route::delete('kelompok-keahlian/{kelompok_keahlian}', [KelompokKeahlianController::class, 'destroy'])->name('kelompok-keahlian.destroy');
             });
         });

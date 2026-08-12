@@ -60,6 +60,8 @@ class PlottingPermissionExport implements FromView, WithEvents, ShouldAutoSize
                 'master-data-fakultas' => 'Data Fakultas',
                 'master-data-prodi' => 'Data Program Studi',
                 'master-data-kompetisi' => 'Data Kompetisi',
+                'master-data-tahun-ajar' => 'Data Tahun Ajaran',
+                'master-data-kelompok-keahlian' => 'Data Kelompok Keahlian',
             ],
             'Pengaturan' => [
                 'konfigurasi-sistem' => 'Konfigurasi Sistem',

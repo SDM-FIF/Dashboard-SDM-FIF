@@ -300,7 +300,7 @@
             @endcanany
 
             {{-- Master Data Section (DIUPDATE) --}}
-            @canany(['master-data-fakultas.view', 'master-data-prodi.view', 'master-data-kompetisi.view'])
+            @canany(['master-data-fakultas.view', 'master-data-prodi.view', 'master-data-kompetisi.view', 'master-data-tahun-ajar.view', 'master-data-kelompok-keahlian.view'])
                 <li class="relative">
                     <button onclick="toggleDropdown('masterDataDropdown')"
                         class="w-full flex items-center justify-between pl-6 pr-4 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->is('master-data*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
@@ -350,7 +350,7 @@
                                 </li>
                             @endcan
                             {{-- Data Tahun Ajaran --}}
-                            @can('master-data-prodi.view')
+                            @can('master-data-tahun-ajar.view')
                                 <li>
                                     <a href="{{ route('tahun-ajar.index') }}"
                                         class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 whitespace-nowrap {{ request()->routeIs('tahun-ajar.*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
@@ -359,7 +359,7 @@
                                 </li>
                             @endcan
                             {{-- Data Kelompok Keahlian --}}
-                            @can('master-data-prodi.view')
+                            @can('master-data-kelompok-keahlian.view')
                                 <li>
                                     <a href="{{ route('kelompok-keahlian.index') }}"
                                         class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 whitespace-nowrap {{ request()->routeIs('kelompok-keahlian.*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">

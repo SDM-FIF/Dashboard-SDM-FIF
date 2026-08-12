@@ -15,7 +15,7 @@ class TahunAjarController extends Controller
      */
     public function index(Request $request)
     {
-        $this->authorize('master-data-prodi.view');
+        $this->authorize('master-data-tahun-ajar.view');
 
         $query = TahunAjar::query();
 
@@ -48,7 +48,7 @@ class TahunAjarController extends Controller
      */
     public function create()
     {
-        $this->authorize('master-data-prodi.create');
+        $this->authorize('master-data-tahun-ajar.create');
 
         return view('master-data.tahun-ajar.create');
     }
@@ -58,7 +58,7 @@ class TahunAjarController extends Controller
      */
     public function store(Request $request)
     {
-        $this->authorize('master-data-prodi.create');
+        $this->authorize('master-data-tahun-ajar.create');
 
         $request->validate([
             'tahun' => [
@@ -90,7 +90,7 @@ class TahunAjarController extends Controller
      */
     public function edit($id)
     {
-        $this->authorize('master-data-prodi.edit');
+        $this->authorize('master-data-tahun-ajar.edit');
 
         $tahunAjar = TahunAjar::findOrFail($id);
 
@@ -102,7 +102,7 @@ class TahunAjarController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $this->authorize('master-data-prodi.edit');
+        $this->authorize('master-data-tahun-ajar.edit');
 
         $request->validate([
             'tahun' => [
@@ -135,7 +135,7 @@ class TahunAjarController extends Controller
      */
     public function destroy($id)
     {
-        $this->authorize('master-data-prodi.delete');
+        $this->authorize('master-data-tahun-ajar.delete');
 
         $tahunAjar = TahunAjar::findOrFail($id);
 
