@@ -149,12 +149,12 @@
 
                     <!-- Dropdown Export -->
                     <div id="exportDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50">
-                        <a href="#"
+                        <a href="{{ route('manajemen-tpa.export-excel', array_merge(request()->query(), ['format' => 'xlsx'])) }}"
                             class="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-green-50 transition-colors">
                             <i class="fas fa-file-excel text-green-600 text-lg"></i>
                             <span>Export Excel</span>
                         </a>
-                        <a href="#"
+                        <a href="{{ route('manajemen-tpa.export-pdf', request()->query()) }}"
                             class="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-red-50 transition-colors border-t border-gray-50">
                             <i class="fas fa-file-pdf text-[#C41E3A] text-lg"></i>
                             <span>Export PDF</span>

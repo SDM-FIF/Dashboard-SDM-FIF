@@ -6,6 +6,8 @@ use App\Models\KelompokKeahlian;
 use App\Models\Dosen;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class KelompokKeahlianController extends Controller
 {
@@ -161,5 +163,85 @@ class KelompokKeahlianController extends Controller
         return redirect()
             ->route('kelompok-keahlian.index')
             ->with('success', 'Data Kelompok Keahlian berhasil dihapus!');
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $this->authorize('master-data-kelompok-keahlian.view');
+
+        $format = $request->get('format', 'xlsx');
+        $fileName = 'data-kelompok-keahlian-' . date('Y-m-d') . '.' . $format;
+
+        $query = KelompokKeahlian::query();
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('singkatan', 'like', '%' . $search . '%')
+                  ->orWhere('nama_kelompok_keahlian', 'like', '%' . $search . '%');
+            });
+        }
+
+        $data = $query->orderBy('singkatan', 'asc')->get()->map(function ($k) {
+            return [
+                'Singkatan / Kode KK' => $k->singkatan,
+                'Nama Kelompok Keahlian' => $k->nama_kelompok_keahlian,
+            ];
+        });
+
+        return Excel::download(
+            new class ($data) implements \Maatwebsite\Excel\Concerns\FromCollection, \Maatwebsite\Excel\Concerns\WithHeadings {
+                private $data;
+                public function __construct($data) { $this->data = $data; }
+                public function collection() { return $this->data; }
+                public function headings(): array {
+                    return ['Singkatan / Kode KK', 'Nama Kelompok Keahlian'];
+                }
+            },
+            $fileName
+        );
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $this->authorize('master-data-kelompok-keahlian.view');
+
+        $query = KelompokKeahlian::query();
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('singkatan', 'like', '%' . $search . '%')
+                  ->orWhere('nama_kelompok_keahlian', 'like', '%' . $search . '%');
+            });
+        }
+
+        $kkList = $query->orderBy('singkatan', 'asc')->get();
+
+        $html = '
+        <h2 style="text-align: center; margin-bottom: 5px;">DATA KELOMPOK KEAHLIAN (KK)</h2>
+        <p style="text-align: center; font-size: 11px; margin-top: 0; color: #555;">Tanggal Cetak: ' . date('d-m-Y') . '</p>
+        <table border="1" cellspacing="0" cellpadding="5" style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 11px;">
+            <thead>
+                <tr style="background-color: #C41E3A; color: white;">
+                    <th width="10%">No</th>
+                    <th width="25%">Singkatan / Kode KK</th>
+                    <th width="65%">Nama Kelompok Keahlian</th>
+                </tr>
+            </thead>
+            <tbody>';
+
+        foreach ($kkList as $index => $k) {
+            $html .= '
+                <tr>
+                    <td style="text-align: center;">' . ($index + 1) . '</td>
+                    <td>' . $k->singkatan . '</td>
+                    <td>' . $k->nama_kelompok_keahlian . '</td>
+                </tr>';
+        }
+
+        $html .= '</tbody></table>';
+
+        $pdf = Pdf::loadHTML($html);
+        $pdf->setPaper('a4', 'portrait');
+        return $pdf->download('data-kelompok-keahlian-' . date('Y-m-d-His') . '.pdf');
     }
 }

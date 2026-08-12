@@ -7,6 +7,8 @@ use App\Models\JadwalPengujian;
 use App\Models\CalonDosen;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class TahunAjarController extends Controller
 {
@@ -168,5 +170,88 @@ class TahunAjarController extends Controller
         return redirect()
             ->route('tahun-ajar.index')
             ->with('success', 'Tahun Ajaran berhasil dihapus.');
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $this->authorize('master-data-tahun-ajar.view');
+
+        $format = $request->get('format', 'xlsx');
+        $fileName = 'data-tahun-ajaran-' . date('Y-m-d') . '.' . $format;
+
+        $query = TahunAjar::query();
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('tahun', 'like', '%' . $search . '%')
+                  ->orWhere('semester', 'like', '%' . $search . '%');
+            });
+        }
+
+        $data = $query->orderBy('tahun', 'desc')->orderBy('semester', 'desc')->get()->map(function ($t) {
+            return [
+                'Tahun Academic' => $t->tahun . '/' . ($t->tahun + 1),
+                'Semester' => $t->semester == 1 ? 'Ganjil (1)' : 'Genap (2)',
+                'Tahun' => $t->tahun,
+            ];
+        });
+
+        return Excel::download(
+            new class ($data) implements \Maatwebsite\Excel\Concerns\FromCollection, \Maatwebsite\Excel\Concerns\WithHeadings {
+                private $data;
+                public function __construct($data) { $this->data = $data; }
+                public function collection() { return $this->data; }
+                public function headings(): array {
+                    return ['Tahun Academic', 'Semester', 'Tahun'];
+                }
+            },
+            $fileName
+        );
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $this->authorize('master-data-tahun-ajar.view');
+
+        $query = TahunAjar::query();
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('tahun', 'like', '%' . $search . '%')
+                  ->orWhere('semester', 'like', '%' . $search . '%');
+            });
+        }
+
+        $tahunAjar = $query->orderBy('tahun', 'desc')->orderBy('semester', 'desc')->get();
+
+        $html = '
+        <h2 style="text-align: center; margin-bottom: 5px;">DATA TAHUN AJARAN</h2>
+        <p style="text-align: center; font-size: 11px; margin-top: 0; color: #555;">Tanggal Cetak: ' . date('d-m-Y') . '</p>
+        <table border="1" cellspacing="0" cellpadding="5" style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 11px;">
+            <thead>
+                <tr style="background-color: #C41E3A; color: white;">
+                    <th width="10%">No</th>
+                    <th width="40%">Tahun Akademik</th>
+                    <th width="30%">Semester</th>
+                    <th width="20%">Tahun</th>
+                </tr>
+            </thead>
+            <tbody>';
+
+        foreach ($tahunAjar as $index => $t) {
+            $html .= '
+                <tr>
+                    <td style="text-align: center;">' . ($index + 1) . '</td>
+                    <td>' . $t->tahun . '/' . ($t->tahun + 1) . '</td>
+                    <td>' . ($t->semester == 1 ? 'Ganjil (1)' : 'Genap (2)') . '</td>
+                    <td style="text-align: center;">' . $t->tahun . '</td>
+                </tr>';
+        }
+
+        $html .= '</tbody></table>';
+
+        $pdf = Pdf::loadHTML($html);
+        $pdf->setPaper('a4', 'portrait');
+        return $pdf->download('data-tahun-ajaran-' . date('Y-m-d-His') . '.pdf');
     }
 }

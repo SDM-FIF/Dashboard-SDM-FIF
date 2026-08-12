@@ -499,6 +499,8 @@ Route::middleware('auth')->group(function () {
         // Fakultas - view permission for all roles, edit permission for Super Admin only
         Route::middleware('can:master-data-fakultas.view')->group(function () {
             Route::get('fakultas', [FakultasController::class, 'index'])->name('fakultas.index');
+            Route::get('fakultas/export-excel', [FakultasController::class, 'exportExcel'])->name('fakultas.export-excel');
+            Route::get('fakultas/export-pdf', [FakultasController::class, 'exportPdf'])->name('fakultas.export-pdf');
 
             Route::middleware('can:master-data-fakultas.edit')->group(function () {
                 Route::get('fakultas/create', [FakultasController::class, 'create'])->name('fakultas.create');
@@ -512,6 +514,8 @@ Route::middleware('auth')->group(function () {
         // Prodi - view permission for all roles, create/edit/delete for Super Admin only
         Route::middleware('can:master-data-prodi.view')->group(function () {
             Route::get('prodi', [ProdiController::class, 'index'])->name('prodi.index');
+            Route::get('prodi/export-excel', [ProdiController::class, 'exportExcel'])->name('prodi.export-excel');
+            Route::get('prodi/export-pdf', [ProdiController::class, 'exportPdf'])->name('prodi.export-pdf');
 
             Route::middleware('can:master-data-prodi.create')->group(function () {
                 Route::get('prodi/create', [ProdiController::class, 'create'])->name('prodi.create');
@@ -531,6 +535,8 @@ Route::middleware('auth')->group(function () {
         // Kompetisi - view permission for all roles, create/edit/delete for Super Admin only
         Route::middleware('can:master-data-kompetisi.view')->group(function () {
             Route::get('kompetisi', [KompetisiController::class, 'index'])->name('kompetisi.index');
+            Route::get('kompetisi/export-excel', [KompetisiController::class, 'exportExcel'])->name('kompetisi.export-excel');
+            Route::get('kompetisi/export-pdf', [KompetisiController::class, 'exportPdf'])->name('kompetisi.export-pdf');
             Route::get('kompetisi/{kompetisi}', [KompetisiController::class, 'show'])->name('kompetisi.show');
 
             Route::middleware('can:master-data-kompetisi.create')->group(function () {
@@ -551,6 +557,8 @@ Route::middleware('auth')->group(function () {
         // Tahun Ajar
         Route::middleware('can:master-data-tahun-ajar.view')->group(function () {
             Route::get('tahun-ajar', [TahunAjarController::class, 'index'])->name('tahun-ajar.index');
+            Route::get('tahun-ajar/export-excel', [TahunAjarController::class, 'exportExcel'])->name('tahun-ajar.export-excel');
+            Route::get('tahun-ajar/export-pdf', [TahunAjarController::class, 'exportPdf'])->name('tahun-ajar.export-pdf');
 
             Route::middleware('can:master-data-tahun-ajar.create')->group(function () {
                 Route::get('tahun-ajar/create', [TahunAjarController::class, 'create'])->name('tahun-ajar.create');
@@ -570,6 +578,8 @@ Route::middleware('auth')->group(function () {
         // Kelompok Keahlian
         Route::middleware('can:master-data-kelompok-keahlian.view')->group(function () {
             Route::get('kelompok-keahlian', [KelompokKeahlianController::class, 'index'])->name('kelompok-keahlian.index');
+            Route::get('kelompok-keahlian/export-excel', [KelompokKeahlianController::class, 'exportExcel'])->name('kelompok-keahlian.export-excel');
+            Route::get('kelompok-keahlian/export-pdf', [KelompokKeahlianController::class, 'exportPdf'])->name('kelompok-keahlian.export-pdf');
 
             Route::middleware('can:master-data-kelompok-keahlian.create')->group(function () {
                 Route::get('kelompok-keahlian/create', [KelompokKeahlianController::class, 'create'])->name('kelompok-keahlian.create');
@@ -618,6 +628,8 @@ Route::middleware('auth')->group(function () {
             Route::get('/', [SuratDosenController::class, 'index'])->name('index');
             Route::get('/create', [SuratDosenController::class, 'create'])->name('create')->middleware('can:kelola-data-dosen.create');
             Route::post('/', [SuratDosenController::class, 'store'])->name('store')->middleware('can:kelola-data-dosen.create');
+            Route::get('/export-excel', [SuratDosenController::class, 'exportExcel'])->name('export-excel');
+            Route::get('/export-pdf', [SuratDosenController::class, 'exportPdf'])->name('export-pdf');
             Route::get('/{id}', [SuratDosenController::class, 'show'])->name('show');
             Route::get('/{id}/edit', [SuratDosenController::class, 'edit'])->name('edit')->middleware('can:kelola-data-dosen.edit');
             Route::put('/{id}', [SuratDosenController::class, 'update'])->name('update')->middleware('can:kelola-data-dosen.edit');
@@ -640,6 +652,8 @@ Route::middleware('auth')->group(function () {
     Route::prefix('manajemen-tpa')->name('manajemen-tpa.')->middleware('can:kelola-data-tpa.view')->group(function () {
         // Kelola Data & Laporan
         Route::get('/kelola-data', [TenagaPendukungAkademikController::class, 'kelolaData'])->name('kelola-data');
+        Route::get('/export-excel', [TenagaPendukungAkademikController::class, 'exportExcel'])->name('export-excel');
+        Route::get('/export-pdf', [TenagaPendukungAkademikController::class, 'exportPdf'])->name('export-pdf');
         Route::get('/laporan', [TenagaPendukungAkademikController::class, 'laporan'])->name('laporan');
 
 
@@ -696,6 +710,8 @@ Route::middleware('auth')->group(function () {
 
         // --- MAHASISWA KOMPETISI ---
         Route::get('/kompetisi-mahasiswa', [MahasiswaController::class, 'kompetisiIndex'])->name('kompetisi.index');
+        Route::get('/kompetisi-mahasiswa/export-excel', [MahasiswaController::class, 'kompetisiExportExcel'])->name('kompetisi.export-excel');
+        Route::get('/kompetisi-mahasiswa/export-pdf', [MahasiswaController::class, 'kompetisiExportPdf'])->name('kompetisi.export-pdf');
         Route::get('/kompetisi-mahasiswa/create', [MahasiswaController::class, 'kompetisiCreate'])->name('kompetisi.create')->middleware('can:kelola-data-mahasiswa.create');
         Route::post('/kompetisi-mahasiswa', [MahasiswaController::class, 'kompetisiStore'])->name('kompetisi.store')->middleware('can:kelola-data-mahasiswa.create');
         Route::delete('/kompetisi-mahasiswa/{id}', [MahasiswaController::class, 'kompetisiDestroy'])->name('kompetisi.destroy')->middleware('can:kelola-data-mahasiswa.delete');

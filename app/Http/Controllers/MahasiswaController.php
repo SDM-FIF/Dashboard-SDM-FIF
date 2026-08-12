@@ -990,4 +990,128 @@ public function exportPdf(Request $request)
         </Worksheet>
         </Workbook>';
     }
+
+    public function kompetisiExportExcel(Request $request)
+    {
+        $this->authorize('kelola-data-mahasiswa.view');
+
+        $format = $request->get('format', 'xlsx');
+        $fileName = 'prestasi-mahasiswa-' . date('Y-m-d') . '.' . $format;
+
+        $query = MahasiswaKompetisi::with(['mahasiswa.prodi', 'kompetisi']);
+        if ($request->filled('prodi_id')) {
+            $query->whereHas('mahasiswa', function ($q) use ($request) {
+                $q->where('prodi_id', $request->prodi_id);
+            });
+        }
+        if ($request->filled('jenis')) {
+            $query->whereHas('kompetisi', function ($q) use ($request) {
+                $q->where('jenis', $request->jenis);
+            });
+        }
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('mahasiswa', function ($sq) use ($search) {
+                    $sq->where('nama_lengkap', 'like', '%' . $search . '%')
+                       ->orWhere('nim', 'like', '%' . $search . '%');
+                })->orWhereHas('kompetisi', function ($cq) use ($search) {
+                    $cq->where('nama_kompetisi', 'like', '%' . $search . '%')
+                       ->orWhere('nama_penyelenggara', 'like', '%' . $search . '%');
+                });
+            });
+        }
+
+        $data = $query->latest('id')->get()->map(function ($mk) {
+            return [
+                'NIM' => $mk->mahasiswa->nim ?? '-',
+                'Nama Mahasiswa' => $mk->mahasiswa->nama_lengkap ?? '-',
+                'Program Studi' => $mk->mahasiswa->prodi->nama_prodi ?? '-',
+                'Nama Kompetisi' => $mk->kompetisi->nama_kompetisi ?? '-',
+                'Capaian / Juara' => $mk->juara ?? '-',
+                'Tingkat' => $mk->kompetisi->tingkat_kompetisi ?? '-',
+                'Penyelenggara' => $mk->kompetisi->nama_penyelenggara ?? '-',
+                'Tanggal' => $mk->kompetisi->tanggal_kompetisi ? \Carbon\Carbon::parse($mk->kompetisi->tanggal_kompetisi)->format('d-m-Y') : '-',
+            ];
+        });
+
+        return Excel::download(
+            new class ($data) implements \Maatwebsite\Excel\Concerns\FromCollection, \Maatwebsite\Excel\Concerns\WithHeadings {
+                private $data;
+                public function __construct($data) { $this->data = $data; }
+                public function collection() { return $this->data; }
+                public function headings(): array {
+                    return ['NIM', 'Nama Mahasiswa', 'Program Studi', 'Nama Kompetisi', 'Capaian / Juara', 'Tingkat', 'Penyelenggara', 'Tanggal'];
+                }
+            },
+            $fileName
+        );
+    }
+
+    public function kompetisiExportPdf(Request $request)
+    {
+        $this->authorize('kelola-data-mahasiswa.view');
+
+        $query = MahasiswaKompetisi::with(['mahasiswa.prodi', 'kompetisi']);
+        if ($request->filled('prodi_id')) {
+            $query->whereHas('mahasiswa', function ($q) use ($request) {
+                $q->where('prodi_id', $request->prodi_id);
+            });
+        }
+        if ($request->filled('jenis')) {
+            $query->whereHas('kompetisi', function ($q) use ($request) {
+                $q->where('jenis', $request->jenis);
+            });
+        }
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('mahasiswa', function ($sq) use ($search) {
+                    $sq->where('nama_lengkap', 'like', '%' . $search . '%')
+                       ->orWhere('nim', 'like', '%' . $search . '%');
+                })->orWhereHas('kompetisi', function ($cq) use ($search) {
+                    $cq->where('nama_kompetisi', 'like', '%' . $search . '%')
+                       ->orWhere('nama_penyelenggara', 'like', '%' . $search . '%');
+                });
+            });
+        }
+
+        $list = $query->latest('id')->get();
+
+        $html = '
+        <h2 style="text-align: center; margin-bottom: 5px;">DATA PRESTASI & KOMPETISI MAHASISWA</h2>
+        <p style="text-align: center; font-size: 11px; margin-top: 0; color: #555;">Tanggal Cetak: ' . date('d-m-Y') . '</p>
+        <table border="1" cellspacing="0" cellpadding="5" style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 11px;">
+            <thead>
+                <tr style="background-color: #C41E3A; color: white;">
+                    <th width="4%">No</th>
+                    <th width="12%">NIM</th>
+                    <th width="20%">Nama Mahasiswa</th>
+                    <th width="18%">Program Studi</th>
+                    <th width="24%">Kompetisi</th>
+                    <th width="12%">Capaian</th>
+                    <th width="10%">Tingkat</th>
+                </tr>
+            </thead>
+            <tbody>';
+
+        foreach ($list as $index => $mk) {
+            $html .= '
+                <tr>
+                    <td style="text-align: center;">' . ($index + 1) . '</td>
+                    <td>' . ($mk->mahasiswa->nim ?? '-') . '</td>
+                    <td>' . ($mk->mahasiswa->nama_lengkap ?? '-') . '</td>
+                    <td>' . ($mk->mahasiswa->prodi->nama_prodi ?? '-') . '</td>
+                    <td>' . ($mk->kompetisi->nama_kompetisi ?? '-') . '</td>
+                    <td>' . ($mk->juara ?? '-') . '</td>
+                    <td>' . ($mk->kompetisi->tingkat_kompetisi ?? '-') . '</td>
+                </tr>';
+        }
+
+        $html .= '</tbody></table>';
+
+        $pdf = Pdf::loadHTML($html);
+        $pdf->setPaper('a4', 'landscape');
+        return $pdf->download('prestasi-mahasiswa-' . date('Y-m-d-His') . '.pdf');
+    }
 }

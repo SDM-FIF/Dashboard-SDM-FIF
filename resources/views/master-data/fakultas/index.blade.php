@@ -82,9 +82,33 @@
 
         {{-- Data Table Section Card --}}
         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300">
-            <div class="p-6 border-b border-gray-100">
-                <h2 class="text-xl font-bold text-[#C41E3A]">Daftar Fakultas</h2>
-                <p class="text-xs text-gray-500 mt-0.5">Menampilkan total {{ $fakultas->total() }} fakultas</p>
+            <div class="p-6 border-b border-gray-100 flex items-center justify-between">
+                <div>
+                    <h2 class="text-xl font-bold text-[#C41E3A]">Daftar Fakultas</h2>
+                    <p class="text-xs text-gray-500 mt-0.5">Menampilkan total {{ $fakultas->total() }} fakultas</p>
+                </div>
+
+                {{-- Export Button --}}
+                <div class="relative inline-block text-left">
+                    <button type="button" onclick="toggleExportDropdown(event)" class="px-5 py-2.5 text-xs font-bold text-gray-700 bg-[#F8FAFC] border border-gray-200 rounded-xl hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-all duration-300 flex items-center gap-2 shadow-sm">
+                        <i class="fas fa-download text-gray-500"></i>
+                        <span>Export Data</span>
+                        <i class="fas fa-chevron-down text-[10px] ml-1 text-gray-400"></i>
+                    </button>
+
+                    <div id="exportDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50">
+                        <a href="{{ route('fakultas.export-excel', array_merge(request()->query(), ['format' => 'xlsx'])) }}"
+                            class="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-green-50 transition-colors">
+                            <i class="fas fa-file-excel text-green-600 text-lg"></i>
+                            <span>Export Excel</span>
+                        </a>
+                        <a href="{{ route('fakultas.export-pdf', request()->query()) }}"
+                            class="flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-red-50 transition-colors border-t border-gray-50">
+                            <i class="fas fa-file-pdf text-[#C41E3A] text-lg"></i>
+                            <span>Export PDF</span>
+                        </a>
+                    </div>
+                </div>
             </div>
 
             <div class="overflow-x-auto">
@@ -157,5 +181,19 @@
             });
         </script>
     @endif
+    <script>
+        function toggleExportDropdown(e) {
+            if (e) e.stopPropagation();
+            const dropdown = document.getElementById('exportDropdown');
+            dropdown.classList.toggle('hidden');
+        }
+
+        window.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('exportDropdown');
+            if (dropdown && !dropdown.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+    </script>
 </body>
 </html>

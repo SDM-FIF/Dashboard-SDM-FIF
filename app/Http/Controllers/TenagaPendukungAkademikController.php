@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -630,5 +631,107 @@ class TenagaPendukungAkademikController extends Controller
             'statusCounts' => $statusCounts,
             'jabatanCounts' => $jabatanCounts,
         ];
+    }
+
+    /**
+     * Export Excel & CSV
+     */
+    public function exportExcel(Request $request)
+    {
+        $this->authorize('kelola-data-tpa.view');
+
+        $format = $request->get('format', 'xlsx');
+        $fileName = 'data-tpa-' . date('Y-m-d') . '.' . $format;
+
+        $query = TenagaPendukungAkademik::query();
+        if ($request->filled('lokasi_kerja')) $query->where('lokasi_kerja', $request->lokasi_kerja);
+        if ($request->filled('status_pegawai')) $query->where('status_pegawai', $request->status_pegawai);
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_lengkap', 'like', '%' . $search . '%')
+                  ->orWhere('nik', 'like', '%' . $search . '%')
+                  ->orWhere('posisi_pekerjaan', 'like', '%' . $search . '%');
+            });
+        }
+
+        $data = $query->orderBy('nama_lengkap', 'asc')->get()->map(function ($tpa) {
+            return [
+                'NIK' => $tpa->nik,
+                'Nama Lengkap' => $tpa->nama_lengkap,
+                'Posisi Pekerjaan' => $tpa->posisi_pekerjaan ?? '-',
+                'Jabatan' => $tpa->jabatan ?? '-',
+                'Unit Kerja / Lokasi' => $tpa->lokasi_kerja ?? '-',
+                'Status Pegawai' => $tpa->status_pegawai ?? '-',
+            ];
+        });
+
+        return Excel::download(
+            new class ($data) implements \Maatwebsite\Excel\Concerns\FromCollection, \Maatwebsite\Excel\Concerns\WithHeadings {
+                private $data;
+                public function __construct($data) { $this->data = $data; }
+                public function collection() { return $this->data; }
+                public function headings(): array {
+                    return ['NIK', 'Nama Lengkap', 'Posisi Pekerjaan', 'Jabatan', 'Unit Kerja / Lokasi', 'Status Pegawai'];
+                }
+            },
+            $fileName
+        );
+    }
+
+    /**
+     * Export PDF
+     */
+    public function exportPdf(Request $request)
+    {
+        $this->authorize('kelola-data-tpa.view');
+
+        $query = TenagaPendukungAkademik::query();
+        if ($request->filled('lokasi_kerja')) $query->where('lokasi_kerja', $request->lokasi_kerja);
+        if ($request->filled('status_pegawai')) $query->where('status_pegawai', $request->status_pegawai);
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_lengkap', 'like', '%' . $search . '%')
+                  ->orWhere('nik', 'like', '%' . $search . '%')
+                  ->orWhere('posisi_pekerjaan', 'like', '%' . $search . '%');
+            });
+        }
+
+        $tpaList = $query->orderBy('nama_lengkap', 'asc')->get();
+
+        $html = '
+        <h2 style="text-align: center; margin-bottom: 5px;">DATA TENAGA PENDUKUNG AKADEMIK (TPA)</h2>
+        <p style="text-align: center; font-size: 11px; margin-top: 0; color: #555;">Tanggal Cetak: ' . date('d-m-Y') . '</p>
+        <table border="1" cellspacing="0" cellpadding="5" style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 11px;">
+            <thead>
+                <tr style="background-color: #C41E3A; color: white;">
+                    <th width="5%">No</th>
+                    <th width="15%">NIK</th>
+                    <th width="25%">Nama Lengkap</th>
+                    <th width="20%">Posisi Pekerjaan</th>
+                    <th width="15%">Jabatan</th>
+                    <th width="20%">Status Pegawai</th>
+                </tr>
+            </thead>
+            <tbody>';
+
+        foreach ($tpaList as $index => $tpa) {
+            $html .= '
+                <tr>
+                    <td style="text-align: center;">' . ($index + 1) . '</td>
+                    <td>' . $tpa->nik . '</td>
+                    <td>' . $tpa->nama_lengkap . '</td>
+                    <td>' . ($tpa->posisi_pekerjaan ?? '-') . '</td>
+                    <td>' . ($tpa->jabatan ?? '-') . '</td>
+                    <td>' . ($tpa->status_pegawai ?? '-') . '</td>
+                </tr>';
+        }
+
+        $html .= '</tbody></table>';
+
+        $pdf = Pdf::loadHTML($html);
+        $pdf->setPaper('a4', 'portrait');
+        return $pdf->download('data-tpa-' . date('Y-m-d-His') . '.pdf');
     }
 }

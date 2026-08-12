@@ -7,6 +7,8 @@ use App\Models\Dosen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class SuratDosenController extends Controller
 {
@@ -316,5 +318,135 @@ class SuratDosenController extends Controller
         $cleanFileName = str_replace('/', '_', $surat->nomor_surat) . '.' . $extension;
 
         return Storage::disk('public')->download($surat->file_surat, $cleanFileName);
+    }
+
+    /**
+     * Export Excel & CSV
+     */
+    public function exportExcel(Request $request)
+    {
+        $this->authorize('kelola-data-dosen.view');
+
+        $format = $request->get('format', 'xlsx');
+        $fileName = 'data-surat-dosen-' . date('Y-m-d') . '.' . $format;
+
+        $query = SuratDosen::with(['dosen', 'dosenList']);
+        if ($request->filled('jenis_surat')) {
+            $query->where('jenis_surat', $request->jenis_surat);
+        }
+        if ($request->filled('kategori')) {
+            $query->where('kategori', $request->kategori);
+        }
+        if ($request->filled('dosen_id')) {
+            $dosenId = $request->dosen_id;
+            $query->where(function ($q) use ($dosenId) {
+                $q->where('dosen_id', $dosenId)
+                  ->orWhereHas('dosenList', function ($qd) use ($dosenId) {
+                      $qd->where('dosen.id', $dosenId);
+                  });
+            });
+        }
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nomor_surat', 'like', '%' . $search . '%')
+                  ->orWhere('judul_surat', 'like', '%' . $search . '%')
+                  ->orWhereHas('dosen', function ($qd) use ($search) {
+                      $qd->where('nama_lengkap', 'like', '%' . $search . '%');
+                  })
+                  ->orWhereHas('dosenList', function ($qd) use ($search) {
+                      $qd->where('nama_lengkap', 'like', '%' . $search . '%');
+                  });
+            });
+        }
+
+        $data = $query->orderBy('tanggal_surat', 'desc')->get()->map(function ($s) {
+            $recipients = $s->dosenList->count() > 0 ? $s->dosenList->pluck('nama_lengkap')->implode(', ') : ($s->dosen->nama_lengkap ?? '-');
+            return [
+                'Jenis Surat' => $s->jenis_surat,
+                'Nomor Surat' => $s->nomor_surat,
+                'Judul / Perihal' => $s->judul_surat,
+                'Dosen Penerima' => $recipients,
+                'Tanggal Terbit' => $s->tanggal_surat ? $s->tanggal_surat->format('d-m-Y') : '-',
+                'Masa Berlaku' => ($s->berlaku_mulai ? $s->berlaku_mulai->format('d/m/Y') : 'Awal') . ' s/d ' . ($s->berlaku_selesai ? $s->berlaku_selesai->format('d/m/Y') : 'Selesai'),
+                'Kategori' => $s->kategori,
+                'Keterangan' => $s->keterangan ?? '-',
+            ];
+        });
+
+        return Excel::download(
+            new class ($data) implements \Maatwebsite\Excel\Concerns\FromCollection, \Maatwebsite\Excel\Concerns\WithHeadings {
+                private $data;
+                public function __construct($data) { $this->data = $data; }
+                public function collection() { return $this->data; }
+                public function headings(): array {
+                    return ['Jenis Surat', 'Nomor Surat', 'Judul / Perihal', 'Dosen Penerima', 'Tanggal Terbit', 'Masa Berlaku', 'Kategori', 'Keterangan'];
+                }
+            },
+            $fileName
+        );
+    }
+
+    /**
+     * Export PDF
+     */
+    public function exportPdf(Request $request)
+    {
+        $this->authorize('kelola-data-dosen.view');
+
+        $query = SuratDosen::with(['dosen', 'dosenList']);
+        if ($request->filled('jenis_surat')) $query->where('jenis_surat', $request->jenis_surat);
+        if ($request->filled('kategori')) $query->where('kategori', $request->kategori);
+        if ($request->filled('dosen_id')) {
+            $dosenId = $request->dosen_id;
+            $query->where(function ($q) use ($dosenId) {
+                $q->where('dosen_id', $dosenId)->orWhereHas('dosenList', function ($qd) use ($dosenId) { $qd->where('dosen.id', $dosenId); });
+            });
+        }
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('nomor_surat', 'like', '%' . $search . '%')->orWhere('judul_surat', 'like', '%' . $search . '%');
+            });
+        }
+
+        $surat = $query->orderBy('tanggal_surat', 'desc')->get();
+
+        $html = '
+        <h2 style="text-align: center; margin-bottom: 5px;">DATA SURAT TUGAS & SURAT KEPUTUSAN DOSEN</h2>
+        <p style="text-align: center; font-size: 11px; margin-top: 0; color: #555;">Tanggal Cetak: ' . date('d-m-Y') . '</p>
+        <table border="1" cellspacing="0" cellpadding="5" style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 11px;">
+            <thead>
+                <tr style="background-color: #C41E3A; color: white;">
+                    <th width="4%">No</th>
+                    <th width="12%">Jenis</th>
+                    <th width="20%">Nomor Surat</th>
+                    <th width="24%">Judul / Perihal</th>
+                    <th width="22%">Dosen Penerima</th>
+                    <th width="10%">Tanggal</th>
+                    <th width="8%">Kategori</th>
+                </tr>
+            </thead>
+            <tbody>';
+
+        foreach ($surat as $index => $s) {
+            $recipients = $s->dosenList->count() > 0 ? $s->dosenList->pluck('nama_lengkap')->implode(', ') : ($s->dosen->nama_lengkap ?? '-');
+            $html .= '
+                <tr>
+                    <td style="text-align: center;">' . ($index + 1) . '</td>
+                    <td>' . $s->jenis_surat . '</td>
+                    <td>' . $s->nomor_surat . '</td>
+                    <td>' . $s->judul_surat . '</td>
+                    <td>' . $recipients . '</td>
+                    <td>' . ($s->tanggal_surat ? $s->tanggal_surat->format('d/m/Y') : '-') . '</td>
+                    <td>' . $s->kategori . '</td>
+                </tr>';
+        }
+
+        $html .= '</tbody></table>';
+
+        $pdf = Pdf::loadHTML($html);
+        $pdf->setPaper('a4', 'landscape');
+        return $pdf->download('data-surat-dosen-' . date('Y-m-d-His') . '.pdf');
     }
 }

@@ -6,6 +6,8 @@ use App\Models\Kompetisi;
 use App\Models\Prodi;
 use App\Models\Mahasiswa;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class KompetisiController extends Controller
 {
@@ -27,7 +29,6 @@ class KompetisiController extends Controller
     {
         $this->authorize('master-data-kompetisi.create');
         
-        // Mengambil opsi dari konstanta model
         $jenisOptions = Kompetisi::getJenisOptions();
         $prodis = Prodi::all();
         return view('master-data.kompetisi.create', compact('jenisOptions', 'prodis'));
@@ -64,6 +65,7 @@ class KompetisiController extends Controller
 
         return redirect()->route('kompetisi.index')->with('success', 'Data Kompetisi berhasil ditambahkan!');
     }
+
     public function destroy($id)
     {
         $this->authorize('master-data-kompetisi.delete');
@@ -128,5 +130,84 @@ class KompetisiController extends Controller
         
         $kompetisi = Kompetisi::with('mahasiswa.prodi')->findOrFail($id);
         return view('master-data.kompetisi.show', compact('kompetisi'));
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $this->authorize('master-data-kompetisi.view');
+
+        $format = $request->get('format', 'xlsx');
+        $fileName = 'data-kompetisi-' . date('Y-m-d') . '.' . $format;
+
+        $query = Kompetisi::query();
+        if ($request->filled('search')) {
+            $query->where('nama_kompetisi', 'like', '%' . $request->search . '%');
+        }
+
+        $data = $query->latest('id')->get()->map(function ($k) {
+            return [
+                'Nama Kompetisi' => $k->nama_kompetisi,
+                'Jenis' => $k->jenis ?? '-',
+                'Penyelenggara' => $k->nama_penyelenggara ?? '-',
+                'Tingkat' => $k->tingkat_kompetisi ?? '-',
+                'Tanggal' => $k->tanggal_kompetisi ? \Carbon\Carbon::parse($k->tanggal_kompetisi)->format('d-m-Y') : '-',
+            ];
+        });
+
+        return Excel::download(
+            new class ($data) implements \Maatwebsite\Excel\Concerns\FromCollection, \Maatwebsite\Excel\Concerns\WithHeadings {
+                private $data;
+                public function __construct($data) { $this->data = $data; }
+                public function collection() { return $this->data; }
+                public function headings(): array {
+                    return ['Nama Kompetisi', 'Jenis', 'Penyelenggara', 'Tingkat', 'Tanggal'];
+                }
+            },
+            $fileName
+        );
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $this->authorize('master-data-kompetisi.view');
+
+        $query = Kompetisi::query();
+        if ($request->filled('search')) {
+            $query->where('nama_kompetisi', 'like', '%' . $request->search . '%');
+        }
+
+        $kompetisi = $query->latest('id')->get();
+
+        $html = '
+        <h2 style="text-align: center; margin-bottom: 5px;">DATA MASTER KOMPETISI</h2>
+        <p style="text-align: center; font-size: 11px; margin-top: 0; color: #555;">Tanggal Cetak: ' . date('d-m-Y') . '</p>
+        <table border="1" cellspacing="0" cellpadding="5" style="width: 100%; border-collapse: collapse; font-family: sans-serif; font-size: 11px;">
+            <thead>
+                <tr style="background-color: #C41E3A; color: white;">
+                    <th width="5%">No</th>
+                    <th width="35%">Nama Kompetisi</th>
+                    <th width="15%">Jenis</th>
+                    <th width="25%">Penyelenggara</th>
+                    <th width="20%">Tingkat</th>
+                </tr>
+            </thead>
+            <tbody>';
+
+        foreach ($kompetisi as $index => $k) {
+            $html .= '
+                <tr>
+                    <td style="text-align: center;">' . ($index + 1) . '</td>
+                    <td>' . $k->nama_kompetisi . '</td>
+                    <td>' . ($k->jenis ?? '-') . '</td>
+                    <td>' . ($k->nama_penyelenggara ?? '-') . '</td>
+                    <td>' . ($k->tingkat_kompetisi ?? '-') . '</td>
+                </tr>';
+        }
+
+        $html .= '</tbody></table>';
+
+        $pdf = Pdf::loadHTML($html);
+        $pdf->setPaper('a4', 'portrait');
+        return $pdf->download('data-kompetisi-' . date('Y-m-d-His') . '.pdf');
     }
 }
