@@ -72,17 +72,22 @@
                     </h3>
 
                     {{-- Dosen Penerima --}}
-                    <div class="flex flex-col gap-1">
+                    <div class="flex flex-col gap-2">
                         <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Dosen Penerima</span>
-                        @if($surat->dosen)
-                        <a href="{{ route('manajemen-dosen.show', $surat->dosen->id) }}" class="text-sm font-bold text-gray-800 hover:text-[#C41E3A] transition-colors">
-                            {{ $surat->dosen->nama_lengkap }}
-                        </a>
-                        <span class="text-xs text-gray-500">NIP: {{ $surat->dosen->nip ?? '-' }}</span>
-                        <span class="text-xs text-gray-500">Prodi: {{ $surat->dosen->prodi->nama_prodi ?? '-' }}</span>
-                        @else
+                        @php
+                            $recipients = $surat->dosenList->count() > 0 ? $surat->dosenList : collect([$surat->dosen])->filter();
+                        @endphp
+                        @forelse($recipients as $d)
+                        <div class="p-3 bg-[#F8FAFC] rounded-xl border border-gray-100 flex flex-col gap-0.5">
+                            <a href="{{ route('manajemen-dosen.show', $d->id) }}" class="text-sm font-bold text-gray-800 hover:text-[#C41E3A] transition-colors">
+                                {{ $d->nama_lengkap }}
+                            </a>
+                            <span class="text-xs text-gray-500">NIP: {{ $d->nip ?? '-' }} | Kode: {{ $d->kode_dosen ?? '-' }}</span>
+                            <span class="text-xs text-gray-500">Prodi: {{ $d->prodi->nama_prodi ?? '-' }}</span>
+                        </div>
+                        @empty
                         <span class="text-sm text-gray-500">-</span>
-                        @endif
+                        @endforelse
                     </div>
 
                     {{-- Tanggal Terbit --}}

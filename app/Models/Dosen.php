@@ -94,6 +94,6 @@ class Dosen extends Model
 
     public function suratDosen()
     {
-        return $this->hasMany(SuratDosen::class, 'dosen_id');
+        return $this->belongsToMany(SuratDosen::class, 'dosen_surat', 'dosen_id', 'surat_dosen_id');
     }
 }

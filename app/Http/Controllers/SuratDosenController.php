@@ -17,7 +17,7 @@ class SuratDosenController extends Controller
     {
         $this->authorize('kelola-data-dosen.view');
 
-        $query = SuratDosen::with('dosen');
+        $query = SuratDosen::with(['dosen', 'dosenList.prodi']);
 
         // Filter Jenis Surat (Surat Tugas / Surat Keputusan)
         if ($request->filled('jenis_surat')) {
@@ -31,7 +31,13 @@ class SuratDosenController extends Controller
 
         // Filter Dosen
         if ($request->filled('dosen_id')) {
-            $query->where('dosen_id', $request->dosen_id);
+            $dosenId = $request->dosen_id;
+            $query->where(function ($q) use ($dosenId) {
+                $q->where('dosen_id', $dosenId)
+                  ->orWhereHas('dosenList', function ($qd) use ($dosenId) {
+                      $qd->where('dosen.id', $dosenId);
+                  });
+            });
         }
 
         // Search Keyword
@@ -41,6 +47,11 @@ class SuratDosenController extends Controller
                 $q->where('nomor_surat', 'like', '%' . $search . '%')
                   ->orWhere('judul_surat', 'like', '%' . $search . '%')
                   ->orWhereHas('dosen', function ($qd) use ($search) {
+                      $qd->where('nama_lengkap', 'like', '%' . $search . '%')
+                         ->orWhere('nip', 'like', '%' . $search . '%')
+                         ->orWhere('kode_dosen', 'like', '%' . $search . '%');
+                  })
+                  ->orWhereHas('dosenList', function ($qd) use ($search) {
                       $qd->where('nama_lengkap', 'like', '%' . $search . '%')
                          ->orWhere('nip', 'like', '%' . $search . '%')
                          ->orWhere('kode_dosen', 'like', '%' . $search . '%');
@@ -108,7 +119,8 @@ class SuratDosenController extends Controller
         $this->authorize('kelola-data-dosen.create');
 
         $request->validate([
-            'dosen_id' => 'required|exists:dosen,id',
+            'dosen_ids' => 'required|array|min:1',
+            'dosen_ids.*' => 'exists:dosen,id',
             'jenis_surat' => 'required|in:Surat Tugas,Surat Keputusan',
             'nomor_surat' => 'required|string|max:100',
             'judul_surat' => 'required|string|max:255',
@@ -119,7 +131,8 @@ class SuratDosenController extends Controller
             'file_surat' => 'required|file|mimes:pdf,doc,docx|max:10240',
             'keterangan' => 'nullable|string',
         ], [
-            'dosen_id.required' => 'Dosen wajib dipilih!',
+            'dosen_ids.required' => 'Dosen penerima wajib dipilih (minimal 1 dosen)!',
+            'dosen_ids.min' => 'Dosen penerima wajib dipilih (minimal 1 dosen)!',
             'jenis_surat.required' => 'Jenis Surat wajib dipilih!',
             'nomor_surat.required' => 'Nomor Surat wajib diisi!',
             'judul_surat.required' => 'Judul / Perihal Surat wajib diisi!',
@@ -139,8 +152,10 @@ class SuratDosenController extends Controller
             $kategoriVal = trim($request->kategori_lainnya);
         }
 
-        SuratDosen::create([
-            'dosen_id' => $request->dosen_id,
+        $primaryDosenId = $request->dosen_ids[0] ?? null;
+
+        $surat = SuratDosen::create([
+            'dosen_id' => $primaryDosenId,
             'jenis_surat' => $request->jenis_surat,
             'nomor_surat' => trim($request->nomor_surat),
             'judul_surat' => trim($request->judul_surat),
@@ -151,6 +166,9 @@ class SuratDosenController extends Controller
             'file_surat' => $filePath,
             'keterangan' => $request->keterangan,
         ]);
+
+        // Sync multiple dosen recipients in pivot table
+        $surat->dosenList()->sync($request->dosen_ids);
 
         return redirect()
             ->route('manajemen-dosen.surat.index')
@@ -164,7 +182,7 @@ class SuratDosenController extends Controller
     {
         $this->authorize('kelola-data-dosen.view');
 
-        $surat = SuratDosen::with('dosen.prodi')->findOrFail($id);
+        $surat = SuratDosen::with(['dosen.prodi', 'dosenList.prodi'])->findOrFail($id);
 
         return view('manajemen-dosen.surat.show', compact('surat'));
     }
@@ -176,7 +194,7 @@ class SuratDosenController extends Controller
     {
         $this->authorize('kelola-data-dosen.edit');
 
-        $surat = SuratDosen::findOrFail($id);
+        $surat = SuratDosen::with('dosenList')->findOrFail($id);
         $dosenList = Dosen::orderBy('nama_lengkap', 'asc')->get();
 
         $kategoriList = [
@@ -201,7 +219,8 @@ class SuratDosenController extends Controller
         $surat = SuratDosen::findOrFail($id);
 
         $request->validate([
-            'dosen_id' => 'required|exists:dosen,id',
+            'dosen_ids' => 'required|array|min:1',
+            'dosen_ids.*' => 'exists:dosen,id',
             'jenis_surat' => 'required|in:Surat Tugas,Surat Keputusan',
             'nomor_surat' => 'required|string|max:100',
             'judul_surat' => 'required|string|max:255',
@@ -212,7 +231,8 @@ class SuratDosenController extends Controller
             'file_surat' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
             'keterangan' => 'nullable|string',
         ], [
-            'dosen_id.required' => 'Dosen wajib dipilih!',
+            'dosen_ids.required' => 'Dosen penerima wajib dipilih (minimal 1 dosen)!',
+            'dosen_ids.min' => 'Dosen penerima wajib dipilih (minimal 1 dosen)!',
             'jenis_surat.required' => 'Jenis Surat wajib dipilih!',
             'nomor_surat.required' => 'Nomor Surat wajib diisi!',
             'judul_surat.required' => 'Judul / Perihal Surat wajib diisi!',
@@ -235,8 +255,10 @@ class SuratDosenController extends Controller
             $kategoriVal = trim($request->kategori_lainnya);
         }
 
+        $primaryDosenId = $request->dosen_ids[0] ?? null;
+
         $surat->update([
-            'dosen_id' => $request->dosen_id,
+            'dosen_id' => $primaryDosenId,
             'jenis_surat' => $request->jenis_surat,
             'nomor_surat' => trim($request->nomor_surat),
             'judul_surat' => trim($request->judul_surat),
@@ -247,6 +269,9 @@ class SuratDosenController extends Controller
             'file_surat' => $filePath,
             'keterangan' => $request->keterangan,
         ]);
+
+        // Sync multiple dosen recipients in pivot table
+        $surat->dosenList()->sync($request->dosen_ids);
 
         return redirect()
             ->route('manajemen-dosen.surat.index')

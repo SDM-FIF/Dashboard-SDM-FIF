@@ -181,13 +181,34 @@
                                 <p class="text-xs text-gray-500 mt-0.5 line-clamp-1 font-medium">{{ $item->judul_surat }}</p>
                             </td>
 
-                            {{-- Dosen --}}
-                            <td class="px-6 py-4 text-sm font-semibold text-gray-800 whitespace-nowrap">
-                                @if($item->dosen)
-                                    <a href="{{ route('manajemen-dosen.show', $item->dosen->id) }}" class="hover:text-[#C41E3A] transition-colors">
-                                        {{ $item->dosen->nama_lengkap }}
-                                    </a>
-                                    <span class="text-xs text-gray-400 font-normal block">NIP: {{ $item->dosen->nip ?? '-' }}</span>
+                            {{-- Dosen Penerima --}}
+                            <td class="px-6 py-4 text-sm font-semibold text-gray-800">
+                                @php
+                                    $recipients = $item->dosenList->count() > 0 ? $item->dosenList : collect([$item->dosen])->filter();
+                                @endphp
+                                @if($recipients->count() > 0)
+                                    @if($recipients->count() == 1)
+                                        <a href="{{ route('manajemen-dosen.show', $recipients->first()->id) }}" class="hover:text-[#C41E3A] transition-colors font-bold block text-xs">
+                                            {{ $recipients->first()->nama_lengkap }}
+                                        </a>
+                                        <span class="text-[11px] text-gray-400 font-normal">NIP: {{ $recipients->first()->nip ?? '-' }}</span>
+                                    @else
+                                        <div class="flex flex-col gap-1 max-w-xs">
+                                            <span class="font-bold text-xs text-gray-800">{{ $recipients->count() }} Dosen Penerima:</span>
+                                            <div class="flex flex-wrap gap-1">
+                                                @foreach($recipients->take(2) as $d)
+                                                <a href="{{ route('manajemen-dosen.show', $d->id) }}" class="inline-block px-2 py-0.5 bg-gray-100 hover:bg-red-50 hover:text-[#C41E3A] text-gray-700 rounded text-[11px] font-medium transition-colors">
+                                                    {{ $d->nama_lengkap }}
+                                                </a>
+                                                @endforeach
+                                                @if($recipients->count() > 2)
+                                                <span class="inline-block px-2 py-0.5 bg-red-50 text-[#C41E3A] rounded text-[11px] font-bold">
+                                                    +{{ $recipients->count() - 2 }} lainnya
+                                                </span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    @endif
                                 @else
                                     <span class="text-gray-400">-</span>
                                 @endif

@@ -15,22 +15,42 @@
         body {
             font-family: 'Outfit', sans-serif;
         }
-        .select2-container--default .select2-selection--single {
+        .select2-container--default .select2-selection--multiple {
             background-color: #F8FAFC;
             border-color: #E2E8F0;
             border-radius: 0.75rem;
-            height: 46px;
-            display: flex;
-            align-items: center;
+            min-height: 46px;
+            padding: 4px 8px;
         }
-        .select2-container--default .select2-selection--single .select2-selection__rendered {
-            color: #334155;
-            font-size: 0.875rem;
-            padding-left: 1rem;
+        .select2-container--default.select2-container--focus .select2-selection--multiple {
+            border-color: #C41E3A;
+            background-color: #FFFFFF;
         }
-        .select2-container--default .select2-selection--single .select2-selection__arrow {
-            height: 44px;
-            right: 10px;
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: #C41E3A;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 4px 10px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+            color: #FFFFFF;
+            margin-right: 6px;
+        }
+        .select2-container--default .select2-selection--multiple .select2-search__field {
+            font-size: 0.8125rem !important;
+            color: #334155 !important;
+            margin-top: 6px !important;
+        }
+        .select2-container--default .select2-selection--multiple .select2-search__field::placeholder {
+            font-size: 0.8125rem !important;
+            color: #94A3B8 !important;
+        }
+        .select2-container--default .select2-selection--multiple .select2-selection__placeholder {
+            font-size: 0.8125rem !important;
+            color: #94A3B8 !important;
         }
         .select2-dropdown {
             border-color: #E2E8F0;
@@ -40,7 +60,7 @@
         }
         .select2-search__field {
             border-radius: 0.5rem !important;
-            padding: 6px 12px !important;
+            padding: 4px 8px !important;
         }
     </style>
 </head>
@@ -72,6 +92,11 @@
             $isCustomKategori = !in_array($surat->kategori, $stdKategori);
             $selectedKategori = $isCustomKategori ? 'Lainnya' : $surat->kategori;
             $customKategoriVal = $isCustomKategori ? $surat->kategori : '';
+
+            $selectedDosenIds = old('dosen_ids', $surat->dosenList->pluck('id')->toArray());
+            if (empty($selectedDosenIds) && $surat->dosen_id) {
+                $selectedDosenIds = [$surat->dosen_id];
+            }
         @endphp
 
         {{-- Form Card --}}
@@ -81,21 +106,21 @@
                 @method('PUT')
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {{-- Dosen Penerima (Searchable Select) --}}
+                    {{-- Dosen Penerima (Multi-Select Searchable) --}}
                     <div class="flex flex-col gap-2 md:col-span-2">
-                        <label for="dosen_id" class="text-xs font-bold text-gray-600 uppercase tracking-wider">
-                            Dosen Penerima <span class="text-red-500">*</span>
+                        <label for="dosen_ids" class="text-xs font-bold text-gray-600 uppercase tracking-wider">
+                            Dosen Penerima (Bisa Lebih Dari Satu) <span class="text-red-500">*</span>
                         </label>
-                        <select name="dosen_id" id="dosen_id" required
+                        <select name="dosen_ids[]" id="dosen_ids" multiple="multiple" required
                             class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
-                            <option value="">-- Pilih Dosen --</option>
                             @foreach($dosenList as $d)
-                            <option value="{{ $d->id }}" {{ old('dosen_id', $surat->dosen_id) == $d->id ? 'selected' : '' }}>
+                            <option value="{{ $d->id }}" {{ in_array($d->id, $selectedDosenIds) ? 'selected' : '' }}>
                                 {{ $d->nama_lengkap }} (NIP: {{ $d->nip ?? '-' }} | Kode: {{ $d->kode_dosen ?? '-' }})
                             </option>
                             @endforeach
                         </select>
-                        @error('dosen_id')
+                        <span class="text-[11px] text-gray-400 font-medium">Ketik nama/NIP dosen untuk mencari & memilih lebih dari satu dosen.</span>
+                        @error('dosen_ids')
                         <p class="text-red-500 text-xs mt-1 font-medium">{{ $message }}</p>
                         @enderror
                     </div>
@@ -257,8 +282,8 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script>
         $(document).ready(function() {
-            $('#dosen_id').select2({
-                placeholder: '-- Pilih Dosen --',
+            $('#dosen_ids').select2({
+                placeholder: '-- Pilih Dosen Penerima (Bisa Pilih Banyak) --',
                 allowClear: true,
                 width: '100%'
             });

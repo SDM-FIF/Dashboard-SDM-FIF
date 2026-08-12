@@ -31,10 +31,18 @@ class SuratDosen extends Model
     ];
 
     /**
-     * Relationship to Dosen
+     * Relationship to Primary Dosen (backward compatibility)
      */
     public function dosen()
     {
         return $this->belongsTo(Dosen::class, 'dosen_id');
+    }
+
+    /**
+     * Relationship to Multiple Dosen Recipients
+     */
+    public function dosenList()
+    {
+        return $this->belongsToMany(Dosen::class, 'dosen_surat', 'surat_dosen_id', 'dosen_id');
     }
 }
