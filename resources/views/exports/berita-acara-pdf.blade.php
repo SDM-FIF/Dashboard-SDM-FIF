@@ -87,10 +87,10 @@
     {{-- Content --}}
     <div class="content">
         <p>
-            Pada hari ini, <strong>{{ \Carbon\Carbon::parse($jadwal->jadwal_ujian)->translatedFormat('l') }}</strong> tanggal 
-            <strong>{{ \Carbon\Carbon::parse($jadwal->jadwal_ujian)->translatedFormat('d') }}</strong> bulan 
-            <strong>{{ \Carbon\Carbon::parse($jadwal->jadwal_ujian)->translatedFormat('F') }}</strong> tahun 
-            <strong>{{ \Carbon\Carbon::parse($jadwal->jadwal_ujian)->translatedFormat('Y') }}</strong>, pukul 
+            Pada hari ini, <strong>{{ \Carbon\Carbon::parse($jadwal->jadwal_ujian)->locale('id')->translatedFormat('l') }}</strong> tanggal 
+            <strong>{{ \Carbon\Carbon::parse($jadwal->jadwal_ujian)->locale('id')->translatedFormat('d') }}</strong> bulan 
+            <strong>{{ \Carbon\Carbon::parse($jadwal->jadwal_ujian)->locale('id')->translatedFormat('F') }}</strong> tahun 
+            <strong>{{ \Carbon\Carbon::parse($jadwal->jadwal_ujian)->locale('id')->translatedFormat('Y') }}</strong>, pukul 
             <strong>{{ \Carbon\Carbon::parse($jadwal->waktu)->format('H.i') }}</strong> WIB secara 
             <strong>{{ $jadwal->metode_pelaksanaan }}</strong> di Fakultas Informatika, Universitas Telkom Jalan Telekomunikasi No.1 Terusan Buah Batu Bandung, telah dilaksanakan kegiatan Microteaching & Interview untuk calon dosen profesional :
         </p>

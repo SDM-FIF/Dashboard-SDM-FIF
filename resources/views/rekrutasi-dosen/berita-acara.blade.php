@@ -47,8 +47,8 @@
                 </div>
                 <div class="flex-1">
                     <p class="text-sm text-gray-600 leading-relaxed">
-                        Pada hari ini, <strong class="text-gray-800">{{ \Carbon\Carbon::parse($jadwal->jadwal_ujian)->translatedFormat('l') }}</strong> tanggal 
-                        <strong class="text-gray-800">{{ \Carbon\Carbon::parse($jadwal->jadwal_ujian)->translatedFormat('d F Y') }}</strong>, 
+                        Pada hari ini, <strong class="text-gray-800">{{ \Carbon\Carbon::parse($jadwal->jadwal_ujian)->locale('id')->translatedFormat('l') }}</strong> tanggal 
+                        <strong class="text-gray-800">{{ \Carbon\Carbon::parse($jadwal->jadwal_ujian)->locale('id')->translatedFormat('d F Y') }}</strong>, 
                         pukul <strong class="text-gray-800">{{ \Carbon\Carbon::parse($jadwal->waktu)->format('H:i') }}</strong> WIB secara 
                         <strong class="text-gray-800">{{ $jadwal->metode_pelaksanaan }}</strong> di Fakultas Informatika, Universitas Telkom 
                         Jalan Telekomunikasi No.1 Terusan Buah Batu Bandung, telah dilaksanakan kegiatan Microteaching & Interview 
