@@ -80,6 +80,7 @@ class TahunAjarController extends Controller
         TahunAjar::create([
             'tahun' => $request->tahun,
             'semester' => $request->semester,
+            'is_active' => $request->has('is_active'),
         ]);
 
         return redirect()
@@ -125,6 +126,7 @@ class TahunAjarController extends Controller
         $tahunAjar->update([
             'tahun' => $request->tahun,
             'semester' => $request->semester,
+            'is_active' => $request->has('is_active'),
         ]);
 
         return redirect()
@@ -193,6 +195,7 @@ class TahunAjarController extends Controller
                 'Tahun Academic' => $t->tahun . '/' . ($t->tahun + 1),
                 'Semester' => $t->semester == 1 ? 'Ganjil (1)' : 'Genap (2)',
                 'Tahun' => $t->tahun,
+                'Status' => $t->is_active ? 'Aktif' : 'Tidak Aktif',
             ];
         });
 
@@ -202,7 +205,7 @@ class TahunAjarController extends Controller
                 public function __construct($data) { $this->data = $data; }
                 public function collection() { return $this->data; }
                 public function headings(): array {
-                    return ['Tahun Academic', 'Semester', 'Tahun'];
+                    return ['Tahun Academic', 'Semester', 'Tahun', 'Status'];
                 }
             },
             $fileName
@@ -231,9 +234,10 @@ class TahunAjarController extends Controller
             <thead>
                 <tr style="background-color: #C41E3A; color: white;">
                     <th width="10%">No</th>
-                    <th width="40%">Tahun Akademik</th>
-                    <th width="30%">Semester</th>
-                    <th width="20%">Tahun</th>
+                    <th width="30%">Tahun Akademik</th>
+                    <th width="25%">Semester</th>
+                    <th width="15%">Tahun</th>
+                    <th width="20%">Status</th>
                 </tr>
             </thead>
             <tbody>';
@@ -245,6 +249,7 @@ class TahunAjarController extends Controller
                     <td>' . $t->tahun . '/' . ($t->tahun + 1) . '</td>
                     <td>' . ($t->semester == 1 ? 'Ganjil (1)' : 'Genap (2)') . '</td>
                     <td style="text-align: center;">' . $t->tahun . '</td>
+                    <td style="text-align: center;">' . ($t->is_active ? 'Aktif' : 'Tidak Aktif') . '</td>
                 </tr>';
         }
 

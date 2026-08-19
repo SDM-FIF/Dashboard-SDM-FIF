@@ -66,6 +66,21 @@
                     @enderror
                 </div>
 
+                {{-- Status Aktif --}}
+                <div class="flex flex-col gap-2 pt-2">
+                    <label class="flex items-center gap-3 cursor-pointer p-3 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors">
+                        <div class="relative flex items-center justify-center">
+                            <input type="checkbox" name="is_active" value="1" {{ old('is_active', $tahunAjar->is_active) ? 'checked' : '' }}
+                                   class="peer appearance-none w-5 h-5 border-2 border-gray-300 rounded focus:ring-2 focus:ring-red-200 checked:bg-[#C41E3A] checked:border-[#C41E3A] transition-all cursor-pointer">
+                            <i class="fas fa-check text-white text-[10px] absolute opacity-0 peer-checked:opacity-100 pointer-events-none transition-opacity"></i>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-sm font-bold text-gray-800">Jadikan Sebagai Tahun Ajaran Aktif</span>
+                            <span class="text-xs text-gray-500 font-medium">Bisa terdapat lebih dari satu tahun ajaran yang aktif.</span>
+                        </div>
+                    </label>
+                </div>
+
                 {{-- Action Panel --}}
                 <div class="flex items-center justify-between gap-3 pt-6 border-t border-gray-100 flex-wrap">
                     <p class="text-xs text-gray-400 font-semibold"><span class="text-red-500">*</span> Data wajib diisi dengan benar.</p>

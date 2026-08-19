@@ -65,6 +65,14 @@
                     @error('fakultas_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
 
+                {{-- Nama Kaprodi --}}
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Nama Kaprodi (Opsional)</label>
+                    <input type="text" name="kaprodi" value="{{ old('kaprodi', $prodi->kaprodi) }}" placeholder="Contoh: Dr. Ir. Budi Santoso"
+                           class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none @error('kaprodi') border-red-500 @enderror">
+                    @error('kaprodi') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
+
                 {{-- Action Panel --}}
                 <div class="flex items-center justify-between gap-3 pt-6 border-t border-gray-100 flex-wrap">
                     <p class="text-xs text-gray-400 font-semibold"><span class="text-red-500">*</span> Data wajib diisi dengan benar.</p>

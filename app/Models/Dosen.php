@@ -32,11 +32,15 @@ class Dosen extends Model
         'lokasi_kampus_studi',
         'tahun_mulai_studi',
         'batas_studi',         // ✅ Tambahan baru
+        'tmt',
+        'tanggal_mulai_status',
     ];
 
     protected $casts = [
         'sertifikasi_dosen' => 'boolean',
         'tanggal_serdos' => 'date',
+        'tmt' => 'date',
+        'tanggal_mulai_status' => 'date',
     ];
 
 

@@ -74,6 +74,24 @@
             </div>
         </div>
 
+        {{-- Penjelasan Skala Nilai --}}
+        <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 mb-6 flex items-start gap-3 shadow-sm">
+            <i class="fas fa-info-circle text-blue-500 mt-0.5 text-lg"></i>
+            <div>
+                <h4 class="text-sm font-bold text-blue-800">Panduan Pengisian Nilai (Skala 1 - 5)</h4>
+                <p class="text-xs text-blue-700 mt-1">
+                    Silakan isi setiap kriteria penilaian dengan angka pada rentang 1 hingga 5.
+                </p>
+                <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 mt-2">
+                    <div class="bg-white/60 px-3 py-1.5 rounded text-[11px] font-semibold text-blue-800 border border-blue-100"><span class="font-extrabold text-blue-600 mr-1">1:</span> Sangat Kurang</div>
+                    <div class="bg-white/60 px-3 py-1.5 rounded text-[11px] font-semibold text-blue-800 border border-blue-100"><span class="font-extrabold text-blue-600 mr-1">2:</span> Kurang</div>
+                    <div class="bg-white/60 px-3 py-1.5 rounded text-[11px] font-semibold text-blue-800 border border-blue-100"><span class="font-extrabold text-blue-600 mr-1">3:</span> Cukup</div>
+                    <div class="bg-white/60 px-3 py-1.5 rounded text-[11px] font-semibold text-blue-800 border border-blue-100"><span class="font-extrabold text-blue-600 mr-1">4:</span> Baik</div>
+                    <div class="bg-white/60 px-3 py-1.5 rounded text-[11px] font-semibold text-blue-800 border border-blue-100"><span class="font-extrabold text-blue-600 mr-1">5:</span> Sangat Baik</div>
+                </div>
+            </div>
+        </div>
+
         {{-- Form Penilaian --}}
         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow duration-300">
             <form id="formPenilaian" action="#" method="POST" class="space-y-8">
@@ -478,6 +496,16 @@
             
             // Calculate rata_a immediately on page load
             calculateRataA();
+            
+            // Limit input to max 5 and min 1
+            $('.nilai-input').on('input', function() {
+                let val = parseFloat($(this).val());
+                if (val > 5) {
+                    $(this).val(5);
+                } else if (val < 1 && $(this).val() !== '') {
+                    $(this).val(1);
+                }
+            });
             
             // Disable all form inputs if Berita Acara has been submitted
             @if($beritaAcaraSubmitted)
