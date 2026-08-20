@@ -67,7 +67,7 @@ class RekrutasiDosenController extends Controller
         $filterData = [
             'prodi' => Prodi::all(),
             'jenjang' => Prodi::distinct()->pluck('jenjang')->filter()->sort()->values(),
-            'tahun_ajar' => \App\Models\TahunAjar::orderBy('tahun', 'desc')->orderBy('semester', 'desc')->get(),
+            'tahun_ajar' => \App\Models\TahunAjar::where('is_active', true)->orderBy('tahun', 'desc')->orderBy('semester', 'desc')->get(),
             'status' => \App\Models\CalonDosen::getStatusOptions(),
         ];
 
@@ -80,7 +80,7 @@ class RekrutasiDosenController extends Controller
         
         $prodi = Prodi::all();
         // Ambil tahun ajar dari database
-        $tahunAjar = \App\Models\TahunAjar::orderBy('tahun', 'desc')->orderBy('semester', 'desc')->get();
+        $tahunAjar = \App\Models\TahunAjar::where('is_active', true)->orderBy('tahun', 'desc')->orderBy('semester', 'desc')->get();
 
         return view('rekrutasi-dosen.tambah-rekrutasi-dosen', compact('prodi', 'tahunAjar'));
     }
@@ -242,7 +242,11 @@ class RekrutasiDosenController extends Controller
         $rekrutasi = CalonDosen::findOrFail($id);
         $prodi = Prodi::all();
         // Ambil tahun ajar dari database
-        $tahunAjar = \App\Models\TahunAjar::orderBy('tahun', 'desc')->orderBy('semester', 'desc')->get();
+        $tahunAjar = \App\Models\TahunAjar::where('is_active', true)
+            ->orWhere('id', $rekrutasi->tahun_ajar_id)
+            ->orderBy('tahun', 'desc')
+            ->orderBy('semester', 'desc')
+            ->get();
 
         return view('rekrutasi-dosen.edit-rekrutasi-dosen', compact('rekrutasi', 'prodi', 'tahunAjar'));
     }
@@ -537,10 +541,9 @@ class RekrutasiDosenController extends Controller
         // Get metode pelaksanaan options (enum values)
         $metodeList = ['Online', 'Onsite'];
 
-        // Get data for modals
         $calonDosenList = \App\Models\CalonDosen::all();
         $dosenList = \App\Models\Dosen::all();
-        $tahunAjarList = \App\Models\TahunAjar::all();
+        $tahunAjarList = \App\Models\TahunAjar::where('is_active', true)->orderBy('tahun', 'desc')->orderBy('semester', 'desc')->get();
 
         return view('rekrutasi-dosen.jadwal-pengujian', compact('jadwalList', 'metodeList', 'calonDosenList', 'dosenList', 'tahunAjarList', 'jadwalWithPenilaianAccess'));
     }
@@ -642,7 +645,11 @@ class RekrutasiDosenController extends Controller
         $jadwal = \App\Models\JadwalPengujian::findOrFail($id);
         $calonDosenList = \App\Models\CalonDosen::all();
         $dosenList = \App\Models\Dosen::all();
-        $tahunAjarList = \App\Models\TahunAjar::all();
+        $tahunAjarList = \App\Models\TahunAjar::where('is_active', true)
+            ->orWhere('id', $jadwal->tahun_ajar_id)
+            ->orderBy('tahun', 'desc')
+            ->orderBy('semester', 'desc')
+            ->get();
 
         return view('rekrutasi-dosen.jadwal-pengujian-edit', compact('jadwal', 'calonDosenList', 'dosenList', 'tahunAjarList'));
     }
