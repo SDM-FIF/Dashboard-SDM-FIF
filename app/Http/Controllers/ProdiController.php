@@ -38,13 +38,17 @@ class ProdiController extends Controller
     {
         $this->authorize('master-data-prodi.create');
 
-        $request->validate([
-            'nama_prodi' => 'required|string|max:255',
-            'fakultas_id' => 'required|exists:fakultas,id',
-        ]);
+    $validated = $request->validate([
+        'nama_prodi' => 'required|string|max:255',
+        'fakultas_id' => 'required|exists:fakultas,id',
+        'batas_nisbah' => 'required|integer|min:1',
+    ]);
 
-        Prodi::create($request->all());
-        return redirect()->route('prodi.index')->with('success', 'Prodi berhasil ditambahkan!');
+    Prodi::create($validated);
+
+    return redirect()
+        ->route('prodi.index')
+        ->with('success', 'Prodi berhasil ditambahkan!');
     }
 
     public function edit($id)
@@ -93,17 +97,20 @@ class ProdiController extends Controller
 
     public function update(Request $request, $id)
     {
-        $this->authorize('master-data-prodi.edit');
+         $this->authorize('master-data-prodi.edit');
 
-        $request->validate([
-            'nama_prodi' => 'required|string|max:255',
-            'fakultas_id' => 'required|exists:fakultas,id',
-        ]);
+    $validated = $request->validate([
+        'nama_prodi' => 'required|string|max:255',
+        'fakultas_id' => 'required|exists:fakultas,id',
+        'batas_nisbah' => 'required|integer|min:1',
+    ]);
 
-        $prodi = Prodi::findOrFail($id);
-        $prodi->update($request->all());
+    $prodi = Prodi::findOrFail($id);
+    $prodi->update($validated);
 
-        return redirect()->route('prodi.index')->with('success', 'Data Prodi berhasil diperbarui!');
+    return redirect()
+        ->route('prodi.index')
+        ->with('success', 'Data Prodi berhasil diperbarui!');
     }
 
     public function exportExcel(Request $request)

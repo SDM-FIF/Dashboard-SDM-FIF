@@ -245,7 +245,7 @@
                                 </td>
 
                                 <td class="px-4 py-3 text-center">
-                                    1 : 27
+                                    1 : {{ $item['batas_nisbah'] }}
                                 </td>
 
                                 <td class="px-4 py-3 text-center">

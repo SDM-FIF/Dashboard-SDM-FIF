@@ -99,18 +99,44 @@
                 <table class="min-w-full w-full border-collapse">
                     <thead>
                         <tr class="bg-[#C41E3A] text-white">
-                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Nama Program Studi</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Fakultas</th>
-                            <th class="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider w-36">Aksi</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">
+                                Nama Program Studi
+                            </th>
+
+                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">
+                                Fakultas
+                            </th>
+
+                            <th class="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider">
+                                Standar Nisbah
+                            </th>
+
+                            <th class="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider w-36">
+                                Aksi
+                            </th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 bg-white">
                         @forelse($prodi as $item)
                         <tr class="hover:bg-[#F8FAFC] transition-colors duration-150 group">
-                            <td class="px-6 py-4 text-sm font-bold text-gray-900 group-hover:text-[#C41E3A] transition-colors">{{ $item->nama_prodi }}</td>
-                            <td class="px-6 py-4 text-sm text-gray-600 font-semibold">{{ $item->fakultas->nama_fakultas ?? '-' }}</td>
+
+                            <td class="px-6 py-4 text-sm font-bold text-gray-900 group-hover:text-[#C41E3A] transition-colors">
+                                {{ $item->nama_prodi }}
+                            </td>
+
+                            <td class="px-6 py-4 text-sm text-gray-600 font-semibold">
+                                {{ $item->fakultas->nama_fakultas ?? '-' }}
+                            </td>
+
+                            {{-- Standar Nisbah --}}
+                            <td class="px-6 py-4 text-center text-sm font-semibold text-gray-700">
+                                1 : {{ $item->batas_nisbah }}
+                            </td>
+
+                            {{-- Aksi --}}
                             <td class="px-6 py-4 text-center text-sm">
                                 <div class="flex items-center justify-center gap-2.5">
+
                                     @can('master-data-prodi.edit')
                                     <a href="{{ route('prodi.edit', $item->id) }}"
                                         class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-green-600 hover:bg-green-50 border border-transparent hover:border-green-100 rounded-lg transition-all"
@@ -120,24 +146,29 @@
                                     @endcan
 
                                     @can('master-data-prodi.delete')
-                                    <form action="{{ route('prodi.destroy', $item->id) }}" method="POST"
+                                    <form action="{{ route('prodi.destroy', $item->id) }}"
+                                        method="POST"
                                         class="inline-block delete-form">
+
                                         @csrf
                                         @method('DELETE')
+
                                         <button type="button"
                                             class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-red-600 hover:bg-red-50 border border-transparent hover:border-red-100 rounded-lg transition-all delete-btn"
                                             data-nama="{{ $item->nama_prodi }}"
                                             title="Hapus">
+
                                             <i class="fas fa-trash text-sm"></i>
                                         </button>
                                     </form>
                                     @endcan
+
                                 </div>
                             </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="3" class="px-6 py-16 text-center text-gray-400">
+                            <td colspan="4" class="px-6 py-16 text-center text-gray-400">
                                 <div class="flex flex-col items-center gap-3">
                                     <div class="p-4 bg-gray-50 text-gray-300 rounded-full">
                                         <i class="fas fa-university text-4xl"></i>
@@ -235,6 +266,7 @@
                 });
             });
         });
+
         function toggleExportDropdown(e) {
             if (e) e.stopPropagation();
             const dropdown = document.getElementById('exportDropdown');
