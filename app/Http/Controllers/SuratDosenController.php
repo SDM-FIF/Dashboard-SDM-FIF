@@ -456,4 +456,82 @@ class SuratDosenController extends Controller
         $pdf->setPaper('a4', 'landscape');
         return $pdf->download('data-surat-dosen-' . date('Y-m-d-His') . '.pdf');
     }
+
+    /**
+     * Display dashboard stats for Surat Tugas and SK.
+     */
+    public function dashboard()
+    {
+        $this->authorize('kelola-data-dosen.view');
+
+        // Total Surat Tugas
+        $totalST = SuratDosen::where('jenis_surat', 'Surat Tugas')->count();
+
+        // Total Surat Keputusan
+        $totalSK = SuratDosen::where('jenis_surat', 'Surat Keputusan')->count();
+
+        // Total Dosen Penerima (distinct lecturer IDs in pivot table)
+        $totalDosenPenerima = \DB::table('dosen_surat')->distinct('dosen_id')->count('dosen_id');
+
+        // Surat terbit bulan ini
+        $suratBulanIni = SuratDosen::whereMonth('tanggal_surat', now()->month)
+            ->whereYear('tanggal_surat', now()->year)
+            ->count();
+
+        // Surat terbit per bulan (trend chart data for current year)
+        $currentYear = now()->year;
+        $monthlyStats = SuratDosen::select(\DB::raw('MONTH(tanggal_surat) as month'), \DB::raw('jenis_surat'), \DB::raw('count(*) as count'))
+            ->whereYear('tanggal_surat', $currentYear)
+            ->groupBy(\DB::raw('MONTH(tanggal_surat)'), 'jenis_surat')
+            ->get();
+
+        // Initialize months array (1-12)
+        $stMonthly = array_fill(1, 12, 0);
+        $skMonthly = array_fill(1, 12, 0);
+
+        foreach ($monthlyStats as $stat) {
+            if ($stat->jenis_surat === 'Surat Tugas') {
+                $stMonthly[$stat->month] = $stat->count;
+            } else {
+                $skMonthly[$stat->month] = $stat->count;
+            }
+        }
+
+        // Convert key-value (1-12) to sequential array for JS charts
+        $stMonthlyArray = array_values($stMonthly);
+        $skMonthlyArray = array_values($skMonthly);
+
+        // Distribution of Surat by Category/Perihal
+        $categoryStats = SuratDosen::select('kategori', \DB::raw('count(*) as count'))
+            ->groupBy('kategori')
+            ->orderBy('count', 'desc')
+            ->get();
+
+        // Lecturer recipients statistics (by kode_dosen)
+        $dosenStats = \DB::table('dosen_surat')
+            ->join('dosen', 'dosen_surat.dosen_id', '=', 'dosen.id')
+            ->select('dosen.kode_dosen', \DB::raw('COUNT(*) as count'))
+            ->groupBy('dosen.kode_dosen')
+            ->orderBy('count', 'desc')
+            ->get();
+
+        // Recent letters
+        $recentSurat = SuratDosen::with(['dosenList'])
+            ->orderBy('tanggal_surat', 'desc')
+            ->orderBy('id', 'desc')
+            ->limit(5)
+            ->get();
+
+        return view('manajemen-dosen.surat.dashboard', compact(
+            'totalST',
+            'totalSK',
+            'totalDosenPenerima',
+            'suratBulanIni',
+            'stMonthlyArray',
+            'skMonthlyArray',
+            'categoryStats',
+            'dosenStats',
+            'recentSurat'
+        ));
+    }
 }

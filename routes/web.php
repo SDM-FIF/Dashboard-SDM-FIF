@@ -649,6 +649,7 @@ Route::middleware('auth')->group(function () {
 
         // Surat Tugas & SK Dosen Routes
         Route::prefix('surat')->name('surat.')->group(function () {
+            Route::get('/dashboard', [SuratDosenController::class, 'dashboard'])->name('dashboard');
             Route::get('/', [SuratDosenController::class, 'index'])->name('index');
             Route::get('/create', [SuratDosenController::class, 'create'])->name('create')->middleware('can:kelola-data-dosen.create');
             Route::post('/', [SuratDosenController::class, 'store'])->name('store')->middleware('can:kelola-data-dosen.create');

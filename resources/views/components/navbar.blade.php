@@ -20,7 +20,7 @@
             {{-- Dashboard Section --}}
             <li class="relative">
                 <button onclick="toggleDropdown('dashboardDropdown')"
-                    class="w-full flex items-center justify-between pl-6 pr-4 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('dashboard*') || request()->routeIs('data-dosen*') || request()->routeIs('data-tpa*') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
+                    class="w-full flex items-center justify-between pl-6 pr-4 py-4 text-sm font-medium hover:bg-red-600 transition-all duration-200 group {{ request()->routeIs('dashboard*') || request()->routeIs('data-dosen*') || request()->routeIs('data-tpa*') || request()->routeIs('manajemen-dosen.surat.dashboard') ? 'bg-[#FBB03B] text-black shadow-md' : '' }}">
                     <div class="flex items-center">
                         <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" />
@@ -54,6 +54,16 @@
                                 <a href="{{ route('dashboard-dosen') }}"
                                     class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('dashboard-dosen') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
                                     Dashboard Dosen
+                                </a>
+                            </li>
+                        @endcan
+
+                        {{-- Dashboard Surat: HANYA UNTUK YANG PUNYA AKSES --}}
+                        @can('kelola-data-dosen.view')
+                            <li>
+                                <a href="{{ route('manajemen-dosen.surat.dashboard') }}"
+                                    class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('manajemen-dosen.surat.dashboard') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
+                                    Dashboard Surat
                                 </a>
                             </li>
                         @endcan
@@ -129,7 +139,7 @@
                             @endcan
                             <li>
                                 <a href="{{ route('manajemen-dosen.surat.index') }}"
-                                    class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('manajemen-dosen.surat.*') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
+                                    class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('manajemen-dosen.surat.index') || request()->routeIs('manajemen-dosen.surat.create') || request()->routeIs('manajemen-dosen.surat.edit') || request()->routeIs('manajemen-dosen.surat.show') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
                                     Surat Tugas & SK
                                 </a>
                             </li>
@@ -563,7 +573,12 @@
         // Check each dropdown and auto-open if current route matches
         Object.keys(routeMappings).forEach(dropdownId => {
             const routes = routeMappings[dropdownId];
-            const shouldOpen = routes.some(route => currentRoute.includes(route));
+            let shouldOpen = routes.some(route => currentRoute.includes(route));
+
+            // Refinement: if current route is dashboard-surat, don't open dosenDropdown
+            if (dropdownId === 'dosenDropdown' && currentRoute.includes('surat/dashboard')) {
+                shouldOpen = false;
+            }
 
             if (shouldOpen) {
                 const dropdown = document.getElementById(dropdownId);
