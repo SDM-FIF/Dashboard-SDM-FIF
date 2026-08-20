@@ -9,9 +9,44 @@
     <title>Tambah Program Studi - Dashboard SDM FIF</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    {{-- Select2 CSS --}}
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <style>
         body {
             font-family: 'Outfit', sans-serif;
+        }
+        .select2-container--default .select2-selection--single {
+            background-color: #F8FAFC;
+            border-color: #E2E8F0;
+            border-radius: 0.75rem;
+            height: 46px;
+            padding: 8px 12px;
+            font-size: 0.875rem;
+            color: #475569;
+        }
+        .select2-container--default.select2-container--focus .select2-selection--single {
+            border-color: #C41E3A;
+            background-color: #FFFFFF;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 44px;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 28px;
+            color: #334155;
+            font-size: 0.875rem;
+            padding-left: 0;
+        }
+        .select2-dropdown {
+            border-color: #E2E8F0;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            font-size: 0.875rem;
+        }
+        .select2-search__field {
+            border-radius: 0.5rem !important;
+            padding: 6px 10px !important;
         }
     </style>
 </head>
@@ -69,10 +104,8 @@
                     </label>
 
                     <div class="flex items-center gap-3">
-                        <div class="px-4 py-3 bg-gray-100 border border-gray-200 rounded-xl text-sm font-semibold text-gray-600">
-                            1 :
-                        </div>
-
+                        <span class="text-sm font-extrabold text-gray-600">1</span>
+                        <span class="text-sm font-semibold text-gray-400">:</span>
                         <input
                             type="number"
                             name="batas_nisbah"
@@ -80,11 +113,11 @@
                             min="1"
                             required
                             placeholder="27"
-                            class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none @error('batas_nisbah') border-red-500 @enderror">
+                            class="w-32 px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none @error('batas_nisbah') border-red-500 @enderror">
                     </div>
 
                     <p class="text-xs text-gray-400">
-                        Contoh: nilai 27 berarti 1 dosen berbanding maksimal 27 mahasiswa aktif.
+                         Contoh: nilai 27 berarti 1 dosen berbanding maksimal 27 mahasiswa aktif.
                     </p>
 
                     @error('batas_nisbah')
@@ -95,8 +128,14 @@
                 {{-- Nama Kaprodi --}}
                 <div class="flex flex-col gap-1.5">
                     <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Nama Kaprodi (Opsional)</label>
-                    <input type="text" name="kaprodi" placeholder="Contoh: Dr. Ir. Budi Santoso"
-                           class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
+                    <select name="kaprodi" id="kaprodi_select" class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
+                        <option value="">-- Pilih Kaprodi (Opsional) --</option>
+                        @foreach($dosen as $d)
+                            <option value="{{ $d->nama_lengkap }}" {{ old('kaprodi') == $d->nama_lengkap ? 'selected' : '' }}>
+                                {{ $d->nama_lengkap }} ({{ $d->nidn ?? 'NIDN/NIP tidak ada' }})
+                            </option>
+                        @endforeach
+                    </select>
                 </div>
                 {{-- Action Panel --}}
                 <div class="flex items-center justify-between gap-3 pt-6 border-t border-gray-100 flex-wrap">
@@ -116,6 +155,19 @@
             </form>
         </div>
     </main>
+
+    {{-- Scripts for Select2 --}}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#kaprodi_select').select2({
+                placeholder: '-- Pilih Kaprodi (Opsional) --',
+                allowClear: true,
+                width: '100%'
+            });
+        });
+    </script>
 </body>
 
 </html>

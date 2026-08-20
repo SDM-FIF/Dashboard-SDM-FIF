@@ -31,7 +31,8 @@ class ProdiController extends Controller
         $this->authorize('master-data-prodi.create');
 
         $fakultas = Fakultas::all();
-        return view('master-data.prodi.create', compact('fakultas'));
+        $dosen = Dosen::orderBy('nama_lengkap')->get();
+        return view('master-data.prodi.create', compact('fakultas', 'dosen'));
     }
 
     public function store(Request $request)
@@ -60,8 +61,9 @@ class ProdiController extends Controller
 
         $prodi = Prodi::findOrFail($id);
         $fakultas = Fakultas::all();
+        $dosen = Dosen::orderBy('nama_lengkap')->get();
 
-        return view('master-data.prodi.edit', compact('prodi', 'fakultas'));
+        return view('master-data.prodi.edit', compact('prodi', 'fakultas', 'dosen'));
     }
 
     public function destroy($id)

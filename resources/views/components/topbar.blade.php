@@ -2,9 +2,15 @@
 @auth
 <div class="flex items-center justify-between bg-white px-6 py-4 rounded-2xl shadow-sm border border-slate-100 mb-8 mt-2">
     <!-- Left Side: Welcome / Title Context -->
-    <div class="flex items-center gap-2">
-        <span class="text-sm font-semibold text-slate-500">Selamat datang,</span>
-        <span class="text-sm font-bold text-[#C41E3A]">{{ Auth::user()->nama_lengkap ?? Auth::user()->name }}</span>
+    <div class="flex items-center gap-4">
+        <!-- Sidebar Toggle Button -->
+        <button type="button" id="toggle-sidebar-btn" class="p-2.5 text-slate-400 hover:text-[#C41E3A] hover:bg-red-50 rounded-xl transition-all duration-300 focus:outline-none" title="Toggle Sidebar">
+            <i class="fa-solid fa-bars text-lg"></i>
+        </button>
+        <div class="flex items-center gap-2">
+            <span class="text-sm font-semibold text-slate-500">Selamat datang,</span>
+            <span class="text-sm font-bold text-[#C41E3A]">{{ Auth::user()->nama_lengkap ?? Auth::user()->name }}</span>
+        </div>
     </div>
 
     <!-- Right Side: Notification Icon & Details -->
@@ -54,6 +60,22 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        // Sidebar Toggle
+        const toggleBtn = document.getElementById('toggle-sidebar-btn');
+        const sidebar = document.getElementById('main-sidebar');
+        if (toggleBtn && sidebar) {
+            toggleBtn.addEventListener('click', function () {
+                const isCollapsed = sidebar.classList.contains('collapsed');
+                if (isCollapsed) {
+                    sidebar.classList.remove('collapsed');
+                    localStorage.setItem('sidebar-collapsed', 'false');
+                } else {
+                    sidebar.classList.add('collapsed');
+                    localStorage.setItem('sidebar-collapsed', 'true');
+                }
+            });
+        }
+
         // Render date in topbar
         const dateSpan = document.getElementById('current-date-span-topbar');
         if (dateSpan) {

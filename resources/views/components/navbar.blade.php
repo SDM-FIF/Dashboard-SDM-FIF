@@ -1,5 +1,14 @@
-{{-- resources/views/components/navbar.blade.php --}}
-<nav class="bg-[#C41E3A] text-white h-screen w-64 hidden md:flex flex-col font-nunito shadow-lg sticky top-0 flex-shrink-0">
+<style>
+    #main-sidebar.collapsed {
+        display: none !important;
+    }
+</style>
+<nav id="main-sidebar" class="bg-[#C41E3A] text-white h-screen w-64 hidden md:flex flex-col font-nunito shadow-lg sticky top-0 flex-shrink-0">
+    <script>
+        if (localStorage.getItem('sidebar-collapsed') === 'true') {
+            document.getElementById('main-sidebar').classList.add('collapsed');
+        }
+    </script>
     {{-- Header/Logo Section --}}
     <div class="p-6 border-b border-red-500/30 flex-shrink-0">
         <h2 class="text-xl font-bold text-center">Dashboard SDM FIF</h2>
