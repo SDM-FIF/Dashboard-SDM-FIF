@@ -135,9 +135,11 @@ Route::get('/', function () {
                 'nama_prodi' => $prodi->nama_prodi,
                 'jumlah_dosen' => $prodi->dosen_count,
                 'jumlah_mahasiswa' => $prodi->mahasiswa_aktif_count,
-                'nisbah' => '1 : 27',
+                'batas_nisbah' => $prodi->batas_nisbah,
                 'hasil_nisbah' => $hasilNisbah,
-                'status' => $hasilNisbah > 27 ? 'Melebihi' : 'Sesuai',
+                'status' => $prodi->dosen_count == 0
+                    ? 'Belum Ada Dosen'
+                    : ($hasilNisbah > $prodi->batas_nisbah ? 'Melebihi' : 'Sesuai'),
             ];
         });
 
