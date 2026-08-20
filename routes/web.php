@@ -36,12 +36,12 @@ Route::post('/logout', [AuthController::class, 'logout'])
 Route::post('/switch-role', function (Illuminate\Http\Request $request) {
     $role = $request->input('role');
     $user = Auth::user();
-    
+
     if ($user && $user->roles->contains('name', $role)) {
         session()->put('active_role', $role);
         return redirect()->route('dashboard')->with('success', 'Role berhasil diganti ke ' . $role);
     }
-    
+
     return redirect()->back()->with('error', 'Akses ditolak.');
 })->name('switch-role')->middleware('auth');
 
@@ -76,17 +76,23 @@ Route::get('/dashboard', function () {
 
             $hasilNisbah = $prodi->dosen_count > 0
                 ? round($prodi->mahasiswa_aktif_count / $prodi->dosen_count, 2)
-                : 0;
+                : null;
 
             return [
                 'nama_prodi' => $prodi->nama_prodi,
                 'jumlah_dosen' => $prodi->dosen_count,
                 'jumlah_mahasiswa' => $prodi->mahasiswa_aktif_count,
-                'nisbah' => '1 : 27',
+                'batas_nisbah' => $prodi->batas_nisbah,
                 'hasil_nisbah' => $hasilNisbah,
-                'status' => $hasilNisbah > 27 ? 'Melebihi' : 'Sesuai',
+
+                'status' => $prodi->dosen_count == 0
+                    ? 'Belum Ada Dosen'
+                    : ($hasilNisbah > $prodi->batas_nisbah
+                        ? 'Melebihi'
+                        : 'Sesuai'),
             ];
         });
+
 
     $jumlahDosenProdi = \App\Models\Prodi::withCount('dosen')
         ->pluck('dosen_count', 'nama_prodi')
@@ -245,18 +251,28 @@ Route::get('/dashboard-dosen', function () {
         ->whereNotNull('status_studi_lanjut')
         ->get(['id', 'nama_lengkap', 'prodi_id', 'jabatan', 'status_studi_lanjut', 'lokasi_kampus_studi', 'tahun_mulai_studi', 'batas_studi']);
 
-    $nisbah = \App\Models\Prodi::withCount(['dosen', 'mahasiswa'])
+    $nisbah = \App\Models\Prodi::withCount([
+        'dosen',
+        'mahasiswa as mahasiswa_aktif_count' => function ($query) {
+            $query->where('status', 'Aktif');
+        }
+    ])
         ->get()
         ->map(function ($prodi) {
+
             $rasio = $prodi->dosen_count > 0
-                ? round($prodi->mahasiswa_count / $prodi->dosen_count, 1)
-                : 0;
+                ? round($prodi->mahasiswa_aktif_count / $prodi->dosen_count, 2)
+                : null;
+
             return [
                 'nama_prodi' => $prodi->nama_prodi,
                 'dosen' => $prodi->dosen_count,
-                'mahasiswa' => $prodi->mahasiswa_count,
+                'mahasiswa' => $prodi->mahasiswa_aktif_count,
+                'batas_nisbah' => $prodi->batas_nisbah,
                 'rasio' => $rasio,
-                'over_limit' => $rasio > 27,
+
+                'over_limit' => $rasio !== null
+                    && $rasio > $prodi->batas_nisbah,
             ];
         });
 
@@ -715,7 +731,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/kompetisi-mahasiswa/create', [MahasiswaController::class, 'kompetisiCreate'])->name('kompetisi.create')->middleware('can:kelola-data-mahasiswa.create');
         Route::post('/kompetisi-mahasiswa', [MahasiswaController::class, 'kompetisiStore'])->name('kompetisi.store')->middleware('can:kelola-data-mahasiswa.create');
         Route::delete('/kompetisi-mahasiswa/{id}', [MahasiswaController::class, 'kompetisiDestroy'])->name('kompetisi.destroy')->middleware('can:kelola-data-mahasiswa.delete');
-        
+
         // --- IMPORT MAHASISWA KOMPETISI ---
         Route::middleware('can:kelola-data-mahasiswa.create')->group(function () {
             Route::get('/kompetisi-mahasiswa/import', [MahasiswaController::class, 'kompetisiImportView'])->name('kompetisi.import.view');
