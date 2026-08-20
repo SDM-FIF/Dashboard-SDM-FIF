@@ -80,10 +80,12 @@ class KelompokKeahlianController extends Controller
             'nama_kelompok_keahlian.unique' => 'Nama Kelompok Keahlian tersebut sudah terdaftar!',
         ]);
 
-        KelompokKeahlian::create([
+        $kk = KelompokKeahlian::create([
             'singkatan' => trim($request->singkatan),
             'nama_kelompok_keahlian' => trim($request->nama_kelompok_keahlian),
         ]);
+
+        \App\Models\Notification::sendToAll('Data Baru', "Kelompok Keahlian baru telah ditambahkan: {$kk->nama_kelompok_keahlian} ({$kk->singkatan})", route('kelompok-keahlian.index'));
 
         return redirect()
             ->route('kelompok-keahlian.index')
@@ -135,6 +137,8 @@ class KelompokKeahlianController extends Controller
             'nama_kelompok_keahlian' => trim($request->nama_kelompok_keahlian),
         ]);
 
+        \App\Models\Notification::sendToAll('Perubahan Data', "Data Kelompok Keahlian {$kelompokKeahlian->nama_kelompok_keahlian} ({$kelompokKeahlian->singkatan}) telah diperbarui", route('kelompok-keahlian.index'));
+
         return redirect()
             ->route('kelompok-keahlian.index')
             ->with('success', 'Data Kelompok Keahlian berhasil diperbarui!');
@@ -158,7 +162,11 @@ class KelompokKeahlianController extends Controller
                 ->with('error', "Gagal menghapus! Kelompok Keahlian ini masih digunakan oleh {$jumlahDosen} dosen.");
         }
 
+        $namaKk = $kelompokKeahlian->nama_kelompok_keahlian;
+        $singkatanKk = $kelompokKeahlian->singkatan;
         $kelompokKeahlian->delete();
+
+        \App\Models\Notification::sendToAll('Perubahan Data', "Kelompok Keahlian {$namaKk} ({$singkatanKk}) telah dihapus");
 
         return redirect()
             ->route('kelompok-keahlian.index')

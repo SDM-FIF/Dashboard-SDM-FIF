@@ -211,6 +211,8 @@ class DosenController extends Controller
             }
 
             // Check if AJAX request
+            \App\Models\Notification::sendToAll('Data Baru', "Dosen baru telah ditambahkan: {$dosen->nama_lengkap}", route('manajemen-dosen.show', $dosen->id));
+
             if ($request->wantsJson() || $request->ajax()) {
                 return response()->json([
                     'success' => true,
@@ -448,6 +450,8 @@ class DosenController extends Controller
                     }
                 }
 
+                \App\Models\Notification::sendToAll('Perubahan Data', "Data dosen {$dosen->nama_lengkap} telah diperbarui", route('manajemen-dosen.show', $dosen->id));
+
                 return response()->json([
                     'success' => true,
                     'message' => 'Data dosen berhasil diperbarui!'
@@ -506,6 +510,8 @@ class DosenController extends Controller
                 'status_pegawai' => $validated['status_pegawai'],
             ]);
 
+            \App\Models\Notification::sendToAll('Perubahan Data', "Data dosen {$dosen->nama_lengkap} telah diperbarui", route('manajemen-dosen.show', $dosen->id));
+
             return redirect()->route('manajemen-dosen.kelola-data')->with('success', 'Data dosen berhasil diperbarui!');
 
         } catch (\Exception $e) {
@@ -521,9 +527,12 @@ class DosenController extends Controller
         $this->authorize('kelola-data-dosen.delete');
         
         try {
+            $namaDosen = $dosen->nama_lengkap;
             $user = $dosen->user;
             $dosen->delete();
             $user->delete();
+
+            \App\Models\Notification::sendToAll('Perubahan Data', "Data dosen {$namaDosen} telah dihapus");
 
             return redirect()->route('manajemen-dosen.kelola-data')->with('success', 'Data dosen berhasil dihapus!');
 

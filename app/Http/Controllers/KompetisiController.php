@@ -62,6 +62,7 @@ class KompetisiController extends Controller
                 $kompetisi->mahasiswa()->attach($mahasiswa->id, ['juara' => $mhs['capaian']]);
             }
         }
+        \App\Models\Notification::sendToAll('Data Baru', "Kompetisi baru telah ditambahkan: {$kompetisi->nama_kompetisi}", route('kompetisi.show', $kompetisi->id));
 
         return redirect()->route('kompetisi.index')->with('success', 'Data Kompetisi berhasil ditambahkan!');
     }
@@ -71,7 +72,10 @@ class KompetisiController extends Controller
         $this->authorize('master-data-kompetisi.delete');
         
         $kompetisi = Kompetisi::findOrFail($id);
+        $namaKomp = $kompetisi->nama_kompetisi;
         $kompetisi->delete();
+
+        \App\Models\Notification::sendToAll('Perubahan Data', "Kompetisi {$namaKomp} telah dihapus");
 
         return redirect()->route('kompetisi.index')
             ->with('success', 'Data Kompetisi berhasil dihapus!');
@@ -120,6 +124,8 @@ class KompetisiController extends Controller
         } else {
             $kompetisi->mahasiswa()->detach();
         }
+
+        \App\Models\Notification::sendToAll('Perubahan Data', "Data kompetisi {$kompetisi->nama_kompetisi} telah diperbarui", route('kompetisi.show', $kompetisi->id));
 
         return redirect()->route('kompetisi.index')->with('success', 'Data Kompetisi berhasil diperbarui!');
     }

@@ -77,10 +77,12 @@ class TahunAjarController extends Controller
             'tahun.unique' => 'Tahun Ajaran dan Semester tersebut sudah terdaftar!',
         ]);
 
-        TahunAjar::create([
+        $ta = TahunAjar::create([
             'tahun' => $request->tahun,
             'semester' => $request->semester,
         ]);
+
+        \App\Models\Notification::sendToAll('Data Baru', "Tahun Ajaran baru telah ditambahkan: {$ta->label}", route('tahun-ajar.index'));
 
         return redirect()
             ->route('tahun-ajar.index')
@@ -127,6 +129,8 @@ class TahunAjarController extends Controller
             'semester' => $request->semester,
         ]);
 
+        \App\Models\Notification::sendToAll('Perubahan Data', "Data Tahun Ajaran {$tahunAjar->label} telah diperbarui", route('tahun-ajar.index'));
+
         return redirect()
             ->route('tahun-ajar.index')
             ->with('success', 'Data Tahun Ajaran berhasil diperbarui!');
@@ -165,7 +169,10 @@ class TahunAjarController extends Controller
                 );
         }
 
+        $labelTa = $tahunAjar->label;
         $tahunAjar->delete();
+
+        \App\Models\Notification::sendToAll('Perubahan Data', "Tahun Ajaran {$labelTa} telah dihapus");
 
         return redirect()
             ->route('tahun-ajar.index')

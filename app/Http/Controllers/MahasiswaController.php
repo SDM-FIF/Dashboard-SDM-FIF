@@ -581,7 +581,8 @@ public function exportPdf(Request $request)
         ]);
 
         try {
-            Mahasiswa::create($validated);
+            $m = Mahasiswa::create($validated);
+            \App\Models\Notification::sendToAll('Data Baru', "Mahasiswa baru telah ditambahkan: {$m->nama_lengkap}", route('mahasiswa.show', $m->id));
             return redirect()->route('mahasiswa.kelola-data')->with('success', 'Data Mahasiswa berhasil ditambahkan!');
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Error: ' . $e->getMessage()])->withInput();
@@ -629,6 +630,7 @@ public function exportPdf(Request $request)
 
         try {
             $mahasiswa->update($validated);
+            \App\Models\Notification::sendToAll('Perubahan Data', "Data mahasiswa {$mahasiswa->nama_lengkap} telah diperbarui", route('mahasiswa.show', $mahasiswa->id));
             return redirect()->route('mahasiswa.kelola-data')->with('success', 'Data Mahasiswa berhasil diperbarui!');
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Error: ' . $e->getMessage()])->withInput();
@@ -640,7 +642,9 @@ public function exportPdf(Request $request)
         $this->authorize('kelola-data-mahasiswa.delete');
 
         try {
+            $namaMhs = $mahasiswa->nama_lengkap;
             $mahasiswa->delete();
+            \App\Models\Notification::sendToAll('Perubahan Data', "Data mahasiswa {$namaMhs} telah dihapus");
             return redirect()->route('mahasiswa.kelola-data')->with('success', 'Data Mahasiswa berhasil dihapus!');
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Error: ' . $e->getMessage()]);
@@ -728,7 +732,9 @@ public function exportPdf(Request $request)
         }
 
         try {
-            MahasiswaKompetisi::create($validated);
+            $mk = MahasiswaKompetisi::create($validated);
+            $mk->load(['mahasiswa', 'kompetisi']);
+            \App\Models\Notification::sendToAll('Data Baru', "Prestasi Mahasiswa baru ditambahkan: {$mk->mahasiswa->nama_lengkap} pada kompetisi {$mk->kompetisi->nama_kompetisi}", route('mahasiswa.kompetisi.index'));
             return redirect()->route('mahasiswa.kompetisi.index')->with('success', 'Mahasiswa Kompetisi berhasil ditambahkan!');
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Error: ' . $e->getMessage()])->withInput();
@@ -740,8 +746,11 @@ public function exportPdf(Request $request)
         $this->authorize('kelola-data-mahasiswa.delete');
 
         try {
-            $mahasiswaKompetisi = MahasiswaKompetisi::findOrFail($id);
+            $mahasiswaKompetisi = MahasiswaKompetisi::with(['mahasiswa', 'kompetisi'])->findOrFail($id);
+            $namaMhs = $mahasiswaKompetisi->mahasiswa->nama_lengkap ?? '';
+            $namaKomp = $mahasiswaKompetisi->kompetisi->nama_kompetisi ?? '';
             $mahasiswaKompetisi->delete();
+            \App\Models\Notification::sendToAll('Perubahan Data', "Prestasi Mahasiswa {$namaMhs} pada kompetisi {$namaKomp} telah dihapus");
             return redirect()->route('mahasiswa.kompetisi.index')->with('success', 'Hubungan Mahasiswa Kompetisi berhasil dihapus!');
         } catch (\Exception $e) {
             return back()->withErrors(['error' => 'Error: ' . $e->getMessage()]);

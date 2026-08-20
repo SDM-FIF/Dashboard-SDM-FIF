@@ -71,6 +71,8 @@ class FakultasController extends Controller
             'wadek2_id'     => $request->id_wadek2,
         ]);
 
+        \App\Models\Notification::sendToAll('Perubahan Data', "Data Fakultas {$fakultas->nama_fakultas} telah diperbarui", route('fakultas.index'));
+
         return redirect()->route('fakultas.index')->with('success', 'Data berhasil diperbarui!');
     }
 

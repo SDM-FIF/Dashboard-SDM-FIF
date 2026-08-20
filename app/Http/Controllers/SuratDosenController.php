@@ -172,6 +172,8 @@ class SuratDosenController extends Controller
         // Sync multiple dosen recipients in pivot table
         $surat->dosenList()->sync($request->dosen_ids);
 
+        \App\Models\Notification::sendToAll('Informasi Baru', "Surat Dosen baru: {$surat->jenis_surat} nomor {$surat->nomor_surat} telah diterbitkan", route('manajemen-dosen.surat.show', $surat->id));
+
         return redirect()
             ->route('manajemen-dosen.surat.index')
             ->with('success', "{$request->jenis_surat} baru berhasil disimpan!");
@@ -275,6 +277,8 @@ class SuratDosenController extends Controller
         // Sync multiple dosen recipients in pivot table
         $surat->dosenList()->sync($request->dosen_ids);
 
+        \App\Models\Notification::sendToAll('Perubahan Data', "Data {$surat->jenis_surat} nomor {$surat->nomor_surat} telah diperbarui", route('manajemen-dosen.surat.show', $surat->id));
+
         return redirect()
             ->route('manajemen-dosen.surat.index')
             ->with('success', "Data {$request->jenis_surat} berhasil diperbarui!");
@@ -294,7 +298,10 @@ class SuratDosenController extends Controller
         }
 
         $jenisSurat = $surat->jenis_surat;
+        $nomorSurat = $surat->nomor_surat;
         $surat->delete();
+
+        \App\Models\Notification::sendToAll('Perubahan Data', "{$jenisSurat} nomor {$nomorSurat} telah dihapus");
 
         return redirect()
             ->route('manajemen-dosen.surat.index')

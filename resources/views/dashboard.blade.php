@@ -12,17 +12,13 @@
     <x-navbar />
 
     <main class="flex-1 flex flex-col min-h-screen p-6 md:p-8 overflow-y-auto">
+        <x-topbar />
+        
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <div>
                 <h1 class="text-3xl md:text-4xl font-extrabold text-[#C41E3A] tracking-tight">Dashboard SDM FIF</h1>
                 <p class="text-slate-500 mt-1 text-sm md:text-base">Ringkasan data sumber daya manusia dan statistik mahasiswa.</p>
-            </div>
-            <div class="flex items-center gap-3 bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-100 self-start md:self-auto">
-                <div class="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center text-[#C41E3A]">
-                    <i class="fa-solid fa-calendar-days"></i>
-                </div>
-                <span class="text-xs font-semibold text-slate-600" id="current-date-span"></span>
             </div>
         </div>
 

@@ -44,7 +44,9 @@ class ProdiController extends Controller
         'batas_nisbah' => 'required|integer|min:1',
     ]);
 
-    Prodi::create($validated);
+    $p = Prodi::create($validated);
+
+    \App\Models\Notification::sendToAll('Data Baru', "Program Studi baru telah ditambahkan: {$p->nama_prodi}", route('prodi.index'));
 
     return redirect()
         ->route('prodi.index')
@@ -88,7 +90,10 @@ class ProdiController extends Controller
                 );
         }
 
+        $namaProdi = $prodi->nama_prodi;
         $prodi->delete();
+
+        \App\Models\Notification::sendToAll('Perubahan Data', "Program Studi {$namaProdi} telah dihapus");
 
         return redirect()
             ->route('prodi.index')
@@ -107,6 +112,8 @@ class ProdiController extends Controller
 
     $prodi = Prodi::findOrFail($id);
     $prodi->update($validated);
+
+    \App\Models\Notification::sendToAll('Perubahan Data', "Data Program Studi {$prodi->nama_prodi} telah diperbarui", route('prodi.index'));
 
     return redirect()
         ->route('prodi.index')

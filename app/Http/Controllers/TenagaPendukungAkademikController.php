@@ -387,7 +387,7 @@ class TenagaPendukungAkademikController extends Controller
             ]);
 
             // Create TPA
-            TenagaPendukungAkademik::create([
+            $tpa = TenagaPendukungAkademik::create([
                 'user_id' => $user->id,
                 'nama_lengkap' => $validated['nama_lengkap'],
                 'nip' => $validated['nip'],
@@ -396,6 +396,8 @@ class TenagaPendukungAkademikController extends Controller
                 'lokasi_kerja' => $validated['lokasi_kerja'],
                 'pendidikan_terakhir' => $validated['pendidikan_terakhir'],
             ]);
+
+            \App\Models\Notification::sendToAll('Data Baru', "TPA baru telah ditambahkan: {$tpa->nama_lengkap}", route('manajemen-tpa.kelola-data'));
 
             return redirect()
                 ->route('manajemen-tpa.kelola-data')
@@ -509,6 +511,8 @@ class TenagaPendukungAkademikController extends Controller
                 'pendidikan_terakhir' => $validated['pendidikan_terakhir'],
             ]);
 
+            \App\Models\Notification::sendToAll('Perubahan Data', "Data TPA {$tpa->nama_lengkap} telah diperbarui", route('manajemen-tpa.kelola-data'));
+
             return redirect()
                 ->route('manajemen-tpa.kelola-data')
                 ->with('success', 'Data TPA berhasil diperbarui!');
@@ -527,9 +531,12 @@ class TenagaPendukungAkademikController extends Controller
         $this->authorize('kelola-data-tpa.delete');
 
         try {
+            $namaTpa = $tpa->nama_lengkap;
             $user = $tpa->user;
             $tpa->delete();
             $user->delete();
+
+            \App\Models\Notification::sendToAll('Perubahan Data', "Data TPA {$namaTpa} telah dihapus");
 
             return redirect()
                 ->route('manajemen-tpa.kelola-data')

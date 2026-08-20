@@ -183,6 +183,8 @@ class RekrutasiDosenController extends Controller
                 Log::info('No riwayat data in request');
             }
 
+            \App\Models\Notification::sendToAll('Data Baru', "Calon Dosen baru telah terdaftar: {$calonDosen->nama_lengkap}", route('rekrutasi-dosen.index'));
+
             if ($request->ajax()) {
                 return response()->json([
                     'success' => true,
@@ -377,6 +379,8 @@ class RekrutasiDosenController extends Controller
                 }
             }
 
+            \App\Models\Notification::sendToAll('Perubahan Data', "Data Calon Dosen {$rekrutasi->nama_lengkap} telah diperbarui", route('rekrutasi-dosen.index'));
+
             if ($request->ajax()) {
                 return response()->json([
                     'success' => true,
@@ -414,9 +418,12 @@ class RekrutasiDosenController extends Controller
     public function destroy($id)
     {
         $this->authorize('rekrutasi-data-dosen.delete');
-        
+
         $rekrutasi = CalonDosen::findOrFail($id);
+        $namaCalon = $rekrutasi->nama_lengkap;
         $rekrutasi->delete();
+
+        \App\Models\Notification::sendToAll('Perubahan Data', "Data Calon Dosen {$namaCalon} telah dihapus");
 
         return redirect()->route('rekrutasi-dosen')
             ->with('success', 'Data rekrutasi berhasil dihapus!');
@@ -580,6 +587,10 @@ class RekrutasiDosenController extends Controller
             }
             $jadwal->dosenPenguji()->attach($dosenData);
 
+            $calon = \App\Models\CalonDosen::find($jadwal->calon_dosen_id);
+            $namaCalon = $calon ? $calon->nama_lengkap : '';
+            \App\Models\Notification::sendToAll('Informasi Baru', "Jadwal pengujian baru ditambahkan untuk Calon Dosen: {$namaCalon}", route('rekrutasi-dosen.jadwal-pengujian'));
+
             return response()->json([
                 'success' => true,
                 'message' => 'Jadwal pengujian berhasil ditambahkan!'
@@ -680,6 +691,10 @@ class RekrutasiDosenController extends Controller
             }
             $jadwal->dosenPenguji()->sync($dosenData);
 
+            $calon = \App\Models\CalonDosen::find($jadwal->calon_dosen_id);
+            $namaCalon = $calon ? $calon->nama_lengkap : '';
+            \App\Models\Notification::sendToAll('Perubahan Data', "Jadwal pengujian Calon Dosen {$namaCalon} telah diperbarui", route('rekrutasi-dosen.jadwal-pengujian'));
+
             return response()->json([
                 'success' => true,
                 'message' => 'Jadwal pengujian berhasil diupdate!'
@@ -696,10 +711,14 @@ class RekrutasiDosenController extends Controller
     public function destroyJadwalPengujian($id)
     {
         $this->authorize('jadwal-pengujian.delete');
-        
+
         try {
             $jadwal = \App\Models\JadwalPengujian::findOrFail($id);
+            $calon = \App\Models\CalonDosen::find($jadwal->calon_dosen_id);
+            $namaCalon = $calon ? $calon->nama_lengkap : '';
             $jadwal->delete();
+
+            \App\Models\Notification::sendToAll('Perubahan Data', "Jadwal pengujian Calon Dosen {$namaCalon} telah dihapus");
 
             return response()->json([
                 'success' => true,
@@ -879,10 +898,18 @@ class RekrutasiDosenController extends Controller
                 $existingPenilaian->update($penilaianData);
                 $penilaian = $existingPenilaian;
                 Log::info('Penilaian updated successfully:', ['id' => $penilaian->id]);
+
+                $calon = \App\Models\CalonDosen::find($penilaian->calon_dosen_id);
+                $namaCalon = $calon ? $calon->nama_lengkap : '';
+                \App\Models\Notification::sendToAll('Perubahan Data', "Penilaian Calon Dosen {$namaCalon} telah diperbarui", route('rekrutasi-dosen.hasil-pengujian'));
             } else {
                 // Create new penilaian
                 $penilaian = \App\Models\PenilaianDetail::create($penilaianData);
                 Log::info('Penilaian created successfully:', ['id' => $penilaian->id]);
+
+                $calon = \App\Models\CalonDosen::find($penilaian->calon_dosen_id);
+                $namaCalon = $calon ? $calon->nama_lengkap : '';
+                \App\Models\Notification::sendToAll('Informasi Baru', "Penilaian baru telah masuk untuk Calon Dosen {$namaCalon}", route('rekrutasi-dosen.hasil-pengujian'));
             }
 
 
@@ -1427,6 +1454,10 @@ class RekrutasiDosenController extends Controller
         }
 
         $penilaian->update($updateData);
+
+        $calon = \App\Models\CalonDosen::find($jadwal->calon_dosen_id);
+        $namaCalon = $calon ? $calon->nama_lengkap : '';
+        \App\Models\Notification::sendToAll('Informasi Baru', "Berita Acara hasil pengujian Calon Dosen {$namaCalon} telah diterbitkan", route('rekrutasi-dosen.hasil-pengujian'));
 
         return redirect()->route('rekrutasi-dosen.berita-acara', $jadwalId)
             ->with('success', 'Berita acara berhasil disimpan');
