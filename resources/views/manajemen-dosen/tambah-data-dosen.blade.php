@@ -199,6 +199,13 @@
                         </select>
                     </div>
 
+                    {{-- TMT (Terhitung Mulai Tanggal) --}}
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">TMT (Terhitung Mulai Tanggal)</label>
+                        <input type="date" name="tmt" value="{{ old('tmt') }}"
+                               class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
+                    </div>
+
                     {{-- Status Dosen --}}
                     <div class="flex flex-col gap-1.5">
                         <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Status Dosen</label>
@@ -207,8 +214,15 @@
                             <option value="Aktif" {{ old('status_dosen') == 'Aktif' ? 'selected' : '' }}>Aktif</option>
                             <option value="Tugas Belajar" {{ old('status_dosen') == 'Tugas Belajar' ? 'selected' : '' }}>Tugas Belajar</option>
                             <option value="Izin Belajar" {{ old('status_dosen') == 'Izin Belajar' ? 'selected' : '' }}>Izin Belajar</option>
-                            <option value="CLTY" {{ old('status_dosen') == 'CLTY' ? 'selected' : '' }}>CLTY</option>
+                            <option value="CLTY" {{ old('status_dosen') == 'CLTY' ? 'selected' : '' }}>Cuti (CLTY)</option>
                         </select>
+                    </div>
+
+                    {{-- Tanggal Mulai Status --}}
+                    <div class="flex flex-col gap-1.5" id="tanggal_mulai_status_container" style="display: none;">
+                        <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Tanggal Mulai Status <span class="text-red-500">*</span></label>
+                        <input type="date" name="tanggal_mulai_status" id="tanggal_mulai_status" value="{{ old('tanggal_mulai_status') }}"
+                               class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
                     </div>
 
                     {{-- Pendidikan Terakhir --}}
@@ -529,6 +543,29 @@
                 });
             }
         });
+
+        // Logika Tanggal Mulai Status
+        const statusDosenSelect = document.querySelector('select[name="status_dosen"]');
+        const tglMulaiStatusContainer = document.getElementById('tanggal_mulai_status_container');
+        const tglMulaiStatusInput = document.getElementById('tanggal_mulai_status');
+
+        function toggleTanggalMulaiStatus() {
+            if (!statusDosenSelect || !tglMulaiStatusContainer) return;
+            const requiredStatuses = ['Tugas Belajar', 'Izin Belajar', 'CLTY'];
+            if (requiredStatuses.includes(statusDosenSelect.value)) {
+                tglMulaiStatusContainer.style.display = 'flex';
+                tglMulaiStatusInput.required = true;
+            } else {
+                tglMulaiStatusContainer.style.display = 'none';
+                tglMulaiStatusInput.required = false;
+                tglMulaiStatusInput.value = '';
+            }
+        }
+
+        if (statusDosenSelect) {
+            statusDosenSelect.addEventListener('change', toggleTanggalMulaiStatus);
+            toggleTanggalMulaiStatus(); // Jalankan saat pertama kali dimuat
+        }
     </script>
 </body>
 </html>

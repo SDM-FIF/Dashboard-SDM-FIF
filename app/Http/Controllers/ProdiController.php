@@ -38,11 +38,12 @@ class ProdiController extends Controller
     {
         $this->authorize('master-data-prodi.create');
 
-    $validated = $request->validate([
-        'nama_prodi' => 'required|string|max:255',
-        'fakultas_id' => 'required|exists:fakultas,id',
-        'batas_nisbah' => 'required|integer|min:1',
-    ]);
+        $validated = $request->validate([
+            'nama_prodi' => 'required|string|max:255',
+            'fakultas_id' => 'required|exists:fakultas,id',
+            'kaprodi' => 'nullable|string|max:255',
+            'batas_nisbah' => 'required|integer|min:1',
+        ]);
 
     $p = Prodi::create($validated);
 
@@ -104,11 +105,12 @@ class ProdiController extends Controller
     {
          $this->authorize('master-data-prodi.edit');
 
-    $validated = $request->validate([
-        'nama_prodi' => 'required|string|max:255',
-        'fakultas_id' => 'required|exists:fakultas,id',
-        'batas_nisbah' => 'required|integer|min:1',
-    ]);
+        $validated = $request->validate([
+            'nama_prodi' => 'required|string|max:255',
+            'fakultas_id' => 'required|exists:fakultas,id',
+            'kaprodi' => 'nullable|string|max:255',
+            'batas_nisbah' => 'required|integer|min:1',
+        ]);
 
     $prodi = Prodi::findOrFail($id);
     $prodi->update($validated);
@@ -138,6 +140,7 @@ class ProdiController extends Controller
                 'Nama Program Studi' => $p->nama_prodi,
                 'Jenjang' => $p->jenjang ?? '-',
                 'Fakultas' => $p->fakultas->nama_fakultas ?? '-',
+                'Kaprodi' => $p->kaprodi ?? '-',
             ];
         });
 
@@ -147,7 +150,7 @@ class ProdiController extends Controller
                 public function __construct($data) { $this->data = $data; }
                 public function collection() { return $this->data; }
                 public function headings(): array {
-                    return ['Kode Prodi', 'Nama Program Studi', 'Jenjang', 'Fakultas'];
+                    return ['Kode Prodi', 'Nama Program Studi', 'Jenjang', 'Fakultas', 'Kaprodi'];
                 }
             },
             $fileName
@@ -173,9 +176,10 @@ class ProdiController extends Controller
                 <tr style="background-color: #C41E3A; color: white;">
                     <th width="5%">No</th>
                     <th width="15%">Kode Prodi</th>
-                    <th width="40%">Nama Program Studi</th>
-                    <th width="15%">Jenjang</th>
-                    <th width="25%">Fakultas</th>
+                    <th width="30%">Nama Program Studi</th>
+                    <th width="10%">Jenjang</th>
+                    <th width="20%">Fakultas</th>
+                    <th width="20%">Kaprodi</th>
                 </tr>
             </thead>
             <tbody>';
@@ -188,6 +192,7 @@ class ProdiController extends Controller
                     <td>' . $p->nama_prodi . '</td>
                     <td>' . ($p->jenjang ?? '-') . '</td>
                     <td>' . ($p->fakultas->nama_fakultas ?? '-') . '</td>
+                    <td>' . ($p->kaprodi ?? '-') . '</td>
                 </tr>';
         }
 

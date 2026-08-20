@@ -321,12 +321,11 @@
                                             $allPenilaianSubmitted = $jumlahPenilaian >= $jumlahDosenPenguji && $jumlahDosenPenguji > 0;
                                         @endphp
                                         @if($beritaAcaraSubmitted)
-                                            @if(Auth::user()->hasRole('Super Admin') || $isDosenPenguji1)
-                                            <button type="button" class="btn-berita-acara w-8 h-8 rounded-lg bg-orange-50 border border-orange-100 text-orange-600 hover:bg-orange-100 transition-colors flex items-center justify-center" 
-                                                    data-id="{{ $jadwal->id }}" title="Lihat Berita Acara">
-                                                <i class="fas fa-file-signature text-xs"></i>
+                                            <button type="button" class="btn-berita-acara-download w-8 h-8 rounded-lg bg-orange-50 border border-orange-100 text-orange-600 hover:bg-orange-100 transition-colors flex items-center justify-center" 
+                                                    data-id="{{ $jadwal->id }}" title="Unduh Berita Acara">
+                                                <i class="fas fa-file-download text-xs"></i>
                                             </button>
-                                            @endif
+
                                         @elseif($allPenilaianSubmitted && (Auth::user()->hasRole('Super Admin') || $isDosenPenguji1))
                                             <button type="button" class="btn-berita-acara w-8 h-8 rounded-lg bg-yellow-50 border border-yellow-100 text-yellow-600 hover:bg-yellow-100 transition-colors flex items-center justify-center" 
                                                     data-id="{{ $jadwal->id }}" title="Buat Berita Acara (Belum Submit)">
@@ -1057,6 +1056,13 @@
             button.addEventListener('click', function() {
                 const id = this.getAttribute('data-id');
                 window.location.href = `/rekrutasi-dosen/berita-acara/${id}`;
+            });
+        });
+
+        document.querySelectorAll('.btn-berita-acara-download').forEach(button => {
+            button.addEventListener('click', function() {
+                const id = this.getAttribute('data-id');
+                window.open(`/rekrutasi-dosen/hasil-pengujian/berita-acara/${id}`, '_blank');
             });
         });
     </script>

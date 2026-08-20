@@ -15,6 +15,7 @@ class MahasiswaKompetisi extends Pivot
         'mahasiswa_id',
         'kompetisi_id',
         'juara',
+        'sertifikat_file',
     ];
 
     // Relasi

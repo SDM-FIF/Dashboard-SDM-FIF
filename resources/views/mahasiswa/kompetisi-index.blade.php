@@ -158,6 +158,7 @@
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Program Studi</th>
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Nama Kompetisi</th>
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Juara / Penghargaan</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Sertifikat</th>
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Jenis</th>
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Tingkat</th>
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Tanggal</th>
@@ -192,6 +193,17 @@
                                             <span class="text-gray-400 italic font-normal">Peserta / Partisipan</span>
                                         @endif
                                     </td>
+                                    <td class="px-6 py-4 text-sm text-center">
+                                        @if($item->sertifikat_file)
+                                            <a href="{{ Storage::url($item->sertifikat_file) }}" target="_blank"
+                                               class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
+                                               title="Lihat Sertifikat">
+                                                <i class="fas fa-file-pdf"></i>
+                                            </a>
+                                        @else
+                                            <span class="text-gray-400 text-xs italic">-</span>
+                                        @endif
+                                    </td>
                                     <td class="px-6 py-4 text-sm text-gray-600">
                                         {{ ucfirst($item->kompetisi->jenis ?? '-') }}
                                     </td>
@@ -221,7 +233,7 @@
                             @endforeach
                         @else
                             <tr>
-                                <td colspan="9" class="px-6 py-16 text-center text-gray-400">
+                                <td colspan="10" class="px-6 py-16 text-center text-gray-400">
                                     <div class="flex flex-col items-center gap-3">
                                         <div class="p-4 bg-gray-50 text-gray-300 rounded-full">
                                             <i class="fas fa-trophy text-4xl"></i>

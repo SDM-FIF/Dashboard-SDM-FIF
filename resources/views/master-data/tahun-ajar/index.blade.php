@@ -108,6 +108,7 @@
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Tahun Awal</th>
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Semester</th>
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Label Tahun Ajaran</th>
+                            <th class="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider">Status</th>
                             <th class="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider w-36">Aksi</th>
                         </tr>
                     </thead>
@@ -123,6 +124,13 @@
                                 @endif
                             </td>
                             <td class="px-6 py-4 text-sm font-bold text-gray-900 group-hover:text-[#C41E3A] transition-colors">{{ $item->label }}</td>
+                            <td class="px-6 py-4 text-center">
+                                @if($item->is_active)
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg border font-bold text-xs bg-green-50 text-green-700 border-green-100"><i class="fas fa-check-circle mr-1"></i> Aktif</span>
+                                @else
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-lg border font-bold text-xs bg-gray-50 text-gray-500 border-gray-200">Tidak Aktif</span>
+                                @endif
+                            </td>
                             <td class="px-6 py-4 text-center text-sm">
                                 <div class="flex items-center justify-center gap-2.5">
                                     @can('master-data-tahun-ajar.edit')
@@ -151,7 +159,7 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="4" class="px-6 py-16 text-center text-gray-400">
+                            <td colspan="5" class="px-6 py-16 text-center text-gray-400">
                                 <div class="flex flex-col items-center gap-3">
                                     <div class="p-4 bg-gray-50 text-gray-300 rounded-full">
                                         <i class="fas fa-calendar-alt text-4xl"></i>

@@ -131,7 +131,7 @@
                     </h2>
                 </div>
 
-                <form action="{{ route('mahasiswa.kompetisi.store') }}" method="POST" class="p-6 space-y-6">
+                <form action="{{ route('mahasiswa.kompetisi.store') }}" method="POST" enctype="multipart/form-data" class="p-6 space-y-6">
                     @csrf
 
                     <div class="space-y-6">
@@ -188,6 +188,19 @@
                                 <p class="text-red-600 text-xs mt-1 font-semibold"><i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}</p>
                             @enderror
                             <p class="text-xs text-gray-400">Kosongkan jika mahasiswa terdaftar sebagai peserta tanpa raihan juara spesifik.</p>
+                        </div>
+
+                        {{-- File Sertifikat Input --}}
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                                Upload Sertifikat <span class="text-gray-400 font-normal normal-case">(Opsional)</span>
+                            </label>
+                            <input type="file" name="sertifikat_file" accept=".pdf,.jpg,.jpeg,.png"
+                                class="w-full px-4 py-2 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] outline-none transition-all @error('sertifikat_file') border-red-500 @enderror">
+                            @error('sertifikat_file')
+                                <p class="text-red-600 text-xs mt-1 font-semibold"><i class="fas fa-exclamation-circle mr-1"></i>{{ $message }}</p>
+                            @enderror
+                            <p class="text-xs text-gray-400">Format: PDF, JPG, PNG. Maksimal 2MB.</p>
                         </div>
                     </div>
 

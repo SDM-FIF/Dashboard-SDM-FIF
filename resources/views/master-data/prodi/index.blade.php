@@ -99,41 +99,22 @@
                 <table class="min-w-full w-full border-collapse">
                     <thead>
                         <tr class="bg-[#C41E3A] text-white">
-                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">
-                                Nama Program Studi
-                            </th>
-
-                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">
-                                Fakultas
-                            </th>
-
-                            <th class="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider">
-                                Standar Nisbah
-                            </th>
-
-                            <th class="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider w-36">
-                                Aksi
-                            </th>
+                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Nama Program Studi</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Fakultas</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Kaprodi</th>
+                            <th class="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider">Standar Nisbah</th>
+                            <th class="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider w-36">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 bg-white">
                         @forelse($prodi as $item)
                         <tr class="hover:bg-[#F8FAFC] transition-colors duration-150 group">
-
-                            <td class="px-6 py-4 text-sm font-bold text-gray-900 group-hover:text-[#C41E3A] transition-colors">
-                                {{ $item->nama_prodi }}
-                            </td>
-
-                            <td class="px-6 py-4 text-sm text-gray-600 font-semibold">
-                                {{ $item->fakultas->nama_fakultas ?? '-' }}
-                            </td>
-
-                            {{-- Standar Nisbah --}}
+                            <td class="px-6 py-4 text-sm font-bold text-gray-900 group-hover:text-[#C41E3A] transition-colors">{{ $item->nama_prodi }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-600 font-semibold">{{ $item->fakultas->nama_fakultas ?? '-' }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-600 font-medium">{{ $item->kaprodi ?? '-' }}</td>
                             <td class="px-6 py-4 text-center text-sm font-semibold text-gray-700">
                                 1 : {{ $item->batas_nisbah }}
                             </td>
-
-                            {{-- Aksi --}}
                             <td class="px-6 py-4 text-center text-sm">
                                 <div class="flex items-center justify-center gap-2.5">
 

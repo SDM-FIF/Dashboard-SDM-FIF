@@ -14,6 +14,7 @@ class Prodi extends Model
         'nama_prodi',
         'fakultas_id',
         'batas_nisbah',
+        'kaprodi',
     ];
 
     // Relasi

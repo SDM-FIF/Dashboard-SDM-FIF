@@ -720,6 +720,7 @@ public function exportPdf(Request $request)
             'mahasiswa_id' => 'required|exists:mahasiswa,id',
             'kompetisi_id' => 'required|exists:kompetisi,id',
             'juara' => 'nullable|string|max:255',
+            'sertifikat_file' => 'nullable|file|mimes:pdf,jpg,jpeg,png|max:2048',
         ]);
 
         // Cek apakah sudah terdaftar
@@ -732,7 +733,15 @@ public function exportPdf(Request $request)
         }
 
         try {
-            $mk = MahasiswaKompetisi::create($validated);
+            $data = $validated;
+            if ($request->hasFile('sertifikat_file')) {
+                $file = $request->file('sertifikat_file');
+                $filename = time() . '_' . $file->getClientOriginalName();
+                $path = $file->storeAs('sertifikat_kompetisi', $filename, 'public');
+                $data['sertifikat_file'] = $path;
+            }
+
+            $mk = MahasiswaKompetisi::create($data);
             $mk->load(['mahasiswa', 'kompetisi']);
             \App\Models\Notification::sendToAll('Data Baru', "Prestasi Mahasiswa baru ditambahkan: {$mk->mahasiswa->nama_lengkap} pada kompetisi {$mk->kompetisi->nama_kompetisi}", route('mahasiswa.kompetisi.index'));
             return redirect()->route('mahasiswa.kompetisi.index')->with('success', 'Mahasiswa Kompetisi berhasil ditambahkan!');

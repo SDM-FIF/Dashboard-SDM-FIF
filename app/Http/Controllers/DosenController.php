@@ -111,8 +111,10 @@ class DosenController extends Controller
             'nip' => 'required|string|max:50|unique:dosen,nip',
             'kode_dosen' => 'required|string|max:20|unique:dosen,kode_dosen',
             'status_pegawai' => 'required|in:Tetap,Perbantuan,Profesional Full Time,Profesional Part Time',
+            'tmt' => 'nullable|date',
             'pendidikan_terakhir' => 'required|in:S1,S2,S3',
             'status_dosen' => 'nullable|string',
+            'tanggal_mulai_status' => 'nullable|date',
             // Validasi S1 (wajib)
             'riwayat.s1.nama_universitas' => 'required|string|max:255',
             'riwayat.s1.prodi_pendidikan' => 'required|string|max:255',
@@ -170,8 +172,10 @@ class DosenController extends Controller
                 'nip' => $validated['nip'],
                 'kode_dosen' => $validated['kode_dosen'],
                 'status_pegawai' => $validated['status_pegawai'],
+                'tmt' => $validated['tmt'] ?? null,
                 'pendidikan_terakhir' => $validated['pendidikan_terakhir'],
                 'status_dosen' => $validated['status_dosen'] ?? 'Aktif',
+                'tanggal_mulai_status' => $validated['tanggal_mulai_status'] ?? null,
             ]);
 
             // Simpan riwayat pendidikan jika ada
@@ -334,8 +338,10 @@ class DosenController extends Controller
                 'nip' => 'required|string|max:50|unique:dosen,nip,' . $dosen->id,
                 'kode_dosen' => 'required|string|max:20|unique:dosen,kode_dosen,' . $dosen->id,
                 'status_pegawai' => 'required|in:Tetap,Perbantuan,Profesional Full Time,Profesional Part Time',
+                'tmt' => 'nullable|date',
                 'pendidikan_terakhir' => 'required|in:S1,S2,S3',
                 'status_dosen' => 'nullable|string',
+                'tanggal_mulai_status' => 'nullable|date',
                 // Validasi riwayat pendidikan (semua jenjang opsional untuk update)
                 'riwayat.s1.nama_universitas' => 'nullable|string|max:255',
                 'riwayat.s1.prodi_pendidikan' => 'nullable|string|max:255',
@@ -401,8 +407,10 @@ class DosenController extends Controller
                     'nip' => $validated['nip'],
                     'kode_dosen' => $validated['kode_dosen'],
                     'status_pegawai' => $validated['status_pegawai'],
+                    'tmt' => $validated['tmt'] ?? null,
                     'pendidikan_terakhir' => $validated['pendidikan_terakhir'],
                     'status_dosen' => $validated['status_dosen'] ?? 'Aktif',
+                    'tanggal_mulai_status' => $validated['tanggal_mulai_status'] ?? null,
                 ]);
 
                 // Update riwayat pendidikan
@@ -477,7 +485,8 @@ class DosenController extends Controller
             'nip' => 'required|string|max:50|unique:dosen,nip,' . $dosen->user_id . ',user_id',
             'kode_dosen' => 'required|string|max:20|unique:dosen,kode_dosen,' . $dosen->user_id . ',user_id',
             'status_pegawai' => 'required|in:Tetap,Perbantuan,Profesional Full Time,Profesional Part Time',
-            'username' => 'required|string|max:100|unique:user,username,' . $dosen->user_id,
+            'tmt' => 'nullable|date',
+            'username' => 'required|string|max:100|unique:users,username,' . $dosen->user_id,
             'password' => 'nullable|string|min:8|confirmed',
         ]);
 
@@ -508,6 +517,7 @@ class DosenController extends Controller
                 'nip' => $validated['nip'],
                 'kode_dosen' => $validated['kode_dosen'],
                 'status_pegawai' => $validated['status_pegawai'],
+                'tmt' => $validated['tmt'] ?? null,
             ]);
 
             \App\Models\Notification::sendToAll('Perubahan Data', "Data dosen {$dosen->nama_lengkap} telah diperbarui", route('manajemen-dosen.show', $dosen->id));

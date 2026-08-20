@@ -14,10 +14,12 @@ class TahunAjar extends Model
     protected $fillable = [
         'tahun',
         'semester',
+        'is_active',
     ];
 
     protected $casts = [
         'tahun' => 'integer',
+        'is_active' => 'boolean',
     ];
 
     protected $appends = [
