@@ -166,6 +166,10 @@
                 class="px-5 py-3 border-b-2 font-bold text-sm transition-all duration-200 focus:outline-none {{ $activeTab === 'dosen' ? 'border-[#C41E3A] text-[#C41E3A]' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
                 <i class="fas fa-users mr-2"></i> Daftar Dosen & Surat
             </button>
+            <button onclick="switchTab('tpa')"
+                class="px-5 py-3 border-b-2 font-bold text-sm transition-all duration-200 focus:outline-none {{ $activeTab === 'tpa' ? 'border-[#C41E3A] text-[#C41E3A]' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
+                <i class="fas fa-user-gear mr-2"></i> Daftar TPA & Surat
+            </button>
         </div>
 
         @if($activeTab === 'dokumen')
@@ -350,7 +354,7 @@
             </div>
             @endif
         </div>
-        @else
+        @elseif($activeTab === 'dosen')
         {{-- Table Section Card: Tab Daftar Dosen & Surat --}}
         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300">
             <div class="p-6 border-b border-gray-100">
@@ -437,6 +441,93 @@
             @if($dosenSuratList->hasPages())
             <div class="px-6 py-4 border-t border-gray-100 bg-[#F8FAFC]">
                 {{ $dosenSuratList->links() }}
+            </div>
+            @endif
+        </div>
+        @else
+        {{-- Table Section Card: Tab Daftar TPA & Surat --}}
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300">
+            <div class="p-6 border-b border-gray-100">
+                <h2 class="text-xl font-bold text-[#C41E3A]">Daftar TPA & Surat</h2>
+                <p class="text-xs text-gray-500 mt-0.5">Menampilkan total {{ $tpaSuratList->total() }} TPA penerima surat</p>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full w-full border-collapse">
+                    <thead>
+                        <tr class="bg-[#C41E3A] text-white">
+                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider w-80">Tenaga Kependidikan (TPA)</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Surat Tugas & SK yang Diterima</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        @forelse($tpaSuratList as $t)
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap align-top">
+                                <div class="flex items-center gap-3">
+                                    @php
+                                        $words = explode(' ', $t->nama_lengkap);
+                                        $initials = '';
+                                        foreach ($words as $w) {
+                                            $initials .= strtoupper(substr($w, 0, 1));
+                                            if (strlen($initials) >= 2) break;
+                                        }
+                                    @endphp
+                                    <div class="w-10 h-10 rounded-full bg-red-50 border border-red-100 flex items-center justify-center text-[#C41E3A] font-bold text-sm">
+                                        {{ $initials ?: 'T' }}
+                                    </div>
+                                    <div>
+                                        <a href="{{ route('manajemen-tpa.show', $t->id) }}" class="text-sm font-bold text-gray-800 hover:text-[#C41E3A] transition-colors">
+                                            {{ $t->nama_lengkap }}
+                                        </a>
+                                        <div class="text-[11px] text-gray-500 font-semibold mt-0.5">
+                                            NIP: {{ $t->nip ?? '-' }} | Jabatan: {{ $t->jabatan ?? '-' }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td class="px-6 py-4 align-middle">
+                                <button class="lecturer-letters-btn inline-flex items-center gap-2 px-4 py-2.5 bg-red-50 hover:bg-[#C41E3A] text-[#C41E3A] hover:text-white font-bold rounded-xl border border-red-100 transition-all duration-200 text-xs shadow-sm hover:shadow"
+                                        data-lecturer="{{ json_encode([
+                                            'dosen_name' => $t->nama_lengkap,
+                                            'letters' => $t->suratDosen->map(function($s) {
+                                                return [
+                                                    'jenis_surat' => $s->jenis_surat,
+                                                    'nomor_surat' => $s->nomor_surat,
+                                                    'judul_surat' => $s->judul_surat,
+                                                    'tanggal_surat' => \Carbon\Carbon::parse($s->tanggal_surat)->locale('id')->translatedFormat('d F Y'),
+                                                    'berlaku_mulai' => $s->berlaku_mulai ? \Carbon\Carbon::parse($s->berlaku_mulai)->locale('id')->translatedFormat('d F Y') : null,
+                                                    'berlaku_selesai' => $s->berlaku_selesai ? \Carbon\Carbon::parse($s->berlaku_selesai)->locale('id')->translatedFormat('d F Y') : null,
+                                                    'kategori' => $s->kategori,
+                                                    'keterangan' => $s->keterangan ?? '-',
+                                                    'jabatan' => $s->pivot->jabatan ?? '-',
+                                                    'file_url' => Storage::url($s->file_surat),
+                                                    'detail_url' => route('manajemen-dosen.surat.show', $s->id)
+                                                ];
+                                            })
+                                        ]) }}">
+                                    <i class="fa-solid fa-file-invoice"></i>
+                                    <span>Lihat Daftar Surat ({{ $t->suratDosen->count() }})</span>
+                                </button>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="2" class="px-6 py-12 text-center text-gray-400">
+                                <i class="fas fa-folder-open text-4xl mb-3"></i>
+                                <p class="text-sm font-semibold">Belum ada TPA dengan Surat Tugas atau SK.</p>
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            {{-- Pagination Footer --}}
+            @if($tpaSuratList->hasPages())
+            <div class="px-6 py-4 border-t border-gray-100 bg-[#F8FAFC]">
+                {{ $tpaSuratList->links() }}
             </div>
             @endif
         </div>

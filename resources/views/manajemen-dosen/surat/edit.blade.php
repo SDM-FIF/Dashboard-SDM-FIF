@@ -97,6 +97,8 @@
             if (empty($selectedDosenIds) && $surat->dosen_id) {
                 $selectedDosenIds = [$surat->dosen_id];
             }
+
+            $selectedTpaIds = old('tpa_ids', $surat->tpaList->pluck('id')->toArray());
         @endphp
 
         {{-- Form Card --}}
@@ -107,11 +109,11 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {{-- Dosen Penerima (Multi-Select Searchable) --}}
-                    <div class="flex flex-col gap-2 md:col-span-2">
+                    <div class="flex flex-col gap-2">
                         <label for="dosen_ids" class="text-xs font-bold text-gray-600 uppercase tracking-wider">
-                            Dosen Penerima (Bisa Lebih Dari Satu) <span class="text-red-500">*</span>
+                            Dosen Penerima (Bisa Lebih Dari Satu)
                         </label>
-                        <select name="dosen_ids[]" id="dosen_ids" multiple="multiple" required
+                        <select name="dosen_ids[]" id="dosen_ids" multiple="multiple"
                             class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
                             @foreach($dosenList as $d)
                             <option value="{{ $d->id }}" {{ in_array($d->id, $selectedDosenIds) ? 'selected' : '' }}>
@@ -135,6 +137,43 @@
                                         </div>
                                         <div class="sm:w-1/2">
                                             <input type="text" name="jabatan[{{ $d->id }}]" data-dosen-id="{{ $d->id }}" value="{{ old('jabatan.' . $d->id, $d->pivot->jabatan) }}" placeholder="Contoh: Ketua, Anggota, Tim Reviewer, dll."
+                                                class="w-full h-8 px-3 border border-gray-200 rounded-lg text-xs bg-white focus:ring-1 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
+                                        </div>
+                                    </div>
+                                @endforeach
+                            @endif
+                        </div>
+                    </div>
+
+                    {{-- TPA Penerima (Multi-Select Searchable) --}}
+                    <div class="flex flex-col gap-2">
+                        <label for="tpa_ids" class="text-xs font-bold text-gray-600 uppercase tracking-wider">
+                            TPA Penerima (Bisa Lebih Dari Satu)
+                        </label>
+                        <select name="tpa_ids[]" id="tpa_ids" multiple="multiple"
+                            class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
+                            @foreach($tpaList as $t)
+                            <option value="{{ $t->id }}" {{ in_array($t->id, $selectedTpaIds) ? 'selected' : '' }}>
+                                {{ $t->nama_lengkap }} (NIP: {{ $t->nip ?? '-' }} | Jabatan: {{ $t->jabatan ?? '-' }})
+                            </option>
+                            @endforeach
+                        </select>
+                        <span class="text-[11px] text-gray-400 font-medium">Ketik nama/NIP TPA untuk mencari & memilih lebih dari satu TPA.</span>
+                        @error('tpa_ids')
+                        <p class="text-red-500 text-xs mt-1 font-medium">{{ $message }}</p>
+                        @enderror
+
+                        {{-- Container for dynamic TPA positions (jabatan) --}}
+                        <div id="tpa-jabatan-container" class="mt-4 space-y-3">
+                            @if(count($surat->tpaList) > 0)
+                                <div class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Jabatan / Kedudukan TPA (Opsional)</div>
+                                @foreach($surat->tpaList as $t)
+                                    <div class="flex flex-col sm:flex-row sm:items-center gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                                        <div class="sm:w-1/2 text-xs font-semibold text-gray-700 truncate">
+                                            {{ $t->nama_lengkap }} (NIP: {{ $t->nip ?? '-' }} | Jabatan: {{ $t->jabatan ?? '-' }})
+                                        </div>
+                                        <div class="sm:w-1/2">
+                                            <input type="text" name="jabatan_tpa[{{ $t->id }}]" data-tpa-id="{{ $t->id }}" value="{{ old('jabatan_tpa.' . $t->id, $t->pivot->jabatan) }}" placeholder="Contoh: Panitia, Anggota, Koordinator, dll."
                                                 class="w-full h-8 px-3 border border-gray-200 rounded-lg text-xs bg-white focus:ring-1 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
                                         </div>
                                     </div>
@@ -306,6 +345,12 @@
                 width: '100%'
             });
 
+            $('#tpa_ids').select2({
+                placeholder: '-- Pilih TPA Penerima (Bisa Pilih Banyak) --',
+                allowClear: true,
+                width: '100%'
+            });
+
             // Generate jabatan inputs dynamically when lecturers are selected
             $('#dosen_ids').on('change', function() {
                 const selectedData = $(this).select2('data');
@@ -327,7 +372,7 @@
                 selectedData.forEach(function(item) {
                     const dosenId = item.id;
                     const dosenName = item.text.trim();
-                    const val = existingValues[dosenId] || '';
+                    const val = existingValues[dosenId] !== undefined ? existingValues[dosenId] : (window.initialDosenJabatans[dosenId] || '');
                     
                     const row = $(`
                         <div class="flex flex-col sm:flex-row sm:items-center gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
@@ -342,8 +387,67 @@
                 });
             });
 
+            // Generate jabatan inputs dynamically when TPA are selected
+            $('#tpa_ids').on('change', function() {
+                const selectedData = $(this).select2('data');
+                const container = $('#tpa-jabatan-container');
+                
+                // Save current typed values to avoid clearing them
+                const existingValues = {};
+                container.find('input').each(function() {
+                    const id = $(this).data('tpa-id');
+                    existingValues[id] = $(this).val();
+                });
+                
+                container.empty();
+                
+                if (selectedData.length > 0) {
+                    container.append('<div class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Jabatan / Kedudukan TPA (Opsional)</div>');
+                }
+                
+                selectedData.forEach(function(item) {
+                    const tpaId = item.id;
+                    const tpaName = item.text.trim();
+                    const val = existingValues[tpaId] !== undefined ? existingValues[tpaId] : (window.initialTpaJabatans[tpaId] || '');
+                    
+                    const row = $(`
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                            <div class="sm:w-1/2 text-xs font-semibold text-gray-700 truncate">${tpaName}</div>
+                            <div class="sm:w-1/2">
+                                <input type="text" name="jabatan_tpa[${tpaId}]" data-tpa-id="${tpaId}" value="${val}" placeholder="Contoh: Panitia, Anggota, Koordinator, dll."
+                                    class="w-full h-8 px-3 border border-gray-200 rounded-lg text-xs bg-white focus:ring-1 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
+                            </div>
+                        </div>
+                    `);
+                    container.append(row);
+                });
+            });
+
+            // Store initial values from DB so change event doesn't clear them on first trigger
+            window.initialDosenJabatans = {};
+            @foreach($surat->dosenList as $d)
+                window.initialDosenJabatans[{{ $d->id }}] = "{{ $d->pivot->jabatan }}";
+            @endforeach
+
+            window.initialTpaJabatans = {};
+            @foreach($surat->tpaList as $t)
+                window.initialTpaJabatans[{{ $t->id }}] = "{{ $t->pivot->jabatan }}";
+            @endforeach
+
             // Trigger change on load to initialize/synchronize loaded values
             $('#dosen_ids').trigger('change');
+            $('#tpa_ids').trigger('change');
+
+            // Form validation check
+            $('form').on('submit', function(e) {
+                const dosenCount = $('#dosen_ids').val() ? $('#dosen_ids').val().length : 0;
+                const tpaCount = $('#tpa_ids').val() ? $('#tpa_ids').val().length : 0;
+                if (dosenCount === 0 && tpaCount === 0) {
+                    e.preventDefault();
+                    alert('Harap pilih minimal 1 penerima (Dosen atau TPA)!');
+                    return false;
+                }
+            });
 
             function checkKategori() {
                 const val = $('#kategori').val();

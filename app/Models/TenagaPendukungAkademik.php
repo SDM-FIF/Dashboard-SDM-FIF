@@ -25,4 +25,14 @@ class TenagaPendukungAkademik extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Relationship to Surat Tugas & SK Dosen received by this TPA
+     */
+    public function suratDosen()
+    {
+        return $this->belongsToMany(SuratDosen::class, 'tpa_surat', 'tpa_id', 'surat_dosen_id')
+                    ->withPivot('jabatan')
+                    ->withTimestamps();
+    }
 }

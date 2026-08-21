@@ -72,12 +72,13 @@
                     </h3>
 
                     {{-- Dosen Penerima --}}
+                    @if($surat->dosenList->count() > 0 || $surat->dosen)
                     <div class="flex flex-col gap-2">
                         <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Dosen Penerima</span>
                         @php
                             $recipients = $surat->dosenList->count() > 0 ? $surat->dosenList : collect([$surat->dosen])->filter();
                         @endphp
-                        @forelse($recipients as $d)
+                        @foreach($recipients as $d)
                         <div class="p-3 bg-[#F8FAFC] rounded-xl border border-gray-100 flex flex-col gap-0.5">
                             <a href="{{ route('manajemen-dosen.show', $d->id) }}" class="text-sm font-bold text-gray-800 hover:text-[#C41E3A] transition-colors">
                                 {{ $d->nama_lengkap }}
@@ -92,10 +93,31 @@
                             </div>
                             @endif
                         </div>
-                        @empty
-                        <span class="text-sm text-gray-500">-</span>
-                        @endforelse
+                        @endforeach
                     </div>
+                    @endif
+
+                    {{-- TPA Penerima --}}
+                    @if($surat->tpaList->count() > 0)
+                    <div class="flex flex-col gap-2">
+                        <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">TPA Penerima</span>
+                        @foreach($surat->tpaList as $t)
+                        <div class="p-3 bg-[#F8FAFC] rounded-xl border border-gray-100 flex flex-col gap-0.5">
+                            <a href="{{ route('manajemen-tpa.show', $t->id) }}" class="text-sm font-bold text-gray-800 hover:text-[#C41E3A] transition-colors">
+                                {{ $t->nama_lengkap }}
+                            </a>
+                            <span class="text-xs text-gray-500">NIP: {{ $t->nip ?? '-' }} | Jabatan: {{ $t->jabatan ?? '-' }}</span>
+                            @if(isset($t->pivot->jabatan) && $t->pivot->jabatan)
+                            <div class="mt-1 flex items-center gap-1.5">
+                                <span class="px-2 py-0.5 bg-red-50 text-[10px] font-bold text-[#C41E3A] rounded border border-red-100 inline-block w-fit">
+                                    {{ $t->pivot->jabatan }}
+                                </span>
+                            </div>
+                            @endif
+                        </div>
+                        @endforeach
+                    </div>
+                    @endif
 
                     {{-- Tanggal Terbit --}}
                     <div class="flex flex-col gap-1">

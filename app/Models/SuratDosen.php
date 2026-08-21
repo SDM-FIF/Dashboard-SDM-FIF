@@ -47,4 +47,14 @@ class SuratDosen extends Model
                     ->withPivot('jabatan')
                     ->withTimestamps();
     }
+
+    /**
+     * Relationship to Multiple TPA Recipients
+     */
+    public function tpaList()
+    {
+        return $this->belongsToMany(TenagaPendukungAkademik::class, 'tpa_surat', 'surat_dosen_id', 'tpa_id')
+                    ->withPivot('jabatan')
+                    ->withTimestamps();
+    }
 }

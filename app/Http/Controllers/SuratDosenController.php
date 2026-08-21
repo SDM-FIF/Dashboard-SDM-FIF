@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\SuratDosen;
 use App\Models\Dosen;
+use App\Models\TenagaPendukungAkademik;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
@@ -57,6 +58,10 @@ class SuratDosenController extends Controller
                       $qd->where('nama_lengkap', 'like', '%' . $search . '%')
                          ->orWhere('nip', 'like', '%' . $search . '%')
                          ->orWhere('kode_dosen', 'like', '%' . $search . '%');
+                  })
+                  ->orWhereHas('tpaList', function ($qt) use ($search) {
+                      $qt->where('nama_lengkap', 'like', '%' . $search . '%')
+                         ->orWhere('nip', 'like', '%' . $search . '%');
                   });
             });
         }
@@ -99,6 +104,21 @@ class SuratDosenController extends Controller
             ->paginate(10, ['*'], 'page_dosen')
             ->appends($request->query());
 
+        // Query for TPA and their letters tab
+        $tpaQuery = TenagaPendukungAkademik::has('suratDosen')->with(['suratDosen']);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $tpaQuery->where(function($q) use ($search) {
+                $q->where('nama_lengkap', 'like', '%' . $search . '%')
+                  ->orWhere('nip', 'like', '%' . $search . '%');
+            });
+        }
+
+        $tpaSuratList = $tpaQuery->orderBy('nama_lengkap', 'asc')
+            ->paginate(10, ['*'], 'page_tpa')
+            ->appends($request->query());
+
         $kategoriList = [
             'Pengajaran',
             'Penelitian',
@@ -108,7 +128,7 @@ class SuratDosenController extends Controller
             'Lainnya',
         ];
 
-        return view('manajemen-dosen.surat.index', compact('suratList', 'dosenList', 'kategoriList', 'dosenSuratList'));
+        return view('manajemen-dosen.surat.index', compact('suratList', 'dosenList', 'kategoriList', 'dosenSuratList', 'tpaSuratList'));
     }
 
     /**
@@ -119,7 +139,9 @@ class SuratDosenController extends Controller
         $this->authorize('kelola-data-dosen.create');
 
         $dosenList = Dosen::orderBy('nama_lengkap', 'asc')->get();
+        $tpaList = TenagaPendukungAkademik::orderBy('nama_lengkap', 'asc')->get();
         $selectedDosenId = $request->query('dosen_id');
+        $selectedTpaId = $request->query('tpa_id');
 
         $kategoriList = [
             'Pengajaran',
@@ -130,7 +152,7 @@ class SuratDosenController extends Controller
             'Lainnya',
         ];
 
-        return view('manajemen-dosen.surat.create', compact('dosenList', 'selectedDosenId', 'kategoriList'));
+        return view('manajemen-dosen.surat.create', compact('dosenList', 'tpaList', 'selectedDosenId', 'selectedTpaId', 'kategoriList'));
     }
 
     /**
@@ -141,8 +163,10 @@ class SuratDosenController extends Controller
         $this->authorize('kelola-data-dosen.create');
 
         $request->validate([
-            'dosen_ids' => 'required|array|min:1',
+            'dosen_ids' => 'required_without:tpa_ids|array',
             'dosen_ids.*' => 'exists:dosen,id',
+            'tpa_ids' => 'required_without:dosen_ids|array',
+            'tpa_ids.*' => 'exists:tenaga_pendukung_akademik,id',
             'jenis_surat' => 'required|in:Surat Tugas,Surat Keputusan',
             'nomor_surat' => 'required|string|max:100',
             'judul_surat' => 'required|string|max:255',
@@ -153,8 +177,8 @@ class SuratDosenController extends Controller
             'file_surat' => 'required|file|mimes:pdf,doc,docx|max:10240',
             'keterangan' => 'nullable|string',
         ], [
-            'dosen_ids.required' => 'Dosen penerima wajib dipilih (minimal 1 dosen)!',
-            'dosen_ids.min' => 'Dosen penerima wajib dipilih (minimal 1 dosen)!',
+            'dosen_ids.required_without' => 'Penerima Surat wajib dipilih (minimal 1 Dosen atau TPA)!',
+            'tpa_ids.required_without' => 'Penerima Surat wajib dipilih (minimal 1 Dosen atau TPA)!',
             'jenis_surat.required' => 'Jenis Surat wajib dipilih!',
             'nomor_surat.required' => 'Nomor Surat wajib diisi!',
             'judul_surat.required' => 'Judul / Perihal Surat wajib diisi!',
@@ -174,7 +198,7 @@ class SuratDosenController extends Controller
             $kategoriVal = trim($request->kategori_lainnya);
         }
 
-        $primaryDosenId = $request->dosen_ids[0] ?? null;
+        $primaryDosenId = $request->filled('dosen_ids') ? $request->dosen_ids[0] : null;
 
         $surat = SuratDosen::create([
             'dosen_id' => $primaryDosenId,
@@ -192,14 +216,28 @@ class SuratDosenController extends Controller
         // Sync multiple dosen recipients in pivot table with optional jabatan
         $syncData = [];
         $jabatans = $request->input('jabatan', []);
-        foreach ($request->dosen_ids as $dosenId) {
-            $syncData[$dosenId] = [
-                'jabatan' => isset($jabatans[$dosenId]) ? trim($jabatans[$dosenId]) : null
-            ];
+        if ($request->filled('dosen_ids')) {
+            foreach ($request->dosen_ids as $dosenId) {
+                $syncData[$dosenId] = [
+                    'jabatan' => isset($jabatans[$dosenId]) ? trim($jabatans[$dosenId]) : null
+                ];
+            }
         }
         $surat->dosenList()->sync($syncData);
 
-        \App\Models\Notification::sendToAll('Informasi Baru', "Surat Dosen baru: {$surat->jenis_surat} nomor {$surat->nomor_surat} telah diterbitkan", route('manajemen-dosen.surat.show', $surat->id));
+        // Sync multiple TPA recipients in pivot table with optional jabatan
+        $syncDataTpa = [];
+        $jabatansTpa = $request->input('jabatan_tpa', []);
+        if ($request->filled('tpa_ids')) {
+            foreach ($request->tpa_ids as $tpaId) {
+                $syncDataTpa[$tpaId] = [
+                    'jabatan' => isset($jabatansTpa[$tpaId]) ? trim($jabatansTpa[$tpaId]) : null
+                ];
+            }
+        }
+        $surat->tpaList()->sync($syncDataTpa);
+
+        \App\Models\Notification::sendToAll('Informasi Baru', "Surat Tugas/SK baru: {$surat->jenis_surat} nomor {$surat->nomor_surat} telah diterbitkan", route('manajemen-dosen.surat.show', $surat->id));
 
         return redirect()
             ->route('manajemen-dosen.surat.index')
@@ -213,7 +251,7 @@ class SuratDosenController extends Controller
     {
         $this->authorize('kelola-data-dosen.view');
 
-        $surat = SuratDosen::with(['dosen.prodi', 'dosenList.prodi'])->findOrFail($id);
+        $surat = SuratDosen::with(['dosenList.prodi', 'tpaList'])->findOrFail($id);
 
         return view('manajemen-dosen.surat.show', compact('surat'));
     }
@@ -225,8 +263,9 @@ class SuratDosenController extends Controller
     {
         $this->authorize('kelola-data-dosen.edit');
 
-        $surat = SuratDosen::with('dosenList')->findOrFail($id);
+        $surat = SuratDosen::with(['dosenList', 'tpaList'])->findOrFail($id);
         $dosenList = Dosen::orderBy('nama_lengkap', 'asc')->get();
+        $tpaList = TenagaPendukungAkademik::orderBy('nama_lengkap', 'asc')->get();
 
         $kategoriList = [
             'Pengajaran',
@@ -237,7 +276,7 @@ class SuratDosenController extends Controller
             'Lainnya',
         ];
 
-        return view('manajemen-dosen.surat.edit', compact('surat', 'dosenList', 'kategoriList'));
+        return view('manajemen-dosen.surat.edit', compact('surat', 'dosenList', 'tpaList', 'kategoriList'));
     }
 
     /**
@@ -250,8 +289,10 @@ class SuratDosenController extends Controller
         $surat = SuratDosen::findOrFail($id);
 
         $request->validate([
-            'dosen_ids' => 'required|array|min:1',
+            'dosen_ids' => 'required_without:tpa_ids|array',
             'dosen_ids.*' => 'exists:dosen,id',
+            'tpa_ids' => 'required_without:dosen_ids|array',
+            'tpa_ids.*' => 'exists:tenaga_pendukung_akademik,id',
             'jenis_surat' => 'required|in:Surat Tugas,Surat Keputusan',
             'nomor_surat' => 'required|string|max:100',
             'judul_surat' => 'required|string|max:255',
@@ -262,8 +303,8 @@ class SuratDosenController extends Controller
             'file_surat' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
             'keterangan' => 'nullable|string',
         ], [
-            'dosen_ids.required' => 'Dosen penerima wajib dipilih (minimal 1 dosen)!',
-            'dosen_ids.min' => 'Dosen penerima wajib dipilih (minimal 1 dosen)!',
+            'dosen_ids.required_without' => 'Penerima Surat wajib dipilih (minimal 1 Dosen atau TPA)!',
+            'tpa_ids.required_without' => 'Penerima Surat wajib dipilih (minimal 1 Dosen atau TPA)!',
             'jenis_surat.required' => 'Jenis Surat wajib dipilih!',
             'nomor_surat.required' => 'Nomor Surat wajib diisi!',
             'judul_surat.required' => 'Judul / Perihal Surat wajib diisi!',
@@ -286,7 +327,7 @@ class SuratDosenController extends Controller
             $kategoriVal = trim($request->kategori_lainnya);
         }
 
-        $primaryDosenId = $request->dosen_ids[0] ?? null;
+        $primaryDosenId = $request->filled('dosen_ids') ? $request->dosen_ids[0] : null;
 
         $surat->update([
             'dosen_id' => $primaryDosenId,
@@ -304,12 +345,26 @@ class SuratDosenController extends Controller
         // Sync multiple dosen recipients in pivot table with optional jabatan
         $syncData = [];
         $jabatans = $request->input('jabatan', []);
-        foreach ($request->dosen_ids as $dosenId) {
-            $syncData[$dosenId] = [
-                'jabatan' => isset($jabatans[$dosenId]) ? trim($jabatans[$dosenId]) : null
-            ];
+        if ($request->filled('dosen_ids')) {
+            foreach ($request->dosen_ids as $dosenId) {
+                $syncData[$dosenId] = [
+                    'jabatan' => isset($jabatans[$dosenId]) ? trim($jabatans[$dosenId]) : null
+                ];
+            }
         }
         $surat->dosenList()->sync($syncData);
+
+        // Sync multiple TPA recipients in pivot table with optional jabatan
+        $syncDataTpa = [];
+        $jabatansTpa = $request->input('jabatan_tpa', []);
+        if ($request->filled('tpa_ids')) {
+            foreach ($request->tpa_ids as $tpaId) {
+                $syncDataTpa[$tpaId] = [
+                    'jabatan' => isset($jabatansTpa[$tpaId]) ? trim($jabatansTpa[$tpaId]) : null
+                ];
+            }
+        }
+        $surat->tpaList()->sync($syncDataTpa);
 
         \App\Models\Notification::sendToAll('Perubahan Data', "Data {$surat->jenis_surat} nomor {$surat->nomor_surat} telah diperbarui", route('manajemen-dosen.surat.show', $surat->id));
 
