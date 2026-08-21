@@ -436,6 +436,14 @@
                                     </a>
                                 </li>
                             @endcan
+                            @can('pengaturan-notifikasi.view')
+                                <li>
+                                    <a href="{{ route('pengaturan.notifikasi') }}"
+                                        class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('pengaturan.notifikasi') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
+                                        Pengaturan Notifikasi
+                                    </a>
+                                </li>
+                            @endcan
                             <!-- Add more dropdown items here -->
                         </ul>
                     </div>

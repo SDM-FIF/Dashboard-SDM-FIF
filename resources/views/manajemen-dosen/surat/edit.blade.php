@@ -123,6 +123,24 @@
                         @error('dosen_ids')
                         <p class="text-red-500 text-xs mt-1 font-medium">{{ $message }}</p>
                         @enderror
+
+                        {{-- Container for dynamic lecturer positions (jabatan) --}}
+                        <div id="dosen-jabatan-container" class="mt-4 space-y-3">
+                            @if(count($surat->dosenList) > 0)
+                                <div class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Jabatan / Kedudukan Dosen (Opsional)</div>
+                                @foreach($surat->dosenList as $d)
+                                    <div class="flex flex-col sm:flex-row sm:items-center gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                                        <div class="sm:w-1/2 text-xs font-semibold text-gray-700 truncate">
+                                            {{ $d->nama_lengkap }} (NIP: {{ $d->nip ?? '-' }} | Kode: {{ $d->kode_dosen ?? '-' }})
+                                        </div>
+                                        <div class="sm:w-1/2">
+                                            <input type="text" name="jabatan[{{ $d->id }}]" data-dosen-id="{{ $d->id }}" value="{{ old('jabatan.' . $d->id, $d->pivot->jabatan) }}" placeholder="Contoh: Ketua, Anggota, Tim Reviewer, dll."
+                                                class="w-full h-8 px-3 border border-gray-200 rounded-lg text-xs bg-white focus:ring-1 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
+                                        </div>
+                                    </div>
+                                @endforeach
+                            @endif
+                        </div>
                     </div>
 
                     {{-- Jenis Surat --}}
@@ -287,6 +305,45 @@
                 allowClear: true,
                 width: '100%'
             });
+
+            // Generate jabatan inputs dynamically when lecturers are selected
+            $('#dosen_ids').on('change', function() {
+                const selectedData = $(this).select2('data');
+                const container = $('#dosen-jabatan-container');
+                
+                // Save current typed values to avoid clearing them
+                const existingValues = {};
+                container.find('input').each(function() {
+                    const id = $(this).data('dosen-id');
+                    existingValues[id] = $(this).val();
+                });
+                
+                container.empty();
+                
+                if (selectedData.length > 0) {
+                    container.append('<div class="text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-2">Jabatan / Kedudukan Dosen (Opsional)</div>');
+                }
+                
+                selectedData.forEach(function(item) {
+                    const dosenId = item.id;
+                    const dosenName = item.text.trim();
+                    const val = existingValues[dosenId] || '';
+                    
+                    const row = $(`
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-2 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                            <div class="sm:w-1/2 text-xs font-semibold text-gray-700 truncate">${dosenName}</div>
+                            <div class="sm:w-1/2">
+                                <input type="text" name="jabatan[${dosenId}]" data-dosen-id="${dosenId}" value="${val}" placeholder="Contoh: Ketua, Anggota, Tim Reviewer, dll."
+                                    class="w-full h-8 px-3 border border-gray-200 rounded-lg text-xs bg-white focus:ring-1 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none">
+                            </div>
+                        </div>
+                    `);
+                    container.append(row);
+                });
+            });
+
+            // Trigger change on load to initialize/synchronize loaded values
+            $('#dosen_ids').trigger('change');
 
             function checkKategori() {
                 const val = $('#kategori').val();

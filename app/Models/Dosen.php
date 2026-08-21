@@ -98,6 +98,8 @@ class Dosen extends Model
 
     public function suratDosen()
     {
-        return $this->belongsToMany(SuratDosen::class, 'dosen_surat', 'dosen_id', 'surat_dosen_id');
+        return $this->belongsToMany(SuratDosen::class, 'dosen_surat', 'dosen_id', 'surat_dosen_id')
+                    ->withPivot('jabatan')
+                    ->withTimestamps();
     }
 }

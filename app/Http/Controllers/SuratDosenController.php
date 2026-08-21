@@ -79,6 +79,26 @@ class SuratDosenController extends Controller
         $suratList = $query->paginate(10)->appends($request->query());
         $dosenList = Dosen::orderBy('nama_lengkap', 'asc')->get();
 
+        // Query for the new lecturers and their letters tab
+        $dosenQuery = Dosen::has('suratDosen')->with(['suratDosen', 'prodi']);
+        
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $dosenQuery->where(function($q) use ($search) {
+                $q->where('nama_lengkap', 'like', '%' . $search . '%')
+                  ->orWhere('nip', 'like', '%' . $search . '%')
+                  ->orWhere('kode_dosen', 'like', '%' . $search . '%');
+            });
+        }
+        
+        if ($request->filled('dosen_id')) {
+            $dosenQuery->where('id', $request->dosen_id);
+        }
+
+        $dosenSuratList = $dosenQuery->orderBy('nama_lengkap', 'asc')
+            ->paginate(10, ['*'], 'page_dosen')
+            ->appends($request->query());
+
         $kategoriList = [
             'Pengajaran',
             'Penelitian',
@@ -88,7 +108,7 @@ class SuratDosenController extends Controller
             'Lainnya',
         ];
 
-        return view('manajemen-dosen.surat.index', compact('suratList', 'dosenList', 'kategoriList'));
+        return view('manajemen-dosen.surat.index', compact('suratList', 'dosenList', 'kategoriList', 'dosenSuratList'));
     }
 
     /**
@@ -169,8 +189,15 @@ class SuratDosenController extends Controller
             'keterangan' => $request->keterangan,
         ]);
 
-        // Sync multiple dosen recipients in pivot table
-        $surat->dosenList()->sync($request->dosen_ids);
+        // Sync multiple dosen recipients in pivot table with optional jabatan
+        $syncData = [];
+        $jabatans = $request->input('jabatan', []);
+        foreach ($request->dosen_ids as $dosenId) {
+            $syncData[$dosenId] = [
+                'jabatan' => isset($jabatans[$dosenId]) ? trim($jabatans[$dosenId]) : null
+            ];
+        }
+        $surat->dosenList()->sync($syncData);
 
         \App\Models\Notification::sendToAll('Informasi Baru', "Surat Dosen baru: {$surat->jenis_surat} nomor {$surat->nomor_surat} telah diterbitkan", route('manajemen-dosen.surat.show', $surat->id));
 
@@ -274,8 +301,15 @@ class SuratDosenController extends Controller
             'keterangan' => $request->keterangan,
         ]);
 
-        // Sync multiple dosen recipients in pivot table
-        $surat->dosenList()->sync($request->dosen_ids);
+        // Sync multiple dosen recipients in pivot table with optional jabatan
+        $syncData = [];
+        $jabatans = $request->input('jabatan', []);
+        foreach ($request->dosen_ids as $dosenId) {
+            $syncData[$dosenId] = [
+                'jabatan' => isset($jabatans[$dosenId]) ? trim($jabatans[$dosenId]) : null
+            ];
+        }
+        $surat->dosenList()->sync($syncData);
 
         \App\Models\Notification::sendToAll('Perubahan Data', "Data {$surat->jenis_surat} nomor {$surat->nomor_surat} telah diperbarui", route('manajemen-dosen.surat.show', $surat->id));
 

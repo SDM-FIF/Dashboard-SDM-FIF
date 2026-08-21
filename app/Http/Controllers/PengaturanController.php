@@ -217,6 +217,7 @@ class PengaturanController extends Controller
             'Pengaturan' => [
                 'konfigurasi-sistem' => 'Konfigurasi Sistem',
                 'user-management' => 'User Management',
+                'pengaturan-notifikasi' => 'Pengaturan Notifikasi',
             ]
         ];
         
@@ -657,6 +658,37 @@ class PengaturanController extends Controller
         $pdf->setPaper('a4', 'landscape');
         
         return $pdf->download($fileName);
+    }
+
+    /**
+     * Show notification settings page
+     */
+    public function notifikasi()
+    {
+        $settings = \App\Models\PengaturanNotifikasi::all()->pluck('is_enabled', 'fitur')->toArray();
+        return view('pengaturan.notifikasi', compact('settings'));
+    }
+
+    /**
+     * Update notification settings
+     */
+    public function updateNotifikasi(Request $request)
+    {
+        $features = ['dosen', 'tpa', 'rekrutasi', 'mahasiswa', 'master'];
+        $actions = ['create', 'update', 'delete'];
+
+        foreach ($features as $fitur) {
+            foreach ($actions as $action) {
+                $key = "{$fitur}_{$action}";
+                \App\Models\PengaturanNotifikasi::updateOrCreate(
+                    ['fitur' => $key],
+                    ['is_enabled' => $request->has($key)]
+                );
+            }
+        }
+
+        return redirect()->route('pengaturan.notifikasi')
+            ->with('success', 'Pengaturan notifikasi berhasil diperbarui!');
     }
 }
 

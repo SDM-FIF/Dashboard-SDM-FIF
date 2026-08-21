@@ -14,6 +14,22 @@
         body {
             font-family: 'Outfit', sans-serif;
         }
+        /* Custom sleek scrollbar for lecturer letters list */
+        .surat-scroll::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        .surat-scroll::-webkit-scrollbar-track {
+            background: #F1F5F9;
+            border-radius: 8px;
+        }
+        .surat-scroll::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 8px;
+        }
+        .surat-scroll::-webkit-scrollbar-thumb:hover {
+            background: #94A3B8;
+        }
     </style>
 </head>
 
@@ -136,6 +152,23 @@
             </form>
         </div>
 
+        @php
+            $activeTab = request('tab', 'dokumen');
+        @endphp
+
+        {{-- Navigation Tabs --}}
+        <div class="flex items-center gap-2 mb-6 border-b border-gray-200">
+            <button onclick="switchTab('dokumen')"
+                class="px-5 py-3 border-b-2 font-bold text-sm transition-all duration-200 focus:outline-none {{ $activeTab === 'dokumen' ? 'border-[#C41E3A] text-[#C41E3A]' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
+                <i class="fas fa-file-alt mr-2"></i> Daftar Dokumen
+            </button>
+            <button onclick="switchTab('dosen')"
+                class="px-5 py-3 border-b-2 font-bold text-sm transition-all duration-200 focus:outline-none {{ $activeTab === 'dosen' ? 'border-[#C41E3A] text-[#C41E3A]' : 'border-transparent text-gray-500 hover:text-gray-700' }}">
+                <i class="fas fa-users mr-2"></i> Daftar Dosen & Surat
+            </button>
+        </div>
+
+        @if($activeTab === 'dokumen')
         {{-- Table Section Card --}}
         <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300">
             <div class="p-6 border-b border-gray-100 flex items-center justify-between">
@@ -317,9 +350,106 @@
             </div>
             @endif
         </div>
+        @else
+        {{-- Table Section Card: Tab Daftar Dosen & Surat --}}
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300">
+            <div class="p-6 border-b border-gray-100">
+                <h2 class="text-xl font-bold text-[#C41E3A]">Daftar Dosen & Surat</h2>
+                <p class="text-xs text-gray-500 mt-0.5">Menampilkan total {{ $dosenSuratList->total() }} dosen penerima surat</p>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full w-full border-collapse">
+                    <thead>
+                        <tr class="bg-[#C41E3A] text-white">
+                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider w-80">Dosen</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Surat Tugas & SK yang Diterima</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        @forelse($dosenSuratList as $d)
+                        <tr class="hover:bg-slate-50 transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap align-top">
+                                <div class="flex items-center gap-3">
+                                    @php
+                                        $words = explode(' ', $d->nama_lengkap);
+                                        $initials = '';
+                                        foreach ($words as $w) {
+                                            $initials .= strtoupper(substr($w, 0, 1));
+                                            if (strlen($initials) >= 2) break;
+                                        }
+                                    @endphp
+                                    <div class="w-10 h-10 rounded-full bg-red-50 border border-red-100 flex items-center justify-center text-[#C41E3A] font-bold text-sm">
+                                        {{ $initials ?: 'D' }}
+                                    </div>
+                                    <div>
+                                        <a href="{{ route('manajemen-dosen.show', $d->id) }}" class="text-sm font-bold text-gray-800 hover:text-[#C41E3A] transition-colors">
+                                            {{ $d->nama_lengkap }}
+                                        </a>
+                                        <div class="text-[11px] text-gray-500 font-semibold mt-0.5">
+                                            NIP: {{ $d->nip ?? '-' }} | Kode: {{ $d->kode_dosen ?? '-' }}
+                                        </div>
+                                        <div class="text-[10px] text-gray-400 mt-0.5">
+                                            Prodi: {{ $d->prodi->nama_prodi ?? '-' }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td class="px-6 py-4 align-middle">
+                                <button class="lecturer-letters-btn inline-flex items-center gap-2 px-4 py-2.5 bg-red-50 hover:bg-[#C41E3A] text-[#C41E3A] hover:text-white font-bold rounded-xl border border-red-100 transition-all duration-200 text-xs shadow-sm hover:shadow"
+                                        data-lecturer="{{ json_encode([
+                                            'dosen_name' => $d->nama_lengkap,
+                                            'letters' => $d->suratDosen->map(function($s) {
+                                                return [
+                                                    'jenis_surat' => $s->jenis_surat,
+                                                    'nomor_surat' => $s->nomor_surat,
+                                                    'judul_surat' => $s->judul_surat,
+                                                    'tanggal_surat' => \Carbon\Carbon::parse($s->tanggal_surat)->locale('id')->translatedFormat('d F Y'),
+                                                    'berlaku_mulai' => $s->berlaku_mulai ? \Carbon\Carbon::parse($s->berlaku_mulai)->locale('id')->translatedFormat('d F Y') : null,
+                                                    'berlaku_selesai' => $s->berlaku_selesai ? \Carbon\Carbon::parse($s->berlaku_selesai)->locale('id')->translatedFormat('d F Y') : null,
+                                                    'kategori' => $s->kategori,
+                                                    'keterangan' => $s->keterangan ?? '-',
+                                                    'jabatan' => $s->pivot->jabatan ?? '-',
+                                                    'file_url' => Storage::url($s->file_surat),
+                                                    'detail_url' => route('manajemen-dosen.surat.show', $s->id)
+                                                ];
+                                            })
+                                        ]) }}">
+                                    <i class="fa-solid fa-file-invoice"></i>
+                                    <span>Lihat Daftar Surat ({{ $d->suratDosen->count() }})</span>
+                                </button>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr>
+                            <td colspan="2" class="px-6 py-12 text-center text-gray-400">
+                                <i class="fas fa-folder-open text-4xl mb-3"></i>
+                                <p class="text-sm font-semibold">Belum ada dosen dengan Surat Tugas atau SK.</p>
+                            </td>
+                        </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            {{-- Pagination Footer --}}
+            @if($dosenSuratList->hasPages())
+            <div class="px-6 py-4 border-t border-gray-100 bg-[#F8FAFC]">
+                {{ $dosenSuratList->links() }}
+            </div>
+            @endif
+        </div>
+        @endif
     </main>
 
     <script>
+        function switchTab(tab) {
+            const url = new URL(window.location.href);
+            url.searchParams.set('tab', tab);
+            window.location.href = url.toString();
+        }
+
         function toggleExportDropdown(e) {
             if (e) e.stopPropagation();
             const dropdown = document.getElementById('exportDropdown');
@@ -346,6 +476,83 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     document.getElementById(`delete-form-${id}`).submit();
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.lecturer-letters-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    const dataStr = this.getAttribute('data-lecturer');
+                    if (dataStr) {
+                        try {
+                            const data = JSON.parse(dataStr);
+                            showLecturerLettersModal(data);
+                        } catch (e) {
+                            console.error('Error parsing data-lecturer:', e);
+                        }
+                    }
+                });
+            });
+        });
+
+        function showLecturerLettersModal(data) {
+            let listHTML = '';
+            if (data.letters.length === 0) {
+                listHTML = '<div class="text-center text-xs text-gray-400 py-6">Belum ada surat yang diterbitkan.</div>';
+            } else {
+                listHTML = `
+                    <div class="overflow-x-auto max-h-[350px] overflow-y-auto pr-1 surat-scroll mt-2 border border-slate-100 rounded-xl text-left">
+                        <table class="w-full text-left border-collapse text-xs table-fixed">
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-slate-150 sticky top-0 z-10 text-gray-500 font-bold uppercase tracking-wider text-[10px]">
+                                    <th class="px-2 py-3 text-center w-2/12" style="width: 12%;">Jenis</th>
+                                    <th class="px-4 py-3 text-left w-5/12" style="width: 38%;">Judul & Nomor Surat</th>
+                                    <th class="px-4 py-3 text-left w-3/12" style="width: 25%;">Jabatan / Kedudukan</th>
+                                    <th class="px-4 py-3 text-center w-3/12" style="width: 25%;">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                ${data.letters.map(s => `
+                                    <tr class="hover:bg-slate-50/50 transition-colors">
+                                        <td class="px-2 py-3 text-center align-middle" style="width: 12%;">
+                                            <span class="inline-flex items-center justify-center w-9 h-5 rounded text-[9px] font-bold ${s.jenis_surat === 'Surat Tugas' ? 'bg-blue-50 text-blue-600 border border-blue-100' : 'bg-purple-50 text-purple-600 border border-purple-100'}">
+                                                ${s.jenis_surat === 'Surat Tugas' ? 'ST' : 'SK'}
+                                            </span>
+                                        </td>
+                                        <td class="px-4 py-3 align-middle whitespace-normal break-words" style="width: 38%;">
+                                            <div class="font-bold text-slate-800 leading-snug">${s.judul_surat}</div>
+                                            <div class="text-[10px] text-gray-400 mt-1 font-medium font-mono">No: ${s.nomor_surat} | Tgl: ${s.tanggal_surat}</div>
+                                        </td>
+                                        <td class="px-4 py-3 align-middle whitespace-normal break-words" style="width: 25%;">
+                                            <span class="font-bold text-[#C41E3A] text-[11px]">${s.jabatan !== '-' ? s.jabatan : '<span class="text-gray-400 font-normal italic">-</span>'}</span>
+                                        </td>
+                                        <td class="px-4 py-3 text-center align-middle" style="width: 25%;">
+                                            <div class="flex items-center justify-center gap-1.5">
+                                                <a href="${s.detail_url}" class="inline-flex items-center justify-center w-14 h-7 bg-red-50 hover:bg-[#C41E3A] text-[#C41E3A] hover:text-white rounded-lg text-[10px] font-bold border border-red-100 transition-colors">
+                                                    Detail
+                                                </a>
+                                                <a href="${s.file_url}" target="_blank" class="inline-flex items-center justify-center w-14 h-7 bg-emerald-50 hover:bg-emerald-600 text-emerald-600 hover:text-white rounded-lg text-[10px] font-bold border border-emerald-100 transition-colors">
+                                                    Unduh
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+
+            Swal.fire({
+                title: `<span class="text-slate-800 font-bold text-base md:text-lg">Surat Tugas & SK: ${data.dosen_name}</span>`,
+                html: listHTML,
+                confirmButtonColor: '#C41E3A',
+                confirmButtonText: 'Tutup',
+                customClass: {
+                    popup: 'rounded-2xl w-full max-w-3xl p-4 md:p-6',
+                    confirmButton: 'text-xs px-4 py-2.5 rounded-xl font-bold focus:ring-0 border-0 shadow-sm'
                 }
             });
         }

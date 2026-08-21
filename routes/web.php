@@ -971,6 +971,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/pengaturan', [App\Http\Controllers\PengaturanController::class, 'index'])
         ->name('pengaturan')
         ->middleware('permission:konfigurasi-sistem.view');
+    Route::get('/pengaturan/notifikasi', [App\Http\Controllers\PengaturanController::class, 'notifikasi'])
+        ->name('pengaturan.notifikasi')
+        ->middleware('permission:pengaturan-notifikasi.view');
+    Route::put('/pengaturan/notifikasi', [App\Http\Controllers\PengaturanController::class, 'updateNotifikasi'])
+        ->name('pengaturan.notifikasi.update')
+        ->middleware('permission:pengaturan-notifikasi.edit');
     Route::post('/pengaturan/role', [App\Http\Controllers\PengaturanController::class, 'storeRole'])
         ->name('pengaturan.role.store')
         ->middleware('permission:konfigurasi-sistem.create');

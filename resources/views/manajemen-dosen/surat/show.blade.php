@@ -84,6 +84,13 @@
                             </a>
                             <span class="text-xs text-gray-500">NIP: {{ $d->nip ?? '-' }} | Kode: {{ $d->kode_dosen ?? '-' }}</span>
                             <span class="text-xs text-gray-500">Prodi: {{ $d->prodi->nama_prodi ?? '-' }}</span>
+                            @if(isset($d->pivot->jabatan) && $d->pivot->jabatan)
+                            <div class="mt-1 flex items-center gap-1.5">
+                                <span class="px-2 py-0.5 bg-red-50 text-[10px] font-bold text-[#C41E3A] rounded border border-red-100 inline-block w-fit">
+                                    {{ $d->pivot->jabatan }}
+                                </span>
+                            </div>
+                            @endif
                         </div>
                         @empty
                         <span class="text-sm text-gray-500">-</span>
