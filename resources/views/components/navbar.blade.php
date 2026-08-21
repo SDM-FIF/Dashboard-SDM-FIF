@@ -444,6 +444,14 @@
                                     </a>
                                 </li>
                             @endcan
+                            @can('pengaturan-periode.view')
+                                <li>
+                                    <a href="{{ route('pengaturan.periode') }}"
+                                        class="block px-12 py-3 text-sm font-medium hover:bg-red-600 transition-colors duration-200 {{ request()->routeIs('pengaturan.periode') ? 'bg-red-600 text-white border-r-4 border-yellow-400' : 'text-red-100' }}">
+                                        Pengaturan Periode CRUD
+                                    </a>
+                                </li>
+                            @endcan
                             <!-- Add more dropdown items here -->
                         </ul>
                     </div>

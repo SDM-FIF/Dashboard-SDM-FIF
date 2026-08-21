@@ -690,5 +690,40 @@ class PengaturanController extends Controller
         return redirect()->route('pengaturan.notifikasi')
             ->with('success', 'Pengaturan notifikasi berhasil diperbarui!');
     }
+
+    /**
+     * Show CRUD period settings page
+     */
+    public function periode()
+    {
+        $settings = \App\Models\PengaturanPeriodeCrud::all();
+        return view('pengaturan.periode', compact('settings'));
+    }
+
+    /**
+     * Update CRUD period settings
+     */
+    public function updatePeriode(Request $request)
+    {
+        $features = ['dosen', 'tpa', 'rekrutasi', 'mahasiswa', 'master', 'surat'];
+
+        foreach ($features as $fitur) {
+            $mode = $request->input("mode_{$fitur}", 'selalu');
+            $start = $request->input("start_{$fitur}");
+            $end = $request->input("end_{$fitur}");
+
+            \App\Models\PengaturanPeriodeCrud::updateOrCreate(
+                ['fitur' => $fitur],
+                [
+                    'mode' => $mode,
+                    'tanggal_mulai' => $mode === 'rentang_tanggal' ? $start : null,
+                    'tanggal_selesai' => $mode === 'rentang_tanggal' ? $end : null,
+                ]
+            );
+        }
+
+        return redirect()->route('pengaturan.periode')
+            ->with('success', 'Pengaturan periode CRUD berhasil diperbarui!');
+    }
 }
 

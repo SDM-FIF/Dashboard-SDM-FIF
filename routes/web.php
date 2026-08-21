@@ -526,7 +526,7 @@ Route::middleware('auth')->group(function () {
             Route::get('fakultas/export-excel', [FakultasController::class, 'exportExcel'])->name('fakultas.export-excel');
             Route::get('fakultas/export-pdf', [FakultasController::class, 'exportPdf'])->name('fakultas.export-pdf');
 
-            Route::middleware('can:master-data-fakultas.edit')->group(function () {
+            Route::middleware(['can:master-data-fakultas.edit', 'check.crud:master'])->group(function () {
                 Route::get('fakultas/create', [FakultasController::class, 'create'])->name('fakultas.create');
                 Route::post('fakultas', [FakultasController::class, 'store'])->name('fakultas.store');
                 Route::get('fakultas/{fakultas}/edit', [FakultasController::class, 'edit'])->name('fakultas.edit');
@@ -541,17 +541,17 @@ Route::middleware('auth')->group(function () {
             Route::get('prodi/export-excel', [ProdiController::class, 'exportExcel'])->name('prodi.export-excel');
             Route::get('prodi/export-pdf', [ProdiController::class, 'exportPdf'])->name('prodi.export-pdf');
 
-            Route::middleware('can:master-data-prodi.create')->group(function () {
+            Route::middleware(['can:master-data-prodi.create', 'check.crud:master'])->group(function () {
                 Route::get('prodi/create', [ProdiController::class, 'create'])->name('prodi.create');
                 Route::post('prodi', [ProdiController::class, 'store'])->name('prodi.store');
             });
 
-            Route::middleware('can:master-data-prodi.edit')->group(function () {
+            Route::middleware(['can:master-data-prodi.edit', 'check.crud:master'])->group(function () {
                 Route::get('prodi/{prodi}/edit', [ProdiController::class, 'edit'])->name('prodi.edit');
                 Route::put('prodi/{prodi}', [ProdiController::class, 'update'])->name('prodi.update');
             });
 
-            Route::middleware('can:master-data-prodi.delete')->group(function () {
+            Route::middleware(['can:master-data-prodi.delete', 'check.crud:master'])->group(function () {
                 Route::delete('prodi/{prodi}', [ProdiController::class, 'destroy'])->name('prodi.destroy');
             });
         });
@@ -563,17 +563,17 @@ Route::middleware('auth')->group(function () {
             Route::get('kompetisi/export-pdf', [KompetisiController::class, 'exportPdf'])->name('kompetisi.export-pdf');
             Route::get('kompetisi/{kompetisi}', [KompetisiController::class, 'show'])->name('kompetisi.show');
 
-            Route::middleware('can:master-data-kompetisi.create')->group(function () {
+            Route::middleware(['can:master-data-kompetisi.create', 'check.crud:master'])->group(function () {
                 Route::get('kompetisi/create', [KompetisiController::class, 'create'])->name('kompetisi.create');
                 Route::post('kompetisi', [KompetisiController::class, 'store'])->name('kompetisi.store');
             });
 
-            Route::middleware('can:master-data-kompetisi.edit')->group(function () {
+            Route::middleware(['can:master-data-kompetisi.edit', 'check.crud:master'])->group(function () {
                 Route::get('kompetisi/{kompetisi}/edit', [KompetisiController::class, 'edit'])->name('kompetisi.edit');
                 Route::put('kompetisi/{kompetisi}', [KompetisiController::class, 'update'])->name('kompetisi.update');
             });
 
-            Route::middleware('can:master-data-kompetisi.delete')->group(function () {
+            Route::middleware(['can:master-data-kompetisi.delete', 'check.crud:master'])->group(function () {
                 Route::delete('kompetisi/{kompetisi}', [KompetisiController::class, 'destroy'])->name('kompetisi.destroy');
             });
         });
@@ -584,17 +584,17 @@ Route::middleware('auth')->group(function () {
             Route::get('tahun-ajar/export-excel', [TahunAjarController::class, 'exportExcel'])->name('tahun-ajar.export-excel');
             Route::get('tahun-ajar/export-pdf', [TahunAjarController::class, 'exportPdf'])->name('tahun-ajar.export-pdf');
 
-            Route::middleware('can:master-data-tahun-ajar.create')->group(function () {
+            Route::middleware(['can:master-data-tahun-ajar.create', 'check.crud:master'])->group(function () {
                 Route::get('tahun-ajar/create', [TahunAjarController::class, 'create'])->name('tahun-ajar.create');
                 Route::post('tahun-ajar', [TahunAjarController::class, 'store'])->name('tahun-ajar.store');
             });
 
-            Route::middleware('can:master-data-tahun-ajar.edit')->group(function () {
+            Route::middleware(['can:master-data-tahun-ajar.edit', 'check.crud:master'])->group(function () {
                 Route::get('tahun-ajar/{tahun_ajar}/edit', [TahunAjarController::class, 'edit'])->name('tahun-ajar.edit');
                 Route::put('tahun-ajar/{tahun_ajar}', [TahunAjarController::class, 'update'])->name('tahun-ajar.update');
             });
 
-            Route::middleware('can:master-data-tahun-ajar.delete')->group(function () {
+            Route::middleware(['can:master-data-tahun-ajar.delete', 'check.crud:master'])->group(function () {
                 Route::delete('tahun-ajar/{tahun_ajar}', [TahunAjarController::class, 'destroy'])->name('tahun-ajar.destroy');
             });
         });
@@ -605,17 +605,17 @@ Route::middleware('auth')->group(function () {
             Route::get('kelompok-keahlian/export-excel', [KelompokKeahlianController::class, 'exportExcel'])->name('kelompok-keahlian.export-excel');
             Route::get('kelompok-keahlian/export-pdf', [KelompokKeahlianController::class, 'exportPdf'])->name('kelompok-keahlian.export-pdf');
 
-            Route::middleware('can:master-data-kelompok-keahlian.create')->group(function () {
+            Route::middleware(['can:master-data-kelompok-keahlian.create', 'check.crud:master'])->group(function () {
                 Route::get('kelompok-keahlian/create', [KelompokKeahlianController::class, 'create'])->name('kelompok-keahlian.create');
                 Route::post('kelompok-keahlian', [KelompokKeahlianController::class, 'store'])->name('kelompok-keahlian.store');
             });
 
-            Route::middleware('can:master-data-kelompok-keahlian.edit')->group(function () {
+            Route::middleware(['can:master-data-kelompok-keahlian.edit', 'check.crud:master'])->group(function () {
                 Route::get('kelompok-keahlian/{kelompok_keahlian}/edit', [KelompokKeahlianController::class, 'edit'])->name('kelompok-keahlian.edit');
                 Route::put('kelompok-keahlian/{kelompok_keahlian}', [KelompokKeahlianController::class, 'update'])->name('kelompok-keahlian.update');
             });
 
-            Route::middleware('can:master-data-kelompok-keahlian.delete')->group(function () {
+            Route::middleware(['can:master-data-kelompok-keahlian.delete', 'check.crud:master'])->group(function () {
                 Route::delete('kelompok-keahlian/{kelompok_keahlian}', [KelompokKeahlianController::class, 'destroy'])->name('kelompok-keahlian.destroy');
             });
         });
@@ -632,7 +632,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/export', [DosenController::class, 'exportExcel'])->name('export'); // Backward compatibility
 
         // Import Routes (Protected - Super Admin only)
-        Route::middleware('can:import-data-dosen.view')->group(function () {
+        Route::middleware(['can:import-data-dosen.view', 'check.crud:dosen'])->group(function () {
             Route::get('/import', [DosenController::class, 'importView'])->name('import.view');
             Route::get('/import/template', [DosenController::class, 'downloadTemplate'])->name('import.template');
             Route::post('/import/upload', [DosenController::class, 'uploadImport'])->name('import.upload');
@@ -651,24 +651,24 @@ Route::middleware('auth')->group(function () {
         Route::prefix('surat')->name('surat.')->group(function () {
             Route::get('/dashboard', [SuratDosenController::class, 'dashboard'])->name('dashboard');
             Route::get('/', [SuratDosenController::class, 'index'])->name('index');
-            Route::get('/create', [SuratDosenController::class, 'create'])->name('create')->middleware('can:kelola-data-dosen.create');
-            Route::post('/', [SuratDosenController::class, 'store'])->name('store')->middleware('can:kelola-data-dosen.create');
+            Route::get('/create', [SuratDosenController::class, 'create'])->name('create')->middleware(['can:kelola-data-dosen.create', 'check.crud:surat']);
+            Route::post('/', [SuratDosenController::class, 'store'])->name('store')->middleware(['can:kelola-data-dosen.create', 'check.crud:surat']);
             Route::get('/export-excel', [SuratDosenController::class, 'exportExcel'])->name('export-excel');
             Route::get('/export-pdf', [SuratDosenController::class, 'exportPdf'])->name('export-pdf');
             Route::get('/{id}', [SuratDosenController::class, 'show'])->name('show');
-            Route::get('/{id}/edit', [SuratDosenController::class, 'edit'])->name('edit')->middleware('can:kelola-data-dosen.edit');
-            Route::put('/{id}', [SuratDosenController::class, 'update'])->name('update')->middleware('can:kelola-data-dosen.edit');
-            Route::delete('/{id}', [SuratDosenController::class, 'destroy'])->name('destroy')->middleware('can:kelola-data-dosen.delete');
+            Route::get('/{id}/edit', [SuratDosenController::class, 'edit'])->name('edit')->middleware(['can:kelola-data-dosen.edit', 'check.crud:surat']);
+            Route::put('/{id}', [SuratDosenController::class, 'update'])->name('update')->middleware(['can:kelola-data-dosen.edit', 'check.crud:surat']);
+            Route::delete('/{id}', [SuratDosenController::class, 'destroy'])->name('destroy')->middleware(['can:kelola-data-dosen.delete', 'check.crud:surat']);
             Route::get('/{id}/download', [SuratDosenController::class, 'download'])->name('download');
         });
 
         // CRUD Routes with specific permissions
-        Route::get('/create', [DosenController::class, 'create'])->name('create')->middleware('can:kelola-data-dosen.create');
-        Route::post('/store', [DosenController::class, 'store'])->name('store')->middleware('can:kelola-data-dosen.create');
+        Route::get('/create', [DosenController::class, 'create'])->name('create')->middleware(['can:kelola-data-dosen.create', 'check.crud:dosen']);
+        Route::post('/store', [DosenController::class, 'store'])->name('store')->middleware(['can:kelola-data-dosen.create', 'check.crud:dosen']);
         Route::get('/{dosen}', [DosenController::class, 'show'])->name('show')->middleware('can:kelola-data-dosen.detail');
-        Route::get('/{dosen}/edit', [DosenController::class, 'edit'])->name('edit')->middleware('can:kelola-data-dosen.edit');
-        Route::put('/{dosen}', [DosenController::class, 'update'])->name('update')->middleware('can:kelola-data-dosen.edit');
-        Route::delete('/{dosen}', [DosenController::class, 'destroy'])->name('destroy')->middleware('can:kelola-data-dosen.delete');
+        Route::get('/{dosen}/edit', [DosenController::class, 'edit'])->name('edit')->middleware(['can:kelola-data-dosen.edit', 'check.crud:dosen']);
+        Route::put('/{dosen}', [DosenController::class, 'update'])->name('update')->middleware(['can:kelola-data-dosen.edit', 'check.crud:dosen']);
+        Route::delete('/{dosen}', [DosenController::class, 'destroy'])->name('destroy')->middleware(['can:kelola-data-dosen.delete', 'check.crud:dosen']);
     });
 
     // ============================
@@ -685,21 +685,21 @@ Route::middleware('auth')->group(function () {
         Route::get('/download-template', [TenagaPendukungAkademikController::class, 'downloadTemplate'])->name('download-template');
 
         // Import Features (Protected - Super Admin only)
-        Route::middleware('can:import-data-tpa.view')->group(function () {
+        Route::middleware(['can:import-data-tpa.view', 'check.crud:tpa'])->group(function () {
             Route::get('/import-data', [TenagaPendukungAkademikController::class, 'importForm'])->name('import-data');
             Route::post('/import-process', [TenagaPendukungAkademikController::class, 'importProcess'])->name('import-process');
             Route::post('/import-store', [TenagaPendukungAkademikController::class, 'storeImport'])->name('import.store');
         });
 
         // CRUD Routes with specific permissions
-        Route::get('/create', [TenagaPendukungAkademikController::class, 'create'])->name('create')->middleware('can:kelola-data-tpa.create');
-        Route::post('/store', [TenagaPendukungAkademikController::class, 'store'])->name('store')->middleware('can:kelola-data-tpa.create');
+        Route::get('/create', [TenagaPendukungAkademikController::class, 'create'])->name('create')->middleware(['can:kelola-data-tpa.create', 'check.crud:tpa']);
+        Route::post('/store', [TenagaPendukungAkademikController::class, 'store'])->name('store')->middleware(['can:kelola-data-tpa.create', 'check.crud:tpa']);
 
         // Letakkan route dengan parameter {tpa} di paling bawah agar tidak bentrok dengan route statis
         Route::get('/{tpa}', [TenagaPendukungAkademikController::class, 'show'])->name('show')->middleware('can:kelola-data-tpa.detail');
-        Route::get('/{tpa}/edit', [TenagaPendukungAkademikController::class, 'edit'])->name('edit')->middleware('can:kelola-data-tpa.edit');
-        Route::put('/{tpa}', [TenagaPendukungAkademikController::class, 'update'])->name('update')->middleware('can:kelola-data-tpa.edit');
-        Route::delete('/{tpa}', [TenagaPendukungAkademikController::class, 'destroy'])->name('destroy')->middleware('can:kelola-data-tpa.delete');
+        Route::get('/{tpa}/edit', [TenagaPendukungAkademikController::class, 'edit'])->name('edit')->middleware(['can:kelola-data-tpa.edit', 'check.crud:tpa']);
+        Route::put('/{tpa}', [TenagaPendukungAkademikController::class, 'update'])->name('update')->middleware(['can:kelola-data-tpa.edit', 'check.crud:tpa']);
+        Route::delete('/{tpa}', [TenagaPendukungAkademikController::class, 'destroy'])->name('destroy')->middleware(['can:kelola-data-tpa.delete', 'check.crud:tpa']);
     });
     // ============================
     // Manajemen Mahasiswa Routes
@@ -708,7 +708,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('mahasiswa')->name('mahasiswa.')->middleware('can:kelola-data-mahasiswa.view')->group(function () {
 
         // --- FITUR IMPORT (Pola Multi-Step) - Super Admin Only ---
-        Route::middleware('can:import-data-mahasiswa.view')->group(function () {
+        Route::middleware(['can:import-data-mahasiswa.view', 'check.crud:mahasiswa'])->group(function () {
             // Halaman utama import & Step 1 (Upload View)
             Route::get('/import', [MahasiswaController::class, 'importView'])->name('import.view');
             // Proses Upload & Parsing (Step 1 ke Step 2)
@@ -730,19 +730,19 @@ Route::middleware('auth')->group(function () {
         Route::get('/kelola-data', [MahasiswaController::class, 'index'])->name('kelola-data');
         Route::get('/laporan', [MahasiswaController::class, 'laporan'])->name('laporan');
 
-        Route::get('/create', [MahasiswaController::class, 'create'])->name('create')->middleware('can:kelola-data-mahasiswa.create');
-        Route::post('/store', [MahasiswaController::class, 'store'])->name('store')->middleware('can:kelola-data-mahasiswa.create');
+        Route::get('/create', [MahasiswaController::class, 'create'])->name('create')->middleware(['can:kelola-data-mahasiswa.create', 'check.crud:mahasiswa']);
+        Route::post('/store', [MahasiswaController::class, 'store'])->name('store')->middleware(['can:kelola-data-mahasiswa.create', 'check.crud:mahasiswa']);
 
         // --- MAHASISWA KOMPETISI ---
         Route::get('/kompetisi-mahasiswa', [MahasiswaController::class, 'kompetisiIndex'])->name('kompetisi.index');
         Route::get('/kompetisi-mahasiswa/export-excel', [MahasiswaController::class, 'kompetisiExportExcel'])->name('kompetisi.export-excel');
         Route::get('/kompetisi-mahasiswa/export-pdf', [MahasiswaController::class, 'kompetisiExportPdf'])->name('kompetisi.export-pdf');
-        Route::get('/kompetisi-mahasiswa/create', [MahasiswaController::class, 'kompetisiCreate'])->name('kompetisi.create')->middleware('can:kelola-data-mahasiswa.create');
-        Route::post('/kompetisi-mahasiswa', [MahasiswaController::class, 'kompetisiStore'])->name('kompetisi.store')->middleware('can:kelola-data-mahasiswa.create');
-        Route::delete('/kompetisi-mahasiswa/{id}', [MahasiswaController::class, 'kompetisiDestroy'])->name('kompetisi.destroy')->middleware('can:kelola-data-mahasiswa.delete');
+        Route::get('/kompetisi-mahasiswa/create', [MahasiswaController::class, 'kompetisiCreate'])->name('kompetisi.create')->middleware(['can:kelola-data-mahasiswa.create', 'check.crud:mahasiswa']);
+        Route::post('/kompetisi-mahasiswa', [MahasiswaController::class, 'kompetisiStore'])->name('kompetisi.store')->middleware(['can:kelola-data-mahasiswa.create', 'check.crud:mahasiswa']);
+        Route::delete('/kompetisi-mahasiswa/{id}', [MahasiswaController::class, 'kompetisiDestroy'])->name('kompetisi.destroy')->middleware(['can:kelola-data-mahasiswa.delete', 'check.crud:mahasiswa']);
 
         // --- IMPORT MAHASISWA KOMPETISI ---
-        Route::middleware('can:kelola-data-mahasiswa.create')->group(function () {
+        Route::middleware(['can:kelola-data-mahasiswa.create', 'check.crud:mahasiswa'])->group(function () {
             Route::get('/kompetisi-mahasiswa/import', [MahasiswaController::class, 'kompetisiImportView'])->name('kompetisi.import.view');
             Route::post('/kompetisi-mahasiswa/import/upload', [MahasiswaController::class, 'kompetisiUploadImport'])->name('kompetisi.import.upload');
             Route::post('/kompetisi-mahasiswa/import/save', [MahasiswaController::class, 'kompetisiSaveImport'])->name('kompetisi.import.save');
@@ -752,9 +752,9 @@ Route::middleware('auth')->group(function () {
 
         // Route dengan Parameter diletakkan di bawah agar tidak "memakan" route statis di atas
         Route::get('/{mahasiswa}', [MahasiswaController::class, 'show'])->name('show')->middleware('can:kelola-data-mahasiswa.detail');
-        Route::get('/{mahasiswa}/edit', [MahasiswaController::class, 'edit'])->name('edit')->middleware('can:kelola-data-mahasiswa.edit');
-        Route::put('/{mahasiswa}', [MahasiswaController::class, 'update'])->name('update')->middleware('can:kelola-data-mahasiswa.edit');
-        Route::delete('/{mahasiswa}', [MahasiswaController::class, 'destroy'])->name('destroy')->middleware('can:kelola-data-mahasiswa.delete');
+        Route::get('/{mahasiswa}/edit', [MahasiswaController::class, 'edit'])->name('edit')->middleware(['can:kelola-data-mahasiswa.edit', 'check.crud:mahasiswa']);
+        Route::put('/{mahasiswa}', [MahasiswaController::class, 'update'])->name('update')->middleware(['can:kelola-data-mahasiswa.edit', 'check.crud:mahasiswa']);
+        Route::delete('/{mahasiswa}', [MahasiswaController::class, 'destroy'])->name('destroy')->middleware(['can:kelola-data-mahasiswa.delete', 'check.crud:mahasiswa']);
     });
     // ============================
     // 🆕 Rekrutasi Dosen Routes (TAMBAHAN BARU)
@@ -765,7 +765,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/laporan', [RekrutasiDosenController::class, 'laporan'])->name('laporan')->middleware('can:rekrutasi-data-dosen.view');
 
         // Import Routes - Super Admin Only
-        Route::middleware('can:import-rekrutasi-dosen.view')->group(function () {
+        Route::middleware(['can:import-rekrutasi-dosen.view', 'check.crud:rekrutasi'])->group(function () {
             Route::get('/import', [RekrutasiDosenController::class, 'importView'])->name('import.view');
             Route::post('/import', [RekrutasiDosenController::class, 'import'])->name('import');
             // Import Routes - Detail
@@ -828,12 +828,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/export-pdf', [RekrutasiDosenController::class, 'exportPdf'])->name('export-pdf')->middleware('can:rekrutasi-data-dosen.view');
 
         // CRUD Routes
-        Route::get('/create', [RekrutasiDosenController::class, 'create'])->name('create')->middleware('can:rekrutasi-data-dosen.view');
-        Route::post('/', [RekrutasiDosenController::class, 'store'])->name('store')->middleware('can:rekrutasi-data-dosen.view');
+        Route::get('/create', [RekrutasiDosenController::class, 'create'])->name('create')->middleware(['can:rekrutasi-data-dosen.view', 'check.crud:rekrutasi']);
+        Route::post('/', [RekrutasiDosenController::class, 'store'])->name('store')->middleware(['can:rekrutasi-data-dosen.view', 'check.crud:rekrutasi']);
         Route::get('/{id}', [RekrutasiDosenController::class, 'show'])->name('show')->middleware('can:rekrutasi-data-dosen.view');
-        Route::get('/{id}/edit', [RekrutasiDosenController::class, 'edit'])->name('edit')->middleware('can:rekrutasi-data-dosen.view');
-        Route::put('/{id}', [RekrutasiDosenController::class, 'update'])->name('update')->middleware('can:rekrutasi-data-dosen.view');
-        Route::delete('/{id}', [RekrutasiDosenController::class, 'destroy'])->name('destroy')->middleware('can:rekrutasi-data-dosen.view');
+        Route::get('/{id}/edit', [RekrutasiDosenController::class, 'edit'])->name('edit')->middleware(['can:rekrutasi-data-dosen.view', 'check.crud:rekrutasi']);
+        Route::put('/{id}', [RekrutasiDosenController::class, 'update'])->name('update')->middleware(['can:rekrutasi-data-dosen.view', 'check.crud:rekrutasi']);
+        Route::delete('/{id}', [RekrutasiDosenController::class, 'destroy'])->name('destroy')->middleware(['can:rekrutasi-data-dosen.view', 'check.crud:rekrutasi']);
     });
 
     // ============================
@@ -977,6 +977,12 @@ Route::middleware('auth')->group(function () {
     Route::put('/pengaturan/notifikasi', [App\Http\Controllers\PengaturanController::class, 'updateNotifikasi'])
         ->name('pengaturan.notifikasi.update')
         ->middleware('permission:pengaturan-notifikasi.edit');
+    Route::get('/pengaturan/periode', [App\Http\Controllers\PengaturanController::class, 'periode'])
+        ->name('pengaturan.periode')
+        ->middleware('permission:pengaturan-periode.view');
+    Route::put('/pengaturan/periode', [App\Http\Controllers\PengaturanController::class, 'updatePeriode'])
+        ->name('pengaturan.periode.update')
+        ->middleware('permission:pengaturan-periode.edit');
     Route::post('/pengaturan/role', [App\Http\Controllers\PengaturanController::class, 'storeRole'])
         ->name('pengaturan.role.store')
         ->middleware('permission:konfigurasi-sistem.create');
