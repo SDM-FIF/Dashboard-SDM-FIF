@@ -242,7 +242,7 @@
                 </div>
                 <div>
                     <h3 class="font-bold text-slate-800 text-base">Nisbah Dosen : Mahasiswa</h3>
-                    <p class="text-xs text-slate-400">Rasio perbandingan dosen dan mahasiswa. Batas ideal: 1:27.</p>
+                    <p class="text-xs text-slate-400">Perbandingan jumlah mahasiswa dan dosen berdasarkan nisbah masing-masing program studi.</p>
                 </div>
             </div>
             <div class="overflow-x-auto">

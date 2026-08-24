@@ -121,7 +121,7 @@
                     </div>
 
                     <p class="text-xs text-gray-400">
-                        Contoh: nilai 27 berarti 1 dosen berbanding maksimal 27 mahasiswa aktif.
+                       Masukkan batas jumlah mahasiswa untuk setiap 1 dosen pada program studi ini.
                     </p>
 
                     @error('batas_nisbah')
@@ -131,9 +131,9 @@
 
                 {{-- Nama Kaprodi --}}
                 <div class="flex flex-col gap-1.5">
-                    <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Nama Kaprodi (Opsional)</label>
+                    <label class="text-xs font-bold text-gray-400 uppercase tracking-wider">Nama Kaprodi</label>
                     <select name="kaprodi" id="kaprodi_select" class="w-full px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none @error('kaprodi') border-red-500 @enderror">
-                        <option value="">-- Pilih Kaprodi (Opsional) --</option>
+                        <option value="">-- Pilih Kaprodi --</option>
                         @foreach($dosen as $d)
                             <option value="{{ $d->nama_lengkap }}" {{ old('kaprodi', $prodi->kaprodi) == $d->nama_lengkap ? 'selected' : '' }}>
                                 {{ $d->nama_lengkap }} ({{ $d->nidn ?? 'NIDN/NIP tidak ada' }})

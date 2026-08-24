@@ -46,7 +46,7 @@ Route::post('/switch-role', function (Illuminate\Http\Request $request) {
 })->name('switch-role')->middleware('auth');
 
 // ============================
-// Public Dashboard (Bisa diakses Guest & Auth)
+// Public Dashboard 
 // ============================
 // Bagian Dashboard
 Route::get('/dashboard', function () {
@@ -66,32 +66,30 @@ Route::get('/dashboard', function () {
         ->toArray();
 
     $nisbah = \App\Models\Prodi::withCount([
-        'dosen',
-        'mahasiswa as mahasiswa_aktif_count' => function ($query) {
-            $query->where('status', 'Aktif');
-        }
-    ])
-        ->get()
-        ->map(function ($prodi) {
+    'dosen',
+    'mahasiswa'
+])
+    ->get()
+    ->map(function ($prodi) {
 
-            $hasilNisbah = $prodi->dosen_count > 0
-                ? round($prodi->mahasiswa_aktif_count / $prodi->dosen_count, 2)
-                : null;
+        $hasilNisbah = $prodi->dosen_count > 0
+            ? round($prodi->mahasiswa_count / $prodi->dosen_count, 2)
+            : null;
 
-            return [
-                'nama_prodi' => $prodi->nama_prodi,
-                'jumlah_dosen' => $prodi->dosen_count,
-                'jumlah_mahasiswa' => $prodi->mahasiswa_aktif_count,
-                'batas_nisbah' => $prodi->batas_nisbah,
-                'hasil_nisbah' => $hasilNisbah,
+        return [
+            'nama_prodi' => $prodi->nama_prodi,
+            'jumlah_dosen' => $prodi->dosen_count,
+            'jumlah_mahasiswa' => $prodi->mahasiswa_count,
+            'batas_nisbah' => $prodi->batas_nisbah,
+            'hasil_nisbah' => $hasilNisbah,
 
-                'status' => $prodi->dosen_count == 0
-                    ? 'Belum Ada Dosen'
-                    : ($hasilNisbah > $prodi->batas_nisbah
-                        ? 'Melebihi'
-                        : 'Sesuai'),
-            ];
-        });
+            'status' => $prodi->dosen_count == 0
+                ? 'Belum Ada Dosen'
+                : ($hasilNisbah > $prodi->batas_nisbah
+                    ? 'Melebihi'
+                    : 'Sesuai'),
+        ];
+    });
 
 
     $jumlahDosenProdi = \App\Models\Prodi::withCount('dosen')
@@ -119,29 +117,30 @@ Route::get('/', function () {
         ->toArray();
 
     $nisbah = \App\Models\Prodi::withCount([
-        'dosen',
-        'mahasiswa as mahasiswa_aktif_count' => function ($query) {
-            $query->where('status', 'Aktif');
-        }
-    ])
-        ->get()
-        ->map(function ($prodi) {
+    'dosen',
+    'mahasiswa'
+])
+    ->get()
+    ->map(function ($prodi) {
 
-            $hasilNisbah = $prodi->dosen_count > 0
-                ? round($prodi->mahasiswa_aktif_count / $prodi->dosen_count, 2)
-                : 0;
+        $hasilNisbah = $prodi->dosen_count > 0
+            ? round($prodi->mahasiswa_count / $prodi->dosen_count, 2)
+            : null;
 
-            return [
-                'nama_prodi' => $prodi->nama_prodi,
-                'jumlah_dosen' => $prodi->dosen_count,
-                'jumlah_mahasiswa' => $prodi->mahasiswa_aktif_count,
-                'batas_nisbah' => $prodi->batas_nisbah,
-                'hasil_nisbah' => $hasilNisbah,
-                'status' => $prodi->dosen_count == 0
-                    ? 'Belum Ada Dosen'
-                    : ($hasilNisbah > $prodi->batas_nisbah ? 'Melebihi' : 'Sesuai'),
-            ];
-        });
+        return [
+            'nama_prodi' => $prodi->nama_prodi,
+            'jumlah_dosen' => $prodi->dosen_count,
+            'jumlah_mahasiswa' => $prodi->mahasiswa_count,
+            'batas_nisbah' => $prodi->batas_nisbah,
+            'hasil_nisbah' => $hasilNisbah,
+
+            'status' => $prodi->dosen_count == 0
+                ? 'Belum Ada Dosen'
+                : ($hasilNisbah > $prodi->batas_nisbah
+                    ? 'Melebihi'
+                    : 'Sesuai'),
+        ];
+    });
 
     $jumlahDosenProdi = \App\Models\Prodi::withCount('dosen')
         ->pluck('dosen_count', 'nama_prodi')
@@ -254,29 +253,28 @@ Route::get('/dashboard-dosen', function () {
         ->get(['id', 'nama_lengkap', 'prodi_id', 'jabatan', 'status_studi_lanjut', 'lokasi_kampus_studi', 'tahun_mulai_studi', 'batas_studi']);
 
     $nisbah = \App\Models\Prodi::withCount([
-        'dosen',
-        'mahasiswa as mahasiswa_aktif_count' => function ($query) {
-            $query->where('status', 'Aktif');
-        }
-    ])
-        ->get()
-        ->map(function ($prodi) {
+    'dosen',
+    'mahasiswa'
+])
+    ->get()
+    ->map(function ($prodi) {
 
-            $rasio = $prodi->dosen_count > 0
-                ? round($prodi->mahasiswa_aktif_count / $prodi->dosen_count, 2)
-                : null;
+        $rasio = $prodi->dosen_count > 0
+            ? round($prodi->mahasiswa_count / $prodi->dosen_count, 2)
+            : null;
 
-            return [
-                'nama_prodi' => $prodi->nama_prodi,
-                'dosen' => $prodi->dosen_count,
-                'mahasiswa' => $prodi->mahasiswa_aktif_count,
-                'batas_nisbah' => $prodi->batas_nisbah,
-                'rasio' => $rasio,
+        return [
+            'nama_prodi' => $prodi->nama_prodi,
+            'dosen' => $prodi->dosen_count,
+            'mahasiswa' => $prodi->mahasiswa_count,
+            'batas_nisbah' => $prodi->batas_nisbah,
+            'rasio' => $rasio,
 
-                'over_limit' => $rasio !== null
-                    && $rasio > $prodi->batas_nisbah,
-            ];
-        });
+            'over_limit' => $rasio !== null
+                && $rasio > $prodi->batas_nisbah,
+        ];
+    });
+     
 
     $totalDosen = \App\Models\Dosen::count();
 
