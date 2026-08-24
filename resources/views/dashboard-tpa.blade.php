@@ -1,17 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard TPA - FIF</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body class="flex bg-[#F8FAFC] text-slate-800 font-nunito min-h-screen overflow-x-hidden">
-    <x-navbar /> 
-    
+    <x-navbar />
+
     <main class="flex-1 flex flex-col min-h-screen p-6 md:p-8 overflow-y-auto">
         <x-topbar />
-        
+
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <div>
@@ -84,8 +86,12 @@
                             <i class="fa-solid fa-layer-group text-lg"></i>
                         </div>
                         <div>
-                            <h3 class="font-bold text-slate-800 text-base">Pangkat & Jabatan</h3>
-                            <p class="text-xs text-slate-400">Distribusi jabatan/pangkat TPA.</p>
+                            <h3 class="font-bold text-slate-800 text-base">
+                                Profil Jabatan TPA
+                            </h3>
+                            <p class="text-xs text-slate-400">
+                                Distribusi jabatan Tenaga Pendukung Akademik.
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -102,8 +108,8 @@
                             <i class="fa-solid fa-user-graduate text-lg"></i>
                         </div>
                         <div>
-                            <h3 class="font-bold text-slate-800 text-base">Tingkat Pendidikan TPA</h3>
-                            <p class="text-xs text-slate-400">Kualifikasi ijazah terakhir.</p>
+                            <h3 class="font-bold text-slate-800 text-base">Profil Pendidikan TPA</h3>
+                            <p class="text-xs text-slate-400">Distribusi pendidikan terakhir Tenaga Pendukung Akademik.</p>
                         </div>
                     </div>
                 </div>
@@ -121,7 +127,7 @@
                         <i class="fa-solid fa-briefcase text-lg"></i>
                     </div>
                     <div>
-                        <h3 class="font-bold text-slate-800 text-lg">Status Pegawai - TPA</h3>
+                        <h3 class="font-bold text-slate-800 text-lg">Profil Status Pegawai TPA</h3>
                         <p class="text-xs text-slate-400">Status kepegawaian tenaga pendukung akademik.</p>
                     </div>
                 </div>
@@ -138,11 +144,17 @@
         document.addEventListener('DOMContentLoaded', () => {
             const dateSpan = document.getElementById('current-date-span');
             if (dateSpan) {
-                const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                const options = {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                };
                 dateSpan.textContent = new Date().toLocaleDateString('id-ID', options);
             }
         });
     </script>
     @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/dashboardTPA.js'])
 </body>
+
 </html>

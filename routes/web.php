@@ -330,7 +330,6 @@ Route::get('/dashboard-dosen', function () {
         ->groupBy('pendidikan_terakhir')
         ->pluck('count', 'pendidikan_terakhir')
         ->toArray();
-    $pendDosen['ONGOING'] = $totalStudiLanjut;
 
     $jfaDosen = \App\Models\Dosen::select('jabatan', DB::raw('count(*) as count'))
         ->groupBy('jabatan')
@@ -341,6 +340,20 @@ Route::get('/dashboard-dosen', function () {
         ->groupBy('status_pegawai')
         ->pluck('count', 'status_pegawai')
         ->toArray();
+    
+    $statusProfilDosen = [
+    'Aktif' => \App\Models\Dosen::where('status_dosen', 'Aktif')->count(),
+
+    'Studi Lanjut' => \App\Models\Dosen::whereIn(
+        'status_dosen',
+        ['Tugas Belajar', 'Izin Belajar']
+    )->count(),
+
+    'Cuti (CLTY)' => \App\Models\Dosen::where(
+        'status_dosen',
+        'CLTY'
+    )->count(),
+];
 
     return view('dashboard-dosen', compact(
         'studiLanjut',
@@ -356,7 +369,8 @@ Route::get('/dashboard-dosen', function () {
         'dosenKK',
         'pendDosen',
         'jfaDosen',
-        'statusDosen'
+        'statusDosen',
+        'statusProfilDosen'
     ));
 })->name('dashboard-dosen');
 

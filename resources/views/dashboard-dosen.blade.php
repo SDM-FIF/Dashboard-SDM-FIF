@@ -13,7 +13,7 @@
 
     <main class="flex-1 flex flex-col min-h-screen p-6 md:p-8 overflow-y-auto">
         <x-topbar />
-        
+
         <!-- Header -->
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <div>
@@ -69,18 +69,18 @@
                     </thead>
 
                     <tbody class="divide-y divide-gray-100">
-                            <tbody>
-                                @foreach($pendidikanPerProdi as $p)
-                                <tr>
-                                    <td class="px-4 py-3">{{ $p['nama_prodi'] }}</td>
-                                    <td class="px-4 py-3 text-center">{{ $p['s1'] }}</td>
-                                    <td class="px-4 py-3 text-center">{{ $p['s2'] }}</td>
-                                    <td class="px-4 py-3 text-center">{{ $p['s3'] }}</td>
-                                    <td class="px-4 py-3 text-center font-semibold">{{ $p['total'] }}</td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
+                    <tbody>
+                        @foreach($pendidikanPerProdi as $p)
+                        <tr>
+                            <td class="px-4 py-3">{{ $p['nama_prodi'] }}</td>
+                            <td class="px-4 py-3 text-center">{{ $p['s1'] }}</td>
+                            <td class="px-4 py-3 text-center">{{ $p['s2'] }}</td>
+                            <td class="px-4 py-3 text-center">{{ $p['s3'] }}</td>
+                            <td class="px-4 py-3 text-center font-semibold">{{ $p['total'] }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
 
                 </table>
             </div>
@@ -134,8 +134,8 @@
                             <i class="fa-solid fa-award text-lg"></i>
                         </div>
                         <div>
-                            <h3 class="font-bold text-slate-800 text-base">Kualifikasi Pendidikan</h3>
-                            <p class="text-xs text-slate-400">Jenjang pendidikan terakhir dosen.</p>
+                            <h3 class="font-bold text-slate-800 text-base">Profil Pendidikan Dosen</h3>
+                            <p class="text-xs text-slate-400">Profil pendidikan terakhir dosen berdasarkan jenjang S1, S2, dan S3.</p>
                         </div>
                     </div>
                 </div>
@@ -146,7 +146,7 @@
         </div>
 
         <!-- Bar Charts (Row 2) -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
             <!-- JFA Dosen -->
             <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow duration-300">
                 <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
@@ -155,14 +155,45 @@
                             <i class="fa-solid fa-chart-column text-lg"></i>
                         </div>
                         <div>
-                            <h3 class="font-bold text-slate-800 text-base">Distribusi JFA Dosen</h3>
-                            <p class="text-xs text-slate-400">Jabatan Fungsional Akademik dosen aktif.</p>
+                            <h3 class="font-bold text-slate-800 text-base">Profil JFA Dosen</h3>
+                            <p class="text-xs text-slate-400"> Profil Jabatan Fungsional Akademik dosen.</p>
                         </div>
                     </div>
                 </div>
                 <div class="relative min-h-[300px] flex items-center justify-center">
                     <canvas id="jfaDosen"></canvas>
                 </div>
+            </div>
+
+            <!-- Profil Status Dosen -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow duration-300">
+
+                <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
+
+                    <div class="flex items-center gap-3">
+
+                        <div class="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600">
+                            <i class="fa-solid fa-user-check text-lg"></i>
+                        </div>
+
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-base">
+                                Status Dosen
+                            </h3>
+
+                            <p class="text-xs text-slate-400">
+                                Status aktif, studi lanjut, dan cuti dosen.
+                            </p>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="relative min-h-[300px] flex items-center justify-center">
+                    <canvas id="statusProfilDosen"></canvas>
+                </div>
+
             </div>
 
             <!-- Status Pegawai -->
@@ -287,7 +318,8 @@
             kk: @json($dosenKK),
             pendidikan: @json($pendDosen),
             jfa: @json($jfaDosen),
-            status: @json($statusDosen)
+            status: @json($statusDosen),
+            statusProfil: @json($statusProfilDosen)
         };
 
         document.addEventListener('DOMContentLoaded', () => {

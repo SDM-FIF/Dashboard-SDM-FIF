@@ -175,6 +175,77 @@ if (jfaDosenEl) {
     });
 }
 
+
+// Profil Status Dosen
+const statusProfilData = window.dosenData?.statusProfil || {};
+
+const statusProfilLabels = Object.keys(statusProfilData);
+const statusProfilValues = Object.values(statusProfilData);
+
+const statusProfilDosenEl = document.getElementById("statusProfilDosen");
+
+if (statusProfilDosenEl) {
+    new Chart(statusProfilDosenEl, {
+        type: "doughnut",
+
+        data: {
+            labels: statusProfilLabels,
+
+            datasets: [
+                {
+                    data: statusProfilValues,
+                    backgroundColor: [
+                        "#10b981",
+                        "#3b82f6",
+                        "#8b5cf6",
+                    ],
+                },
+            ],
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            plugins: {
+                legend: {
+                    position: "bottom",
+                },
+
+                datalabels: {
+                    display: function (context) {
+                        return context.dataset.data[context.dataIndex] > 0;
+                    },
+
+                    formatter: (value, ctx) => {
+                        const data = ctx.chart.data.datasets[0].data;
+
+                        const total = data.reduce(
+                            (sum, item) => sum + Number(item),
+                            0,
+                        );
+
+                        if (total === 0) return "";
+
+                        return (
+                            value +
+                            " (" +
+                            ((value / total) * 100).toFixed(0) +
+                            "%)"
+                        );
+                    },
+
+                    color: "#fff",
+
+                    font: {
+                        weight: "bold",
+                    },
+                },
+            },
+        },
+    });
+}
+
 // 5. Horizontal Bar chart statusDosen
 const statusData = window.dosenData?.status || {};
 const statusLabels = Object.keys(statusData).length > 0 ? Object.keys(statusData) : ['PEGAWAI TETAP','PROFESIONAL FULL TIME','PROFESIONAL PART TIME','PERBANTUAN LLDIKTI'];

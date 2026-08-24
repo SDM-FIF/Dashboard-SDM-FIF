@@ -14,7 +14,7 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
             <div>
                 <h1 class="text-3xl md:text-4xl font-extrabold text-[#C41E3A] tracking-tight">Dashboard TPA FIF</h1>
-                <p class="text-slate-500 mt-1 text-sm md:text-base">Statistik Tenaga Pendukung Akademik berdasarkan Lokasi Kerja, Golongan, Pendidikan, dan Status Kepegawaian (Akses Publik).</p>
+                <p class="text-slate-500 mt-1 text-sm md:text-base">Statistik Tenaga Pendukung Akademik berdasarkan Jabatan, Pendidikan, Lokasi Kerja, dan Status Kepegawaian.</p>
             </div>
             <div class="flex items-center gap-3 bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-100 self-start md:self-auto">
                 <div class="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center text-[#C41E3A]">
@@ -89,8 +89,8 @@
                             <i class="fa-solid fa-layer-group text-lg"></i>
                         </div>
                         <div>
-                            <h3 class="font-bold text-slate-800 text-base">Pangkat Golongan TPA</h3>
-                            <p class="text-xs text-slate-400">Distribusi jabatan/pangkat TPA.</p>
+                            <h3 class="font-bold text-slate-800 text-base">Profil Jabatan TPA</h3>
+                            <p class="text-xs text-slate-400">Distribusi jabatan Tenaga Pendukung Akademik.</p>
                         </div>
                     </div>
                 </div>
@@ -107,8 +107,8 @@
                             <i class="fa-solid fa-user-graduate text-lg"></i>
                         </div>
                         <div>
-                            <h3 class="font-bold text-slate-800 text-base">Pendidikan TPA</h3>
-                            <p class="text-xs text-slate-400">Kualifikasi ijazah terakhir.</p>
+                            <h3 class="font-bold text-slate-800 text-base">Profil Pendidikan TPA</h3>
+                            <p class="text-xs text-slate-400">Distribusi pendidikan terakhir Tenaga Pendukung Akademik.</p>
                         </div>
                     </div>
                 </div>
@@ -126,7 +126,7 @@
                         <i class="fa-solid fa-briefcase text-lg"></i>
                     </div>
                     <div>
-                        <h3 class="font-bold text-slate-800 text-lg">Status Pegawai - TPA</h3>
+                        <h3 class="font-bold text-slate-800 text-lg">Profil Status Pegawai TPA</h3>
                         <p class="text-xs text-slate-400">Status kepegawaian tenaga pendukung akademik.</p>
                     </div>
                 </div>
