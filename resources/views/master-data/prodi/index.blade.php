@@ -16,7 +16,10 @@
     </style>
 </head>
 
-<body class="flex flex-col md:flex-row bg-[#F8FAFC] min-h-screen text-[#1E293B]">
+<body
+    class="flex flex-col md:flex-row bg-[#F8FAFC] min-h-screen text-[#1E293B]"
+    data-success="{{ session('success') }}"
+    data-error="{{ session('error') }}">
     {{-- Sidebar Navigation --}}
     <x-navbar />
 
@@ -102,7 +105,7 @@
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Nama Program Studi</th>
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Fakultas</th>
                             <th class="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider">Kaprodi</th>
-                            <th class="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider">Standar Nisbah</th>
+                            <th class="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider">Nisbah</th>
                             <th class="px-6 py-4 text-center text-xs font-bold uppercase tracking-wider w-36">Aksi</th>
                         </tr>
                     </thead>
@@ -173,38 +176,37 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            @if(session('success'))
 
-            Swal.fire({
-                icon: 'success',
-                title: 'Berhasil!',
-                text: '{{ session('
-                success ') }}',
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-                toast: true,
-                position: 'top-end'
-            });
-            @endif
+            const successMessage = document.body.dataset.success;
+            const errorMessage = document.body.dataset.error;
 
-            @if(session('error'))
-            Swal.fire({
-                icon: 'error',
-                title: 'Gagal!',
-                html: `
-        <p style="font-size:16px; line-height:1.6;">
-            {{ session('error') }}
-        </p>
-    `,
-                confirmButtonText: 'OK',
-                confirmButtonColor: '#C41E3A',
-                customClass: {
-                    popup: 'rounded-2xl',
-                    confirmButton: 'px-5 py-2 rounded-xl font-semibold'
-                }
-            });
-            @endif
+            if (successMessage) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: successMessage,
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    toast: true,
+                    position: 'top-end'
+                });
+            }
+
+            if (errorMessage) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: errorMessage,
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#C41E3A',
+                    customClass: {
+                        popup: 'rounded-2xl',
+                        confirmButton: 'px-5 py-2 rounded-xl font-semibold'
+                    }
+                });
+            }
+
 
             // SWEETALERT DELETE CONFIRMATION
             const deleteBtns = document.querySelectorAll('.delete-btn');

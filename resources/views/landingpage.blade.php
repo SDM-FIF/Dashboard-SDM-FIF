@@ -174,7 +174,7 @@
                         </h3>
 
                         <p class="text-xs text-slate-500">
-                            Berdasarkan jumlah dosen dan mahasiswa aktif setiap program studi.
+                            Berdasarkan jumlah dosen dan jumlah mahasiswa setiap program studi.
                         </p>
                     </div>
 
@@ -197,11 +197,11 @@
                                 </th>
 
                                 <th class="px-4 py-3 text-center">
-                                    Mahasiswa Aktif
+                                    Jumlah Mahasiswa
                                 </th>
 
                                 <th class="px-4 py-3 text-center">
-                                    Standar
+                                    Nisbah
                                 </th>
 
                                 <th class="px-4 py-3 text-center">

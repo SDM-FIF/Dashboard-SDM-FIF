@@ -109,15 +109,15 @@
                         <input
                             type="number"
                             name="batas_nisbah"
-                            value="{{ old('batas_nisbah', 27) }}"
+                            value="{{ old('batas_nisbah') }}"
                             min="1"
                             required
-                            placeholder="27"
+                            placeholder="Masukkan nisbah"
                             class="w-32 px-4 py-3 border border-gray-200 rounded-xl bg-[#F8FAFC] text-gray-700 text-sm focus:bg-white focus:ring-2 focus:ring-red-200 focus:border-[#C41E3A] transition-all outline-none @error('batas_nisbah') border-red-500 @enderror">
                     </div>
 
                     <p class="text-xs text-gray-400">
-                         Contoh: nilai 27 berarti 1 dosen berbanding maksimal 27 mahasiswa aktif.
+                         Masukkan batas jumlah mahasiswa untuk setiap 1 dosen pada program studi.
                     </p>
 
                     @error('batas_nisbah')
