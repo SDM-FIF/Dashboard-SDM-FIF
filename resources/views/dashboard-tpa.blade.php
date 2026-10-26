@@ -22,6 +22,17 @@
             </div>
         </div>
 
+        <div class="flex justify-end mt-6 mb-8">
+            <a href="{{ route('laporan-pengembangan-tpa.index') }}"
+                class="inline-flex w-auto items-center justify-center gap-2
+              px-5 py-3 rounded-xl bg-[#C41E3A] text-white
+              font-semibold shadow-sm hover:bg-red-800 transition">
+                <i class="fa-solid fa-file-lines"></i>
+                Laporan Pengembangan TPA
+            </a>
+        </div>
+
+
         <!-- Statistic Cards -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <!-- Card 1 -->
@@ -74,91 +85,91 @@
                     <span class="bg-blue-50 px-2.5 py-0.5 rounded-full">LAA, SDM & Program Studi</span>
                 </div>
             </div>
-        <!-- Laporan Jumlah TPA Pegawai Tetap dan Profesional (Item 3) -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center justify-between">
-                <div>
-                    <span class="text-xs font-bold uppercase tracking-wider text-blue-200">Status Kepegawaian</span>
-                    <h3 class="text-lg font-bold mt-1">TPA Pegawai Tetap</h3>
-                    <p class="text-3xl font-black mt-2">{{ $totalTetap ?? 0 }} <span class="text-base font-normal text-blue-200">Staf ({{ $persenTetap ?? 0 }}%)</span></p>
-                </div>
-                <div class="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center text-2xl">
-                    <i class="fa-solid fa-id-badge"></i>
-                </div>
-            </div>
-
-            <div class="bg-gradient-to-r from-amber-500 to-orange-600 text-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center justify-between">
-                <div>
-                    <span class="text-xs font-bold uppercase tracking-wider text-amber-200">Status Kepegawaian</span>
-                    <h3 class="text-lg font-bold mt-1">TPA Pegawai Profesional / Kontrak</h3>
-                    <p class="text-3xl font-black mt-2">{{ $totalProfesional ?? 0 }} <span class="text-base font-normal text-amber-200">Staf ({{ $persenProfesional ?? 0 }}%)</span></p>
-                </div>
-                <div class="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center text-2xl">
-                    <i class="fa-solid fa-user-clock"></i>
-                </div>
-            </div>
-        </div>
-
-        <!-- Doughnut Charts (Row 1) -->
-        <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-8">
-            <!-- Pangkat & Jabatan TPA -->
-            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col hover:shadow-md transition-shadow duration-300">
-                <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600">
-                            <i class="fa-solid fa-layer-group text-lg"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-slate-800 text-base">
-                                Profil Jabatan TPA
-                            </h3>
-                            <p class="text-xs text-slate-400">
-                                Distribusi jabatan Tenaga Pendukung Akademik.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex-1 flex items-center justify-center relative min-h-[260px]">
-                    <canvas id="jabatanChart" data-labels='@json(array_keys($jabatanCounts))' data-values='@json(array_values($jabatanCounts))'></canvas>
-                </div>
-            </div>
-
-            <!-- Pendidikan TPA -->
-            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col hover:shadow-md transition-shadow duration-300">
-                <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center text-purple-600">
-                            <i class="fa-solid fa-user-graduate text-lg"></i>
-                        </div>
-                        <div>
-                            <h3 class="font-bold text-slate-800 text-base">Profil Pendidikan TPA</h3>
-                            <p class="text-xs text-slate-400">Distribusi pendidikan terakhir Tenaga Pendukung Akademik.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex-1 flex items-center justify-center relative min-h-[260px]">
-                    <canvas id="pendidikanChart" data-labels='@json(array_keys($pendidikanCountsMap))' data-values='@json(array_values($pendidikanCountsMap))'></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- Horizontal Bar Chart (Row 2) -->
-        <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm mb-8">
-            <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center text-amber-600">
-                        <i class="fa-solid fa-briefcase text-lg"></i>
-                    </div>
+            <!-- Laporan Jumlah TPA Pegawai Tetap dan Profesional (Item 3) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center justify-between">
                     <div>
-                        <h3 class="font-bold text-slate-800 text-lg">Profil Status Pegawai TPA</h3>
-                        <p class="text-xs text-slate-400">Status kepegawaian tenaga pendukung akademik.</p>
+                        <span class="text-xs font-bold uppercase tracking-wider text-blue-200">Status Kepegawaian</span>
+                        <h3 class="text-lg font-bold mt-1">TPA Pegawai Tetap</h3>
+                        <p class="text-3xl font-black mt-2">{{ $totalTetap ?? 0 }} <span class="text-base font-normal text-blue-200">Staf ({{ $persenTetap ?? 0 }}%)</span></p>
+                    </div>
+                    <div class="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center text-2xl">
+                        <i class="fa-solid fa-id-badge"></i>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-r from-amber-500 to-orange-600 text-white p-6 rounded-2xl shadow-sm hover:shadow-md transition-all flex items-center justify-between">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-amber-200">Status Kepegawaian</span>
+                        <h3 class="text-lg font-bold mt-1">TPA Pegawai Profesional / Kontrak</h3>
+                        <p class="text-3xl font-black mt-2">{{ $totalProfesional ?? 0 }} <span class="text-base font-normal text-amber-200">Staf ({{ $persenProfesional ?? 0 }}%)</span></p>
+                    </div>
+                    <div class="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center text-2xl">
+                        <i class="fa-solid fa-user-clock"></i>
                     </div>
                 </div>
             </div>
-            <div class="relative min-h-[300px] flex items-center justify-center">
-                <canvas id="statusPegawaiChart" data-labels='@json(array_keys($statusCounts))' data-values='@json(array_values($statusCounts))'></canvas>
+
+            <!-- Doughnut Charts (Row 1) -->
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-8">
+                <!-- Pangkat & Jabatan TPA -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col hover:shadow-md transition-shadow duration-300">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600">
+                                <i class="fa-solid fa-layer-group text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-slate-800 text-base">
+                                    Profil Jabatan TPA
+                                </h3>
+                                <p class="text-xs text-slate-400">
+                                    Distribusi jabatan Tenaga Pendukung Akademik.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex-1 flex items-center justify-center relative min-h-[260px]">
+                        <canvas id="jabatanChart" data-labels='@json(array_keys($jabatanCounts))' data-values='@json(array_values($jabatanCounts))'></canvas>
+                    </div>
+                </div>
+
+                <!-- Pendidikan TPA -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex flex-col hover:shadow-md transition-shadow duration-300">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-lg bg-purple-50 flex items-center justify-center text-purple-600">
+                                <i class="fa-solid fa-user-graduate text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-slate-800 text-base">Profil Pendidikan TPA</h3>
+                                <p class="text-xs text-slate-400">Distribusi pendidikan terakhir Tenaga Pendukung Akademik.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex-1 flex items-center justify-center relative min-h-[260px]">
+                        <canvas id="pendidikanChart" data-labels='@json(array_keys($pendidikanCountsMap))' data-values='@json(array_values($pendidikanCountsMap))'></canvas>
+                    </div>
+                </div>
             </div>
-        </div>
+
+            <!-- Horizontal Bar Chart (Row 2) -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm mb-8">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-lg bg-amber-50 flex items-center justify-center text-amber-600">
+                            <i class="fa-solid fa-briefcase text-lg"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-lg">Profil Status Pegawai TPA</h3>
+                            <p class="text-xs text-slate-400">Status kepegawaian tenaga pendukung akademik.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative min-h-[300px] flex items-center justify-center">
+                    <canvas id="statusPegawaiChart" data-labels='@json(array_keys($statusCounts))' data-values='@json(array_values($statusCounts))'></canvas>
+                </div>
+            </div>
 
 
     </main>
