@@ -1,3 +1,4 @@
+
 <?php
 
 use Illuminate\Database\Migrations\Migration;
@@ -13,10 +14,11 @@ return new class extends Migration
     {
         Schema::create('kegiatan_pengembangan_tpa', function (Blueprint $table) {
             $table->id();
-            $table->string('kegiatan'); // Pelatihan, Sertifikasi, Studi Lanjut
+            $table->string('kegiatan');
             $table->integer('tahun');
             $table->integer('jumlah')->default(0);
             $table->timestamps();
+
             $table->unique(['kegiatan', 'tahun']);
         });
 

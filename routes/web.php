@@ -11,12 +11,14 @@ use App\Http\Controllers\ProdiController;
 use App\Http\Controllers\KompetisiController;
 use App\Http\Controllers\TahunAjarController;
 use App\Http\Controllers\KelompokKeahlianController;
+use App\Http\Controllers\LaporanPengembanganTpaController;
 use App\Http\Controllers\SuratDosenController;
 use App\Models\Dosen;
 use App\Models\Mahasiswa;
 use App\Models\TenagaPendukungAkademik;
 use App\Models\Prodi;
 use Illuminate\Support\Facades\DB;
+
 
 // ============================
 // Auth Routes
@@ -66,30 +68,30 @@ Route::get('/dashboard', function () {
         ->toArray();
 
     $nisbah = \App\Models\Prodi::withCount([
-    'dosen',
-    'mahasiswa'
-])
-    ->get()
-    ->map(function ($prodi) {
+        'dosen',
+        'mahasiswa'
+    ])
+        ->get()
+        ->map(function ($prodi) {
 
-        $hasilNisbah = $prodi->dosen_count > 0
-            ? round($prodi->mahasiswa_count / $prodi->dosen_count, 2)
-            : null;
+            $hasilNisbah = $prodi->dosen_count > 0
+                ? round($prodi->mahasiswa_count / $prodi->dosen_count, 2)
+                : null;
 
-        return [
-            'nama_prodi' => $prodi->nama_prodi,
-            'jumlah_dosen' => $prodi->dosen_count,
-            'jumlah_mahasiswa' => $prodi->mahasiswa_count,
-            'batas_nisbah' => $prodi->batas_nisbah,
-            'hasil_nisbah' => $hasilNisbah,
+            return [
+                'nama_prodi' => $prodi->nama_prodi,
+                'jumlah_dosen' => $prodi->dosen_count,
+                'jumlah_mahasiswa' => $prodi->mahasiswa_count,
+                'batas_nisbah' => $prodi->batas_nisbah,
+                'hasil_nisbah' => $hasilNisbah,
 
-            'status' => $prodi->dosen_count == 0
-                ? 'Belum Ada Dosen'
-                : ($hasilNisbah > $prodi->batas_nisbah
-                    ? 'Melebihi'
-                    : 'Sesuai'),
-        ];
-    });
+                'status' => $prodi->dosen_count == 0
+                    ? 'Belum Ada Dosen'
+                    : ($hasilNisbah > $prodi->batas_nisbah
+                        ? 'Melebihi'
+                        : 'Sesuai'),
+            ];
+        });
 
 
     $jumlahDosenProdi = \App\Models\Prodi::withCount('dosen')
@@ -117,30 +119,30 @@ Route::get('/', function () {
         ->toArray();
 
     $nisbah = \App\Models\Prodi::withCount([
-    'dosen',
-    'mahasiswa'
-])
-    ->get()
-    ->map(function ($prodi) {
+        'dosen',
+        'mahasiswa'
+    ])
+        ->get()
+        ->map(function ($prodi) {
 
-        $hasilNisbah = $prodi->dosen_count > 0
-            ? round($prodi->mahasiswa_count / $prodi->dosen_count, 2)
-            : null;
+            $hasilNisbah = $prodi->dosen_count > 0
+                ? round($prodi->mahasiswa_count / $prodi->dosen_count, 2)
+                : null;
 
-        return [
-            'nama_prodi' => $prodi->nama_prodi,
-            'jumlah_dosen' => $prodi->dosen_count,
-            'jumlah_mahasiswa' => $prodi->mahasiswa_count,
-            'batas_nisbah' => $prodi->batas_nisbah,
-            'hasil_nisbah' => $hasilNisbah,
+            return [
+                'nama_prodi' => $prodi->nama_prodi,
+                'jumlah_dosen' => $prodi->dosen_count,
+                'jumlah_mahasiswa' => $prodi->mahasiswa_count,
+                'batas_nisbah' => $prodi->batas_nisbah,
+                'hasil_nisbah' => $hasilNisbah,
 
-            'status' => $prodi->dosen_count == 0
-                ? 'Belum Ada Dosen'
-                : ($hasilNisbah > $prodi->batas_nisbah
-                    ? 'Melebihi'
-                    : 'Sesuai'),
-        ];
-    });
+                'status' => $prodi->dosen_count == 0
+                    ? 'Belum Ada Dosen'
+                    : ($hasilNisbah > $prodi->batas_nisbah
+                        ? 'Melebihi'
+                        : 'Sesuai'),
+            ];
+        });
 
     $jumlahDosenProdi = \App\Models\Prodi::withCount('dosen')
         ->pluck('dosen_count', 'nama_prodi')
@@ -258,28 +260,28 @@ Route::get('/dashboard-dosen', function () {
         ->get(['id', 'nama_lengkap', 'prodi_id', 'jabatan', 'status_studi_lanjut', 'lokasi_kampus_studi', 'tahun_mulai_studi', 'batas_studi']);
 
     $nisbah = \App\Models\Prodi::withCount([
-    'dosen',
-    'mahasiswa'
-])
-    ->get()
-    ->map(function ($prodi) {
+        'dosen',
+        'mahasiswa'
+    ])
+        ->get()
+        ->map(function ($prodi) {
 
-        $rasio = $prodi->dosen_count > 0
-            ? round($prodi->mahasiswa_count / $prodi->dosen_count, 2)
-            : null;
+            $rasio = $prodi->dosen_count > 0
+                ? round($prodi->mahasiswa_count / $prodi->dosen_count, 2)
+                : null;
 
-        return [
-            'nama_prodi' => $prodi->nama_prodi,
-            'dosen' => $prodi->dosen_count,
-            'mahasiswa' => $prodi->mahasiswa_count,
-            'batas_nisbah' => $prodi->batas_nisbah,
-            'rasio' => $rasio,
+            return [
+                'nama_prodi' => $prodi->nama_prodi,
+                'dosen' => $prodi->dosen_count,
+                'mahasiswa' => $prodi->mahasiswa_count,
+                'batas_nisbah' => $prodi->batas_nisbah,
+                'rasio' => $rasio,
 
-            'over_limit' => $rasio !== null
-                && $rasio > $prodi->batas_nisbah,
-        ];
-    });
-     
+                'over_limit' => $rasio !== null
+                    && $rasio > $prodi->batas_nisbah,
+            ];
+        });
+
 
     $totalDosen = \App\Models\Dosen::count();
 
@@ -345,20 +347,20 @@ Route::get('/dashboard-dosen', function () {
         ->groupBy('status_pegawai')
         ->pluck('count', 'status_pegawai')
         ->toArray();
-    
+
     $statusProfilDosen = [
-    'Aktif' => \App\Models\Dosen::where('status_dosen', 'Aktif')->count(),
+        'Aktif' => \App\Models\Dosen::where('status_dosen', 'Aktif')->count(),
 
-    'Studi Lanjut' => \App\Models\Dosen::whereIn(
-        'status_dosen',
-        ['Tugas Belajar', 'Izin Belajar']
-    )->count(),
+        'Studi Lanjut' => \App\Models\Dosen::whereIn(
+            'status_dosen',
+            ['Tugas Belajar', 'Izin Belajar']
+        )->count(),
 
-    'Cuti (CLTY)' => \App\Models\Dosen::where(
-        'status_dosen',
-        'CLTY'
-    )->count(),
-];
+        'Cuti (CLTY)' => \App\Models\Dosen::where(
+            'status_dosen',
+            'CLTY'
+        )->count(),
+    ];
 
     $dosenList = \App\Models\Dosen::with(['prodi', 'kelompokKeahlian', 'riwayatPendidikan'])
         ->orderBy('nama_lengkap', 'asc')
@@ -530,6 +532,35 @@ Route::middleware('auth')->group(function () {
     Route::post('/notifications/mark-all-read', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.mark-all-read');
     Route::delete('/notifications/{id}', [\App\Http\Controllers\NotificationController::class, 'destroy'])->name('notifications.destroy');
     Route::delete('/notifications', [\App\Http\Controllers\NotificationController::class, 'destroyAll'])->name('notifications.destroy-all');
+
+    // Laporan Pengembangan Tenaga Kependidikan TPA
+    Route::prefix('laporan-pengembangan-tpa')
+        ->name('laporan-pengembangan-tpa.')
+        ->middleware('can:import-data-tpa.view')
+        ->group(function () {
+            // Menampilkan halaman laporan
+            Route::get('/', [
+                LaporanPengembanganTpaController::class,
+                'index'
+            ])->name('index');
+
+            // Menyimpan data kegiatan per tahun
+            Route::post('/kegiatan', [
+                LaporanPengembanganTpaController::class,
+                'storeKegiatan'
+            ])->name('kegiatan.store');
+
+            // Menyimpan ringkasan pengembangan kompetensi
+            Route::post('/ringkasan', [
+                LaporanPengembanganTpaController::class,
+                'storeRingkasan'
+            ])->name('ringkasan.store');
+        });
+    Route::post(
+        '/laporan-pengembangan-tpa/import',
+        [LaporanPengembanganTpaController::class, 'importExcel']
+    )->name('laporan-pengembangan-tpa.import');
+
 
     // Dashboard - with permission check and smart redirect
 
